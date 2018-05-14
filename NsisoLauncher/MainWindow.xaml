@@ -1,0 +1,33 @@
+﻿<controls:MetroWindow x:Name="mainWindow" x:Class="NsisoLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NsisoLauncher"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        BorderBrush="{DynamicResource AccentColorBrush}"
+        WindowStartupLocation="CenterScreen"
+        Title="Nsiso启动器" Height="445" Width="720" ResizeMode="NoResize">
+    <controls:MetroWindow.Background>
+        <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
+    </controls:MetroWindow.Background>
+    <Grid>
+        <Grid Width="220" HorizontalAlignment="Right">
+            <!--#region 高斯模糊效果(最底层) -->
+            <Rectangle Fill="{Binding Background, ElementName=mainWindow}" >
+                <Rectangle.Effect>
+                    <BlurEffect Radius="20"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <Rectangle Fill="#33FFFFFF" HorizontalAlignment="Right" Width="220"/>
+            <!--#endregion-->
+            <Button x:Name="launchButton" Content="启动游戏" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
+                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White"/>
+        </Grid>
+
+    </Grid>
+</controls:MetroWindow>
+    
+ 
