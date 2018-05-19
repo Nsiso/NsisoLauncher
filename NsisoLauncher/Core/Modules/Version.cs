@@ -36,10 +36,28 @@ namespace NsisoLauncher.Core.Modules
         public string ID { get; set; }
 
         /// <summary>
+        /// 继承版本
+        /// </summary>
+        [JsonProperty("inheritsFrom")]
+        public string InheritsVersion { get; set; }
+
+        ///// <summary>
+        ///// 库列表
+        ///// </summary>
+        //[JsonProperty("libraries")]
+        //public List<Library> Library { get; set; }
+
+        /// <summary>
         /// 库列表
         /// </summary>
-        [JsonProperty("libraries")]
-        public List<Library> Library { get; set; }
+        [JsonIgnore]
+        public List<Library> Libraries { get; set; }
+
+        /// <summary>
+        /// native列表
+        /// </summary>
+        [JsonIgnore]
+        public List<Native> Natives { get; set; }
 
         /// <summary>
         /// 启动主类
@@ -119,66 +137,92 @@ namespace NsisoLauncher.Core.Modules
     #endregion
 
     #region Library
+    //public class Library
+    //{
+    //    /// <summary>
+    //    /// 库名称
+    //    /// </summary>
+    //    [JsonProperty("name")]
+    //    public string Name { get; set; }
+
+    //    /// <summary>
+    //    /// Native列表
+    //    /// </summary>
+    //    [JsonProperty("natives")]
+    //    public Dictionary<string, string> Natives { get; set; }
+
+    //    /// <summary>
+    //    /// 规则
+    //    /// </summary>
+    //    [JsonProperty("rules")]
+    //    public List<Rule> Rules { get; set; }
+
+    //    /// <summary>
+    //    /// 解压声明
+    //    /// </summary>
+    //    [JsonProperty("extract")]
+    //    public Extract Extract { get; set; }
+    //}
+
     public class Library
     {
         /// <summary>
-        /// 库名称
+        /// 包名
         /// </summary>
-        [JsonProperty("name")]
+        public string Package { get; set; }
+
+        /// <summary>
+        /// 名称
+        /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Native列表
+        /// 版本
         /// </summary>
-        [JsonProperty("natives")]
-        public Dictionary<string, string> Natives { get; set; }
-
-        /// <summary>
-        /// 规则
-        /// </summary>
-        [JsonProperty("rules")]
-        public List<Rule> Rules { get; set; }
-
-        /// <summary>
-        /// 解压声明
-        /// </summary>
-        [JsonProperty("extract")]
-        public Extract Extract { get; set; }
+        public string Version { get; set; }
     }
 
-
-    public class Rule
+    public class Native : Library
     {
         /// <summary>
-        /// action
+        /// windows系统修改后缀
         /// </summary>
-        [JsonProperty("action")]
-        public string Action { get; set; }
-
-        /// <summary>
-        /// 操作系统
-        /// </summary>
-        [JsonProperty("os")]
-        public OperatingSystem OS { get; set; }
+        public string NativeSuffix { get; set; }
     }
 
-    public class OperatingSystem
-    {
-        /// <summary>
-        /// 系统名称
-        /// </summary>
-        [JsonProperty("name")]
-        public string Name { get; set; }
-    }
 
-    public class Extract
-    {
-        /// <summary>
-        /// 排除列表
-        /// </summary>
-        [JsonProperty("exclude")]
-        public List<string> Exculde { get; set; }
-    }
+    //public class Rule
+    //{
+    //    /// <summary>
+    //    /// action
+    //    /// </summary>
+    //    [JsonProperty("action")]
+    //    public string Action { get; set; }
+
+    //    /// <summary>
+    //    /// 操作系统
+    //    /// </summary>
+    //    [JsonProperty("os")]
+    //    public OperatingSystem OS { get; set; }
+    //}
+
+    //public class OperatingSystem
+    //{
+    //    /// <summary>
+    //    /// 系统名称
+    //    /// </summary>
+    //    [JsonProperty("name")]
+    //    public string Name { get; set; }
+    //}
+
+    //public class Extract
+    //{
+    //    /// <summary>
+    //    /// 排除列表
+    //    /// </summary>
+    //    [JsonProperty("exclude")]
+    //    public List<string> Exculde { get; set; }
+    //}
     #endregion
 
     /// <summary>

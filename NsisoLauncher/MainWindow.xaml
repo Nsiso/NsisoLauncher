@@ -24,7 +24,7 @@
             <Rectangle Fill="#33FFFFFF" HorizontalAlignment="Right" Width="220"/>
             <!--#endregion-->
             <Button x:Name="launchButton" Content="启动游戏" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
-                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White"/>
+                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click"/>
         </Grid>
 
     </Grid>

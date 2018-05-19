@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Net;
+using NsisoLauncher.Core.Net.MojangApi.Responses;
 
 namespace NsisoLauncher.Core.Modules
 {
@@ -76,14 +77,24 @@ namespace NsisoLauncher.Core.Modules
         public bool GCEnabled { get; set; } = true;
 
         /// <summary>
-        /// 垃圾回收器种类
+        /// 垃圾回收器种类(默认G1)
         /// </summary>
-        public GCType GCType { get; set; }
+        public GCType GCType { get; set; } = GCType.G1GC;
 
         /// <summary>
         /// 垃圾回收器附加参数
         /// </summary>
-        public List<string> GCArgument { get; set; }
+        public string GCArgument { get; set; }
+
+        /// <summary>
+        /// 验证结果
+        /// </summary>
+        public AuthenticateResponse AuthenticateResponse { get; set; }
+
+        /// <summary>
+        /// 选择的角色
+        /// </summary>
+        public Net.MojangApi.Api.Uuid AuthenticateSelectedUUID { get; set; }
 
         /// <summary>
         /// 启动版本
@@ -108,16 +119,21 @@ namespace NsisoLauncher.Core.Modules
         /// <summary>
         /// 附加虚拟机启动参数
         /// </summary>
-        public List<string> AdvencedJvmArguments { get; set; }
+        public string AdvencedJvmArguments { get; set; }
 
         /// <summary>
         /// 附加游戏启动参数
         /// </summary>
-        public List<string> AdvencedGameArguments { get; set; }
+        public string AdvencedGameArguments { get; set; }
 
         /// <summary>
         /// 设置启动时登陆的服务器IP地址
         /// </summary>
         public Server LaunchToServer { get; set; }
+
+        /// <summary>
+        /// 左下角信息
+        /// </summary>
+        public string VersionType { get; set; }
     }
 }

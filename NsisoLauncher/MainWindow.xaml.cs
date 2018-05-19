@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using NsisoLauncher.Core.Modules;
 
 namespace NsisoLauncher
 {
@@ -23,6 +24,19 @@ namespace NsisoLauncher
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void launchButton_Click(object sender, RoutedEventArgs e)
+        {
+            var auth = Core.Auth.OfflineAuthenticator.OfflineAuthenticate("Nsiso");
+            LaunchSetting launchSetting = new LaunchSetting()
+            {
+                Version = App.handler.GetVersions().First(),
+                MaxMemory = 1024,
+                AuthenticateResponse = auth.Item2,
+                AuthenticateSelectedUUID = auth.Item1
+            };
+            App.handler.Launch(launchSetting);
         }
     }
 }

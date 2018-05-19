@@ -15,11 +15,10 @@ namespace NsisoLauncher
     /// </summary>
     public partial class App : Application
     {
-        LaunchHandler handler = new LaunchHandler(".minecraft", Java.GetSuitableJava());
+        public static LaunchHandler handler = new LaunchHandler(Path.GetFullPath(".minecraft"), Java.GetSuitableJava(), true);
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            handler.GetVersions();
         }
     }
 }

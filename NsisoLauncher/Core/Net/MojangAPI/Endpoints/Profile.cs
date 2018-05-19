@@ -54,9 +54,7 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
                      Uuid = new Uuid()
                      {
                          PlayerName = profile["name"].ToObject<string>(),
-                         Value = profile["id"].ToObject<string>(),
-                         Legacy = null,
-                         Demo = null,
+                         Value = profile["id"].ToObject<string>()
                      },
                      Properties = new ProfileProperties(profile["properties"].ToObject<JArray>()[0]["value"].ToObject<string>())
                 };

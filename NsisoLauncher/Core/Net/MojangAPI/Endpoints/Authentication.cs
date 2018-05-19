@@ -37,7 +37,17 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public Authenticate(Credentials credentials)
         {
-            this.Address = new Uri($"https://authserver.mojang.com/authenticate");
+            this.Address = new Uri("https://authserver.mojang.com/authenticate");
+            this.Arguments.Add(credentials.Username);
+            this.Arguments.Add(credentials.Password);
+        }
+
+        /// <summary>
+        /// 发送认证请求
+        /// </summary>
+        public Authenticate(Credentials credentials, string authServerUrl)
+        {
+            this.Address = new Uri(authServerUrl + "/authenticate");
             this.Arguments.Add(credentials.Username);
             this.Arguments.Add(credentials.Password);
         }
@@ -113,7 +123,16 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public Refresh(string accessToken)
         {
-            this.Address = new Uri($"https://authserver.mojang.com/refresh");
+            this.Address = new Uri("https://authserver.mojang.com/refresh");
+            this.Arguments.Add(accessToken);
+        }
+
+        /// <summary>
+        /// 刷新访问令牌,必须与身份验证相同.
+        /// </summary>
+        public Refresh(string accessToken, string authServerUrl)
+        {
+            this.Address = new Uri(authServerUrl +"/refresh");
             this.Arguments.Add(accessToken);
         }
 
@@ -154,7 +173,16 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public Validate(string accessToken)
         {
-            this.Address = new Uri($"https://authserver.mojang.com/validate");
+            this.Address = new Uri("https://authserver.mojang.com/validate");
+            this.Arguments.Add(accessToken);
+        }
+
+        /// <summary>
+        /// 刷新访问令牌,必须与身份验证相同
+        /// </summary>
+        public Validate(string accessToken, string authServerUrl)
+        {
+            this.Address = new Uri(authServerUrl + "/validate");
             this.Arguments.Add(accessToken);
         }
 
@@ -187,7 +215,17 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public Signout(Credentials credentials)
         {
-            this.Address = new Uri($"https://authserver.mojang.com/signout");
+            this.Address = new Uri("https://authserver.mojang.com/signout");
+            this.Arguments.Add(credentials.Username);
+            this.Arguments.Add(credentials.Password);
+        }
+
+        /// <summary>
+        /// 刷新访问令牌,必须与身份验证相同
+        /// </summary>
+        public Signout(Credentials credentials, string authServerUrl)
+        {
+            this.Address = new Uri(authServerUrl + "/signout");
             this.Arguments.Add(credentials.Username);
             this.Arguments.Add(credentials.Password);
         }
@@ -221,7 +259,16 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public Invalidate(string accessToken)
         {
-            this.Address = new Uri($"https://authserver.mojang.com/invalidate");
+            this.Address = new Uri("https://authserver.mojang.com/invalidate");
+            this.Arguments.Add(accessToken);
+        }
+
+        /// <summary>
+        /// 刷新访问令牌,必须与身份验证相同
+        /// </summary>
+        public Invalidate(string accessToken, string authServerUrl)
+        {
+            this.Address = new Uri(authServerUrl + "/invalidate");
             this.Arguments.Add(accessToken);
         }
 

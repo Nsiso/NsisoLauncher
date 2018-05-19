@@ -40,7 +40,7 @@ namespace NsisoLauncher.Core.Net.MojangApi.Api
         /// 如果为true,则此账户尚未迁移.
         /// </summary>
         [JsonProperty("legacy")]
-        public bool? Legacy { get; internal set; }
+        public bool Legacy { get; internal set; }
 
         /// <summary>
         /// 玩家账户是否为演示账户.

@@ -13,6 +13,8 @@ namespace NsisoLauncher.Core.Net.MojangApi.Responses
     {
         internal AuthenticateResponse(Response response) : base(response) { }
 
+        internal AuthenticateResponse() { }
+
         /// <summary>
         /// 此用户的访问令牌
         /// </summary>
