@@ -28,10 +28,11 @@ namespace NsisoLauncher
 
         private void launchButton_Click(object sender, RoutedEventArgs e)
         {
+            var versions = App.handler.GetVersions();
             var auth = Core.Auth.OfflineAuthenticator.OfflineAuthenticate("Nsiso");
             LaunchSetting launchSetting = new LaunchSetting()
             {
-                Version = App.handler.GetVersions().First(),
+                Version = versions.First(),
                 MaxMemory = 1024,
                 AuthenticateResponse = auth.Item2,
                 AuthenticateSelectedUUID = auth.Item1

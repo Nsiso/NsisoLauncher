@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace NsisoLauncher.Core.Util
+namespace NsisoLauncher.Core.Modules
 {
     public class LaunchResult
     {

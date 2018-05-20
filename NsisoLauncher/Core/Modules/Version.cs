@@ -188,6 +188,11 @@ namespace NsisoLauncher.Core.Modules
         /// windows系统修改后缀
         /// </summary>
         public string NativeSuffix { get; set; }
+
+        /// <summary>
+        /// 不解压的文件夹
+        /// </summary>
+        public List<string> Exclude { get; set; }
     }
 
 

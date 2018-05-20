@@ -113,6 +113,7 @@
     </Compile>
     <Compile Include="Core\ArgumentsParser.cs" />
     <Compile Include="Core\Auth\OfflineAuthenticator.cs" />
+    <Compile Include="Core\LaunchException\NativeNotFoundException.cs" />
     <Compile Include="Core\LaunchHandler.cs" />
     <Compile Include="Core\Modules\LaunchSetting.cs" />
     <Compile Include="Core\Net\MojangAPI\Api\Requester.cs" />
@@ -143,8 +144,9 @@
     <Compile Include="Core\Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
     <Compile Include="Core\Modules\Version.cs" />
     <Compile Include="Core\Util\Java.cs" />
-    <Compile Include="Core\Util\LaunchResult.cs" />
+    <Compile Include="Core\Modules\LaunchResult.cs" />
     <Compile Include="Core\Util\SystemTools.cs" />
+    <Compile Include="Core\Util\Unzip.cs" />
     <Compile Include="Core\Util\VersionReader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

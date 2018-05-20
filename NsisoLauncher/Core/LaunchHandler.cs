@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip;
+using System.IO;
+using NsisoLauncher.Core.LaunchException;
 
 namespace NsisoLauncher.Core
 {
@@ -39,6 +42,19 @@ namespace NsisoLauncher.Core
 
         public LaunchResult Launch(LaunchSetting setting)
         {
+            foreach (var item in setting.Version.Natives)
+            {
+                string nativePath = GetNativePath(item);
+                if (File.Exists(nativePath))
+                {
+                    Unzip.UnZipFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude);
+                }
+                else
+                {
+                    throw new NativeNotFoundException(item, nativePath);
+                }
+                
+            }
             string arg = argumentsParser.Parse(setting);
             ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
             { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };

@@ -143,7 +143,7 @@ namespace NsisoLauncher.Core.Util
                                 ver.Natives.Add(native);
                                 if (libObj.Extract != null)
                                 {
-                                    //native.Options = new UnzipOptions { Exclude = lib.Extract.Exculde };
+                                    native.Exclude = libObj.Extract.Exculde;
                                 }
                             }
                         }
