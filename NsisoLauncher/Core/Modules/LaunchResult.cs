@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 
 namespace NsisoLauncher.Core.Modules
@@ -22,5 +19,28 @@ namespace NsisoLauncher.Core.Modules
         /// 是否成功
         /// </summary>
         public bool IsSuccess { get; set; } = false;
+
+        /// <summary>
+        /// 启动时发生的意外
+        /// </summary>
+        public LaunchException.LaunchException LaunchException { get; set; }
+
+        public LaunchResult() { }
+
+        public LaunchResult(LaunchException.LaunchException ex)
+        {
+            Process = null;
+            LaunchArguments = null;
+            this.IsSuccess = false;
+            this.LaunchException = ex;
+        }
+
+        public LaunchResult(Exception ex)
+        {
+            Process = null;
+            LaunchArguments = null;
+            this.IsSuccess = false;
+            this.LaunchException = new Core.LaunchException.LaunchException(ex);
+        }
     }
 }

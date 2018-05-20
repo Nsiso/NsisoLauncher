@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,9 +27,9 @@ namespace NsisoLauncher
             InitializeComponent();
         }
 
-        private void launchButton_Click(object sender, RoutedEventArgs e)
+        private async void launchButton_Click(object sender, RoutedEventArgs e)
         {
-            var versions = App.handler.GetVersions();
+            var versions = await App.handler.GetVersionsAsync();
             var auth = Core.Auth.OfflineAuthenticator.OfflineAuthenticate("Nsiso");
             LaunchSetting launchSetting = new LaunchSetting()
             {
@@ -37,7 +38,8 @@ namespace NsisoLauncher
                 AuthenticateResponse = auth.Item2,
                 AuthenticateSelectedUUID = auth.Item1
             };
-            App.handler.Launch(launchSetting);
+            var result = await App.handler.LaunchAsync(launchSetting);
+            
         }
     }
 }

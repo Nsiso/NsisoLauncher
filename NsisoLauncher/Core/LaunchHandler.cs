@@ -8,11 +8,16 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using System.IO;
 using NsisoLauncher.Core.LaunchException;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace NsisoLauncher.Core
 {
     public class LaunchHandler
     {
+        private object launchLocker = new object();
+        private object getVersionsLocker = new object();
+
         /// <summary>
         /// 启动器所处理的游戏根目录
         /// </summary>
@@ -40,32 +45,58 @@ namespace NsisoLauncher.Core
             argumentsParser = new ArgumentsParser(this);
         }
 
-        public LaunchResult Launch(LaunchSetting setting)
+        public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
         {
-            foreach (var item in setting.Version.Natives)
+            return await Task.Factory.StartNew(() =>
             {
-                string nativePath = GetNativePath(item);
-                if (File.Exists(nativePath))
-                {
-                    Unzip.UnZipFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude);
-                }
-                else
-                {
-                    throw new NativeNotFoundException(item, nativePath);
-                }
-                
-            }
-            string arg = argumentsParser.Parse(setting);
-            ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
-            { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
-            var process = Process.Start(startInfo);
-            return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
-
+                return Launch(setting);
+            });
         }
 
-        public List<Modules.Version> GetVersions()
+        private LaunchResult Launch(LaunchSetting setting)
+        {
+            try
+            {
+                foreach (var item in setting.Version.Natives)
+                {
+                    string nativePath = GetNativePath(item);
+                    if (File.Exists(nativePath))
+                    {
+                        Unzip.UnZipFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude);
+                    }
+                    else
+                    {
+                        return new LaunchResult(new NativeNotFoundException(item, nativePath));
+                    }
+
+                }
+                string arg = argumentsParser.Parse(setting);
+                ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
+                { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
+                var process = Process.Start(startInfo);
+                return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
+            }
+            catch (LaunchException.LaunchException ex)
+            {
+                return new LaunchResult(ex);
+            }
+            catch (Exception ex)
+            {
+                return new LaunchResult(ex);
+            }
+        }
+
+        private List<Modules.Version> GetVersions()
         {
             return versionReader.GetVersions();
+        }
+
+        public async Task<List<Modules.Version>> GetVersionsAsync()
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                return GetVersions();
+            });
         }
 
         public string GetGameVersionRootDir(Modules.Version ver)
@@ -78,7 +109,7 @@ namespace NsisoLauncher.Core
             {
                 return GameRootPath;
             }
-            
+
         }
 
         public string GetLibraryPath(Modules.Library lib)

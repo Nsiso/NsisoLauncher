@@ -113,6 +113,7 @@
     </Compile>
     <Compile Include="Core\ArgumentsParser.cs" />
     <Compile Include="Core\Auth\OfflineAuthenticator.cs" />
+    <Compile Include="Core\LaunchException\LaunchException.cs" />
     <Compile Include="Core\LaunchException\NativeNotFoundException.cs" />
     <Compile Include="Core\LaunchHandler.cs" />
     <Compile Include="Core\Modules\LaunchSetting.cs" />

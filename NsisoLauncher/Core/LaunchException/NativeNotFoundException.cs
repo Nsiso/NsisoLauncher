@@ -6,13 +6,13 @@ using System.Text;
 
 namespace NsisoLauncher.Core.LaunchException
 {
-    public class NativeNotFoundException : Exception
+    public class NativeNotFoundException : LaunchException
     {
         public Native LostNative { get; private set; }
 
         public string LostPath { get; private set; }
 
-        public NativeNotFoundException(Native lostNative, string lostPath) : base(string.Format("缺失Native库文件{0},路径不存在:{1}", lostNative.Name, lostPath))
+        public NativeNotFoundException(Native lostNative, string lostPath) : base("缺失Native库文件",string.Format("无法找到指定的Native库文件{0},游戏是否完整?路径:{1}", lostNative.Name, lostPath))
         {
             this.LostNative = lostNative;
             this.LostPath = LostPath;
