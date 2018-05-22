@@ -12,7 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NsisoLauncher.Core;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Modules;
 
 namespace NsisoLauncher
@@ -25,21 +27,35 @@ namespace NsisoLauncher
         public MainWindow()
         {
             InitializeComponent();
+            Refresh();
+        }
+            
+        private async void Refresh()
+        {
+            launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
         }
 
         private async void launchButton_Click(object sender, RoutedEventArgs e)
         {
-            var versions = await App.handler.GetVersionsAsync();
+            this.loadingGrid.Visibility = Visibility.Visible;
+            this.loadingRing.IsActive = true;
+
             var auth = Core.Auth.OfflineAuthenticator.OfflineAuthenticate("Nsiso");
             LaunchSetting launchSetting = new LaunchSetting()
             {
-                Version = versions.First(),
+                Version = (Core.Modules.Version)launchVersionCombobox.SelectedItem,
                 MaxMemory = 1024,
                 AuthenticateResponse = auth.Item2,
                 AuthenticateSelectedUUID = auth.Item1
             };
             var result = await App.handler.LaunchAsync(launchSetting);
-            
+            if (!result.IsSuccess)
+            {
+                await this.ShowMessageAsync("启动失败:" + result.LaunchException.Title, result.LaunchException.Message);
+            }
+
+            this.loadingGrid.Visibility = Visibility.Hidden;
+            this.loadingRing.IsActive = false;
         }
     }
 }
