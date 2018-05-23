@@ -19,6 +19,10 @@ namespace NsisoLauncher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            NsisoLauncher.Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+            debugWindow.Show();
+            handler.Log += (s,log) => debugWindow.AppendLog(s,log);
         }
+
     }
 }

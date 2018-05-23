@@ -33,6 +33,8 @@ namespace NsisoLauncher.Core
         /// </summary>
         public bool VersionIsolation { get; set; }
 
+        public event EventHandler<Log> Log;
+
         private ArgumentsParser argumentsParser;
         private VersionReader versionReader;
 
@@ -47,10 +49,28 @@ namespace NsisoLauncher.Core
 
         public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
         {
-            return await Task.Factory.StartNew(() =>
+            var result = await Task.Factory.StartNew(() =>
             {
                 return Launch(setting);
             });
+            if (result.IsSuccess && result.Process!=null)
+            {
+                result.Process.OutputDataReceived += Process_OutputDataReceived;
+                result.Process.ErrorDataReceived += Process_ErrorDataReceived;
+                result.Process.BeginErrorReadLine();
+                result.Process.BeginOutputReadLine();
+            }
+            return result;
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
+        }
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
         }
 
         private LaunchResult Launch(LaunchSetting setting)

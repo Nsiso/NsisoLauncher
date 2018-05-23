@@ -53,9 +53,28 @@ namespace NsisoLauncher
             {
                 await this.ShowMessageAsync("启动失败:" + result.LaunchException.Title, result.LaunchException.Message);
             }
+            else
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    while (true)
+                    {
+                        if (result.Process.MainWindowHandle.ToInt32() != 0)
+                        {
+                            break;
+                        }
+                    }
+                });
+                this.loadingGrid.Visibility = Visibility.Hidden;
+                this.loadingRing.IsActive = false;
+                this.WindowState = WindowState.Minimized;
 
-            this.loadingGrid.Visibility = Visibility.Hidden;
-            this.loadingRing.IsActive = false;
+                await Task.Factory.StartNew(() =>
+                {
+                    result.Process.WaitForExit();
+                });
+                this.WindowState = WindowState.Normal;
+            }
         }
     }
 }

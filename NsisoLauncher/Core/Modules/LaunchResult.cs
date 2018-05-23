@@ -25,6 +25,7 @@ namespace NsisoLauncher.Core.Modules
         /// </summary>
         public LaunchException.LaunchException LaunchException { get; set; }
 
+
         public LaunchResult() { }
 
         public LaunchResult(LaunchException.LaunchException ex)

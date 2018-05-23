@@ -103,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\Modules\Log.cs" />
+    <Compile Include="Windows\DebugWindow.xaml.cs">
+      <DependentUpon>DebugWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -144,6 +148,7 @@
     <Compile Include="Core\Net\MojangAPI\Responses\UuidAtTimeResponse.cs" />
     <Compile Include="Core\Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
     <Compile Include="Core\Modules\Version.cs" />
+    <Compile Include="Core\Util\GameHelper.cs" />
     <Compile Include="Core\Util\Java.cs" />
     <Compile Include="Core\Modules\LaunchResult.cs" />
     <Compile Include="Core\Util\SystemTools.cs" />
@@ -153,6 +158,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\DebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
