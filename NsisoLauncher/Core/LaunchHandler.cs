@@ -73,10 +73,17 @@ namespace NsisoLauncher.Core
             this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
         }
 
+        public void SendLog(object sender, Log log)
+        {
+            this.Log?.Invoke(sender, log);
+        }
+
         private LaunchResult Launch(LaunchSetting setting)
         {
             try
             {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 foreach (var item in setting.Version.Natives)
                 {
                     string nativePath = GetNativePath(item);
@@ -94,6 +101,8 @@ namespace NsisoLauncher.Core
                 ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                 { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
                 var process = Process.Start(startInfo);
+                sw.Stop();
+                this.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds) });
                 return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
             }
             catch (LaunchException.LaunchException ex)
@@ -106,17 +115,16 @@ namespace NsisoLauncher.Core
             }
         }
 
-        private List<Modules.Version> GetVersions()
-        {
-            return versionReader.GetVersions();
-        }
-
         public async Task<List<Modules.Version>> GetVersionsAsync()
         {
-            return await Task.Factory.StartNew(() =>
+            try
             {
-                return GetVersions();
-            });
+                return await versionReader.GetVersionsAsync();
+            }
+            catch (Exception)
+            {
+                return new List<Modules.Version>();
+            }
         }
 
         public string GetGameVersionRootDir(Modules.Version ver)

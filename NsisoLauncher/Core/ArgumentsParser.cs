@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -18,6 +19,9 @@ namespace NsisoLauncher.Core
 
         public string Parse(Modules.LaunchSetting setting)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             #region 处理JVM启动头参数
             StringBuilder jvmHead = new StringBuilder();
             if (setting.GCEnabled)
@@ -90,6 +94,9 @@ namespace NsisoLauncher.Core
             };
             string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic);
             #endregion
+
+            stopwatch.Stop();
+            handler.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds) });
 
             return jvmHead.ToString() + jvmArg + ' ' + setting.Version.MainClass + ' ' + gameArg;
         }

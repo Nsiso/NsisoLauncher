@@ -57,7 +57,9 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
         /// </summary>
         public async override Task<AuthenticateResponse> PerformRequestAsync()
         {
-            this.PostContent = new JObject(
+            try
+            {
+                this.PostContent = new JObject(
                                     new JProperty("agent",
                                         new JObject(
                                             new JProperty("name", "Minecraft"),
@@ -67,47 +69,58 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
                                     new JProperty("clientToken", Requester.ClientToken),
                                     new JProperty("requestUser", true)).ToString();
 
-            this.Response = await Requester.Post(this);
-            if (this.Response.IsSuccess)
-            {
-                JObject user = JObject.Parse(this.Response.RawMessage);
-                List<Uuid> availableProfiles = new List<Uuid>();
-
-                foreach (JObject profile in user["availableProfiles"])
-                    availableProfiles.Add(new Uuid()
-                    {
-                        PlayerName = profile["name"].ToObject<string>(),
-                        Value = profile["id"].ToObject<string>(),
-                        Legacy = (profile.ToString().Contains("legacy") ? profile["legacy"].ToObject<bool>() : false),
-                        Demo = null
-                    });
-
-                return new AuthenticateResponse(this.Response)
+                this.Response = await Requester.Post(this);
+                if (this.Response.IsSuccess)
                 {
-                    AccessToken = user["accessToken"].ToObject<string>(),
-                    ClientToken = user["clientToken"].ToObject<string>(),
-                    AvailableProfiles = availableProfiles,
-                    SelectedProfile = new Uuid()
+                    JObject user = JObject.Parse(this.Response.RawMessage);
+                    List<Uuid> availableProfiles = new List<Uuid>();
+
+                    foreach (JObject profile in user["availableProfiles"])
                     {
-                        PlayerName = user["selectedProfile"]["name"].ToObject<string>(),
-                        Value = user["selectedProfile"]["id"].ToObject<string>(),
-                        Legacy = (user["selectedProfile"].ToString().Contains("legacy") ? user["selectedProfile"]["legacy"].ToObject<bool>() : false),
-                        Demo = null
-                    },
-                    User = user["user"].ToObject<UserData>()
-                };
+                        var playerName = profile["name"].ToObject<string>();
+                        var value = profile["id"].ToObject<string>();
+                        var legacy = (profile.ToString().Contains("legacy") ? profile["legacy"].ToObject<bool>() : false);
+                        availableProfiles.Add(new Uuid()
+                        {
+                            PlayerName = playerName,
+                            Value = value,
+                            Legacy = legacy,
+                            Demo = null
+                        });
+                    }
+                        
+
+                    return new AuthenticateResponse(this.Response)
+                    {
+                        AccessToken = user["accessToken"].ToObject<string>(),
+                        ClientToken = user["clientToken"].ToObject<string>(),
+                        AvailableProfiles = availableProfiles,
+                        SelectedProfile = new Uuid()
+                        {
+                            PlayerName = user["selectedProfile"]["name"].ToObject<string>(),
+                            Value = user["selectedProfile"]["id"].ToObject<string>(),
+                            Legacy = (user["selectedProfile"].ToString().Contains("legacy") ? user["selectedProfile"]["legacy"].ToObject<bool>() : false),
+                            Demo = null
+                        },
+                        User = user["user"].ToObject<UserData>()
+                    };
+                }
+                else
+                {
+                    try
+                    {
+                        AuthenticationResponseError error = new AuthenticationResponseError(JObject.Parse(this.Response.RawMessage));
+                        return new AuthenticateResponse(this.Response) { Error = error };
+                    }
+                    catch (Exception)
+                    {
+                        return new AuthenticateResponse(Error.GetError(this.Response));
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    AuthenticationResponseError error = new AuthenticationResponseError(JObject.Parse(this.Response.RawMessage));
-                    return new AuthenticateResponse(this.Response) { Error = error };
-                }
-                catch (Exception)
-                {
-                    return new AuthenticateResponse(Error.GetError(this.Response));
-                }
+                throw ex;
             }
         }
     }

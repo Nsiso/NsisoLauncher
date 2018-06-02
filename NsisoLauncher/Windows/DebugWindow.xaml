@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:NsisoLauncher.Windows"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="DebugWindow" Height="450" Width="800">
+        Title="DebugWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBox x:Name="textBox" Margin="10" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
 
