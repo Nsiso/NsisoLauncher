@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using NsisoLauncher.Core.Net.MojangApi.Responses;
+using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Core.Modules
 {
@@ -87,14 +88,19 @@ namespace NsisoLauncher.Core.Modules
         public string GCArgument { get; set; }
 
         /// <summary>
-        /// 验证结果
+        /// 验证Token
         /// </summary>
-        public AuthenticateResponse AuthenticateResponse { get; set; }
+        public string AuthenticateAccessToken { get; set; }
 
         /// <summary>
         /// 选择的角色
         /// </summary>
-        public Net.MojangApi.Api.Uuid AuthenticateSelectedUUID { get; set; }
+        public Net.MojangApi.Api.Uuid AuthenticateUUID { get; set; }
+
+        /// <summary>
+        /// 验证的用户信息
+        /// </summary>
+        public UserData AuthenticationUserData { get; set; }
 
         /// <summary>
         /// 启动版本

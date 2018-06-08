@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using System.Threading.Tasks;
 
 namespace NsisoLauncher.Windows
 {
@@ -33,6 +34,17 @@ namespace NsisoLauncher.Windows
                 textBox.ScrollToEnd();
             }));
             
+        }
+
+        private void findKeyWord_Click(object sender, RoutedEventArgs e)
+        {
+            string str = keyWordTextBox.Text;
+            int index = textBox.Text.IndexOf(str);
+            if (index != -1)
+            {
+                textBox.Focus();
+                textBox.Select(index, str.Length);
+            }
         }
     }
 }

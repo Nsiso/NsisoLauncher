@@ -79,7 +79,7 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
                     {
                         var playerName = profile["name"].ToObject<string>();
                         var value = profile["id"].ToObject<string>();
-                        var legacy = (profile.ToString().Contains("legacy") ? profile["legacy"].ToObject<bool>() : false);
+                        var legacy = (profile.ContainsKey("legacyProfile") ? profile["legacyProfile"].ToObject<bool>() : false);
                         availableProfiles.Add(new Uuid()
                         {
                             PlayerName = playerName,
@@ -99,7 +99,7 @@ namespace NsisoLauncher.Core.Net.MojangApi.Endpoints
                         {
                             PlayerName = user["selectedProfile"]["name"].ToObject<string>(),
                             Value = user["selectedProfile"]["id"].ToObject<string>(),
-                            Legacy = (user["selectedProfile"].ToString().Contains("legacy") ? user["selectedProfile"]["legacy"].ToObject<bool>() : false),
+                            Legacy = (user["selectedProfile"].ToString().Contains("legacyProfile") ? user["selectedProfile"]["legacyProfile"].ToObject<bool>() : false),
                             Demo = null
                         },
                         User = user["user"].ToObject<UserData>()

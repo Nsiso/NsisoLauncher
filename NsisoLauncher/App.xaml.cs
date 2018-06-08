@@ -21,6 +21,7 @@ namespace NsisoLauncher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+
             config = new Config.ConfigHandler();
             handler = new LaunchHandler(Path.GetFullPath(".minecraft"), Java.GetSuitableJava(), true);
 
@@ -30,6 +31,8 @@ namespace NsisoLauncher
             Windows.DebugWindow debugWindow = new Windows.DebugWindow();
             debugWindow.Show();
             handler.Log += (s, log) => debugWindow.AppendLog(s, log);
+            TaskScheduler.UnobservedTaskException += (a, b) => debugWindow.AppendLog(a, new Core.Modules.Log() { LogLevel = Core.Modules.LogLevel.ERROR, Message = b.ToString() });
+            DispatcherUnhandledException += (a, b) => debugWindow.AppendLog(a, new Core.Modules.Log() { LogLevel = Core.Modules.LogLevel.ERROR, Message = b.ToString() });
         }
     }
 }

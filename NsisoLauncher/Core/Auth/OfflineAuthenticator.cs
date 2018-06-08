@@ -11,7 +11,7 @@ namespace NsisoLauncher.Core.Auth
 {
     public static class OfflineAuthenticator
     {
-        public static Tuple<AuthenticateResponse, Uuid> DoAuthenticate(string displayname)
+        public static Tuple<string, Uuid> DoAuthenticate(string displayname)
         {
             Uuid uuid = new Uuid()
             {
@@ -19,13 +19,9 @@ namespace NsisoLauncher.Core.Auth
                 Value = Guid.NewGuid().ToString("N")
             };
 
-            AuthenticateResponse response = new AuthenticateResponse()
-            {
-                AccessToken = Guid.NewGuid().ToString("N"),
-                User = new AuthenticateResponse.UserData() { Properties = new List<AuthenticateResponse.UserData.Property>() }
-            };
+            string accessToken = Guid.NewGuid().ToString("N");
 
-            return new Tuple<AuthenticateResponse, Uuid>(response, uuid);
+            return new Tuple<string, Uuid>(accessToken, uuid);
         }
     }
 }

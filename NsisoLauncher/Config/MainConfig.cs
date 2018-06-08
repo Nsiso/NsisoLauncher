@@ -1,7 +1,10 @@
-﻿using System;
+﻿using NsisoLauncher.Core.Net.MojangApi.Api;
+using NsisoLauncher.Core.Net.MojangApi.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
 {
@@ -39,6 +42,16 @@ namespace NsisoLauncher.Config
         /// 验证类型
         /// </summary>
         public AuthenticationType AuthenticationType { get; set; }
+
+        /// <summary>
+        /// 玩家选择的角色UUID
+        /// </summary>
+        public Uuid AuthenticationUUID { get; set; }
+
+        /// <summary>
+        /// 验证的用户信息
+        /// </summary>
+        public UserData AuthenticationUserData { get; set; }
     }
 
     public enum AuthenticationType

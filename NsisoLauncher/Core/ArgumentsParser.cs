@@ -65,19 +65,19 @@ namespace NsisoLauncher.Core
 
             #region 处理游戏参数
             string assetsPath = setting.Version.Assets == "legacy" ? "assets\\virtual\\legacy" : "assets";
-            string legacy = setting.AuthenticateSelectedUUID.Legacy ? "Legacy" : "Mojang";
+            string legacy = setting.AuthenticateUUID.Legacy ? "Legacy" : "Mojang";
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",setting.AuthenticateSelectedUUID.PlayerName },
-                {"${auth_session}",setting.AuthenticateResponse.AccessToken },
+                {"${auth_player_name}",setting.AuthenticateUUID.PlayerName },
+                {"${auth_session}",setting.AuthenticateAccessToken },
                 {"${version_name}",setting.Version.ID },
                 {"${game_directory}",handler.GetGameVersionRootDir(setting.Version) },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",setting.Version.Assets },
-                {"${auth_uuid}",setting.AuthenticateSelectedUUID.Value },
-                {"${auth_access_token}",setting.AuthenticateResponse.AccessToken },
-                {"${user_properties}",ToList(setting.AuthenticateResponse.User.Properties) },
+                {"${auth_uuid}",setting.AuthenticateUUID.Value },
+                {"${auth_access_token}",setting.AuthenticateAccessToken },
+                {"${user_properties}",ToList(setting.AuthenticationUserData.Properties) },
                 {"${user_type}",legacy },
                 {"${version_type}",setting.VersionType }
             };
@@ -103,6 +103,10 @@ namespace NsisoLauncher.Core
 
         private static string ToList(List<Net.MojangApi.Responses.AuthenticateResponse.UserData.Property> properties)
         {
+            if (properties == null)
+            {
+                return "{}";
+            }
             var sb = new StringBuilder();
             sb.Append('{');
             foreach (var item in properties)

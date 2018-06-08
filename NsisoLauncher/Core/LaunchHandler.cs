@@ -49,8 +49,20 @@ namespace NsisoLauncher.Core
 
         public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
         {
+            if (setting.AuthenticateAccessToken == null || setting.AuthenticateUUID == null)
+            {
+                throw new ArgumentException("启动所需必要的验证参数为空");
+            }
+            if (setting.Version == null)
+            {
+                throw new ArgumentException("启动所需必要的版本参数为空");
+            }
             var result = await Task.Factory.StartNew(() =>
             {
+                if (setting.MaxMemory == 0)
+                {
+                    setting.MaxMemory = SystemTools.GetBestMemory(this.Java);
+                }
                 return Launch(setting);
             });
             if (result.IsSuccess && result.Process!=null)
@@ -98,6 +110,9 @@ namespace NsisoLauncher.Core
 
                 }
                 string arg = argumentsParser.Parse(setting);
+
+                this.SendLog(this, new Log() { LogLevel = LogLevel.INFO, Message = arg });
+
                 ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                 { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
                 var process = Process.Start(startInfo);

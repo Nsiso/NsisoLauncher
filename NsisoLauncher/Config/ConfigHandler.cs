@@ -74,9 +74,8 @@ namespace NsisoLauncher.Config
             {
                 User = new User()
                 {
-                    ClientToken = Guid.NewGuid().ToString(),
-                    AuthenticationType = AuthenticationType.OFFLINE,
-
+                    ClientToken = Guid.NewGuid().ToString("N"),
+                    AuthenticationType = AuthenticationType.OFFLINE
                 }
             };
             Save();
