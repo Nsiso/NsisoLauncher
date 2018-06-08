@@ -29,6 +29,7 @@ namespace NsisoLauncher
         public MainWindow()
         {
             InitializeComponent();
+            App.SendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = "启动器主窗体已载入" });
             Refresh();
         }
 
@@ -36,6 +37,7 @@ namespace NsisoLauncher
         {
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
+            App.SendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = "启动器主窗体数据重载完毕" });
         }
 
         private async void launchButton_Click(object sender, RoutedEventArgs e)
@@ -80,6 +82,7 @@ namespace NsisoLauncher
                     if (validateResult.IsSuccess)
                     {
                         launchSetting.AuthenticateAccessToken = App.config.MainConfig.User.AccessToken;
+                        launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
                         await loader.CloseAsync();
                     }
                     else
@@ -90,11 +93,14 @@ namespace NsisoLauncher
                         if (refreshResult.IsSuccess)
                         {
                             App.config.MainConfig.User.AccessToken = refreshResult.AccessToken;
+
+                            launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
                             launchSetting.AuthenticateAccessToken = refreshResult.AccessToken;
                         }
                         else
                         {
                             App.config.MainConfig.User.AccessToken = string.Empty;
+                            App.config.Save();
                             await this.ShowMessageAsync("验证失败", "验证信息已过期，请重新登陆");
                             return;
                         }
@@ -110,17 +116,19 @@ namespace NsisoLauncher
                         AffirmativeButtonText = "登陆",
                         RememberCheckBoxText = "记住登陆状态",
                         InitialUsername = userName,
-                        RememberCheckBoxVisibility = Visibility
+                        RememberCheckBoxVisibility = Visibility,
+                        EnablePasswordPreview = true,
+                        PasswordWatermark = "密码"
                     });
+                    if (loginMsgResult == null)
+                    {
+                        return;
+                    }
                     var loader = await this.ShowProgressAsync("在线验证中...", "这可能需要几秒的时间，我们正在进行处理");
                     loader.SetIndeterminate();
                     Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
                     var loginResult = await authenticate.PerformRequestAsync();
                     await loader.CloseAsync();
-                    if (loginResult == null)
-                    {
-                        return;
-                    }
                     if (loginResult.IsSuccess)
                     {
                         if (loginMsgResult.ShouldRemember)

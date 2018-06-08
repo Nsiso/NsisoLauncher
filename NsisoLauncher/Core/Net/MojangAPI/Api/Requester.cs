@@ -47,8 +47,10 @@ namespace NsisoLauncher.Core.Net.MojangApi.Api
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(_clientToken))
-                    _clientToken = Guid.NewGuid().ToString();
+                if (string.IsNullOrWhiteSpace(_clientToken))
+                {
+                    _clientToken = Guid.NewGuid().ToString("N");
+                }
                 return _clientToken;
             }
             set { _clientToken = value; }

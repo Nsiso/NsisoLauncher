@@ -77,7 +77,7 @@ namespace NsisoLauncher.Core
                 {"${assets_index_name}",setting.Version.Assets },
                 {"${auth_uuid}",setting.AuthenticateUUID.Value },
                 {"${auth_access_token}",setting.AuthenticateAccessToken },
-                {"${user_properties}",ToList(setting.AuthenticationUserData.Properties) },
+                {"${user_properties}",ToList(setting.AuthenticationUserData?.Properties) },
                 {"${user_type}",legacy },
                 {"${version_type}",setting.VersionType }
             };

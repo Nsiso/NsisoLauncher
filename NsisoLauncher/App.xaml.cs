@@ -8,6 +8,7 @@ using System.IO;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Core;
 using System.Threading.Tasks;
+using NsisoLauncher.Core.Modules;
 
 namespace NsisoLauncher
 {
@@ -18,6 +19,8 @@ namespace NsisoLauncher
     {
         public static LaunchHandler handler;
         public static Config.ConfigHandler config;
+
+        public static event EventHandler<Log> Log;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -31,8 +34,16 @@ namespace NsisoLauncher
             Windows.DebugWindow debugWindow = new Windows.DebugWindow();
             debugWindow.Show();
             handler.Log += (s, log) => debugWindow.AppendLog(s, log);
-            TaskScheduler.UnobservedTaskException += (a, b) => debugWindow.AppendLog(a, new Core.Modules.Log() { LogLevel = Core.Modules.LogLevel.ERROR, Message = b.ToString() });
-            DispatcherUnhandledException += (a, b) => debugWindow.AppendLog(a, new Core.Modules.Log() { LogLevel = Core.Modules.LogLevel.ERROR, Message = b.ToString() });
+            Log += (s, log) => debugWindow.AppendLog(s, log);
+            TaskScheduler.UnobservedTaskException += (a, b) => debugWindow.AppendLog(a, new Log() { LogLevel = LogLevel.ERROR, Message = b.ToString() });
+            DispatcherUnhandledException += (a, b) => debugWindow.AppendLog(a, new Log() { LogLevel = LogLevel.ERROR, Message = b.ToString() });
+
+            SendLog(this, new Log() { Message = "yeahhhh", LogLevel = LogLevel.DEBUG });
+        }
+
+        public static void SendLog(object sender, Log log)
+        {
+            Log?.Invoke(sender, log);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace NsisoLauncher.Windows
         {
             this.Dispatcher.Invoke(new Action(delegate ()
             {
-                this.textBox.Text += string.Format("[{0}]{1}\n", log.LogLevel.ToString(), log.Message);
+                this.textBox.Text += string.Format("[{0}][{1}]{2}\n", DateTime.Now.ToString(), log.LogLevel.ToString(), log.Message);
                 textBox.ScrollToEnd();
             }));
             
@@ -39,7 +39,7 @@ namespace NsisoLauncher.Windows
         private void findKeyWord_Click(object sender, RoutedEventArgs e)
         {
             string str = keyWordTextBox.Text;
-            int index = textBox.Text.IndexOf(str);
+            int index = textBox.Text.LastIndexOf(str);
             if (index != -1)
             {
                 textBox.Focus();
