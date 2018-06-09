@@ -30,10 +30,20 @@ namespace NsisoLauncher.Windows
         {
             this.Dispatcher.Invoke(new Action(delegate ()
             {
-                this.textBox.Text += string.Format("[{0}][{1}]{2}\n", DateTime.Now.ToString(), log.LogLevel.ToString(), log.Message);
+                this.textBox.AppendText(string.Format("[{0}][{1}]{2}\n", log.LogLevel.ToString(), DateTime.Now.ToString(), log.Message));
                 textBox.ScrollToEnd();
             }));
             
+        }
+
+        public void AppendGameLog(object sender, string gamelog)
+        {
+            this.Dispatcher.Invoke(new Action(delegate ()
+            {
+                this.textBox.AppendText(string.Format("[GameLog]{0}\n", gamelog));
+                textBox.ScrollToEnd();
+            }));
+
         }
 
         private void findKeyWord_Click(object sender, RoutedEventArgs e)

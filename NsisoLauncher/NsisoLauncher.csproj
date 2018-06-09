@@ -53,6 +53,15 @@
   <PropertyGroup>
     <ApplicationIcon>Resource\icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net40\ControlzEx.dll</HintPath>
@@ -128,10 +137,19 @@
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\MainConfig.cs" />
     <Compile Include="Core\Modules\Log.cs" />
+    <Compile Include="Core\Net\DownloadSource.cs" />
+    <Compile Include="Core\Net\DownloadTask.cs" />
+    <Compile Include="Core\Net\Tools\GetDownloadUrl.cs" />
+    <Compile Include="Core\Util\GetLost.cs" />
+    <Compile Include="Utils\MultiThreadDownloader.cs" />
+    <Compile Include="Utils\AsyncObservableCollection.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
     <Compile Include="Windows\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\DownloadWindow.xaml.cs">
+      <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +206,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -209,6 +231,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

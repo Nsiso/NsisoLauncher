@@ -71,9 +71,9 @@ namespace NsisoLauncher.Core.Util
                                         {
                                             if (rule["os"]["name"].ToString() == "windows")
                                             {
-                                                if (rule["os"].Contains("version"))
+                                                if (rule["os"]["version"] != null)
                                                 {
-                                                    if (Regex.Match(Environment.OSVersion.VersionString, rule["os"]["version"].ToString()).Success)
+                                                    if (Regex.Match(Environment.OSVersion.Version.ToString(), rule["os"]["version"].ToString()).Success)
                                                     {
                                                         if (arg["value"].Type == JTokenType.String)
                                                         {
@@ -83,7 +83,7 @@ namespace NsisoLauncher.Core.Util
                                                         {
                                                             foreach (var str in arg["value"])
                                                             {
-                                                                jvmArgBuilder.AppendFormat("{0} ", str);
+                                                                jvmArgBuilder.AppendFormat("\"{0}\" ", str);
                                                             }
                                                         }
 

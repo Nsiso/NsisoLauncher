@@ -25,7 +25,11 @@ namespace NsisoLauncher.Core.Util
 
                 foreach (ZipEntry zipEntry in zf)
                 {
-                    if (!zipEntry.IsFile || exclude.Any(zipEntry.Name.StartsWith))
+                    if (!zipEntry.IsFile)
+                    {
+                        continue;
+                    }
+                    if (exclude !=null && exclude.Any(zipEntry.Name.StartsWith))
                     {
                         continue;
                     }

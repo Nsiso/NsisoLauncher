@@ -67,6 +67,16 @@ namespace NsisoLauncher
                 Version = (Core.Modules.Version)launchVersionCombobox.SelectedItem
             };
 
+            #region 检查游戏完整
+            var losts = Core.Util.GetLost.GetLostDependDownloadTask(Core.Net.DownloadSource.BMCLAPI, App.handler, (Core.Modules.Version)launchVersionCombobox.SelectedItem);
+            if (losts.Count != 0)
+            {
+                App.downloader.Download(losts);
+                new Windows.DownloadWindow().Show();
+                return;
+            }
+            #endregion
+
             #region 验证
 
             //在线验证
@@ -169,7 +179,7 @@ namespace NsisoLauncher
             this.loadingRing.IsActive = true;
 
             var result = await App.handler.LaunchAsync(launchSetting);
-            App.handler.Log += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
+            App.handler.GameLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b; }); };
 
             if (!result.IsSuccess)
             {
@@ -184,9 +194,20 @@ namespace NsisoLauncher
                 {
                     while (true)
                     {
-                        if (result.Process.MainWindowHandle.ToInt32() != 0)
+                        if (result.Process.HasExited)
                         {
+                            this.Dispatcher.Invoke(new Action(() =>
+                            {
+                                this.ShowMessageAsync("游戏进程在未显示出窗口前退出", "可能启动遇到错误");
+                            }));
                             break;
+                        }
+                        else
+                        {
+                            if (result.Process.MainWindowHandle.ToInt32() != 0)
+                            {
+                                break;
+                            }
                         }
                     }
                 });
@@ -201,6 +222,11 @@ namespace NsisoLauncher
 
             }
             #endregion
+        }
+
+        private void downloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            new Windows.DownloadWindow().Show();
         }
     }
 }

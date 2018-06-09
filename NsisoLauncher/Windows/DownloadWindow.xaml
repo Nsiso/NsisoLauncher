@@ -1,0 +1,37 @@
+﻿<controls:MetroWindow x:Class="NsisoLauncher.Windows.DownloadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:NsisoLauncher.Windows"
+        mc:Ignorable="d"
+        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <DataGrid x:Name="downloadList" Margin="10,10,10,45" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="下载任务描述" Binding="{Binding Path=TaskName}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="下载进度" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <controls:MetroProgressBar
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Maximum="{Binding TotalSize, Mode=OneWay}"
+                                Minimum="0"
+                                Value="{Binding DownloadSize, Mode=OneWay}"
+                                Background="LightGray">
+                            </controls:MetroProgressBar>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="下载到目标" Binding="{Binding Path=To}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="下载源" Binding="{Binding Path=From}" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ProgressBar Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
+        <TextBlock x:Name="progressPerTextBlock" HorizontalAlignment="Left" Margin="10,0,0,25" TextWrapping="Wrap" Text="000%" VerticalAlignment="Bottom"/>
+        <TextBlock x:Name="speedTextBlock" Margin="0,0,10,25" TextWrapping="Wrap" Text="0kb/s" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+    </Grid>
+</controls:MetroWindow>

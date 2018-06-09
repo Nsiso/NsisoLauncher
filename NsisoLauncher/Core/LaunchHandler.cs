@@ -33,7 +33,8 @@ namespace NsisoLauncher.Core
         /// </summary>
         public bool VersionIsolation { get; set; }
 
-        public event EventHandler<Log> Log;
+        public event GameLogHandler GameLog;
+        public delegate void GameLogHandler(object sender, string e);
 
         private ArgumentsParser argumentsParser;
         private VersionReader versionReader;
@@ -43,7 +44,7 @@ namespace NsisoLauncher.Core
             this.GameRootPath = gamepath;
             this.Java = java;
             this.VersionIsolation = isversionIsolation;
-            versionReader = new VersionReader(new System.IO.DirectoryInfo(GameRootPath + @"\versions"));
+            versionReader = new VersionReader(new DirectoryInfo(GameRootPath + @"\versions"));
             argumentsParser = new ArgumentsParser(this);
         }
 
@@ -77,17 +78,12 @@ namespace NsisoLauncher.Core
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
+            this.GameLog?.Invoke(this, e.Data);
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
-        }
-
-        public void SendLog(object sender, Log log)
-        {
-            this.Log?.Invoke(sender, log);
+            this.GameLog?.Invoke(this, e.Data);
         }
 
         private LaunchResult Launch(LaunchSetting setting)
@@ -101,6 +97,7 @@ namespace NsisoLauncher.Core
                     string nativePath = GetNativePath(item);
                     if (File.Exists(nativePath))
                     {
+                        App.SendLog(this, new Modules.Log() { LogLevel = LogLevel.DEBUG, Message = string.Format("检查并解压不存在的库文件:{0}", nativePath) });
                         Unzip.UnZipFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude);
                     }
                     else
@@ -111,13 +108,11 @@ namespace NsisoLauncher.Core
                 }
                 string arg = argumentsParser.Parse(setting);
 
-                this.SendLog(this, new Log() { LogLevel = LogLevel.INFO, Message = arg });
-
                 ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                 { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
                 var process = Process.Start(startInfo);
                 sw.Stop();
-                this.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds) });
+                App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds) });
                 return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
             }
             catch (LaunchException.LaunchException ex)

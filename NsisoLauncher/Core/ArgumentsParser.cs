@@ -79,7 +79,7 @@ namespace NsisoLauncher.Core
                 {"${auth_access_token}",setting.AuthenticateAccessToken },
                 {"${user_properties}",ToList(setting.AuthenticationUserData?.Properties) },
                 {"${user_type}",legacy },
-                {"${version_type}",setting.VersionType }
+                {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher":setting.VersionType }
             };
             string gameArg = ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic);
             #endregion
@@ -90,15 +90,18 @@ namespace NsisoLauncher.Core
                 {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(setting.Version), @"\$natives") },
                 {"${launcher_name}","NsisoLauncher" },
                 {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                {"${classpath}",GetClassPaths(setting.Version.Libraries,setting.Version) },
+                {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
             };
             string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic);
             #endregion
 
             stopwatch.Stop();
-            handler.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds) });
 
-            return jvmHead.ToString() + jvmArg + ' ' + setting.Version.MainClass + ' ' + gameArg;
+            string allArg = jvmHead.ToString() + jvmArg + ' ' + setting.Version.MainClass + ' ' + gameArg;
+            App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds) });
+            App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("启动参数:{0}", allArg) });
+
+            return allArg;
         }
 
         private static string ToList(List<Net.MojangApi.Responses.AuthenticateResponse.UserData.Property> properties)
