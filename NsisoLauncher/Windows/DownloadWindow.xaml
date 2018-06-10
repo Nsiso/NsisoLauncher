@@ -30,7 +30,7 @@
                 <DataGridTextColumn Header="下载源" Binding="{Binding Path=From}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <ProgressBar Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
+        <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
         <TextBlock x:Name="progressPerTextBlock" HorizontalAlignment="Left" Margin="10,0,0,25" TextWrapping="Wrap" Text="000%" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="speedTextBlock" Margin="0,0,10,25" TextWrapping="Wrap" Text="0kb/s" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
     </Grid>

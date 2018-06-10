@@ -71,7 +71,8 @@ namespace NsisoLauncher
             var losts = Core.Util.GetLost.GetLostDependDownloadTask(Core.Net.DownloadSource.BMCLAPI, App.handler, (Core.Modules.Version)launchVersionCombobox.SelectedItem);
             if (losts.Count != 0)
             {
-                App.downloader.Download(losts);
+                App.downloader.SetDownloadTasks(losts);
+                App.downloader.StartDownload();
                 new Windows.DownloadWindow().Show();
                 return;
             }
