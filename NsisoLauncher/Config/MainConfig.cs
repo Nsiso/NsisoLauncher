@@ -66,4 +66,27 @@ namespace NsisoLauncher.Config
         /// </summary>
         ONLINE
     }
+
+    public enum GameDirEnum
+    {
+        /// <summary>
+        /// 启动器根目录
+        /// </summary>
+        ROOT = 0,
+
+        /// <summary>
+        /// 系统AppData
+        /// </summary>
+        APPDATA = 1,
+
+        /// <summary>
+        /// 系统程序文件夹
+        /// </summary>
+        PROGRAMFILES = 2,
+
+        /// <summary>
+        /// 自定义
+        /// </summary>
+        CUSTOM = 3
+    }
 }

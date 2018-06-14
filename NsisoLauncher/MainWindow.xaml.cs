@@ -29,7 +29,7 @@ namespace NsisoLauncher
         public MainWindow()
         {
             InitializeComponent();
-            App.SendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = "启动器主窗体已载入" });
+            App.logHandler.AppendDebug("启动器主窗体已载入");
             Refresh();
         }
 
@@ -37,7 +37,7 @@ namespace NsisoLauncher
         {
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
-            App.SendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = "启动器主窗体数据重载完毕" });
+            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
 
         private async void launchButton_Click(object sender, RoutedEventArgs e)
@@ -228,6 +228,12 @@ namespace NsisoLauncher
         private void downloadButton_Click(object sender, RoutedEventArgs e)
         {
             new Windows.DownloadWindow().Show();
+        }
+
+        private void configButton_Click(object sender, RoutedEventArgs e)
+        {
+            new Windows.SettingWindow().ShowDialog();
+            Refresh();
         }
     }
 }

@@ -97,7 +97,7 @@ namespace NsisoLauncher.Core
                     string nativePath = GetNativePath(item);
                     if (File.Exists(nativePath))
                     {
-                        App.SendLog(this, new Modules.Log() { LogLevel = LogLevel.DEBUG, Message = string.Format("检查并解压不存在的库文件:{0}", nativePath) });
+                        App.logHandler.AppendDebug(string.Format("检查并解压不存在的库文件:{0}", nativePath));
                         Unzip.UnZipFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude);
                     }
                     else
@@ -109,10 +109,10 @@ namespace NsisoLauncher.Core
                 string arg = argumentsParser.Parse(setting);
 
                 ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
-                { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GameRootPath };
+                { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
                 var process = Process.Start(startInfo);
                 sw.Stop();
-                App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds) });
+                App.logHandler.AppendInfo(string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds));
                 return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
             }
             catch (LaunchException.LaunchException ex)

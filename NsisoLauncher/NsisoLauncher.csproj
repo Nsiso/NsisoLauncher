@@ -141,6 +141,7 @@
     <Compile Include="Core\Net\DownloadTask.cs" />
     <Compile Include="Core\Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="Core\Util\GetLost.cs" />
+    <Compile Include="Core\Util\LogHandler.cs" />
     <Compile Include="Utils\MultiThreadDownloader.cs" />
     <Compile Include="Utils\AsyncObservableCollection.cs" />
     <Compile Include="Utils\Converter.cs" />
@@ -150,6 +151,12 @@
     </Compile>
     <Compile Include="Windows\DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SettingWindow.xaml.cs">
+      <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -207,6 +214,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ErrorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

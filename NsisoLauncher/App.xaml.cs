@@ -21,31 +21,34 @@ namespace NsisoLauncher
         public static LaunchHandler handler;
         public static Config.ConfigHandler config;
         public static MultiThreadDownloader downloader;
-
-        public static event EventHandler<Log> Log;
+        public static LogHandler logHandler;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             //debug
+            logHandler = new LogHandler(true);
             Windows.DebugWindow debugWindow = new Windows.DebugWindow();
             debugWindow.Show();
-            TaskScheduler.UnobservedTaskException += (a, b) => debugWindow.AppendLog(a, new Log() { LogLevel = LogLevel.ERROR, Message = b.ToString() });
-            DispatcherUnhandledException += (a, b) => debugWindow.AppendLog(a, new Log() { LogLevel = LogLevel.ERROR, Message = b.ToString() });
-            Log += (s, log) => debugWindow?.AppendLog(s, log);
+            TaskScheduler.UnobservedTaskException += (a, b) => logHandler.AppendError(b.Exception);
+            logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
 
             config = new Config.ConfigHandler();
+
             handler = new LaunchHandler(Path.GetFullPath(".minecraft"), Java.GetSuitableJava(), true);
             handler.GameLog += (s, log) => debugWindow?.AppendGameLog(s, log);
+
             downloader = new MultiThreadDownloader();
+            downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
 
 
             Core.Net.MojangApi.Api.Requester.ClientToken = config.MainConfig.User.ClientToken;
 
         }
 
-        public static void SendLog(object sender, Log log)
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            Log?.Invoke(sender, log);
+            App.logHandler.AppendFatal(e.Exception);
+            e.Handled = true;
         }
     }
 }

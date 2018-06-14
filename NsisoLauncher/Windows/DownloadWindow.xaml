@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
-        <DataGrid x:Name="downloadList" Margin="10,10,10,45" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+        <DataGrid x:Name="downloadList" Margin="10,43,10,45" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="下载任务描述" Binding="{Binding Path=TaskName}" IsReadOnly="True"/>
                 <DataGridTemplateColumn Header="下载进度" IsReadOnly="True">
@@ -33,5 +33,6 @@
         <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
         <TextBlock x:Name="progressPerTextBlock" HorizontalAlignment="Left" Margin="10,0,0,25" TextWrapping="Wrap" Text="000%" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="speedTextBlock" Margin="0,0,10,25" TextWrapping="Wrap" Text="0kb/s" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <Button Content="取消下载" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click"/>
     </Grid>
 </controls:MetroWindow>

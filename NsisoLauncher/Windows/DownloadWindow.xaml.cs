@@ -69,5 +69,17 @@ namespace NsisoLauncher.Windows
                 this.progressPerTextBlock.Text = ((double)(e.TaskCount - e.LastTaskCount) / (double)e.TaskCount).ToString("0%");
             }));
         }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = await this.ShowMessageAsync("您确定要取消下载?", "现在后悔还来得及", 
+                MessageDialogStyle.AffirmativeAndNegative,
+                new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" });
+            if (result == MessageDialogResult.Affirmative)
+            {
+                App.downloader.RequestStop();
+                this.progressBar.Value = 0;
+            }
+        }
     }
 }

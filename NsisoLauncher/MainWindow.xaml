@@ -55,7 +55,7 @@
 
             <Button x:Name="configButton"
                     Height="30" Margin="10,0,0,65" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="95"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White">
+                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="configButton_Click">
                 <iconPacks:FontAwesome Kind="CogSolid"/>
             </Button>
 

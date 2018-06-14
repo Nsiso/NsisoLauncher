@@ -98,8 +98,8 @@ namespace NsisoLauncher.Core
             stopwatch.Stop();
 
             string allArg = jvmHead.ToString() + jvmArg + ' ' + setting.Version.MainClass + ' ' + gameArg;
-            App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds) });
-            App.SendLog(this, new Modules.Log() { LogLevel = Modules.LogLevel.DEBUG, Message = string.Format("启动参数:{0}", allArg) });
+            App.logHandler.AppendDebug(string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds));
+            App.logHandler.AppendDebug(string.Format("启动参数:{0}", allArg));
 
             return allArg;
         }

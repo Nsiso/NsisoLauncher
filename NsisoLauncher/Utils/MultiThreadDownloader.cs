@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using System.Timers;
+using NsisoLauncher.Core.Modules;
 
 namespace NsisoLauncher.Utils
 {
@@ -61,11 +62,13 @@ namespace NsisoLauncher.Utils
 
         public AsyncObservableCollection<DownloadTask> TasksObservableCollection { get; private set; } = new AsyncObservableCollection<DownloadTask>();
         public int ProcessorSize { get; set; } = 3;
-        public bool IsBusy { get; set; } = false;
+        public bool IsBusy { get; private set; } = false;
+        public WebProxy Proxy { get; set; }
 
         public event EventHandler<DownloadProgressChangedArg> DownloadProgressChanged;
         public event EventHandler<DownloadSpeedChangedArg> DownloadSpeedChanged;
         public event EventHandler<DownloadCompletedArg> DownloadCompleted;
+        public event EventHandler<Log> DownloadLog;
 
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
         private List<DownloadTask> _downloadTasks;
@@ -82,30 +85,48 @@ namespace NsisoLauncher.Utils
         public void RequestStop()
         {
             _shouldStop = true;
+            CompleteDownload();
+            ApendDebugLog("已申请取消下载");
         }
 
         public void StartDownload()
         {
-            if (ProcessorSize == 0)
+            if (!IsBusy)
             {
-                throw new ArgumentException("下载器的线程数不能为0");
-            }
-            if (_downloadTasks.Count == 0)
-            {
-                return;
-            }
-            foreach (var item in _downloadTasks)
-            {
-                TasksObservableCollection.Add(item);
-            }
-            _threads = new Thread[ProcessorSize];
-            var threadTask = Split(_downloadTasks, ProcessorSize);
-            _timer.Start();
-            for (int i = 0; i < ProcessorSize; i++)
-            {
-                List<DownloadTask> arg = threadTask[i];
-                _threads[i] = new Thread(() => ThreadDownloadWork(arg));
-                _threads[i].Start();
+                _shouldStop = false;
+                IsBusy = true;
+                if (ProcessorSize == 0)
+                {
+                    IsBusy = false;
+                    throw new ArgumentException("下载器的线程数不能为0");
+                }
+                if (_downloadTasks.Count == 0)
+                {
+                    IsBusy = false;
+                    return;
+                }
+                foreach (var item in _downloadTasks)
+                {
+                    TasksObservableCollection.Add(item);
+                }
+                _threads = new Thread[ProcessorSize];
+                var threadTask = Split(_downloadTasks, ProcessorSize);
+                _timer.Start();
+                int threadNum;
+                if (threadTask.Count < ProcessorSize)
+                {
+                    threadNum = threadTask.Count;
+                }
+                else
+                {
+                    threadNum = ProcessorSize;
+                }
+                for (int i = 0; i < threadNum; i++)
+                {
+                    List<DownloadTask> arg = threadTask[i];
+                    _threads[i] = new Thread(() => ThreadDownloadWork(arg));
+                    _threads[i].Start();
+                }
             }
         }
 
@@ -113,15 +134,20 @@ namespace NsisoLauncher.Utils
         {
             foreach (var item in tasks)
             {
+                if (_shouldStop)
+                {
+                    CompleteDownload();
+                    return;
+                }
+                ApendDebugLog("开始下载:" + item.From);
                 HTTPDownload(item);
+                ApendDebugLog("下载完成:" + item.From);
                 TasksObservableCollection.Remove(item);
                 DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() {TaskCount = _downloadTasks.Count, LastTaskCount = TasksObservableCollection.Count });
-                if (TasksObservableCollection.Count == 0)
+                if (TasksObservableCollection.Count == 0 && (!_shouldStop))
                 {
-                    DownloadCompleted?.Invoke(this, new DownloadCompletedArg() {ErrorList = _errorList });
-                    _downloadTasks.Clear();
-                    _timer.Stop();
-                    _downloadSizePerSec = 0;
+                    CompleteDownload();
+                    DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
                 }
             }
         }
@@ -139,9 +165,14 @@ namespace NsisoLauncher.Utils
                 }
                 if (_shouldStop)
                 {
+                    CompleteDownload();
                     return;
                 }
                 HttpWebRequest request = WebRequest.Create(task.From) as HttpWebRequest;
+                if (Proxy != null)
+                {
+                    request.Proxy = Proxy;
+                }
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
                 task.SetTotalSize(response.ContentLength);
                 Stream responseStream = response.GetResponseStream();
@@ -153,6 +184,13 @@ namespace NsisoLauncher.Utils
                 {
                     if (_shouldStop)
                     {
+                        fs.Close();
+                        responseStream.Close();
+                        if (File.Exists(task.To))
+                        {
+                            File.Delete(task.To);
+                        }
+                        CompleteDownload();
                         return;
                     }
                     fs.Write(bArr, 0, size);
@@ -165,7 +203,12 @@ namespace NsisoLauncher.Utils
             }
             catch (Exception e)
             {
+                ApendErrorLog(e);
                 _errorList.Add(task, e);
+                if (File.Exists(task.To))
+                {
+                    File.Delete(task.To);
+                }
             }
         }
 
@@ -176,6 +219,26 @@ namespace NsisoLauncher.Utils
                          group item by i++ % parts into part
                          select part.ToList();
             return splits.ToList();
+        }
+
+        private void CompleteDownload()
+        {
+            TasksObservableCollection.Clear();
+            _downloadTasks.Clear();
+            _timer.Stop();
+            _downloadSizePerSec = 0;
+            IsBusy = false;
+            ApendDebugLog("全部下载任务已完成");
+        }
+
+        private void ApendDebugLog(string msg)
+        {
+            this.DownloadLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
+        }
+
+        private void ApendErrorLog(Exception e)
+        {
+            this.DownloadLog?.Invoke(this, new Log() { LogLevel = LogLevel.ERROR, Message = "下载文件失败:" + e.ToString() });
         }
     }
 }
