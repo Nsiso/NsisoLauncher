@@ -14,6 +14,11 @@ namespace NsisoLauncher.Config
         /// 用户信息
         /// </summary>
         public User User { get; set; }
+
+        /// <summary>
+        /// 历史数据
+        /// </summary>
+        public History History { get; set; }
     }
 
     public class User
@@ -88,5 +93,26 @@ namespace NsisoLauncher.Config
         /// 自定义
         /// </summary>
         CUSTOM = 3
+    }
+
+    /// <summary>
+    /// 历史记录类
+    /// </summary>
+    public class History
+    {
+        /// <summary>
+        /// 上一次启动版本
+        /// </summary>
+        public string LastLaunchVersion { get; set; }
+
+        /// <summary>
+        /// 上次启动时间
+        /// </summary>
+        public DateTime LastLaunchTime { get; set; }
+
+        /// <summary>
+        /// 上次启动使用的时间(Ms)
+        /// </summary>
+        public long LastLaunchUsingMs { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System.IO;
 using NsisoLauncher.Core.LaunchException;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows;
 
 namespace NsisoLauncher.Core
 {
@@ -92,6 +93,10 @@ namespace NsisoLauncher.Core
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
+
+                string arg = argumentsParser.Parse(setting);
+
+                #region 处理库文件
                 foreach (var item in setting.Version.Natives)
                 {
                     string nativePath = GetNativePath(item);
@@ -106,13 +111,21 @@ namespace NsisoLauncher.Core
                     }
 
                 }
-                string arg = argumentsParser.Parse(setting);
+                #endregion
 
                 ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                 { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
                 var process = Process.Start(startInfo);
                 sw.Stop();
                 App.logHandler.AppendInfo(string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds));
+
+                #region 配置文件
+                App.config.MainConfig.History.LastLaunchUsingMs = sw.ElapsedMilliseconds;
+                App.config.MainConfig.History.LastLaunchTime = DateTime.Now;
+                App.config.MainConfig.History.LastLaunchVersion = setting.Version.ID;
+                App.config.Save();
+                #endregion
+
                 return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
             }
             catch (LaunchException.LaunchException ex)

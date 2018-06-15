@@ -40,15 +40,18 @@ namespace NsisoLauncher
             downloader = new MultiThreadDownloader();
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
 
-
             Core.Net.MojangApi.Api.Requester.ClientToken = config.MainConfig.User.ClientToken;
-
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             App.logHandler.AppendFatal(e.Exception);
             e.Handled = true;
+        }
+
+        public static string GetResourceString(string key)
+        {
+            return (string)Current.FindResource(key);
         }
     }
 }

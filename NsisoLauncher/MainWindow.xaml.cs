@@ -37,6 +37,7 @@ namespace NsisoLauncher
         {
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
+            this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
 
@@ -52,12 +53,14 @@ namespace NsisoLauncher
             #region 检查有效数据
             if (string.IsNullOrWhiteSpace(userName))
             {
-                await this.ShowMessageAsync("您的用户名未填写", "请在用户名栏填写您的用户名");
+                await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
+                    App.GetResourceString("String.Message.EmptyUsername2"));
                 return;
             }
             if (launchVersionCombobox.SelectedItem == null)
             {
-                await this.ShowMessageAsync("您未选择启动版本", "请在启动版本栏选择您要启动的版本");
+                await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
+                    App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                 return;
             }
             #endregion
@@ -86,7 +89,8 @@ namespace NsisoLauncher
                 //如果记住登陆
                 if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
                 {
-                    var loader = await this.ShowProgressAsync("在线验证中(自动验证)...", "这可能需要几秒的时间，我们正在进行处理。若您想关闭自动验证，请在设置窗口中进行设置");
+                    var loader = await this.ShowProgressAsync(App.GetResourceString("String.Mainwindow.AutoVerifying"),
+                        App.GetResourceString("String.Mainwindow.AutoVerifying2"));
                     loader.SetIndeterminate();
                     Validate validate = new Validate(App.config.MainConfig.User.AccessToken);
                     var validateResult = await validate.PerformRequestAsync();
@@ -112,7 +116,8 @@ namespace NsisoLauncher
                         {
                             App.config.MainConfig.User.AccessToken = string.Empty;
                             App.config.Save();
-                            await this.ShowMessageAsync("验证失败", "验证信息已过期，请重新登陆");
+                            await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.AutoVerificationFailed"),
+                                App.GetResourceString("String.Mainwindow.AutoVerificationFailed2"));
                             return;
                         }
                     }
@@ -120,7 +125,8 @@ namespace NsisoLauncher
                 //账号密码验证
                 else
                 {
-                    var loginMsgResult = await this.ShowLoginAsync("请确认登陆信息", "您启用了在线验证",
+                    var loginMsgResult = await this.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Login"),
+                        App.GetResourceString("String.Mainwindow.Login2"),
                     new LoginDialogSettings()
                     {
                         NegativeButtonText = "取消",
@@ -135,7 +141,8 @@ namespace NsisoLauncher
                     {
                         return;
                     }
-                    var loader = await this.ShowProgressAsync("在线验证中...", "这可能需要几秒的时间，我们正在进行处理");
+                    var loader = await this.ShowProgressAsync(App.GetResourceString("String.Mainwindow.Verifying"),
+                        App.GetResourceString("String.Mainwindow.Verifying2"));
                     loader.SetIndeterminate();
                     Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
                     var loginResult = await authenticate.PerformRequestAsync();
@@ -155,7 +162,8 @@ namespace NsisoLauncher
                     }
                     else
                     {
-                        await this.ShowMessageAsync("在线验证失败", loginResult.Error.ErrorMessage);
+                        await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.VerificationFailed"),
+                            loginResult.Error.ErrorMessage);
                         return;
                     }
                 }

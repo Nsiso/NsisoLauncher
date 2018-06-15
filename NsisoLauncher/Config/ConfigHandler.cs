@@ -76,6 +76,10 @@ namespace NsisoLauncher.Config
                 {
                     ClientToken = Guid.NewGuid().ToString("N"),
                     AuthenticationType = AuthenticationType.OFFLINE
+                },
+                History = new History()
+                {
+                    
                 }
             };
             Save();

@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="String.LanguageInfo.Lang">English</sys:String>
+    <sys:String x:Key="String.LanguageInfo.Author">Nsiso</sys:String>
+    <sys:String x:Key="String.Base.LauncherName">Nsiso Launcher</sys:String>
+    <sys:String x:Key="String.Base.Launch">Launch Game</sys:String>
+</ResourceDictionary>

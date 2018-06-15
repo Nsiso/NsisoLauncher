@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
-        Title="Nsiso启动器" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True">
+        Title="{DynamicResource String.Base.LauncherName}" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True">
     <controls:MetroWindow.Background>
         <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
     </controls:MetroWindow.Background>
@@ -24,7 +24,7 @@
             <Rectangle Fill="#33FFFFFF" HorizontalAlignment="Right" Width="220"/>
             <!--#endregion-->
 
-            <Button x:Name="launchButton" Content="启动游戏" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
+            <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
                     FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click"/>
 
             <Ellipse  Height="100" Stroke="White" VerticalAlignment="Top" HorizontalAlignment="Center" Width="100" Margin="0,10,0,0"/>
@@ -35,7 +35,7 @@
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="ID"
-                  controls:TextBoxHelper.Watermark="选择启动版本"
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"
                   />
 
             <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
@@ -44,13 +44,13 @@
                  Margin="41,155,10,0"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                 controls:TextBoxHelper.Watermark="输入游戏名称或账号"
+                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
                  />
 
             <controls:ToggleSwitch Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Margin="41,190,10,0" Height="auto" VerticalAlignment="Top"
                                    x:Name="isOnlineLogin"
-                                   OnLabel="使用在线验证"
-                                   OffLabel="使用离线验证" FontSize="14"
+                                   OnLabel="{DynamicResource String.Mainwindow.UseOnlineAuth}"
+                                   OffLabel="{DynamicResource String.Mainwindow.UseOfflineAuth}" FontSize="14"
                                    />
 
             <Button x:Name="configButton"
@@ -73,7 +73,7 @@
                 </Border.Effect>
             </Border>
             <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="False"/>
-            <TextBlock Text="启动中" Height="140" TextAlignment="Center" Foreground="Gray"/>
+            <TextBlock Text="{DynamicResource String.Mainwindow.Launching}" Height="140" TextAlignment="Center" Foreground="Gray"/>
             <TextBlock x:Name="launchInfoBlock" Height="20" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
 
         </Grid>
