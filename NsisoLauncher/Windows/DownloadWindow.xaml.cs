@@ -38,9 +38,10 @@ namespace NsisoLauncher.Windows
             this.Dispatcher.Invoke(new Action(() =>
             {
                 speedTextBlock.Text = "0Kb/s";
+                progressBar.Maximum = 1;
                 progressBar.Value = 0;
                 progressPerTextBlock.Text = "000%";
-                if (e.ErrorList.Count == 0)
+                if (e.ErrorList == null || e.ErrorList.Count == 0)
                 {
                     this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
                         App.GetResourceString("String.Downloadwindow.DownloadComplete2"));

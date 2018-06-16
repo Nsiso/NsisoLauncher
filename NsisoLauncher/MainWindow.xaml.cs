@@ -30,7 +30,16 @@ namespace NsisoLauncher
         {
             InitializeComponent();
             App.logHandler.AppendDebug("启动器主窗体已载入");
+            App.handler.GameExit += Handler_GameExit;
             Refresh();
+        }
+
+        private void Handler_GameExit(object sender, int ret)
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                this.WindowState = WindowState.Normal;
+            }));
         }
 
         private async void Refresh()
@@ -188,8 +197,9 @@ namespace NsisoLauncher
             this.loadingGrid.Visibility = Visibility.Visible;
             this.loadingRing.IsActive = true;
 
-            var result = await App.handler.LaunchAsync(launchSetting);
             App.handler.GameLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b; }); };
+            var result = await App.handler.LaunchAsync(launchSetting);
+            App.handler.GameLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b; }); };
 
             if (!result.IsSuccess)
             {
@@ -202,35 +212,30 @@ namespace NsisoLauncher
             {
                 await Task.Factory.StartNew(() =>
                 {
-                    while (true)
-                    {
-                        if (result.Process.HasExited)
-                        {
-                            this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.GameExitWithNoWindow"),
-                                    App.GetResourceString("String.Mainwindow.GameExitWithNoWindow2"));
-                            }));
-                            break;
-                        }
-                        else
-                        {
-                            if (result.Process.MainWindowHandle.ToInt32() != 0)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    result.Process.WaitForInputIdle();
+                    //while (true)
+                    //{
+                    //    if (result.Process.HasExited)
+                    //    {
+                    //        this.Dispatcher.Invoke(new Action(() =>
+                    //        {
+                    //            this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.GameExitWithNoWindow"),
+                    //                App.GetResourceString("String.Mainwindow.GameExitWithNoWindow2"));
+                    //        }));
+                    //        break;
+                    //    }
+                    //    else
+                    //    {
+                    //        if (result.Process.MainWindowHandle.ToInt32() != 0)
+                    //        {
+                    //            break;
+                    //        }
+                    //    }
+                    //}
                 });
                 this.loadingGrid.Visibility = Visibility.Hidden;
                 this.loadingRing.IsActive = false;
                 this.WindowState = WindowState.Minimized;
-                await Task.Factory.StartNew(() =>
-                {
-                    result.Process.WaitForExit();
-                });
-                this.WindowState = WindowState.Normal;
-
             }
             #endregion
         }

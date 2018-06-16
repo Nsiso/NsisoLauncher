@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using System.Timers;
 using NsisoLauncher.Core.Modules;
+using System.Collections.Concurrent;
 
 namespace NsisoLauncher.Utils
 {
@@ -61,7 +62,7 @@ namespace NsisoLauncher.Utils
         }
 
         public AsyncObservableCollection<DownloadTask> TasksObservableCollection { get; private set; } = new AsyncObservableCollection<DownloadTask>();
-        public int ProcessorSize { get; set; } = 3;
+        public int ProcessorSize { get; set; } = 5;
         public bool IsBusy { get; private set; } = false;
         public WebProxy Proxy { get; set; }
 
@@ -71,7 +72,8 @@ namespace NsisoLauncher.Utils
         public event EventHandler<Log> DownloadLog;
 
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
-        private List<DownloadTask> _downloadTasks;
+        private ConcurrentBag<DownloadTask> _downloadTasks;
+        private int _taskCount;
         private volatile bool _shouldStop = false;
         private Thread[] _threads;
         private int _downloadSizePerSec;
@@ -79,7 +81,8 @@ namespace NsisoLauncher.Utils
 
         public void SetDownloadTasks(List<DownloadTask> tasks)
         {
-            _downloadTasks = tasks;
+            _downloadTasks = new ConcurrentBag<DownloadTask>(tasks);
+            _taskCount = tasks.Count;
         }
 
         public void RequestStop()
@@ -100,56 +103,60 @@ namespace NsisoLauncher.Utils
                     IsBusy = false;
                     throw new ArgumentException("下载器的线程数不能为0");
                 }
-                if (_downloadTasks.Count == 0)
+                if (_downloadTasks == null || _downloadTasks.Count == 0)
                 {
                     IsBusy = false;
                     return;
                 }
-                foreach (var item in _downloadTasks)
+                foreach (var item in _downloadTasks.Reverse())
                 {
                     TasksObservableCollection.Add(item);
                 }
                 _threads = new Thread[ProcessorSize];
-                var threadTask = Split(_downloadTasks, ProcessorSize);
                 _timer.Start();
-                int threadNum;
-                if (threadTask.Count < ProcessorSize)
+                for (int i = 0; i < ProcessorSize; i++)
                 {
-                    threadNum = threadTask.Count;
-                }
-                else
-                {
-                    threadNum = ProcessorSize;
-                }
-                for (int i = 0; i < threadNum; i++)
-                {
-                    List<DownloadTask> arg = threadTask[i];
-                    _threads[i] = new Thread(() => ThreadDownloadWork(arg));
+                    _threads[i] = new Thread(() =>
+                    {
+                        ThreadDownloadWork();
+                    });
                     _threads[i].Start();
                 }
+                new Thread(() =>
+                {
+                    while (true)
+                    {
+                        if (GetAvailableThreadsCount() == 0)
+                        {
+                            CompleteDownload();
+                            DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
+                            break;
+                        }
+                    }
+                }).Start();
             }
         }
 
-        private void ThreadDownloadWork(List<DownloadTask> tasks)
+        private void ThreadDownloadWork()
         {
-            foreach (var item in tasks)
+            DownloadTask item = null;
+            while (!_downloadTasks.IsEmpty)
             {
-                if (_shouldStop)
+                if (_downloadTasks.TryTake(out item))
                 {
-                    CompleteDownload();
-                    return;
-                }
-                ApendDebugLog("开始下载:" + item.From);
-                HTTPDownload(item);
-                ApendDebugLog("下载完成:" + item.From);
-                TasksObservableCollection.Remove(item);
-                DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() {TaskCount = _downloadTasks.Count, LastTaskCount = TasksObservableCollection.Count });
-                if (TasksObservableCollection.Count == 0 && (!_shouldStop))
-                {
-                    CompleteDownload();
-                    DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
+                    if (_shouldStop)
+                    {
+                        CompleteDownload();
+                        return;
+                    }
+                    ApendDebugLog("开始下载:" + item.From);
+                    HTTPDownload(item);
+                    ApendDebugLog("下载完成:" + item.From);
+                    TasksObservableCollection.Remove(item);
+                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count });
                 }
             }
+
         }
 
         private void HTTPDownload(DownloadTask task)
@@ -212,20 +219,11 @@ namespace NsisoLauncher.Utils
             }
         }
 
-        private List<List<DownloadTask>> Split(List<DownloadTask> list, int parts)
-        {
-            int i = 0;
-            var splits = from item in list
-                         group item by i++ % parts into part
-                         select part.ToList();
-            return splits.ToList();
-        }
-
         private void CompleteDownload()
         {
             TasksObservableCollection.Clear();
-            _downloadTasks.Clear();
             _timer.Stop();
+            _taskCount = 0;
             _downloadSizePerSec = 0;
             IsBusy = false;
             ApendDebugLog("全部下载任务已完成");
@@ -239,6 +237,19 @@ namespace NsisoLauncher.Utils
         private void ApendErrorLog(Exception e)
         {
             this.DownloadLog?.Invoke(this, new Log() { LogLevel = LogLevel.ERROR, Message = "下载文件失败:" + e.ToString() });
+        }
+
+        private int GetAvailableThreadsCount()
+        {
+            int num = 0; ;
+            foreach (var item in _threads)
+            {
+                if (item != null && item.IsAlive)
+                {
+                    num += 1;
+                }
+            }
+            return num;
         }
     }
 }

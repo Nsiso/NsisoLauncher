@@ -41,7 +41,7 @@ namespace NsisoLauncher.Core.Modules
             Process = null;
             LaunchArguments = null;
             this.IsSuccess = false;
-            this.LaunchException = new Core.LaunchException.LaunchException(ex);
+            this.LaunchException = new LaunchException.LaunchException(ex);
         }
     }
 }

@@ -35,7 +35,9 @@ namespace NsisoLauncher.Core
         public bool VersionIsolation { get; set; }
 
         public event GameLogHandler GameLog;
+        public event GameExitHandler GameExit;
         public delegate void GameLogHandler(object sender, string e);
+        public delegate void GameExitHandler(object sender, int ret);
 
         private ArgumentsParser argumentsParser;
         private VersionReader versionReader;
@@ -51,14 +53,6 @@ namespace NsisoLauncher.Core
 
         public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
         {
-            if (setting.AuthenticateAccessToken == null || setting.AuthenticateUUID == null)
-            {
-                throw new ArgumentException("启动所需必要的验证参数为空");
-            }
-            if (setting.Version == null)
-            {
-                throw new ArgumentException("启动所需必要的版本参数为空");
-            }
             var result = await Task.Factory.StartNew(() =>
             {
                 if (setting.MaxMemory == 0)
@@ -67,13 +61,6 @@ namespace NsisoLauncher.Core
                 }
                 return Launch(setting);
             });
-            if (result.IsSuccess && result.Process!=null)
-            {
-                result.Process.OutputDataReceived += Process_OutputDataReceived;
-                result.Process.ErrorDataReceived += Process_ErrorDataReceived;
-                result.Process.BeginErrorReadLine();
-                result.Process.BeginOutputReadLine();
-            }
             return result;
         }
 
@@ -91,6 +78,15 @@ namespace NsisoLauncher.Core
         {
             try
             {
+                if (setting.AuthenticateAccessToken == null || setting.AuthenticateUUID == null)
+                {
+                    return new LaunchResult(new ArgumentException("启动所需必要的验证参数为空"));
+                }
+                if (setting.Version == null)
+                {
+                    return new LaunchResult(new ArgumentException("启动所需必要的版本参数为空"));
+                }
+
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
@@ -118,6 +114,17 @@ namespace NsisoLauncher.Core
                 var process = Process.Start(startInfo);
                 sw.Stop();
                 App.logHandler.AppendInfo(string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds));
+
+                Task.Factory.StartNew(() =>
+                {
+                    process.WaitForExit();
+                    GameExit?.Invoke(this, process.ExitCode);
+                });
+
+                process.OutputDataReceived += Process_OutputDataReceived;
+                process.ErrorDataReceived += Process_ErrorDataReceived;
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
 
                 #region 配置文件
                 App.config.MainConfig.History.LastLaunchUsingMs = sw.ElapsedMilliseconds;
