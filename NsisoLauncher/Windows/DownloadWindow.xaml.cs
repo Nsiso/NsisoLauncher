@@ -42,11 +42,13 @@ namespace NsisoLauncher.Windows
                 progressPerTextBlock.Text = "000%";
                 if (e.ErrorList.Count == 0)
                 {
-                    this.ShowMessageAsync("下载完成", "所有任务已成功下载");
+                    this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
+                        App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
                 }
                 else
                 {
-                    this.ShowMessageAsync("下载完成但发生错误", string.Format("一共有{0}个任务下载失败,其中一个原因:{1}", e.ErrorList.Count, e.ErrorList.First().Value.Message));
+                    this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
+                        string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
                 }
 
             }));
@@ -72,9 +74,11 @@ namespace NsisoLauncher.Windows
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("您确定要取消下载?", "现在后悔还来得及", 
+            var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
+                App.GetResourceString("String.Downloadwindow.MakesureCancel"), 
                 MessageDialogStyle.AffirmativeAndNegative,
-                new MetroDialogSettings() { AffirmativeButtonText = "确定", NegativeButtonText = "取消" });
+                new MetroDialogSettings() { AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                    NegativeButtonText = App.GetResourceString("String.Base.Cancel") });
             if (result == MessageDialogResult.Affirmative)
             {
                 App.downloader.RequestStop();

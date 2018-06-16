@@ -129,13 +129,14 @@ namespace NsisoLauncher
                         App.GetResourceString("String.Mainwindow.Login2"),
                     new LoginDialogSettings()
                     {
-                        NegativeButtonText = "取消",
-                        AffirmativeButtonText = "登陆",
-                        RememberCheckBoxText = "记住登陆状态",
+                        NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                        AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
+                        RememberCheckBoxText = App.GetResourceString("String.Base.ShouldRememberLogin"),
+                        UsernameWatermark = App.GetResourceString("String.Base.Username"),
                         InitialUsername = userName,
                         RememberCheckBoxVisibility = Visibility,
                         EnablePasswordPreview = true,
-                        PasswordWatermark = "密码"
+                        PasswordWatermark = App.GetResourceString("String.Base.Password")
                     });
                     if (loginMsgResult == null)
                     {
@@ -192,7 +193,7 @@ namespace NsisoLauncher
 
             if (!result.IsSuccess)
             {
-                await this.ShowMessageAsync("启动失败:" + result.LaunchException.Title, result.LaunchException.Message);
+                await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
                 this.loadingGrid.Visibility = Visibility.Hidden;
                 this.loadingRing.IsActive = false;
                 this.WindowState = WindowState.Minimized;
@@ -207,7 +208,8 @@ namespace NsisoLauncher
                         {
                             this.Dispatcher.Invoke(new Action(() =>
                             {
-                                this.ShowMessageAsync("游戏进程在未显示出窗口前退出", "可能启动遇到错误");
+                                this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.GameExitWithNoWindow"),
+                                    App.GetResourceString("String.Mainwindow.GameExitWithNoWindow2"));
                             }));
                             break;
                         }
