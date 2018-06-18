@@ -79,7 +79,34 @@ namespace NsisoLauncher.Config
                 },
                 History = new History()
                 {
+
+                },
+                Environment = new Environment()
+                {
+                    AutoMemory = true,
+                    GamePathType = GameDirEnum.ROOT,
+                    DownloadLostAssets = true,
+                    DownloadLostDepend = true,
+                    GCEnabled = true,
+                    GCType = Core.Modules.GCType.G1GC,
+                    AutoJava = true
+                },
+                Download = new Download()
+                {
+                    DownloadSource = Core.Net.DownloadSource.BMCLAPI,
+                    DownloadThreadsSize = 5
+                },
+                Launcher = new Launcher()
+                {
+                    Debug = false
+                },
+                Server = new Server()
+                {
                     
+                },
+                Customize = new Customize()
+                {
+
                 }
             };
             Save();

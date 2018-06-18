@@ -9,7 +9,299 @@
         xmlns:local="clr-namespace:NsisoLauncher.Windows"
         mc:Ignorable="d"
         Title="下载窗口" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Controls:MetroWindow.Resources>
+        <util:BoolToOppositeBoolConverter x:Key="BoolToOppositeBoolConverter"/>
+        <util:SettingDirRadioButtonConverter x:Key="SettingDirRadioButtonConverter" />
+        <util:SettingDownloadRadioButtonConverter x:Key="SettingDownloadRadioButtonConverter" />
+        <util:SettingLoginTypeRadioButtonConverter x:Key="SettingLoginTypeRadioButtonConverter"/>
+        <util:SettingCGRadioButtonConverter x:Key="SettingCGRadioButtonConverter"/>
+        <util:StringToIntConverter x:Key="StringToIntConverter" />
+    </Controls:MetroWindow.Resources>
     <Grid>
-        
+        <Grid.Resources>
+            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+        </Grid.Resources>
+        <TabControl x:Name="tabControl" Margin="0,0,0,50">
+            <TabItem Header="全局设置">
+                <ScrollViewer>
+                    <StackPanel x:Name="environmentGrid" Margin="10,0">
+                        <Expander Header="Java设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Controls:ToggleSwitch
+                                x:Name="isAutoJavaToggle"
+                                OnLabel="已开启自动选择JAVA"
+                                OffLabel="已关闭自动选择JAVA"
+                                Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+                                IsChecked="{Binding Path=AutoJava}"
+                                />
+                                <Label Content="JAVA路径:" Margin="0,10,0,0"/>
+                                <ComboBox x:Name="javaPathComboBox"
+                                      IsEditable="True"
+                                      IsReadOnly="True"
+                                      IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"
+                                      DisplayMemberPath="Path"
+                                      Text="{Binding JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
+                                      />
+                                <Label x:Name="javaInfoLabel" IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"/>
+                                <Button x:Name="chooseJavaButton" Content="选择自定义JAVA路径" Margin="0,5,0,0"
+                                    IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}" Click="chooseJavaButton_Click"
+                                    />
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="游戏根目录设置" Margin="0,0,0,5">
+                            <StackPanel x:Name="dirChooseGrid">
+                                <RadioButton Margin="0,0,0,5"
+                                             Content="启动器根目录" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=0}"/>
+                                <RadioButton Margin="0,0,0,5"
+                                             Content="用户AppData文件夹" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=1}"/>
+                                <RadioButton Margin="0,0,0,5" 
+                                             Content="系统程序文件夹下" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=2}"/>
+                                <RadioButton x:Name="dir_customRadio" Margin="0,0,0,5" 
+                                             Content="自定义" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=3}"/>
+                                <TextBox x:Name="gamedirPathTextBox"  Margin="0,0,0,5"
+                                         IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Text="{Binding Path=GamePath}"/>
+                                <Button x:Name="gamedirChooseButton"
+                                        Content="选择" IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Click="gamedirChooseButton_Click"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="内存设置" Margin="0,0,0,5">
+                            <Grid >
+                                <Controls:ToggleSwitch 
+                                    Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+                                    OnLabel="已启用自动设置内存"
+                                    OffLabel="已禁用自动设置内存"
+                                    IsChecked="{Binding Path=AutoMemory}"
+                                    VerticalAlignment="Top" />
+                                <Controls:RangeSlider x:Name="memorySlider"
+                                    IsSnapToTickEnabled="True"
+                                    IsEnabled="{Binding Path=AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                    UpperValue="{Binding ElementName=maxMemoryTextBox, Path=Text, Converter={StaticResource StringToIntConverter}}"
+                                    LowerValue="{Binding ElementName=minMemoryTextBox, Path=Text, Converter={StaticResource StringToIntConverter}}"
+                                    UpperValueChanged="memorySlider_UpperValueChanged"
+                                    LowerValueChanged="memorySlider_LowerValueChanged"
+                                    Margin="0,30"/>
+                                <Label Content="最小内存(MB):" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom"/>
+                                <TextBox x:Name="minMemoryTextBox" HorizontalAlignment="Left" Height="23" Margin="88,0,0,0" TextWrapping="Wrap"
+                                     Text="{Binding Path=MinMemory}"
+                                     IsEnabled="{Binding Path=AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                     PreviewTextInput="textBox1_PreviewTextInput"
+                                     InputMethod.IsInputMethodEnabled="False"
+                                     MaxLength="6"
+                                     Width="60" VerticalAlignment="Bottom"/>
+                                <TextBox x:Name="maxMemoryTextBox" Height="23" TextWrapping="Wrap" 
+                                     Text="{Binding Path=MaxMemory}" 
+                                     IsEnabled="{Binding Path=AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                     PreviewTextInput="textBox1_PreviewTextInput"
+                                     InputMethod.IsInputMethodEnabled="False"
+                                     MaxLength="6"
+                                     HorizontalAlignment="Right" Width="60" VerticalAlignment="Bottom"/>
+                                <Label Content="最大内存(MB):" HorizontalAlignment="Right" Margin="0,0,61,0" VerticalAlignment="Bottom"/>
+                            </Grid>
+                        </Expander>
+                        <Expander Header="游戏窗口设置" Margin="0,0,0,5">
+                            <Grid>
+                                <TextBox
+                                         HorizontalAlignment="Left" Height="auto" TextWrapping="Wrap" 
+                                         PreviewTextInput="textBox1_PreviewTextInput"
+                                         InputMethod.IsInputMethodEnabled="False"
+                                         Text="{Binding Path=WindowSize.Width}" IsEnabled="{Binding Path=WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50"/>
+                                <TextBox
+                                         HorizontalAlignment="Left" Height="auto" TextWrapping="Wrap"
+                                         PreviewTextInput="textBox1_PreviewTextInput"
+                                         InputMethod.IsInputMethodEnabled="False"
+                                         Text="{Binding Path=WindowSize.Height}" IsEnabled="{Binding Path=WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50" Margin="97,0,0,0"/>
+                                <CheckBox Content="全屏" HorizontalAlignment="Right" Width="50" Height="auto" IsChecked="{Binding Path=WindowSize.FullScreen}"/>
+                                <Label Content="长 x 宽" HorizontalAlignment="Left" Margin="50,0,0,0.76" d:LayoutOverrides="Height"/>
+                            </Grid>
+                        </Expander>
+                        <Expander Header="高级参数设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="JavaAgent参数:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=JavaAgent}"/>
+                                <Label Content="CG类型" Margin="0,5,0,0"/>
+                                <RadioButton
+                                             Content="G1GC (Garbage First Garbage Collector)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=0}"/>
+                                <RadioButton Margin="0,5,0,0"
+                                             Content="SerialGC (串行垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=1}"/>
+                                <RadioButton Margin="0,5,0,0" 
+                                             Content="ParallelGC (并行垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=2}"/>
+                                <RadioButton Margin="0,5,0,0" 
+                                             Content="CMSGC (并发标记扫描垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=3}"/>
+                                <Label Content="CG(垃圾回收器)参数:" Margin="0,5,0,0"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=GCArgument}"/>
+                                <Label Content="附加JVM启动参数:" Margin="0,5,0,0"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=AdvencedJvmArguments}"/>
+                                <Label Content="附加游戏启动参数:" Margin="0,5,0,0"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=AdvencedGameArguments}"/>
+                                <Label Content="*请勿随意增添参数，可能会造成无法启动。附加参数已自动包含-Dfml参数" FontSize="10"/>
+
+                            </StackPanel>
+                        </Expander>
+                        
+                        <Expander Header="自动补全设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <CheckBox Content="自动补全丢失的依赖库" IsChecked="{Binding Path=DownloadLostDepend}" Margin="0,0,0,5"/>
+                                <CheckBox Content="自动补全丢失的资源库" IsChecked="{Binding Path=DownloadLostAssets}"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="开发者选项" Margin="0,0,0,5">
+                            <StackPanel>
+                                <CheckBox x:Name="debugCheckBox" Content="DEBUG模式" IsChecked="{Binding Path=Debug}"/>
+                            </StackPanel>
+                        </Expander>
+                        <TextBlock TextWrapping="Wrap" Text="*请注意：本页面(全局设置)中大部分设置需要重启启动器后才能生效。"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="下载设置">
+                <ScrollViewer>
+                    <StackPanel x:Name="downloadGrid" Margin="10,0">
+                        <Expander Header="下载源" Margin="0,0,0,5">
+                            <StackPanel>
+                                <RadioButton Content="Mojang官方" IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=0}" Margin="0,0,0,5"/>
+                                <RadioButton Content="BMCLAPI (bangbang93's minecraft launcher api)" IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="下载线程设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="下载线程数量"/>
+                                <TextBox Text="{Binding DownloadThreadsSize}"
+                                         PreviewTextInput="textBox1_PreviewTextInput"
+                                         InputMethod.IsInputMethodEnabled="False"
+                                         Width="60" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="下载代理" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="代理服务器地址:"/>
+                                <TextBox Text="{Binding Path=DownloadProxyAddress}" Margin="0,0,0,5"/>
+                                <Label Content="代理服务器端口:"/>
+                                <TextBox 
+                                    PreviewTextInput="textBox1_PreviewTextInput"
+                                    InputMethod.IsInputMethodEnabled="False"
+                                    Text="{Binding Path=DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
+                                    Margin="0,0,0,5" MaxLength="6"/>
+                                <Label Content="代理服务器账号:"/>
+                                <TextBox Text="{Binding Path=ProxyUserName}" Margin="0,0,0,5"/>
+                                <Label Content="代理服务器密码:"/>
+                                <TextBox Text="{Binding Path=ProxyUserPassword}" Margin="0,0,0,5"/>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="版本设置">
+                <Grid>
+                    <Label x:Name="label6" Content="选择要进行设置的版本:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
+                    <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="Id" SelectionChanged="VersionsComboBox_SelectionChanged"/>
+                    <GroupBox x:Name="groupBox7" Header="版本Options设置" Margin="10,31,185,0">
+                        <Grid>
+                            <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="设置项" Binding="{Binding Key}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="设置值" Binding="{Binding Value}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <TextBlock TextWrapping="Wrap" Text="*双击设置值即可进行更改。若设置列表为空说明Options.txt文件不存在或未选择版本。" VerticalAlignment="Bottom"/>
+                        </Grid>
+                    </GroupBox>
+                    <Button x:Name="refreshVersionsButton" Content="刷新版本列表" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Click="refreshVersionsButton_Click" Margin="0,-1,10,0"/>
+                    <GroupBox x:Name="groupBox" Header="版本操作" Margin="0,31,10,0" HorizontalAlignment="Right" Width="170">
+                        <StackPanel/>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="用户设置">
+                <ScrollViewer>
+                    <StackPanel x:Name="userGrid" Margin="10,0">
+                        <Expander Header="启动验证类型设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <RadioButton Content="使用正版验证登陆 (需要联网验证)"
+                                             IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=1}" Margin="0,0,0,5"/>
+                                <RadioButton Content="使用离线验证登陆 (无需正版账号)" 
+                                             IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=0}" />
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="验证信息设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="用户名/账号:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=UserName}"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="高级验证信息设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="*此设置节点请勿随意改动,否则可能导致验证失败而无法启动"/>
+                                <Label Content="代理验证服务器地址:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=AuthServer}"/>
+                                <Label Content="客户端GUID:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=ClientToken}"/>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="自定义">
+                <ScrollViewer>
+                    <StackPanel x:Name="customGrid" Margin="10,0,10,0">
+                        <Expander Header="启动器主题设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="启动器主题颜色:"/>
+                                <ComboBox x:Name="AccentColorComboBox" DisplayMemberPath="Name" SelectionChanged="AccentColorComboBox_SelectionChanged" Text="{Binding Path=AccentColor}" HorizontalAlignment="Left" Width="200"/>
+                                <Label Content="启动器主题:"/>
+                                <ComboBox x:Name="appThmeComboBox" SelectionChanged="appThmeComboBox_SelectionChanged" DisplayMemberPath="Name" Text="{Binding Path=AppThme}" HorizontalAlignment="Left" Width="200"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="启动器背景元素设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <CheckBox x:Name="checkBox1" Content="开启自定义背景图片" IsChecked="{Binding Path=CustomBackGroundPicture}" Margin="0,0,0,2"/>
+                                <CheckBox x:Name="checkBox2" Content="开启自定义背景音乐" IsChecked="{Binding Path=CustomBackGroundMusic}" Margin="0,0,0,2"/>
+                                <Label Content="*自定义方法请查看启动器教程文档"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="自定义内容设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="启动器标题:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=LauncherTitle}"/>
+                                <Label Content="游戏窗口标题:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=GameWindowTitle}"/>
+                                <Label Content="游戏版本信息:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding Path=VersionInfo}"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="Minecraft服务器设置" Margin="0,0,0,5">
+                            <StackPanel x:Name="serverGroupBox">
+                                <CheckBox x:Name="checkBox3" Content="在主界面显示服务器信息" IsChecked="{Binding Path=ShowServerInfo}" Margin="0,0,0,5"/>
+                                <CheckBox x:Name="checkBox4" Content="启动后自动进入服务器" IsChecked="{Binding Path=LaunchToServer}" Margin="0,0,0,5"/>
+                                <Label x:Name="label9" Content="服务器名称:"/>
+                                <TextBox x:Name="textBox7" TextWrapping="NoWrap" Text="{Binding Path=ServerName}" HorizontalAlignment="Left" Width="300"/>
+                                <Label x:Name="label7" Content="服务器地址:"/>
+                                <TextBox x:Name="textBox5" TextWrapping="NoWrap" Text="{Binding Path=Address}" HorizontalAlignment="Left" Width="300"/>
+                                <Label x:Name="label8" Content="服务器端口:"/>
+                                <TextBox x:Name="textBox6" Text="{Binding Path=Port}"
+                                     PreviewTextInput="textBox1_PreviewTextInput"
+                                     InputMethod.IsInputMethodEnabled="False"
+                                     MaxLength="6" HorizontalAlignment="Left" Width="80"
+                                     />
+
+
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+
+            </TabItem>
+            <TabItem Header="关于" IsEnabled="False">
+                <Grid>
+                    <TextBox x:Name="textBox" TextWrapping="Wrap" Margin="10,0" IsReadOnly="True"/>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+        <Button x:Name="saveButton" Content="应用" Margin="0,0,10,10" Style="{StaticResource AccentedSquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="saveButton_Click"/>
+        <Button x:Name="cancelButton" Content="取消" Margin="0,0,135,10" Style="{DynamicResource SquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="cancelButton_Click"/>
+
     </Grid>
 </Controls:MetroWindow>

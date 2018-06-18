@@ -19,17 +19,17 @@ namespace NsisoLauncher.Core.Modules
         /// <summary>
         /// 串行垃圾回收器
         /// </summary>
-        SerialGC,
+        SerialGC = 1,
 
         /// <summary>
         /// 并行垃圾回收器
         /// </summary>
-        ParallelGC,
+        ParallelGC = 2,
 
         /// <summary>
         /// 并发标记扫描垃圾回收器
         /// </summary>
-        CMSGC,
+        CMSGC = 3,
     }
 
     public class WindowSize
@@ -121,6 +121,11 @@ namespace NsisoLauncher.Core.Modules
         /// 启动窗口设置
         /// </summary>
         public WindowSize WindowSize { get; set; }
+
+        /// <summary>
+        /// JavaAgent
+        /// </summary>
+        public string JavaAgent { get; set; }
 
         /// <summary>
         /// 附加虚拟机启动参数

@@ -24,6 +24,13 @@ namespace NsisoLauncher.Core
 
             #region 处理JVM启动头参数
             StringBuilder jvmHead = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
+            {
+                jvmHead.Append("-javaagent:\"");
+                jvmHead.Append(setting.JavaAgent);
+                jvmHead.Append("\" ");
+            }
             if (setting.GCEnabled)
             {
                 switch (setting.GCType)

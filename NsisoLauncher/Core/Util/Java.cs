@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
 {
@@ -38,28 +39,48 @@ namespace NsisoLauncher.Core.Util
         /// <returns></returns>
         public static Java GetJavaInfo(string javaPath)
         {
-            if (!string.IsNullOrWhiteSpace(javaPath) && File.Exists(javaPath))
+            try
             {
-                Process p = new Process();
-                p.StartInfo.FileName = javaPath;
-                p.StartInfo.Arguments = "-version";
-                p.StartInfo.RedirectStandardError = true;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = true;
-                p.Start();
-                string result = p.StandardError.ReadToEnd();
-                string version = result.Replace("java version \"", "");
-                version = version.Remove(version.IndexOf("\""));
-                bool is64 = result.Contains("64-Bit");
-                Java info;
-                if (is64) { info = new Java(javaPath, version, ArchEnum.x64); } else { info = new Java(javaPath, version, ArchEnum.x32); }
-                p.Dispose();
-                return info;
+                if (!string.IsNullOrWhiteSpace(javaPath) && File.Exists(javaPath))
+                {
+                    Process p = new Process();
+                    p.StartInfo.FileName = javaPath;
+                    p.StartInfo.Arguments = "-version";
+                    p.StartInfo.RedirectStandardError = true;
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.CreateNoWindow = true;
+                    p.Start();
+                    string result = p.StandardError.ReadToEnd();
+                    string version = result.Replace("java version \"", "");
+                    version = version.Remove(version.IndexOf("\""));
+                    bool is64 = result.Contains("64-Bit");
+                    Java info;
+                    if (is64) { info = new Java(javaPath, version, ArchEnum.x64); } else { info = new Java(javaPath, version, ArchEnum.x32); }
+                    p.Dispose();
+                    return info;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (Exception)
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// 根据路径获取单个JAVA详细信息
+        /// </summary>
+        /// <param name="javaPath"></param>
+        /// <returns></returns>
+        public static Task<Java> GetJavaInfoAsync(string javaPath)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return GetJavaInfo(javaPath);
+            });
         }
 
         /// <summary> n
