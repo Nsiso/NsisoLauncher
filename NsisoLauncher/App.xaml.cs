@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
+using MahApps.Metro;
 
 namespace NsisoLauncher
 {
@@ -27,14 +28,28 @@ namespace NsisoLauncher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            #region DEBUG初始化
             //debug
             logHandler = new LogHandler(true);
-            Windows.DebugWindow debugWindow = new Windows.DebugWindow();
-            debugWindow.Show();
             TaskScheduler.UnobservedTaskException += (a, b) => logHandler.AppendError(b.Exception);
-            logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
+            if (e.Args.Contains("-debug"))
+            {
+                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                debugWindow.Show();
+                logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
+            }
+            #endregion
 
             config = new ConfigHandler();
+
+            #region DEBUG初始化（基于配置文件）
+            if (config.MainConfig.Launcher.Debug)
+            {
+                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                debugWindow.Show();
+                logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
+            }
+            #endregion
 
             #region 数据初始化
             Config.Environment env = App.config.MainConfig.Environment;
@@ -94,16 +109,30 @@ namespace NsisoLauncher
             {
                 logHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
             }
+
+            bool verIso = config.MainConfig.Environment.VersionIsolation;
             #endregion
 
-            handler = new LaunchHandler(gameroot, java, true);
+            #region 启动核心初始化
+            handler = new LaunchHandler(gameroot, java, verIso);
             handler.GameLog += (s, log) => debugWindow?.AppendGameLog(s, log);
+            #endregion
 
+            #region 下载核心初始化
             downloader = new MultiThreadDownloader();
             downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
+            #endregion
 
-            Core.Net.MojangApi.Api.Requester.ClientToken = config.MainConfig.User.ClientToken;
+            #region 自定义主题初始化
+            var custom = config.MainConfig.Customize;
+            if (!string.IsNullOrWhiteSpace(custom.AccentColor) && !string.IsNullOrWhiteSpace(custom.AppThme))
+            {
+                logHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
+                logHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
+                ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
+            }
+            #endregion
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

@@ -83,6 +83,7 @@ namespace NsisoLauncher.Config
                 },
                 Environment = new Environment()
                 {
+                    VersionIsolation = true,
                     AutoMemory = true,
                     GamePathType = GameDirEnum.ROOT,
                     DownloadLostAssets = true,
@@ -102,11 +103,16 @@ namespace NsisoLauncher.Config
                 },
                 Server = new Server()
                 {
-                    
+                    ShowServerInfo = false,
+                    LaunchToServer = false,
+                    Port = 25565
                 },
                 Customize = new Customize()
                 {
-
+                    CustomBackGroundMusic = false,
+                    CustomBackGroundPicture = false,
+                    AccentColor = "Blue",
+                    AppThme = "BaseLight"
                 }
             };
             Save();

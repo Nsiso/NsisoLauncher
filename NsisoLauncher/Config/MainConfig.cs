@@ -92,6 +92,11 @@ namespace NsisoLauncher.Config
     public class Environment
     {
         /// <summary>
+        /// 版本隔离
+        /// </summary>
+        public bool VersionIsolation { get; set; }
+
+        /// <summary>
         /// 游戏路径类型
         /// </summary>
         public GameDirEnum GamePathType { get; set; }

@@ -95,6 +95,7 @@ namespace NsisoLauncher
             //在线验证
             if ((bool)isOnlineLogin.IsChecked)
             {
+                Core.Net.MojangApi.Api.Requester.ClientToken = App.config.MainConfig.User.ClientToken;
                 //如果记住登陆
                 if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
                 {

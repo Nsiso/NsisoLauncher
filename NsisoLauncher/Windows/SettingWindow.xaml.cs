@@ -205,5 +205,19 @@ namespace NsisoLauncher.Windows
                 this.javaInfoLabel.Content = null;
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            config.User.AccessToken = null;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            config.User = new Config.User()
+            {
+                AuthenticationType = Config.AuthenticationType.OFFLINE,
+                ClientToken = Guid.NewGuid().ToString("N"),
+            };
+        }
     }
 }
