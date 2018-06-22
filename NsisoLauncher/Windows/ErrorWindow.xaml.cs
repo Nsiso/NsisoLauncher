@@ -53,15 +53,7 @@ namespace NsisoLauncher.Windows
 
         private void UpdateThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var args = Environment.GetCommandLineArgs();
-            foreach (var item in args)
-            {
-                info.Arguments += (item + ' ');
-            }
-            info.Arguments += "-rebootByError";
-            System.Diagnostics.Process.Start(info);
-            App.Current.Shutdown();
+            App.Reboot(false);
         }
 
         private void UpdateThread_DoWork(object sender, DoWorkEventArgs e)

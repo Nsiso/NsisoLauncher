@@ -115,7 +115,7 @@ namespace NsisoLauncher
 
             #region 启动核心初始化
             handler = new LaunchHandler(gameroot, java, verIso);
-            handler.GameLog += (s, log) => debugWindow?.AppendGameLog(s, log);
+            handler.GameLog += (s, log) => logHandler.AppendLog(s, new Log() { LogLevel = LogLevel.GAME, Message = log });
             #endregion
 
             #region 下载核心初始化
@@ -144,6 +144,23 @@ namespace NsisoLauncher
         public static string GetResourceString(string key)
         {
             return (string)Current.FindResource(key);
+        }
+
+        public static void Reboot(bool admin)
+        {
+            System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var args = System.Environment.GetCommandLineArgs();
+            foreach (var item in args)
+            {
+                info.Arguments += (item + ' ');
+            }
+            if (admin)
+            {
+                info.Verb = "runas";
+            }
+            info.Arguments += "-reboot";
+            System.Diagnostics.Process.Start(info);
+            App.Current.Shutdown();
         }
     }
 }

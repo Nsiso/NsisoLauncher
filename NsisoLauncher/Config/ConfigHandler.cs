@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Newtonsoft.Json;
 
 namespace NsisoLauncher.Config
@@ -29,18 +30,32 @@ namespace NsisoLauncher.Config
 
         public ConfigHandler()
         {
-            Directory = new DirectoryInfo("Config");
-
-            if (!Directory.Exists)
+            try
             {
-                Directory.Create();
-            }
+                Directory = new DirectoryInfo("Config");
 
-            if (!File.Exists(MainConfigPath))
-            { NewConfig(); }
-            else
-            { Read(); }
-            
+                if (!Directory.Exists)
+                {
+                    Directory.Create();
+                }
+
+                if (!File.Exists(MainConfigPath))
+                { NewConfig(); }
+                else
+                { Read(); }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
+                    "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                    "而导致系统自我保护机制权限禁止写入文件。\n" +
+                    "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
+                    "启动器权限不足", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    App.Reboot(true);
+                }
+            }
         }
 
         /// <summary>
@@ -48,10 +63,11 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void Save()
         {
-            lock(locker)
+            lock (locker)
             {
                 File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig));
             }
+
         }
 
         /// <summary>
@@ -64,7 +80,7 @@ namespace NsisoLauncher.Config
                 MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
             }
         }
-        
+
         /// <summary>
         /// 新建配置文件
         /// </summary>
