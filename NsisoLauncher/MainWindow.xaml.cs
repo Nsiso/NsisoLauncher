@@ -80,7 +80,21 @@ namespace NsisoLauncher
             };
 
             #region 检查游戏完整
-            var losts = Core.Util.GetLost.GetLostDependDownloadTask(Core.Net.DownloadSource.BMCLAPI, App.handler, (Core.Modules.Version)launchVersionCombobox.SelectedItem);
+            List<Core.Net.DownloadTask> losts = new List<Core.Net.DownloadTask>();
+
+            if (App.config.MainConfig.Environment.DownloadLostDepend)
+            {
+                losts.AddRange(Core.Util.GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource,
+                App.handler,
+                launchSetting.Version));
+            }
+            if (App.config.MainConfig.Environment.DownloadLostAssets)
+            {
+                losts.AddRange(Core.Util.GetLost.GetLostAssetsDownloadTask(App.config.MainConfig.Download.DownloadSource,
+                App.handler,
+                await App.handler.GetAssetsAsync(launchSetting.Version)));
+            }
+
             if (losts.Count != 0)
             {
                 App.downloader.SetDownloadTasks(losts);
@@ -88,6 +102,7 @@ namespace NsisoLauncher
                 new Windows.DownloadWindow().Show();
                 return;
             }
+
             #endregion
 
             #region 验证

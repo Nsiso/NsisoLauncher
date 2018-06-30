@@ -16,6 +16,7 @@ namespace NsisoLauncher.Utils
     {
         public int TaskCount { get; set; }
         public int LastTaskCount { get; set; }
+        public DownloadTask DoneTask { get; set; }
     }
 
     public class DownloadSpeedChangedArg : EventArgs
@@ -120,9 +121,10 @@ namespace NsisoLauncher.Utils
                     {
                         ThreadDownloadWork();
                     });
+                    _threads[i].Name = string.Format("下载线程{0}号", i);
                     _threads[i].Start();
                 }
-                new Thread(() =>
+                var checkThread = new Thread(() =>
                 {
                     while (true)
                     {
@@ -133,7 +135,9 @@ namespace NsisoLauncher.Utils
                             break;
                         }
                     }
-                }).Start();
+                });
+                checkThread.Name = "下载监视线程";
+                checkThread.Start();
             }
         }
 
@@ -152,8 +156,8 @@ namespace NsisoLauncher.Utils
                     ApendDebugLog("开始下载:" + item.From);
                     HTTPDownload(item);
                     ApendDebugLog("下载完成:" + item.From);
+                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
                     TasksObservableCollection.Remove(item);
-                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count });
                 }
             }
 
@@ -189,21 +193,30 @@ namespace NsisoLauncher.Utils
 
                 while (size > 0)
                 {
-                    if (_shouldStop)
+                    try
+                    {
+                        if (_shouldStop)
+                        {
+                            fs.Close();
+                            responseStream.Close();
+                            if (File.Exists(task.To))
+                            {
+                                File.Delete(task.To);
+                            }
+                            CompleteDownload();
+                            return;
+                        }
+                        fs.Write(bArr, 0, size);
+                        size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                        _downloadSizePerSec += size;
+                        task.IncreaseDownloadSize(size);
+                    }
+                    catch (Exception ex)
                     {
                         fs.Close();
                         responseStream.Close();
-                        if (File.Exists(task.To))
-                        {
-                            File.Delete(task.To);
-                        }
-                        CompleteDownload();
-                        return;
+                        throw ex;
                     }
-                    fs.Write(bArr, 0, size);
-                    size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                    _downloadSizePerSec += size;
-                    task.IncreaseDownloadSize(size);
                 }
                 fs.Close();
                 responseStream.Close();
@@ -211,7 +224,10 @@ namespace NsisoLauncher.Utils
             catch (Exception e)
             {
                 ApendErrorLog(e);
-                _errorList.Add(task, e);
+                if (!_errorList.ContainsKey(task))
+                {
+                    _errorList.Add(task, e);
+                }
                 if (File.Exists(task.To))
                 {
                     File.Delete(task.To);

@@ -41,13 +41,15 @@ namespace NsisoLauncher.Core
 
         private ArgumentsParser argumentsParser;
         private VersionReader versionReader;
+        private AssetsReader assetsReader;
 
         public LaunchHandler(string gamepath, Java java, bool isversionIsolation)
         {
             this.GameRootPath = gamepath;
             this.Java = java;
             this.VersionIsolation = isversionIsolation;
-            versionReader = new VersionReader(new DirectoryInfo(GameRootPath + @"\versions"));
+            versionReader = new VersionReader(this);
+            assetsReader = new AssetsReader(this);
             argumentsParser = new ArgumentsParser(this);
         }
 
@@ -72,6 +74,20 @@ namespace NsisoLauncher.Core
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             this.GameLog?.Invoke(this, e.Data);
+        }
+
+        public Assets GetAssets(Modules.Version version)
+        {
+            return assetsReader.GetAssets(version);
+        }
+
+        public async Task<Assets> GetAssetsAsync(Modules.Version version)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                return assetsReader.GetAssets(version);
+            });
+            
         }
 
         private LaunchResult Launch(LaunchSetting setting)
@@ -185,11 +201,6 @@ namespace NsisoLauncher.Core
         public string GetJarPath(Modules.Version ver)
         {
             return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, ver.ID);
-        }
-
-        public string GetAssetsIndexPath(Assets assets)
-        {
-            return GetAssetsIndexPath(assets.ID);
         }
 
         public string GetAssetsIndexPath(string assetsID)

@@ -23,7 +23,7 @@ namespace NsisoLauncher.Core.Modules
         /// <summary>
         /// 资源文件总大小
         /// </summary>
-        public int TotalSize { get; set; }
+        public long TotalSize { get; set; }
 
         /// <summary>
         /// 每一个资源文件的信息

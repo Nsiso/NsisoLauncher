@@ -70,6 +70,41 @@ namespace NsisoLauncher.Core.Util
             }
         }
 
+        /// <summary>
+        /// 获取版本丢失的资源文件
+        /// </summary>
+        /// <param name="core">所使用的核心</param>
+        /// <param name="version">要检查的版本</param>
+        /// <returns>返回Key为路径，value为资源文件信息实例的集合</returns>
+        public static Dictionary<string, AssetsInfo> GetLostAssets(LaunchHandler core, Assets assets)
+        {
+            Dictionary<string, AssetsInfo> lostAssets = new Dictionary<string, AssetsInfo>();
+            try
+            {
+                if (assets.Infos == null)
+                {
+                    return lostAssets;
+                }
+                foreach (AssetsInfo item in assets.Infos)
+                {
+                    string path = core.GetAssetsPath(item);
+                    if (lostAssets.ContainsKey(path))
+                    {
+                        continue;
+                    }
+                    else if (!File.Exists(path))
+                    {
+                        lostAssets.Add(path, item);
+                    }
+                }
+
+                return lostAssets;
+            }
+            catch
+            {
+                return lostAssets;
+            }
+        }
 
         /// <summary>
         /// 返回全部丢失的文件路径
@@ -104,6 +139,28 @@ namespace NsisoLauncher.Core.Util
             foreach (var item in lostNatives)
             {
                 tasks.Add(GetDownloadUrl.GetNativeDownloadTask(source, item.Value, core));
+            }
+            return tasks;
+        }
+
+        /// <summary>
+        /// 获取丢失的资源文件下载任务
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="core"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public static List<DownloadTask> GetLostAssetsDownloadTask(DownloadSource source, LaunchHandler core, Assets assets)
+        {
+            var lostAssets = GetLostAssets(core, assets);
+            List<DownloadTask> tasks = new List<DownloadTask>();
+            foreach (var item in lostAssets)
+            {
+                DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(source, item.Value, core);
+                if (!tasks.Contains(task))
+                {
+                    tasks.Add(task);
+                }
             }
             return tasks;
         }

@@ -12,16 +12,17 @@ namespace NsisoLauncher.Core.Util
 {
     public class VersionReader
     {
-        DirectoryInfo dirInfo;
-        public VersionReader(DirectoryInfo directory)
+        private DirectoryInfo dirInfo;
+        private object locker = new object();
+        public VersionReader(LaunchHandler launchHandler)
         {
-            dirInfo = directory;
+            dirInfo = new DirectoryInfo(launchHandler.GameRootPath + @"\versions");
 
         }
 
-        public async Task<List<Modules.Version>> GetVersionsAsync()
+        public List<Modules.Version> GetVersions()
         {
-            return await Task.Factory.StartNew(() =>
+            lock (locker)
             {
                 if (!dirInfo.Exists)
                 {
@@ -161,6 +162,14 @@ namespace NsisoLauncher.Core.Util
                     }
                 }
                 return versions;
+            }
+        }
+
+        public async Task<List<Modules.Version>> GetVersionsAsync()
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                return GetVersions();
             });
         }
 

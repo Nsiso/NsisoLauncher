@@ -28,6 +28,11 @@ namespace NsisoLauncher.Core.Net.Tools
             return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Package.Replace(".", "\\"), native.Name, native.Version, native.NativeSuffix);
         }
 
+        private static string GetAssetsPath(AssetsInfo assetsInfo)
+        {
+            return String.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
+        }
+
         /// <summary>
         /// 获取Lib下载地址
         /// </summary>
@@ -99,6 +104,42 @@ namespace NsisoLauncher.Core.Net.Tools
             string from = GetNativeDownloadURL(source, native);
             string to = core.GetNativePath(native);
             return new DownloadTask("版本系统依赖库文件" + native.Name, from, to);
+        }
+
+        /// <summary>
+        /// 获取assets下载地址
+        /// </summary>
+        /// <param name="source">下载源</param>
+        /// <param name="assets">assets实例</param>
+        /// <returns>下载URL</returns>
+        public static string GetAssetsDownloadURL(DownloadSource source, AssetsInfo assets)
+        {
+            switch (source)
+            {
+                case DownloadSource.Mojang:
+                    return (MojangAssetsBaseUrl + GetAssetsPath(assets)).Replace('\\', '/');
+
+                case DownloadSource.BMCLAPI:
+                    return (BMCLUrl + "objects\\" + GetAssetsPath(assets)).Replace('\\', '/');
+
+                default:
+                    throw new ArgumentNullException("source");
+
+            }
+        }
+
+        /// <summary>
+        /// 获取assets下载任务
+        /// </summary>
+        /// <param name="source">下载源</param>
+        /// <param name="assets">assets实例</param>
+        /// <param name="core">所使用的核心</param>
+        /// <returns>下载任务</returns>
+        public static DownloadTask GetAssetsDownloadTask(DownloadSource source, AssetsInfo assets, LaunchHandler core)
+        {
+            string from = GetAssetsDownloadURL(source, assets);
+            string to = core.GetAssetsPath(assets);
+            return new DownloadTask("游戏资源文件" + assets.Hash, from, to);
         }
     }
 }
