@@ -13,156 +13,187 @@ namespace NsisoLauncher.Core.Util
     public class VersionReader
     {
         private DirectoryInfo dirInfo;
+        private LaunchHandler handler;
         private object locker = new object();
         public VersionReader(LaunchHandler launchHandler)
         {
             dirInfo = new DirectoryInfo(launchHandler.GameRootPath + @"\versions");
-
+            handler = launchHandler;
         }
 
-        public List<Modules.Version> GetVersions()
+        public Modules.Version GetVersion(string ID)
         {
             lock (locker)
             {
-                if (!dirInfo.Exists)
+                string jsonPath = handler.GetJsonPath(ID);
+                if (!File.Exists(jsonPath))
                 {
-                    return new List<Modules.Version>();
+                    return null;
                 }
-                var dirs = dirInfo.EnumerateDirectories();
-                List<Modules.Version> versions = new List<Modules.Version>();
-                foreach (var item in dirs)
+                string jsonStr = File.ReadAllText(jsonPath, Encoding.UTF8);
+                var obj = JObject.Parse(jsonStr);
+                Modules.Version ver = new Modules.Version();
+                ver = obj.ToObject<Modules.Version>();
+                if (obj.ContainsKey("arguments"))
                 {
-                    var jsonFiles = item.GetFiles(item.Name + ".json");
-                    if (jsonFiles.Length != 0)
+                    #region 处理新版本引导
+
+                    JToken gameArg = obj["arguments"]["game"];
+                    StringBuilder gameArgBuilder = new StringBuilder();
+                    foreach (var arg in gameArg)
                     {
-                        string jsonPath = jsonFiles.First().FullName;
-                        string jsonStr = File.ReadAllText(jsonPath, Encoding.UTF8);
-                        var obj = JsonConvert.DeserializeObject<JObject>(jsonStr);
-                        Modules.Version ver = new Modules.Version();
-                        ver = obj.ToObject<Modules.Version>();
-                        if (obj.ContainsKey("arguments"))
+                        if (arg.Type == JTokenType.String)
                         {
-                            #region 处理新版本引导
+                            gameArgBuilder.AppendFormat("{0} ", arg.ToString());
+                        }
+                    }
+                    ver.MinecraftArguments = gameArgBuilder.ToString();
 
-                            JToken gameArg = obj["arguments"]["game"];
-                            StringBuilder gameArgBuilder = new StringBuilder();
-                            foreach (var arg in gameArg)
+                    JToken jvmArg = obj["arguments"]["jvm"];
+                    StringBuilder jvmArgBuilder = new StringBuilder();
+                    foreach (var arg in jvmArg)
+                    {
+                        if (arg.Type == JTokenType.String)
+                        {
+                            jvmArgBuilder.AppendFormat("{0} ", arg.ToString());
+                        }
+                        else if (arg.Type == JTokenType.Object)
+                        {
+                            JToken rules = arg["rules"];
+                            foreach (var rule in rules)
                             {
-                                if (arg.Type == JTokenType.String)
+                                if (rule["action"].ToString() == "allow")
                                 {
-                                    gameArgBuilder.AppendFormat("{0} ", arg.ToString());
-                                }
-                            }
-                            ver.MinecraftArguments = gameArgBuilder.ToString();
-
-                            JToken jvmArg = obj["arguments"]["jvm"];
-                            StringBuilder jvmArgBuilder = new StringBuilder();
-                            foreach (var arg in jvmArg)
-                            {
-                                if (arg.Type == JTokenType.String)
-                                {
-                                    jvmArgBuilder.AppendFormat("{0} ", arg.ToString());
-                                }
-                                else if (arg.Type == JTokenType.Object)
-                                {
-                                    JToken rules = arg["rules"];
-                                    foreach (var rule in rules)
+                                    if (rule["os"]["name"].ToString() == "windows")
                                     {
-                                        if (rule["action"].ToString() == "allow")
+                                        if (rule["os"]["version"] != null)
                                         {
-                                            if (rule["os"]["name"].ToString() == "windows")
+                                            if (Regex.Match(Environment.OSVersion.Version.ToString(), rule["os"]["version"].ToString()).Success)
                                             {
-                                                if (rule["os"]["version"] != null)
+                                                if (arg["value"].Type == JTokenType.String)
                                                 {
-                                                    if (Regex.Match(Environment.OSVersion.Version.ToString(), rule["os"]["version"].ToString()).Success)
+                                                    jvmArgBuilder.AppendFormat("{0} ", arg["value"].ToString());
+                                                }
+                                                else if (arg["value"].Type == JTokenType.Array)
+                                                {
+                                                    foreach (var str in arg["value"])
                                                     {
-                                                        if (arg["value"].Type == JTokenType.String)
-                                                        {
-                                                            jvmArgBuilder.AppendFormat("{0} ", arg["value"].ToString());
-                                                        }
-                                                        else if (arg["value"].Type == JTokenType.Array)
-                                                        {
-                                                            foreach (var str in arg["value"])
-                                                            {
-                                                                jvmArgBuilder.AppendFormat("\"{0}\" ", str);
-                                                            }
-                                                        }
-
+                                                        jvmArgBuilder.AppendFormat("\"{0}\" ", str);
                                                     }
                                                 }
-                                                else
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (arg["value"].Type == JTokenType.String)
+                                            {
+                                                jvmArgBuilder.AppendFormat("{0} ", arg["value"].ToString());
+                                            }
+                                            else if (arg["value"].Type == JTokenType.Array)
+                                            {
+                                                foreach (var str in arg["value"])
                                                 {
-                                                    if (arg["value"].Type == JTokenType.String)
-                                                    {
-                                                        jvmArgBuilder.AppendFormat("{0} ", arg["value"].ToString());
-                                                    }
-                                                    else if (arg["value"].Type == JTokenType.Array)
-                                                    {
-                                                        foreach (var str in arg["value"])
-                                                        {
-                                                            jvmArgBuilder.AppendFormat("{0} ", str);
-                                                        }
-                                                    }
+                                                    jvmArgBuilder.AppendFormat("{0} ", str);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                            ver.JvmArguments = jvmArgBuilder.ToString();
-                            #endregion
                         }
-                        else
-                        {
-                            ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
-                        }
+                    }
+                    ver.JvmArguments = jvmArgBuilder.ToString();
+                    #endregion
+                }
+                else
+                {
+                    ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
+                }
 
-                        #region 处理库文件
-                        ver.Libraries = new List<Modules.Library>();
-                        ver.Natives = new List<Modules.Native>();
-                        var libToken = obj["libraries"];
-                        foreach (JToken lib in libToken)
+                #region 处理库文件
+                ver.Libraries = new List<Modules.Library>();
+                ver.Natives = new List<Modules.Native>();
+                var libToken = obj["libraries"];
+                foreach (JToken lib in libToken)
+                {
+                    var libObj = lib.ToObject<Library>();
+                    var parts = libObj.Name.Split(':');
+                    if (libObj.Natives == null)
+                    {
+                        if (CheckAllowed(libObj.Rules))
                         {
-                            var libObj = lib.ToObject<Library>();
-                            var parts = libObj.Name.Split(':');
-                            if (libObj.Natives == null)
+                            ver.Libraries.Add(new Modules.Library()
                             {
-                                if (CheckAllowed(libObj.Rules))
-                                {
-                                    ver.Libraries.Add(new Modules.Library()
-                                    {
-                                        Package = parts[0],
-                                        Name = parts[1],
-                                        Version = parts[2]
-                                    });
-                                }
-                            }
-                            else
+                                Package = parts[0],
+                                Name = parts[1],
+                                Version = parts[2]
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (CheckAllowed(libObj.Rules))
+                        {
+                            var native = new Modules.Native
                             {
-                                if (CheckAllowed(libObj.Rules))
-                                {
-                                    var native = new Modules.Native
-                                    {
-                                        Package = parts[0],
-                                        Name = parts[1],
-                                        Version = parts[2],
-                                        NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
-                                    };
-                                    ver.Natives.Add(native);
-                                    if (libObj.Extract != null)
-                                    {
-                                        native.Exclude = libObj.Extract.Exculde;
-                                    }
-                                }
+                                Package = parts[0],
+                                Name = parts[1],
+                                Version = parts[2],
+                                NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
+                            };
+                            ver.Natives.Add(native);
+                            if (libObj.Extract != null)
+                            {
+                                native.Exclude = libObj.Extract.Exculde;
                             }
                         }
-                        #endregion
-
-                        versions.Add(ver);
                     }
                 }
-                return versions;
+                #endregion
+
+                #region 处理版本继承
+                if (ver.InheritsVersion != null)
+                {
+                    var iv = GetVersion(ver.InheritsVersion);
+                    if (iv != null)
+                    {
+                        ver.AssetIndex = iv.AssetIndex;
+                        ver.Natives.AddRange(iv.Natives);
+                        ver.Libraries.AddRange(iv.Libraries);
+                    }
+                }
+                #endregion
+
+                return ver;
             }
+        }
+
+        public async Task<Modules.Version> GetVersionAsync(string ID)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                return GetVersion(ID);
+            });
+        }
+
+        public List<Modules.Version> GetVersions()
+        {
+            if (!dirInfo.Exists)
+            {
+                return new List<Modules.Version>();
+            }
+            var dirs = dirInfo.EnumerateDirectories();
+            List<Modules.Version> versions = new List<Modules.Version>();
+            foreach (var item in dirs)
+            {
+                var ver = GetVersion(item.Name);
+                if (ver != null)
+                {
+                    versions.Add(ver);
+                }
+            }
+            return versions;
         }
 
         public async Task<List<Modules.Version>> GetVersionsAsync()

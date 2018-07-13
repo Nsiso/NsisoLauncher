@@ -26,7 +26,12 @@ namespace NsisoLauncher.Core.Util
                 lock (locker)
                 {
                     string assetsID = version.Assets;
-                    var ja = JsonConvert.DeserializeObject<JAssets>(File.ReadAllText(handler.GetAssetsIndexPath(assetsID)));
+                    string assetsPath = handler.GetAssetsIndexPath(assetsID);
+                    if (!File.Exists(assetsPath))
+                    {
+                        return new Assets() { ID = version.Assets, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
+                    }
+                    var ja = JsonConvert.DeserializeObject<JAssets>(File.ReadAllText(assetsPath));
                     if (ja == null)
                     {
                         return new Assets() { ID = assetsID, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
@@ -43,7 +48,7 @@ namespace NsisoLauncher.Core.Util
             }
             catch (Exception)
             {
-                return new Assets() { ID = version.Assets, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
+                return new Assets() { ID = version.Assets, IndexURL = null, TotalSize = -1, Infos = null };
             }
         }
     }

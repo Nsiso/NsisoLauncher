@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Util;
+using Newtonsoft.Json;
 
 namespace NsisoLauncher.Windows
 {
@@ -24,7 +25,8 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class ErrorWindow : MetroWindow
     {
-        private const string errorApiAdress = "http://www.nsiso.com/api/Public/nsisoapi/";
+        private const string errorApiAdress = "http://hn2.api.okayapi.com";
+        private bool isMoreInfo = true;
 
         BackgroundWorker updateThread = new BackgroundWorker();
 
@@ -48,7 +50,6 @@ namespace NsisoLauncher.Windows
             Random random = new Random();
             FunnyBlock.Text = funny[random.Next(funny.Count())];
             this.textBox.Text = ex.ToString();
-            AppendInfo();
         }
 
         private void UpdateThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -60,22 +61,40 @@ namespace NsisoLauncher.Windows
         {
             try
             {
-                string err = Uri.EscapeDataString((string)e.Argument);
-                string pa = "service=Default.Report&text=" + err;
+                string msg = (string)e.Argument;
+                if (isMoreInfo)
+                {
+                    msg += ("/r/n" + GetEnvironmentInfo());
+                }
+                var dataMsg = new { report_type = "ERROR", report_msg = msg };
+                var dataJson = Uri.EscapeDataString(JsonConvert.SerializeObject(dataMsg));
+                string pam = string.Format("s=App.Table.Create&model_name={0}&data={1}&app_key={2}",
+                    "NsisoLauncherReport",
+                    dataJson,
+                    "7B27B7B6A3C10158C28E3DE0B13785CD");
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(errorApiAdress);
                 req.Method = "POST";
                 req.ContentType = "application/x-www-form-urlencoded";
 
-                byte[] data = Encoding.UTF8.GetBytes(pa);
+                byte[] data = Encoding.UTF8.GetBytes(pam);
                 req.ContentLength = data.Length;
                 using (Stream reqStream = req.GetRequestStream())
                 {
                     reqStream.Write(data, 0, data.Length);
                     reqStream.Close();
                 }
+
+                HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                Stream stream = resp.GetResponseStream();
+                //获取响应内容  
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    var result = reader.ReadToEnd();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                App.logHandler.AppendError(ex);
             }
         }
 
@@ -114,17 +133,19 @@ namespace NsisoLauncher.Windows
             this.ShowMessageAsync("复制成功", "你现在可以点击窗口左下角作者联系方式，并把这该死的错误抛给他");
         }
 
-        private void AppendInfo()
+        private string GetEnvironmentInfo()
         {
-            textBox.AppendText("\r\n==========环境信息==========");
-            textBox.AppendText("\r\nCPU信息:" + SystemTools.GetProcessorInfo());
-            textBox.AppendText("\r\n内存信息: 总大小:" + SystemTools.GetTotalMemory().ToString() + "MB/可用大小:" + SystemTools.GetRunmemory().ToString() + "MB");
-            textBox.AppendText("\r\n显卡信息:" + SystemTools.GetVideoCardInfo());
-            textBox.AppendText("\r\n操作系统:" + Environment.OSVersion.Platform);
-            textBox.AppendText("\r\n版本号:" + Environment.OSVersion.VersionString);
-            textBox.AppendText("\r\n系统位数:" + SystemTools.GetSystemArch());
-            textBox.AppendText("\r\n程序运行命令行:" + Environment.CommandLine);
-            textBox.AppendText("\r\n程序工作目录:" + Environment.CurrentDirectory);
+            StringBuilder builder = new StringBuilder();
+            builder.Append("\r\n==========环境信息==========");
+            builder.Append("\r\nCPU信息:" + SystemTools.GetProcessorInfo());
+            builder.Append("\r\n内存信息: 总大小:" + SystemTools.GetTotalMemory().ToString() + "MB/可用大小:" + SystemTools.GetRunmemory().ToString() + "MB");
+            builder.Append("\r\n显卡信息:" + SystemTools.GetVideoCardInfo());
+            builder.Append("\r\n操作系统:" + Environment.OSVersion.Platform);
+            builder.Append("\r\n版本号:" + Environment.OSVersion.VersionString);
+            builder.Append("\r\n系统位数:" + SystemTools.GetSystemArch());
+            builder.Append("\r\n程序运行命令行:" + Environment.CommandLine);
+            builder.Append("\r\n程序工作目录:" + Environment.CurrentDirectory);
+            return builder.ToString();
         }
     }
 }

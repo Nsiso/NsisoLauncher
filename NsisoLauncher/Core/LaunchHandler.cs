@@ -188,29 +188,41 @@ namespace NsisoLauncher.Core
 
         public string GetLibraryPath(Modules.Library lib)
         {
-            return String.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.jar",
+            return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.jar",
                 this.GameRootPath, lib.Package.Replace(".", @"\"), lib.Name, lib.Version);
         }
 
         public string GetNativePath(Native native)
         {
-            return String.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
+            return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
                 this.GameRootPath, native.Package.Replace(".", @"\"), native.Name, native.Version, native.NativeSuffix);
+        }
+
+        public string GetJsonPath(string ID)
+        {
+            return string.Format(@"{0}\versions\{1}\{1}.json", this.GameRootPath, ID);
         }
 
         public string GetJarPath(Modules.Version ver)
         {
-            return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, ver.ID);
+            if (ver.Jar!=null)
+            {
+                return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, ver.Jar);
+            }
+            else
+            {
+                return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, ver.ID);
+            }
         }
 
         public string GetAssetsIndexPath(string assetsID)
         {
-            return String.Format(@"{0}\assets\indexes\{1}.json", this.GameRootPath, assetsID);
+            return string.Format(@"{0}\assets\indexes\{1}.json", this.GameRootPath, assetsID);
         }
 
         public string GetAssetsPath(AssetsInfo assetsInfo)
         {
-            return String.Format(@"{0}\assets\objects\{1}\{2}", this.GameRootPath, assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
+            return string.Format(@"{0}\assets\objects\{1}\{2}", this.GameRootPath, assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
 
         public string GetVersionOptions(Modules.Version version)
@@ -220,7 +232,7 @@ namespace NsisoLauncher.Core
 
         public string GetVersionOptions(string versionId)
         {
-            return String.Format(@"{0}\versions\{1}\options.txt", this.GameRootPath, versionId);
+            return string.Format(@"{0}\versions\{1}\options.txt", this.GameRootPath, versionId);
         }
     }
 }

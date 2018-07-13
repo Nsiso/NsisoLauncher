@@ -196,7 +196,7 @@
             <TabItem Header="版本设置">
                 <Grid>
                     <Label x:Name="label6" Content="选择要进行设置的版本:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
-                    <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="Id" SelectionChanged="VersionsComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="ID" SelectionChanged="VersionsComboBox_SelectionChanged"/>
                     <GroupBox x:Name="groupBox7" Header="版本Options设置" Margin="10,31,185,0">
                         <Grid>
                             <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20">

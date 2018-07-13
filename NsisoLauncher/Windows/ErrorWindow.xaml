@@ -21,9 +21,12 @@
                    Height="39"
                    FontSize="16"/>
         <TextBox x:Name="textBox" Margin="10,115,10,50" TextWrapping="Wrap" IsReadOnly="True"/>
-        <Button x:Name="RebootButton" Content="报告并重启启动器" Margin="0,0,10,10" FontSize="12" Click="RebootButton_Click" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="140"/>
-        <Button x:Name="CloseButton" Content="忽视这个错误" Margin="0,0,155,10" FontSize="12" Click="CloseButton_Click" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100"/>
-        <Button x:Name="CopyButton" Content="复制错误信息" Margin="0,0,260,10" FontSize="12" Click="CopyButton_Click" HorizontalAlignment="Right" Width="100" Height="35" VerticalAlignment="Bottom"/>
+        <Button x:Name="RebootButton" Style="{StaticResource AccentedSquareButtonStyle}"
+                Content="报告并重启启动器" Margin="0,0,10,10" FontSize="12" Click="RebootButton_Click" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="140"/>
+        <Button x:Name="CloseButton" Content="忽视这个错误" Style="{DynamicResource SquareButtonStyle}"
+                Margin="0,0,155,10" FontSize="12" Click="CloseButton_Click" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100"/>
+        <Button x:Name="CopyButton" Content="复制错误信息"
+                Style="{DynamicResource SquareButtonStyle}" Margin="0,0,260,10" FontSize="12" Click="CopyButton_Click" HorizontalAlignment="Right" Width="100" Height="35" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="59,0,0,10" TextWrapping="Wrap" Height="15" VerticalAlignment="Bottom">
             <Hyperlink Click="Hyperlink_Click">作者邮箱</Hyperlink>
         </TextBlock>
@@ -37,5 +40,6 @@
             <controls:ProgressRing Width="60" Height="60"/>
             <Label x:Name="label1" Content="处理中" Margin="326,242,326,147" HorizontalContentAlignment="Center"/>
         </Grid>
+        <CheckBox x:Name="moreInfoCheckBox" Content="上传报告时附加环境信息" IsChecked="{Binding isMoreInfo}" HorizontalAlignment="Left" Margin="10,369,0,0" VerticalAlignment="Top"/>
     </Grid>
 </controls:MetroWindow>

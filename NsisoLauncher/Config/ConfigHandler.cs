@@ -106,7 +106,8 @@ namespace NsisoLauncher.Config
                     DownloadLostDepend = true,
                     GCEnabled = true,
                     GCType = Core.Modules.GCType.G1GC,
-                    AutoJava = true
+                    AutoJava = true,
+                    WindowSize = new Core.Modules.WindowSize() { FullScreen = false }
                 },
                 Download = new Download()
                 {

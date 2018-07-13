@@ -66,6 +66,12 @@ namespace NsisoLauncher.Core.Modules
         public string MainClass { get; set; }
 
         /// <summary>
+        /// 指定JAR包
+        /// </summary>
+        [JsonProperty("jar")]
+        public string Jar { get; set; }
+
+        /// <summary>
         /// JVM启动参数
         /// </summary>
         [JsonIgnore]

@@ -18,6 +18,9 @@ using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net.MojangApi.Endpoints;
 using NsisoLauncher.Core.Net.MojangApi.Responses;
+using System.Runtime.InteropServices;
+using System.Drawing;
+using System.IO;
 
 namespace NsisoLauncher
 {
@@ -47,8 +50,111 @@ namespace NsisoLauncher
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+            if (App.config.MainConfig.Server.ShowServerInfo)
+            {
+                Server server = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
+                ShowServerInfo(server);
+            }
+            else
+            {
+                serverInfoGrid.Visibility = Visibility.Hidden;
+            }
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
+
+        #region 显示服务器信息
+        [DllImport("gdi32.dll", SetLastError = true)]
+        private static extern bool DeleteObject(IntPtr hObject);
+
+        /// <summary>  
+        /// 从bitmap转换成ImageSource  
+        /// </summary>  
+        /// <param name="icon"></param>  
+        /// <returns></returns>  
+        public static ImageSource ChangeBitmapToImageSource(Bitmap bitmap)
+        {
+            //Bitmap bitmap = icon.ToBitmap();  
+            IntPtr hBitmap = bitmap.GetHbitmap();
+
+            ImageSource wpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                hBitmap,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+            if (!DeleteObject(hBitmap))
+            {
+                throw new System.ComponentModel.Win32Exception();
+            }
+            return wpfBitmap;
+
+        }
+
+        private async void ShowServerInfo(Server info) 
+        {
+            Core.Net.Server.ServerInfo serverInfo = new Core.Net.Server.ServerInfo(info) { ServerName = App.config.MainConfig.Server.ServerName };
+            serverInfoGrid.Visibility = Visibility.Visible;
+            serverLoadingBar.Visibility = Visibility.Visible;
+            serverLoadingBar.IsIndeterminate = true;
+            await serverInfo.StartGetServerInfoAsync();
+            serverLoadingBar.IsIndeterminate = false;
+            serverLoadingBar.Visibility = Visibility.Hidden;
+            this.serverNameTextBlock.Text = serverInfo.ServerName;
+            switch (serverInfo.State)
+            {
+                case Core.Net.Server.ServerInfo.StateType.GOOD:
+                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CheckCircleSolid;
+                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Green;
+                    this.serverPeopleTextBlock.Text = string.Format("人数:[{0}/{1}]", serverInfo.CurrentPlayerCount, serverInfo.MaxPlayerCount);
+                    this.serverVersionTextBlock.Text = serverInfo.GameVersion;
+                    this.serverVersionTextBlock.ToolTip = serverInfo.GameVersion;
+                    this.serverPingTextBlock.Text = string.Format("延迟:{0}ms", serverInfo.Ping);
+                    this.serverMotdTextBlock.Text = serverInfo.MOTD;
+                    this.serverMotdTextBlock.ToolTip = serverInfo.MOTD;
+                    if (serverInfo.OnlinePlayersName != null)
+                    {
+                        this.serverPeopleTextBlock.ToolTip = string.Join("\n", serverInfo.OnlinePlayersName);
+                    }
+                    if (serverInfo.IconData != null)
+                    {
+                        using (MemoryStream ms = new MemoryStream(serverInfo.IconData))
+                        {
+                            this.serverIcon.Fill = new ImageBrush(ChangeBitmapToImageSource(new Bitmap(ms)));
+                        }
+
+                    }
+                    break;
+
+                case Core.Net.Server.ServerInfo.StateType.NO_RESPONSE:
+                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
+                    this.serverPeopleTextBlock.Text = "获取失败";
+                    this.serverVersionTextBlock.Text = "获取失败";
+                    this.serverPingTextBlock.Text = "获取失败";
+                    this.serverMotdTextBlock.Text = "服务器没有响应，可能网络或服务器发生异常";
+                    break;
+
+                case Core.Net.Server.ServerInfo.StateType.BAD_CONNECT:
+                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
+                    this.serverPeopleTextBlock.Text = "获取失败";
+                    this.serverVersionTextBlock.Text = "获取失败";
+                    this.serverPingTextBlock.Text = "获取失败";
+                    this.serverMotdTextBlock.Text = "服务器连接失败，服务器可能不存在或网络异常";
+                    break;
+
+                case Core.Net.Server.ServerInfo.StateType.EXCEPTION:
+                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
+                    this.serverPeopleTextBlock.Text = "获取失败";
+                    this.serverVersionTextBlock.Text = "获取失败";
+                    this.serverPingTextBlock.Text = "获取失败";
+                    this.serverMotdTextBlock.Text = "启动器获取服务器信息时发生内部异常";
+                    break;
+                default:
+                    break;
+            }
+        }
+        #endregion
 
         private async void launchButton_Click(object sender, RoutedEventArgs e)
         {
@@ -202,6 +308,27 @@ namespace NsisoLauncher
                 launchSetting.AuthenticateUUID = loginResult.Item2;
             }
 
+            #endregion
+
+            #region 根据配置文件设置
+            launchSetting.AdvencedGameArguments = App.config.MainConfig.Environment.AdvencedGameArguments;
+            launchSetting.AdvencedJvmArguments = App.config.MainConfig.Environment.AdvencedJvmArguments;
+            launchSetting.GCArgument = App.config.MainConfig.Environment.GCArgument;
+            launchSetting.GCEnabled = App.config.MainConfig.Environment.GCEnabled;
+            launchSetting.GCType = App.config.MainConfig.Environment.GCType;
+            launchSetting.JavaAgent = App.config.MainConfig.Environment.JavaAgent;
+            if (App.config.MainConfig.Server.LaunchToServer)
+            {
+                launchSetting.LaunchToServer = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
+            }
+            if (App.config.MainConfig.Environment.AutoMemory)
+            {
+                var m = Core.Util.SystemTools.GetBestMemory(App.handler.Java);
+                App.config.MainConfig.Environment.MaxMemory = m;
+                launchSetting.MaxMemory = m;
+            }
+            launchSetting.VersionType = App.config.MainConfig.Customize.VersionInfo;
+            launchSetting.WindowSize = App.config.MainConfig.Environment.WindowSize;
             #endregion
 
             #region 配置文件处理

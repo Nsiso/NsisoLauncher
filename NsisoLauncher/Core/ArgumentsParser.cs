@@ -88,7 +88,42 @@ namespace NsisoLauncher.Core
                 {"${user_type}",legacy },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher":setting.VersionType }
             };
-            string gameArg = ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic);
+            StringBuilder otherGamearg = new StringBuilder();
+            if (setting.WindowSize != null)
+            {
+                if (setting.WindowSize.FullScreen)
+                {
+                    otherGamearg.Append(" --fullscreen");
+                }
+                else
+                {
+                    if (setting.WindowSize.Width > 0)
+                    {
+                        otherGamearg.AppendFormat(" --width {0}", setting.WindowSize.Width);
+                    }
+                    if (setting.WindowSize.Height > 0)
+                    {
+                        otherGamearg.AppendFormat(" --height {0}", setting.WindowSize.Height);
+                    }
+                }
+            }
+            if (setting.LaunchToServer != null)
+            {
+                if (!string.IsNullOrWhiteSpace(setting.LaunchToServer.Address))
+                {
+                    otherGamearg.AppendFormat(" --server {0}", setting.LaunchToServer.Address);
+                }
+                if (setting.LaunchToServer.Port > 0)
+                {
+                    otherGamearg.AppendFormat(" --port {0}", setting.LaunchToServer.Port);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(setting.AdvencedGameArguments))
+            {
+                otherGamearg.Append(' ' + setting.AdvencedGameArguments);
+            }
+            string gameArg = ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic) + otherGamearg.ToString();
+
             #endregion
 
             #region 处理游戏JVM参数
@@ -99,7 +134,8 @@ namespace NsisoLauncher.Core
                 {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
                 {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
             };
-            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic);
+
+            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic) + " -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true";
             #endregion
 
             stopwatch.Stop();
