@@ -170,7 +170,7 @@ namespace NsisoLauncher
             }
             if (App.handler.Java == null)
             {
-                await this.ShowMessageAsync("该电脑上未安装Java", "Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动");
+                await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
                 return;
             }
             #endregion
@@ -394,7 +394,7 @@ namespace NsisoLauncher
         {
             if (App.handler.Java == null)
             {
-                await this.ShowMessageAsync("该电脑上未安装Java", "Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动");
+                await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
             }
         }
     }

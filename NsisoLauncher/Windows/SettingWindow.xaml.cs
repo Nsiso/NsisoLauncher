@@ -42,6 +42,7 @@ namespace NsisoLauncher.Windows
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
             serverGroupBox.DataContext = config.Server;
             userGrid.DataContext = config.User;
+            versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)

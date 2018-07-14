@@ -8,6 +8,7 @@
     <sys:String x:Key="String.Base.LauncherName">Nsiso启动器</sys:String>
     <sys:String x:Key="String.Base.Launch">启动游戏</sys:String>
     <sys:String x:Key="String.Base.Cancel">取消</sys:String>
+    <sys:String x:Key="String.Base.Apply">应用</sys:String>
     <sys:String x:Key="String.Base.Login">登陆</sys:String>
     <sys:String x:Key="String.Base.Yes">确认</sys:String>
     <sys:String x:Key="String.Base.Username">用户名</sys:String>
@@ -18,6 +19,8 @@
     <sys:String x:Key="String.Message.EmptyUsername2">请在用户名栏填写您的用户名</sys:String>
     <sys:String x:Key="String.Message.EmptyLaunchVersion">您未选择启动版本</sys:String>
     <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在启动版本栏选择您要启动的版本</sys:String>
+    <sys:String x:Key="String.Message.NoJava">该电脑上未安装Java</sys:String>
+    <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动</sys:String>
 
     <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">选择启动版本</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">输入游戏名称或账号</sys:String>
@@ -36,6 +39,10 @@
     <sys:String x:Key="String.Mainwindow.LaunchError">启动错误</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow">游戏进程在未显示出窗口前退出</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow2">可能游戏启动时发生错误</sys:String>
+    <sys:String x:Key="String.Mainwindow.ServerName">服务器名称</sys:String>
+    <sys:String x:Key="String.Mainwindow.ServerGettingNum">获取服务器人数中...</sys:String>
+    <sys:String x:Key="String.Mainwindow.ServerGettingVer">获取服务器版本中...</sys:String>
+    <sys:String x:Key="String.Mainwindow.ServerGettingPing">获取服务器延迟中..</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskProgress">下载进度</sys:String>
@@ -48,4 +55,45 @@
     <sys:String x:Key="String.Downloadwindow.DownloadCompleteWithError2">一共有{0}个任务下载失败,其中一个原因:{1}</sys:String>
     <sys:String x:Key="String.Downloadwindow.MakesureCancel">您确定要取消下载?</sys:String>
     <sys:String x:Key="String.Downloadwindow.MakesureCancel2">现在后悔还来得及</sys:String>
+
+    <sys:String x:Key="String.Settingwindow.Title">设置窗口</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env">全局设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Java">Java设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Java.AutoOn">已开启自动选择JAVA</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Java.AutoOff">已关闭自动选择JAVA</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Java.Path">JAVA路径:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Java.Select">选择自定义JAVA路径</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root">游戏根目录设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.VersionIsolation">版本隔离</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.TypeTitle">游戏根目录位置:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.Root">启动器根目录</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.AppData">用户AppData文件夹</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.Programe">系统程序文件夹下</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.Custom">自定义</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Root.Choose">选择</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Memory">内存设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Memory.AutoOn">已启用自动设置内存</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Memory.AutoOff">已禁用自动设置内存</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Memory.Min">最小内存(MB):</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Memory.Max">最大内存(MB):</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Window">游戏窗口设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Window.WH">长 x 宽</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Window.Full">全屏</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro">高级参数设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.Agent">JavaAgent参数:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC">GC类型</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.G1">G1GC (Garbage First Garbage Collector)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Serial">SerialGC (串行垃圾回收器)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Paralle">ParallelGC (并行垃圾回收器)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.CMS">CMSGC (并发标记扫描垃圾回收器)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Arg">GC(垃圾回收器)参数:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.JVMArg">附加JVM启动参数:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GameArg">附加游戏启动参数:</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.ArgNote">*请勿随意增添参数，可能会造成无法启动。附加参数已自动包含-Dfml参数</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.AutoFill">自动补全设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.AutoFill.Lib">自动补全丢失的依赖库</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.AutoFill.Assets">自动补全丢失的资源库</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Debug">开发者选项</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Debug.Mode">DEBUG模式</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Note">*请注意：本页面(全局设置)中大部分设置需要重启启动器后才能生效</sys:String>
 </ResourceDictionary>

@@ -8,7 +8,7 @@
         xmlns:util="clr-namespace:NsisoLauncher.Utils"
         xmlns:local="clr-namespace:NsisoLauncher.Windows"
         mc:Ignorable="d"
-        Title="下载窗口" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="{DynamicResource String.Settingwindow.Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.Resources>
         <util:BoolToOppositeBoolConverter x:Key="BoolToOppositeBoolConverter"/>
         <util:SettingDirRadioButtonConverter x:Key="SettingDirRadioButtonConverter" />
@@ -22,19 +22,19 @@
             <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
         </Grid.Resources>
         <TabControl x:Name="tabControl" Margin="0,0,0,50">
-            <TabItem Header="全局设置">
+            <TabItem Header="{DynamicResource String.Settingwindow.Env}">
                 <ScrollViewer>
                     <StackPanel x:Name="environmentGrid" Margin="10,0">
-                        <Expander Header="Java设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Java}" Margin="0,0,0,5">
                             <StackPanel>
                                 <Controls:ToggleSwitch
                                 x:Name="isAutoJavaToggle"
-                                OnLabel="已开启自动选择JAVA"
-                                OffLabel="已关闭自动选择JAVA"
+                                OnLabel="{DynamicResource String.Settingwindow.Env.Java.AutoOn}"
+                                OffLabel="{DynamicResource String.Settingwindow.Env.Java.AutoOff}"
                                 Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
                                 IsChecked="{Binding Path=AutoJava}"
                                 />
-                                <Label Content="JAVA路径:" Margin="0,10,0,0"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Java.Path}" Margin="0,10,0,0"/>
                                 <ComboBox x:Name="javaPathComboBox"
                                       IsEditable="True"
                                       IsReadOnly="True"
@@ -43,36 +43,39 @@
                                       Text="{Binding JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
                                       />
                                 <Label x:Name="javaInfoLabel" IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"/>
-                                <Button x:Name="chooseJavaButton" Content="选择自定义JAVA路径" Margin="0,5,0,0"
+                                <Button x:Name="chooseJavaButton" Content="{DynamicResource String.Settingwindow.Env.Java.Select}" Margin="0,5,0,0"
                                     IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}" Click="chooseJavaButton_Click"
                                     />
                             </StackPanel>
                         </Expander>
-                        <Expander Header="游戏根目录设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Root}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="版本隔离" IsChecked="{Binding VersionIsolation}"/>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.Root.VersionIsolation}" IsChecked="{Binding VersionIsolation}"/>
 
-                                <Label Content="游戏根目录位置:" Margin="0,10,0,0"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Root.TypeTitle}" Margin="0,10,0,0"/>
                                 <RadioButton Margin="0,0,0,5"
-                                             Content="启动器根目录" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=0}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Root.Root}" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=0}"/>
                                 <RadioButton Margin="0,0,0,5"
-                                             Content="用户AppData文件夹" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=1}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Root.AppData}" 
+                                             IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=1}"/>
                                 <RadioButton Margin="0,0,0,5" 
-                                             Content="系统程序文件夹下" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=2}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Root.Programe}"
+                                             IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=2}"/>
                                 <RadioButton x:Name="dir_customRadio" Margin="0,0,0,5" 
-                                             Content="自定义" IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=3}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Root.Custom}"
+                                             IsChecked="{Binding Path=GamePathType, Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=3}"/>
                                 <TextBox x:Name="gamedirPathTextBox"  Margin="0,0,0,5"
                                          IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Text="{Binding Path=GamePath}"/>
                                 <Button x:Name="gamedirChooseButton"
-                                        Content="选择" IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Click="gamedirChooseButton_Click"/>
+                                        Content="{DynamicResource String.Settingwindow.Env.Root.Choose}" IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Click="gamedirChooseButton_Click"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="内存设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Memory}" Margin="0,0,0,5">
                             <Grid >
                                 <Controls:ToggleSwitch 
                                     Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                    OnLabel="已启用自动设置内存"
-                                    OffLabel="已禁用自动设置内存"
+                                    OnLabel="{DynamicResource String.Settingwindow.Env.Memory.AutoOn}"
+                                    OffLabel="{DynamicResource String.Settingwindow.Env.Memory.AutoOff}"
                                     IsChecked="{Binding Path=AutoMemory}"
                                     VerticalAlignment="Top" />
                                 <Controls:RangeSlider x:Name="memorySlider"
@@ -83,7 +86,7 @@
                                     UpperValueChanged="memorySlider_UpperValueChanged"
                                     LowerValueChanged="memorySlider_LowerValueChanged"
                                     Margin="0,30"/>
-                                <Label Content="最小内存(MB):" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Memory.Min}" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom"/>
                                 <TextBox x:Name="minMemoryTextBox" HorizontalAlignment="Left" Height="23" Margin="88,0,0,0" TextWrapping="Wrap"
                                      Text="{Binding Path=MinMemory}"
                                      IsEnabled="{Binding Path=AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
@@ -98,10 +101,10 @@
                                      InputMethod.IsInputMethodEnabled="False"
                                      MaxLength="6"
                                      HorizontalAlignment="Right" Width="60" VerticalAlignment="Bottom"/>
-                                <Label Content="最大内存(MB):" HorizontalAlignment="Right" Margin="0,0,61,0" VerticalAlignment="Bottom"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Memory.Max}" HorizontalAlignment="Right" Margin="0,0,61,0" VerticalAlignment="Bottom"/>
                             </Grid>
                         </Expander>
-                        <Expander Header="游戏窗口设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Window}" Margin="0,0,0,5">
                             <Grid>
                                 <TextBox
                                          HorizontalAlignment="Left" Height="auto" TextWrapping="Wrap" 
@@ -112,47 +115,53 @@
                                          HorizontalAlignment="Left" Height="auto" TextWrapping="Wrap"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Text="{Binding Path=WindowSize.Height}" IsEnabled="{Binding Path=WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50" Margin="97,0,0,0"/>
-                                <CheckBox Content="全屏" HorizontalAlignment="Right" Width="50" Height="auto" IsChecked="{Binding Path=WindowSize.FullScreen}"/>
-                                <Label Content="长 x 宽" HorizontalAlignment="Left" Margin="50,0,0,0.76" d:LayoutOverrides="Height"/>
+                                         Text="{Binding Path=WindowSize.Height}"
+                                         IsEnabled="{Binding Path=WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50" Margin="97,0,0,0"/>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.Window.Full}"
+                                          HorizontalAlignment="Right" Width="50" Height="auto" IsChecked="{Binding Path=WindowSize.FullScreen}"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Window.WH}" HorizontalAlignment="Left" Margin="50,0,0,0.76" d:LayoutOverrides="Height"/>
                             </Grid>
                         </Expander>
-                        <Expander Header="高级参数设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Pro}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="JavaAgent参数:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.Agent}"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=JavaAgent}"/>
-                                <Label Content="CG类型" Margin="0,5,0,0"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.GC}" Margin="0,5,0,0"/>
                                 <RadioButton
-                                             Content="G1GC (Garbage First Garbage Collector)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=0}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Pro.GC.G1}"
+                                    IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=0}"/>
                                 <RadioButton Margin="0,5,0,0"
-                                             Content="SerialGC (串行垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=1}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Serial}"
+                                             IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=1}"/>
                                 <RadioButton Margin="0,5,0,0" 
-                                             Content="ParallelGC (并行垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=2}"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Paralle}"
+                                             IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=2}"/>
                                 <RadioButton Margin="0,5,0,0" 
-                                             Content="CMSGC (并发标记扫描垃圾回收器)" IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=3}"/>
-                                <Label Content="CG(垃圾回收器)参数:" Margin="0,5,0,0"/>
+                                             Content="{DynamicResource String.Settingwindow.Env.Pro.GC.CMS}"
+                                             IsChecked="{Binding Path=GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=3}"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Arg}" Margin="0,5,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=GCArgument}"/>
-                                <Label Content="附加JVM启动参数:" Margin="0,5,0,0"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.JVMArg}" Margin="0,5,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=AdvencedJvmArguments}"/>
-                                <Label Content="附加游戏启动参数:" Margin="0,5,0,0"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.GameArg}" Margin="0,5,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=AdvencedGameArguments}"/>
-                                <Label Content="*请勿随意增添参数，可能会造成无法启动。附加参数已自动包含-Dfml参数" FontSize="10"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Env.Pro.ArgNote}" FontSize="10"/>
 
                             </StackPanel>
                         </Expander>
-                        
-                        <Expander Header="自动补全设置" Margin="0,0,0,5">
+
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.AutoFill}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="自动补全丢失的依赖库" IsChecked="{Binding Path=DownloadLostDepend}" Margin="0,0,0,5"/>
-                                <CheckBox Content="自动补全丢失的资源库" IsChecked="{Binding Path=DownloadLostAssets}"/>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.AutoFill.Lib}" IsChecked="{Binding Path=DownloadLostDepend}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.AutoFill.Assets}" IsChecked="{Binding Path=DownloadLostAssets}"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="开发者选项" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Debug}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox x:Name="debugCheckBox" Content="DEBUG模式" IsChecked="{Binding Path=Debug}"/>
+                                <CheckBox x:Name="debugCheckBox" Content="{DynamicResource String.Settingwindow.Env.Debug.Mode}" IsChecked="{Binding Path=Debug}"/>
                             </StackPanel>
                         </Expander>
-                        <TextBlock TextWrapping="Wrap" Text="*请注意：本页面(全局设置)中大部分设置需要重启启动器后才能生效。"/>
+                        <TextBlock TextWrapping="Wrap" Text="{DynamicResource String.Settingwindow.Env.Note}"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -307,8 +316,11 @@
             </TabItem>
 
         </TabControl>
-        <Button x:Name="saveButton" Content="应用" Margin="0,0,10,10" Style="{StaticResource AccentedSquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="saveButton_Click"/>
-        <Button x:Name="cancelButton" Content="取消" Margin="0,0,135,10" Style="{DynamicResource SquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="cancelButton_Click"/>
+        <Button x:Name="saveButton" Content="{DynamicResource String.Base.Apply}"
+                Margin="0,0,10,10" Style="{StaticResource AccentedSquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="saveButton_Click"/>
+        <Button x:Name="cancelButton" Content="{DynamicResource String.Base.Cancel}" 
+                Margin="0,0,135,10" Style="{DynamicResource SquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="cancelButton_Click"/>
+        <TextBlock x:Name="versionTextBlock" Opacity="0.5" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Text="0.0.0.0" Height="15" VerticalAlignment="Bottom"/>
 
     </Grid>
 </Controls:MetroWindow>
