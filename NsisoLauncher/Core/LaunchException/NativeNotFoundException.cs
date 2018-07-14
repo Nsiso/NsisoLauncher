@@ -1,8 +1,4 @@
 ﻿using NsisoLauncher.Core.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NsisoLauncher.Core.LaunchException
 {

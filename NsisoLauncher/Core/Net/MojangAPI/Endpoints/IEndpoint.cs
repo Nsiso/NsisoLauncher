@@ -1,5 +1,4 @@
-﻿using NsisoLauncher.Core.Net.MojangApi.Api;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

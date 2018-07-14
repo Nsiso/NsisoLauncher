@@ -2,7 +2,6 @@
 using NsisoLauncher.Core.Net.MojangApi.Responses;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Net.MojangApi.Endpoints

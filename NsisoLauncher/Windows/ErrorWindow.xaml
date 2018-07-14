@@ -40,6 +40,6 @@
             <controls:ProgressRing Width="60" Height="60"/>
             <Label x:Name="label1" Content="处理中" Margin="326,242,326,147" HorizontalContentAlignment="Center"/>
         </Grid>
-        <CheckBox x:Name="moreInfoCheckBox" Content="上传报告时附加环境信息" IsChecked="{Binding isMoreInfo}" HorizontalAlignment="Left" Margin="10,369,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="moreInfoCheckBox" Content="上传报告时附加环境信息" HorizontalAlignment="Left" Margin="10,0,0,27" Height="18" VerticalAlignment="Bottom"/>
     </Grid>
 </controls:MetroWindow>

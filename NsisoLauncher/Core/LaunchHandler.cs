@@ -3,14 +3,9 @@ using NsisoLauncher.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 using System.IO;
 using NsisoLauncher.Core.LaunchException;
 using System.Threading.Tasks;
-using System.Threading;
-using System.Windows;
 
 namespace NsisoLauncher.Core
 {

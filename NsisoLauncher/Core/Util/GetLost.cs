@@ -1,11 +1,8 @@
 ﻿using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net;
 using NsisoLauncher.Core.Net.Tools;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace NsisoLauncher.Core.Util
 {

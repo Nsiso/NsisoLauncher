@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using NsisoLauncher.Core.Net.MojangApi.Api;
 using Newtonsoft.Json.Linq;
 using NsisoLauncher.Core.Net.MojangApi.Responses;
-using System.Net;
 using System.Collections.Generic;
-using System.Linq;
 using static NsisoLauncher.Core.Net.MojangApi.Responses.ChallengesResponse;
 
 namespace NsisoLauncher.Core.Net.MojangApi.Endpoints

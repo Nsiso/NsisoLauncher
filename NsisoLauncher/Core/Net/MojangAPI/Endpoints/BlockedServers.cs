@@ -1,7 +1,6 @@
 ﻿using NsisoLauncher.Core.Net.MojangApi.Api;
 using NsisoLauncher.Core.Net.MojangApi.Responses;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using static NsisoLauncher.Core.Net.MojangApi.Responses.BlockedServersResponse;
 

@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Util;
@@ -26,7 +18,6 @@ namespace NsisoLauncher.Windows
     public partial class ErrorWindow : MetroWindow
     {
         private const string errorApiAdress = "http://hn2.api.okayapi.com";
-        private bool isMoreInfo = true;
 
         BackgroundWorker updateThread = new BackgroundWorker();
 
@@ -49,7 +40,12 @@ namespace NsisoLauncher.Windows
             updateThread.RunWorkerCompleted += UpdateThread_RunWorkerCompleted;
             Random random = new Random();
             FunnyBlock.Text = funny[random.Next(funny.Count())];
+            moreInfoCheckBox.IsChecked = true;
             this.textBox.Text = ex.ToString();
+            if (Environment.GetCommandLineArgs().Contains("-reboot"))
+            {
+                MessageBox.Show("很抱歉启动器在重启之后再次发生错误\n您可以在左下角联系开发者加快解决这个问题，我们由衷的表示感谢");
+            }
         }
 
         private void UpdateThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -62,7 +58,7 @@ namespace NsisoLauncher.Windows
             try
             {
                 string msg = (string)e.Argument;
-                if (isMoreInfo)
+                if ((bool)moreInfoCheckBox.IsChecked)
                 {
                     msg += ("/r/n" + GetEnvironmentInfo());
                 }

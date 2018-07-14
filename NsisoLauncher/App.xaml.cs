@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Linq;
 using System.Windows;
 using System.IO;
@@ -81,7 +79,6 @@ namespace NsisoLauncher
             if (env.AutoJava)
             {
                 java = Java.GetSuitableJava(javaList);
-                env.JavaPath = java.Path;
             }
             else
             {
@@ -101,6 +98,7 @@ namespace NsisoLauncher
             }
             if (java != null)
             {
+                env.JavaPath = java.Path;
                 logHandler.AppendInfo("核心初始化->Java路径:" + java.Path);
                 logHandler.AppendInfo("核心初始化->Java版本:" + java.Version);
                 logHandler.AppendInfo("核心初始化->Java位数:" + java.Arch);

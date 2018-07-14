@@ -1,9 +1,6 @@
 ﻿using NsisoLauncher.Core.Net.MojangApi.Api;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Net.MojangApi.Endpoints

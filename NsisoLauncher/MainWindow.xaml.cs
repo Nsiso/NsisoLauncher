@@ -1,23 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NsisoLauncher.Core;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net.MojangApi.Endpoints;
-using NsisoLauncher.Core.Net.MojangApi.Responses;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
@@ -176,6 +166,11 @@ namespace NsisoLauncher
             {
                 await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
                     App.GetResourceString("String.Message.EmptyLaunchVersion2"));
+                return;
+            }
+            if (App.handler.Java == null)
+            {
+                await this.ShowMessageAsync("该电脑上未安装Java", "Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动");
                 return;
             }
             #endregion
@@ -347,6 +342,7 @@ namespace NsisoLauncher
             if (!result.IsSuccess)
             {
                 await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
+                App.logHandler.AppendError(result.LaunchException);
                 this.loadingGrid.Visibility = Visibility.Hidden;
                 this.loadingRing.IsActive = false;
                 this.WindowState = WindowState.Minimized;
@@ -392,6 +388,14 @@ namespace NsisoLauncher
         {
             new Windows.SettingWindow().ShowDialog();
             Refresh();
+        }
+
+        private async void mainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (App.handler.Java == null)
+            {
+                await this.ShowMessageAsync("该电脑上未安装Java", "Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动");
+            }
         }
     }
 }

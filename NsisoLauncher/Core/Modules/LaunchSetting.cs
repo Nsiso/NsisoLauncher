@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Net;
-using NsisoLauncher.Core.Net.MojangApi.Responses;
-using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
+﻿using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Core.Modules
 {

@@ -1,10 +1,6 @@
 ﻿using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net.MojangApi.Api;
-using NsisoLauncher.Core.Net.MojangApi.Responses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config

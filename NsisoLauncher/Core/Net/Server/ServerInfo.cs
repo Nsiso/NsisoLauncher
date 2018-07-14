@@ -4,10 +4,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace NsisoLauncher.Core.Net.Server
 {
