@@ -171,6 +171,11 @@ namespace NsisoLauncher.Config
         /// 是否下载丢失游戏资源库
         /// </summary>
         public bool DownloadLostAssets { get; set; }
+
+        /// <summary>
+        /// 启动后退出启动器
+        /// </summary>
+        public bool ExitAfterLaunch { get; set; }
     }
 
     public class Launcher

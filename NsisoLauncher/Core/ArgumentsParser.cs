@@ -71,12 +71,13 @@ namespace NsisoLauncher.Core
             #region 处理游戏参数
             string assetsPath = setting.Version.Assets == "legacy" ? "assets\\virtual\\legacy" : "assets";
             string legacy = setting.AuthenticateUUID.Legacy ? "Legacy" : "Mojang";
+            string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(setting.Version));
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
                 {"${auth_player_name}",setting.AuthenticateUUID.PlayerName },
                 {"${auth_session}",setting.AuthenticateAccessToken },
                 {"${version_name}",setting.Version.ID },
-                {"${game_directory}",handler.GetGameVersionRootDir(setting.Version) },
+                {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",setting.Version.Assets },
@@ -155,7 +156,7 @@ namespace NsisoLauncher.Core
             sb.Append('{');
             foreach (var item in properties)
             {
-                sb.Append(string.Format("\"{0}\":[\"{1}\"]", item.Name, item.Value));
+                sb.AppendFormat("\"{0}\":[\"{1}\"]", item.Name, item.Value);
             }
             sb.Append("}");
             return sb.ToString();
@@ -164,13 +165,14 @@ namespace NsisoLauncher.Core
         private string GetClassPaths(List<Modules.Library> libs, Modules.Version ver)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append('\"');
+
             foreach (var item in libs)
             {
-                stringBuilder.Append(handler.GetLibraryPath(item)).Append(';');
+                stringBuilder.AppendFormat("\"{0}\";", handler.GetLibraryPath(item));
             }
-            stringBuilder.Append(handler.GetJarPath(ver));
-            stringBuilder.Append('\"');
+
+            stringBuilder.AppendFormat("\"{0}\"", handler.GetJarPath(ver));
+
             return stringBuilder.ToString();
         }
 

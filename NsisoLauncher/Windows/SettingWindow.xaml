@@ -156,6 +156,11 @@
                                 <CheckBox Content="{DynamicResource String.Settingwindow.Env.AutoFill.Assets}" IsChecked="{Binding Path=DownloadLostAssets}"/>
                             </StackPanel>
                         </Expander>
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Habbit}" Margin="0,0,0,5">
+                            <StackPanel>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.Habbit.Exit}" IsChecked="{Binding Path=ExitAfterLaunch}" Margin="0,0,0,5"/>
+                            </StackPanel>
+                        </Expander>
                         <Expander Header="{DynamicResource String.Settingwindow.Env.Debug}" Margin="0,0,0,5">
                             <StackPanel>
                                 <CheckBox x:Name="debugCheckBox" Content="{DynamicResource String.Settingwindow.Env.Debug.Mode}" IsChecked="{Binding Path=Debug}"/>
@@ -165,91 +170,94 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="下载设置">
+            <TabItem Header="{DynamicResource String.Settingwindow.Download}">
                 <ScrollViewer>
                     <StackPanel x:Name="downloadGrid" Margin="10,0">
-                        <Expander Header="下载源" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Download.Source}" Margin="0,0,0,5">
                             <StackPanel>
-                                <RadioButton Content="Mojang官方" IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=0}" Margin="0,0,0,5"/>
-                                <RadioButton Content="BMCLAPI (bangbang93's minecraft launcher api)" IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}"/>
+                                <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.Mojang}"
+                                             IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=0}" Margin="0,0,0,5"/>
+                                <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.BMCLAPI}"
+                                             IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="下载线程设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Download.Thread}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="下载线程数量"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Download.Thread.Num}"/>
                                 <TextBox Text="{Binding DownloadThreadsSize}"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
                                          Width="60" HorizontalAlignment="Left"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="下载代理" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Download.Proxy}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="代理服务器地址:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Download.Proxy.Address}"/>
                                 <TextBox Text="{Binding Path=DownloadProxyAddress}" Margin="0,0,0,5"/>
-                                <Label Content="代理服务器端口:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Download.Proxy.Port}"/>
                                 <TextBox 
                                     PreviewTextInput="textBox1_PreviewTextInput"
                                     InputMethod.IsInputMethodEnabled="False"
                                     Text="{Binding Path=DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
                                     Margin="0,0,0,5" MaxLength="6"/>
-                                <Label Content="代理服务器账号:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Download.Proxy.User}"/>
                                 <TextBox Text="{Binding Path=ProxyUserName}" Margin="0,0,0,5"/>
-                                <Label Content="代理服务器密码:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.Download.Proxy.Password}"/>
                                 <TextBox Text="{Binding Path=ProxyUserPassword}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="版本设置">
+            <TabItem Header="{DynamicResource String.Settingwindow.Version}">
                 <Grid>
-                    <Label x:Name="label6" Content="选择要进行设置的版本:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
+                    <Label x:Name="label6" Content="{DynamicResource String.Settingwindow.Version.ChooseText}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
                     <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="ID" SelectionChanged="VersionsComboBox_SelectionChanged"/>
-                    <GroupBox x:Name="groupBox7" Header="版本Options设置" Margin="10,31,185,0">
+                    <GroupBox x:Name="groupBox7" Header="{DynamicResource String.Settingwindow.Version.Options}" Margin="10,31,185,0">
                         <Grid>
                             <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="设置项" Binding="{Binding Key}" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="设置值" Binding="{Binding Value}"/>
+                                    <DataGridTextColumn Header="{DynamicResource String.Settingwindow.Version.Options.T}" Binding="{Binding Key}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource String.Settingwindow.Version.Options.V}" Binding="{Binding Value}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <TextBlock TextWrapping="Wrap" Text="*双击设置值即可进行更改。若设置列表为空说明Options.txt文件不存在或未选择版本。" VerticalAlignment="Bottom"/>
+                            <TextBlock TextWrapping="Wrap" Text="{DynamicResource String.Settingwindow.Version.Options.Note}" VerticalAlignment="Bottom"/>
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="refreshVersionsButton" Content="刷新版本列表" VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Click="refreshVersionsButton_Click" Margin="0,-1,10,0"/>
-                    <GroupBox x:Name="groupBox" Header="版本操作" Margin="0,31,10,0" HorizontalAlignment="Right" Width="170">
+                    <Button x:Name="refreshVersionsButton" Content="{DynamicResource String.Settingwindow.Version.Refresh}"
+                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Click="refreshVersionsButton_Click" Margin="0,-1,10,0"/>
+                    <GroupBox x:Name="groupBox" Header="{DynamicResource String.Settingwindow.Version.Control}" Margin="0,31,10,0" HorizontalAlignment="Right" Width="170">
                         <StackPanel/>
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="用户设置">
+            <TabItem Header="{DynamicResource String.Settingwindow.User}">
                 <ScrollViewer>
                     <StackPanel x:Name="userGrid" Margin="10,0">
                         <Expander Header="启动验证类型设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <RadioButton Content="使用正版验证登陆 (需要联网验证)"
+                                <RadioButton Content="{DynamicResource String.Settingwindow.User.Type.Online}"
                                              IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=1}" Margin="0,0,0,5"/>
-                                <RadioButton Content="使用离线验证登陆 (无需正版账号)" 
+                                <RadioButton Content="{DynamicResource String.Settingwindow.User.Type.Offline}" 
                                              IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=0}" />
                             </StackPanel>
                         </Expander>
-                        <Expander Header="验证信息设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.User.Info}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="用户名/账号:"/>
+                                <Label Content="{DynamicResource String.Base.Username}"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=UserName}"/>
-                                <Label Content="*在线验证将在启动时进行登陆"/>
-                                <Button Style="{DynamicResource SquareButtonStyle}" Content="取消记住登陆状态" Margin="0,10,0,5" Click="Button_Click"/>
-                                <Button Style="{DynamicResource SquareButtonStyle}" Content="重置用户信息" Click="Button_Click_1"/>
-                                <Label Content="*操作完后点击应用按钮生效"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Info.Note}"/>
+                                <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource String.Settingwindow.User.Info.UnRemember}" Margin="0,10,0,5" Click="Button_Click"/>
+                                <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource String.Settingwindow.User.Info.Clear}" Click="Button_Click_1"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Info.Note2}"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="高级验证信息设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.User.Pro}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="*此设置节点请勿随意改动,否则可能导致验证失败而无法启动"/>
-                                <Label Content="代理验证服务器地址:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Pro.Note}"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Pro.ProxyAddress}"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=AuthServer}"/>
-                                <Label Content="客户端GUID:"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Pro.GUID}"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=ClientToken}"/>
                             </StackPanel>
                         </Expander>

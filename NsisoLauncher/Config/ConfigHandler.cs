@@ -103,7 +103,8 @@ namespace NsisoLauncher.Config
                     GCEnabled = true,
                     GCType = Core.Modules.GCType.G1GC,
                     AutoJava = true,
-                    WindowSize = new Core.Modules.WindowSize() { FullScreen = false }
+                    WindowSize = new Core.Modules.WindowSize() { FullScreen = false },
+                    ExitAfterLaunch = false
                 },
                 Download = new Download()
                 {

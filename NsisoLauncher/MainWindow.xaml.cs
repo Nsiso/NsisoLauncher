@@ -372,6 +372,10 @@ namespace NsisoLauncher
                     //    }
                     //}
                 });
+                if (App.config.MainConfig.Environment.ExitAfterLaunch)
+                {
+                    Application.Current.Shutdown();
+                }
                 this.loadingGrid.Visibility = Visibility.Hidden;
                 this.loadingRing.IsActive = false;
                 this.WindowState = WindowState.Minimized;
