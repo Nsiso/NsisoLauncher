@@ -1,66 +1,88 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace NsisoLauncher.Utils
 {
-    /*
-     * Copyright thomas-levesque
-     * http://www.thomaslevesque.com/2009/04/17/wpf-binding-to-an-asynchronous-collection/#comment-7139
-     */
+    ///*
+    // * Copyright thomaslevesque
+    // * https://gist.github.com/thomaslevesque/10023516
+    // */
+    //public class AsyncObservableCollection<T> : ObservableCollection<T>
+    //{
+    //    private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+
+    //    public AsyncObservableCollection() { }
+
+    //    public AsyncObservableCollection(IEnumerable<T> list) : base(list) { }
+
+    //    private void ExecuteOnSyncContext(Action action)
+    //    {
+    //        if (SynchronizationContext.Current == _synchronizationContext)
+    //        {
+    //            action();
+    //        }
+    //        else
+    //        {
+    //            _synchronizationContext.Send(_ => action(), null);
+    //        }
+    //    }
+
+    //    protected override void InsertItem(int index, T item) { ExecuteOnSyncContext(() => base.InsertItem(index, item)); }
+
+    //    protected override void RemoveItem(int index) { ExecuteOnSyncContext(() => base.RemoveItem(index)); }
+
+    //    protected override void SetItem(int index, T item) { ExecuteOnSyncContext(() => base.SetItem(index, item)); }
+
+    //    protected override void MoveItem(int oldIndex, int newIndex) { ExecuteOnSyncContext(() => base.MoveItem(oldIndex, newIndex)); }
+
+    //    protected override void ClearItems() { ExecuteOnSyncContext(() => base.ClearItems()); }
+    //}
+
+    /// <summary>
+    ///     The async observable collection.
+    /// </summary>
+    /// <typeparam>
+    ///     <name>T</name>
+    /// </typeparam>
     public class AsyncObservableCollection<T> : ObservableCollection<T>
     {
-        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+        #region Public Events
 
-        public AsyncObservableCollection()
-        {
-        }
+        public override event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public AsyncObservableCollection(IEnumerable<T> list)
-            : base(list)
-        {
-        }
+        #endregion
+
+        #region Methods
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (SynchronizationContext.Current == _synchronizationContext)
+            //NotifyCollectionChangedEventHandler CollectionChanged = this.CollectionChanged;
+            if (CollectionChanged != null)
             {
-                // Execute the CollectionChanged event on the current thread
-                RaiseCollectionChanged(e);
+                foreach (NotifyCollectionChangedEventHandler nh in CollectionChanged.GetInvocationList())
+                {
+                    var dispObj = nh.Target as DispatcherObject;
+                    if (dispObj != null)
+                    {
+                        if (dispObj.Dispatcher != null && !dispObj.Dispatcher.CheckAccess())
+                        {
+                            dispObj.Dispatcher.BeginInvoke(
+                                (Action)(() => nh.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))),
+                                DispatcherPriority.DataBind);
+                            continue;
+                        }
+                    }
+                    nh.Invoke(this, e);
+                }
             }
-            else
-            {
-                // Raises the CollectionChanged event on the creator thread
-                _synchronizationContext.Send(RaiseCollectionChanged, e);
-            }
+            //CollectionChanged?.Invoke(this, e);
         }
 
-        private void RaiseCollectionChanged(object param)
-        {
-            // We are in the creator thread, call the base implementation directly
-            base.OnCollectionChanged((NotifyCollectionChangedEventArgs)param);
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            if (SynchronizationContext.Current == _synchronizationContext)
-            {
-                // Execute the PropertyChanged event on the current thread
-                RaisePropertyChanged(e);
-            }
-            else
-            {
-                // Raises the PropertyChanged event on the creator thread
-                _synchronizationContext.Send(RaisePropertyChanged, e);
-            }
-        }
-
-        private void RaisePropertyChanged(object param)
-        {
-            // We are in the creator thread, call the base implementation directly
-            base.OnPropertyChanged((PropertyChangedEventArgs)param);
-        }
+        #endregion
     }
 }

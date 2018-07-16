@@ -33,6 +33,9 @@
         <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
         <TextBlock x:Name="progressPerTextBlock" HorizontalAlignment="Left" Margin="10,0,0,25" TextWrapping="Wrap" Text="000%" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="speedTextBlock" Margin="0,0,10,25" TextWrapping="Wrap" Text="0kb/s" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click"/>
+        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}"
+                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click"/>
+        <Button Content="{DynamicResource String.Downloadwindow.NewTask}"
+                Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1"/>
     </Grid>
 </controls:MetroWindow>

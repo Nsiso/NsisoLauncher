@@ -181,6 +181,11 @@ namespace NsisoLauncher.Core
 
         }
 
+        public Modules.Version JsonToVersion(string json)
+        {
+            return versionReader.JsonToVersion(json);
+        }
+
         public string GetLibraryPath(Modules.Library lib)
         {
             return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.jar",

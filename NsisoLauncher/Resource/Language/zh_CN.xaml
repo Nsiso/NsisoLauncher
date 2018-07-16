@@ -55,6 +55,18 @@
     <sys:String x:Key="String.Downloadwindow.DownloadCompleteWithError2">一共有{0}个任务下载失败,其中一个原因:{1}</sys:String>
     <sys:String x:Key="String.Downloadwindow.MakesureCancel">您确定要取消下载?</sys:String>
     <sys:String x:Key="String.Downloadwindow.MakesureCancel2">现在后悔还来得及</sys:String>
+    <sys:String x:Key="String.Downloadwindow.NewTask">新建下载任务</sys:String>
+
+    <sys:String x:Key="String.NewDownloadTaskWindow">新建下载任务窗口</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Loading">加载中</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version">下载游戏版本</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.ID">版本ID</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.Type">类型</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.Time">修改时间</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.ReleaseTime">发布时间</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.Refresh">刷新</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.Download">下载选中版本</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Forge">下载Forge</sys:String>
 
     <sys:String x:Key="String.Settingwindow.Title">设置窗口</sys:String>
     <sys:String x:Key="String.Settingwindow.Env">全局设置</sys:String>

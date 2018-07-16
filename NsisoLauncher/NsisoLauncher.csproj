@@ -94,6 +94,8 @@
     <Compile Include="Core\Modules\Log.cs" />
     <Compile Include="Core\Net\DownloadSource.cs" />
     <Compile Include="Core\Net\DownloadTask.cs" />
+    <Compile Include="Core\Net\FunctionAPI\APIModules.cs" />
+    <Compile Include="Core\Net\FunctionAPI\FunctionAPIHandler.cs" />
     <Compile Include="Core\Net\Server\ForgeInfo.cs" />
     <Compile Include="Core\Net\Server\ProtocolHandler.cs" />
     <Compile Include="Core\Net\Server\ServerInfo.cs" />
@@ -113,6 +115,9 @@
     </Compile>
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\NewDownloadTaskWindow.xaml.cs">
+      <DependentUpon>NewDownloadTaskWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
@@ -185,6 +190,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ErrorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\NewDownloadTaskWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -264,6 +273,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\Steve.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

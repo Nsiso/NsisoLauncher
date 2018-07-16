@@ -385,7 +385,8 @@ namespace NsisoLauncher
 
         private void downloadButton_Click(object sender, RoutedEventArgs e)
         {
-            new Windows.DownloadWindow().Show();
+            new Windows.DownloadWindow().ShowDialog();
+            Refresh();
         }
 
         private void configButton_Click(object sender, RoutedEventArgs e)

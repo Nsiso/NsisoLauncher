@@ -31,6 +31,8 @@ namespace NsisoLauncher.Utils
 
     public class MultiThreadDownloader
     {
+        private readonly object removeLock = new object();
+
         public MultiThreadDownloader()
         {
             _timer.Elapsed += _timer_Elapsed;
@@ -78,7 +80,7 @@ namespace NsisoLauncher.Utils
         private Thread[] _threads;
         private int _downloadSizePerSec;
         private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
-
+        
         public void SetDownloadTasks(List<DownloadTask> tasks)
         {
             _downloadTasks = new ConcurrentBag<DownloadTask>(tasks);
@@ -155,8 +157,8 @@ namespace NsisoLauncher.Utils
                     ApendDebugLog("开始下载:" + item.From);
                     HTTPDownload(item);
                     ApendDebugLog("下载完成:" + item.From);
-                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
                     TasksObservableCollection.Remove(item);
+                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
                 }
             }
 

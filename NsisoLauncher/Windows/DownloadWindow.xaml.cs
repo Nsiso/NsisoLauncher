@@ -73,5 +73,10 @@ namespace NsisoLauncher.Windows
                 this.progressBar.Value = 0;
             }
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            new NewDownloadTaskWindow().Show();
+        }
     }
 }
