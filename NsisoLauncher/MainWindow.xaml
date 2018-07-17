@@ -14,6 +14,7 @@
         <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
     </controls:MetroWindow.Background>
     <Grid>
+        <MediaElement x:Name="mediaElement" Visibility="Hidden" LoadedBehavior="Manual" MediaEnded="mediaElement_MediaEnded"/>
         <Grid Width="220" x:Name="userGrid" HorizontalAlignment="Right">
             <!--#region 高斯模糊效果(最底层) -->
             <Rectangle Fill="{Binding Background, ElementName=mainWindow}" >
@@ -23,7 +24,6 @@
             </Rectangle>
             <Rectangle Fill="#33FFFFFF" HorizontalAlignment="Right" Width="220"/>
             <!--#endregion-->
-
             <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
                     FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click"/>
 
@@ -65,8 +65,12 @@
                     Background="{x:Null}" BorderBrush="White" Foreground="White" Click="downloadButton_Click">
                 <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
             </Button>
-
         </Grid>
+        <Button x:Name="volumeButton" Style ="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
+                Width="30" Height="30" Margin="0,10,225,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                BorderBrush="White" Visibility="Hidden" Foreground="White" Click="volumeButton_Click">
+            <iconPacks:FontAwesome x:Name="volumeButtonIcon" Kind="VolumeUpSolid" />
+        </Button>
         <Grid x:Name="serverInfoGrid" Height="125" Margin="10,10,352,0" VerticalAlignment="Top" Visibility="Hidden">
             <Ellipse x:Name="serverIcon" HorizontalAlignment="Left" Width="100" Stroke="#7FFFFFFF" Height="100" VerticalAlignment="Top">
                 <Ellipse.Fill>

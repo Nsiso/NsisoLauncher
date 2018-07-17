@@ -11,6 +11,9 @@ using NsisoLauncher.Core.Net.MojangApi.Endpoints;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using NsisoLauncher.Core.Util;
 
 namespace NsisoLauncher
 {
@@ -40,17 +43,75 @@ namespace NsisoLauncher
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+            await CustomizeRefresh();
+            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
+        }
+
+        #region 自定义
+        private async Task CustomizeRefresh()
+        {
+            if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.LauncherTitle))
+            {
+                this.Title = App.config.MainConfig.Customize.LauncherTitle;
+            }
+            if (App.config.MainConfig.Customize.CustomBackGroundPicture)
+            {
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgpic_?.png");
+                if (files.Count() != 0)
+                {
+                    Random random = new Random();
+                    ImageBrush brush = new ImageBrush(new BitmapImage(new Uri(files[random.Next(files.Count())])))
+                    { TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
+                    this.Background = brush;
+                }
+            }
+
+            if (App.config.MainConfig.Customize.CustomBackGroundMusic)
+            {
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgmusic_?.mp3");
+                if (files.Count() != 0)
+                {
+                    Random random = new Random();
+                    mediaElement.Source = new Uri(files[random.Next(files.Count())]);
+                    this.volumeButton.Visibility = Visibility.Visible;
+                    mediaElement.Play();
+                    mediaElement.Volume = 0;
+                    await Task.Factory.StartNew(() =>
+                    {
+                        for (int i = 0; i < 50; i++)
+                        {
+                            this.Dispatcher.Invoke(new Action(() =>
+                            {
+                                this.mediaElement.Volume += 0.01;
+                            }));
+                            Thread.Sleep(50);
+                        }
+                    });
+                }
+            }
+
             if (App.config.MainConfig.Server.ShowServerInfo)
             {
                 Server server = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
-                ShowServerInfo(server);
+                await ShowServerInfo(server);
             }
             else
             {
                 serverInfoGrid.Visibility = Visibility.Hidden;
             }
-            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
+
+        private void volumeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.mediaElement.IsMuted = !this.mediaElement.IsMuted;
+        }
+
+        private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            mediaElement.Stop();
+            mediaElement.Play();
+        }
+        #endregion
 
         #region 显示服务器信息
         [DllImport("gdi32.dll", SetLastError = true)]
@@ -79,7 +140,7 @@ namespace NsisoLauncher
 
         }
 
-        private async void ShowServerInfo(Server info) 
+        private async Task ShowServerInfo(Server info) 
         {
             Core.Net.Server.ServerInfo serverInfo = new Core.Net.Server.ServerInfo(info) { ServerName = App.config.MainConfig.Server.ServerName };
             serverInfoGrid.Visibility = Visibility.Visible;
@@ -379,6 +440,27 @@ namespace NsisoLauncher
                 this.loadingGrid.Visibility = Visibility.Hidden;
                 this.loadingRing.IsActive = false;
                 this.WindowState = WindowState.Minimized;
+
+                //自定义处理
+                if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.GameWindowTitle))
+                {
+                    GameHelper.SetGameTitle(result, App.config.MainConfig.Customize.GameWindowTitle);
+                }
+                await Task.Factory.StartNew(() =>
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            this.mediaElement.Volume -= 0.01;
+                        }));
+                        Thread.Sleep(50);
+                    }
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.mediaElement.Stop();
+                    }));
+                });
             }
             #endregion
         }

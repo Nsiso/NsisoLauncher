@@ -1,6 +1,10 @@
-﻿using System;
+﻿using NsisoLauncher.Core.Modules;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
 {
@@ -57,6 +61,22 @@ namespace NsisoLauncher.Core.Util
             {
                 return null;
             }
+        }
+
+        [DllImport("User32.dll")]
+        public static extern int SetWindowText(IntPtr winHandle, string title);
+
+        public static void SetGameTitle(LaunchResult result, string title)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var handle = result.Process.MainWindowHandle;
+                while (!result.Process.HasExited)
+                {
+                    SetWindowText(handle, title);
+                    Thread.Sleep(1000);
+                }
+            });
         }
 
         public static void SaveOptions(List<VersionOption> opts, LaunchHandler core, Modules.Version version)

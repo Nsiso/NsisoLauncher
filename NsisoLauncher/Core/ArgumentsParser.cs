@@ -66,17 +66,18 @@ namespace NsisoLauncher.Core
             {
                 jvmHead.Append(setting.AdvencedJvmArguments).Append(' ');
             }
+            jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
             #endregion
 
             #region 处理游戏参数
-            string assetsPath = setting.Version.Assets == "legacy" ? "assets\\virtual\\legacy" : "assets";
+            string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
             string legacy = setting.AuthenticateUUID.Legacy ? "Legacy" : "Mojang";
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(setting.Version));
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",setting.AuthenticateUUID.PlayerName },
+                {"${auth_player_name}",string.Format("\"{0}\"", setting.AuthenticateUUID.PlayerName) },
                 {"${auth_session}",setting.AuthenticateAccessToken },
-                {"${version_name}",setting.Version.ID },
+                {"${version_name}",string.Format("\"{0}\"", setting.Version.ID) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
@@ -134,7 +135,7 @@ namespace NsisoLauncher.Core
                 {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
             };
 
-            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic) + " -Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true";
+            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic);
             #endregion
 
             stopwatch.Stop();
@@ -166,13 +167,15 @@ namespace NsisoLauncher.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
 
+            stringBuilder.Append('\"');
+
             foreach (var item in libs)
             {
-                stringBuilder.AppendFormat("\"{0}\";", handler.GetLibraryPath(item));
+                stringBuilder.AppendFormat("{0};", handler.GetLibraryPath(item));
             }
+            stringBuilder.Append(handler.GetJarPath(ver));
 
-            stringBuilder.AppendFormat("\"{0}\"", handler.GetJarPath(ver));
-
+            stringBuilder.Append('\"');
             return stringBuilder.ToString();
         }
 
