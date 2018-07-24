@@ -48,6 +48,11 @@ namespace NsisoLauncher.Core.Net
             DownloadSize += size;
         }
 
+        public void SetDone()
+        {
+            DownloadSize = TotalSize;
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string strPropertyInfo)

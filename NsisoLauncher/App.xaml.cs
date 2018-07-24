@@ -13,23 +13,30 @@ using MahApps.Metro;
 
 namespace NsisoLauncher
 {
+
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
     public partial class App : Application
     {
         public static LaunchHandler handler;
-        public static Config.ConfigHandler config;
+        public static ConfigHandler config;
         public static MultiThreadDownloader downloader;
         public static LogHandler logHandler;
+        public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
         public static List<Java> javaList;
+
+        public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
+        {
+            AggregateExceptionCatched?.Invoke(sender, arg);
+        }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             #region DEBUG初始化
             //debug
             logHandler = new LogHandler(true);
-            TaskScheduler.UnobservedTaskException += (a, b) => logHandler.AppendError(b.Exception);
+            AggregateExceptionCatched += (a, b) => logHandler.AppendFatal(b.AggregateException);
             if (e.Args.Contains("-debug"))
             {
                 Windows.DebugWindow debugWindow = new Windows.DebugWindow();
@@ -160,5 +167,11 @@ namespace NsisoLauncher
             System.Diagnostics.Process.Start(info);
             App.Current.Shutdown();
         }
+    }
+
+    //定义异常参数处理
+    public class AggregateExceptionArgs : EventArgs
+    {
+        public AggregateException AggregateException { get; set; }
     }
 }

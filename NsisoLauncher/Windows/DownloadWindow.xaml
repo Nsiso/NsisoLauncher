@@ -20,7 +20,7 @@
                                 Foreground="{DynamicResource AccentColorBrush}"
                                 Maximum="{Binding TotalSize, Mode=OneWay}"
                                 Minimum="0"
-                                Value="{Binding DownloadSize, Mode=OneWay}"
+                                Value="{Binding DownloadSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Background="LightGray">
                             </controls:MetroProgressBar>
                         </DataTemplate>

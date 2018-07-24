@@ -28,26 +28,36 @@ namespace NsisoLauncher.Core.Util
             {
                 Task.Factory.StartNew(() =>
                 {
-                    LogLock.EnterWriteLock();
                     try
                     {
-                        if (log.LogLevel == LogLevel.GAME)
+                        LogLock.EnterWriteLock();
+                        try
                         {
-                            File.AppendAllText("log.txt", string.Format("[GAME]{0}\r\n", log.Message));
+                            if (log.LogLevel == LogLevel.GAME)
+                            {
+                                File.AppendAllText("log.txt", string.Format("[GAME]{0}\r\n", log.Message));
+                            }
+                            else
+                            {
+                                File.AppendAllText("log.txt", string.Format("[{0}][{1}]{2}\r\n", DateTime.Now.ToString(), log.LogLevel, log.Message));
+                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            File.AppendAllText("log.txt", string.Format("[{0}][{1}]{2}\r\n", DateTime.Now.ToString(), log.LogLevel, log.Message));
+                        }
+                        finally
+                        {
+                            LogLock.ExitWriteLock();
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        AggregateExceptionArgs args = new AggregateExceptionArgs()
+                        {
+                            AggregateException = new AggregateException(ex)
+                        };
+                        App.CatchAggregateException(this, args);
                     }
-                    finally
-                    {
-                        LogLock.ExitWriteLock();
-                    }
-                    
                 });
             }
         }

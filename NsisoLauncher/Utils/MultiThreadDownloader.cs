@@ -63,7 +63,6 @@ namespace NsisoLauncher.Utils
             _downloadSizePerSec = 0;
         }
 
-        public AsyncObservableCollection<DownloadTask> TasksObservableCollection { get; private set; } = new AsyncObservableCollection<DownloadTask>();
         public int ProcessorSize { get; set; } = 5;
         public bool IsBusy { get; private set; } = false;
         public WebProxy Proxy { get; set; }
@@ -72,6 +71,8 @@ namespace NsisoLauncher.Utils
         public event EventHandler<DownloadSpeedChangedArg> DownloadSpeedChanged;
         public event EventHandler<DownloadCompletedArg> DownloadCompleted;
         public event EventHandler<Log> DownloadLog;
+
+        public IEnumerable<DownloadTask> DownloadTasks { get => _downloadTasks.AsEnumerable(); }
 
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
         private ConcurrentBag<DownloadTask> _downloadTasks;
@@ -96,70 +97,100 @@ namespace NsisoLauncher.Utils
 
         public void StartDownload()
         {
-            if (!IsBusy)
+            try
             {
-                _shouldStop = false;
-                IsBusy = true;
-                if (ProcessorSize == 0)
+                if (!IsBusy)
                 {
-                    IsBusy = false;
-                    throw new ArgumentException("下载器的线程数不能为0");
-                }
-                if (_downloadTasks == null || _downloadTasks.Count == 0)
-                {
-                    IsBusy = false;
-                    return;
-                }
-                foreach (var item in _downloadTasks.Reverse())
-                {
-                    TasksObservableCollection.Add(item);
-                }
-                _threads = new Thread[ProcessorSize];
-                _timer.Start();
-                for (int i = 0; i < ProcessorSize; i++)
-                {
-                    _threads[i] = new Thread(() =>
+                    _shouldStop = false;
+                    IsBusy = true;
+                    if (ProcessorSize == 0)
                     {
-                        ThreadDownloadWork();
-                    });
-                    _threads[i].Name = string.Format("下载线程{0}号", i);
-                    _threads[i].Start();
-                }
-                var checkThread = new Thread(() =>
-                {
-                    while (true)
-                    {
-                        if (GetAvailableThreadsCount() == 0)
-                        {
-                            CompleteDownload();
-                            DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
-                            break;
-                        }
+                        IsBusy = false;
+                        throw new ArgumentException("下载器的线程数不能为0");
                     }
-                });
-                checkThread.Name = "下载监视线程";
-                checkThread.Start();
+                    if (_downloadTasks == null || _downloadTasks.Count == 0)
+                    {
+                        IsBusy = false;
+                        return;
+                    }
+                    //foreach (var item in _downloadTasks.Reverse())
+                    //{
+                    //    TasksObservableCollection.Add(item);
+                    //}
+                    _threads = new Thread[ProcessorSize];
+                    _timer.Start();
+                    for (int i = 0; i < ProcessorSize; i++)
+                    {
+                        _threads[i] = new Thread(() =>
+                        {
+                            ThreadDownloadWork();
+                        });
+                        _threads[i].Name = string.Format("下载线程{0}号", i);
+                        _threads[i].Start();
+                    }
+                    var checkThread = new Thread(() =>
+                    {
+                        try
+                        {
+                            while (true)
+                            {
+                                if (GetAvailableThreadsCount() == 0)
+                                {
+                                    CompleteDownload();
+                                    DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
+                                    break;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            AggregateExceptionArgs args = new AggregateExceptionArgs()
+                            {
+                                AggregateException = new AggregateException(ex)
+                            };
+                            App.CatchAggregateException(this, args);
+                        }
+                    });
+                    checkThread.Name = "下载监视线程";
+                    checkThread.Start();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
         private void ThreadDownloadWork()
         {
-            DownloadTask item = null;
-            while (!_downloadTasks.IsEmpty)
+            try
             {
-                if (_downloadTasks.TryTake(out item))
+                DownloadTask item = null;
+                while (!_downloadTasks.IsEmpty)
                 {
-                    if (_shouldStop)
+                    if (_downloadTasks.TryTake(out item))
                     {
-                        CompleteDownload();
-                        return;
+                        if (_shouldStop)
+                        {
+                            CompleteDownload();
+                            return;
+                        }
+                        ApendDebugLog("开始下载:" + item.From);
+                        HTTPDownload(item);
+                        ApendDebugLog("下载完成:" + item.From);
+                        item.SetDone();
+                        DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
+                        //TasksObservableCollection.Remove(item);
                     }
-                    ApendDebugLog("开始下载:" + item.From);
-                    HTTPDownload(item);
-                    ApendDebugLog("下载完成:" + item.From);
-                    TasksObservableCollection.Remove(item);
-                    DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
                 }
+            }
+            catch (Exception ex)
+            {
+                AggregateExceptionArgs args = new AggregateExceptionArgs()
+                {
+                    AggregateException = new AggregateException(ex)
+                };
+                App.CatchAggregateException(this, args);
             }
 
         }
@@ -224,21 +255,32 @@ namespace NsisoLauncher.Utils
             }
             catch (Exception e)
             {
-                ApendErrorLog(e);
-                if (!_errorList.ContainsKey(task))
+                try
                 {
-                    _errorList.Add(task, e);
+                    ApendErrorLog(e);
+                    if (!_errorList.ContainsKey(task))
+                    {
+                        _errorList.Add(task, e);
+                    }
+                    if (File.Exists(task.To))
+                    {
+                        File.Delete(task.To);
+                    }
                 }
-                if (File.Exists(task.To))
+                catch (Exception ex)
                 {
-                    File.Delete(task.To);
+                    AggregateExceptionArgs args = new AggregateExceptionArgs()
+                    {
+                        AggregateException = new AggregateException(ex)
+                    };
+                    App.CatchAggregateException(this, args);
                 }
             }
         }
 
         private void CompleteDownload()
         {
-            TasksObservableCollection.Clear();
+            //TasksObservableCollection.Clear();
             _timer.Stop();
             _taskCount = 0;
             _downloadSizePerSec = 0;

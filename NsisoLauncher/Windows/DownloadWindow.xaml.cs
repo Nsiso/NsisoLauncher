@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Core.Net;
 
 namespace NsisoLauncher.Windows
 {
@@ -11,13 +15,47 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class DownloadWindow : MetroWindow
     {
+        private ObservableCollection<DownloadTask> Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks.Reverse());
         public DownloadWindow()
         {
             InitializeComponent();
-            downloadList.ItemsSource = App.downloader.TasksObservableCollection;
             App.downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
             App.downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
             App.downloader.DownloadCompleted += Downloader_DownloadCompleted;
+            downloadList.ItemsSource = Tasks;
+        }
+
+        public async Task ShowWhenDownloading()
+        {
+            this.Show();
+            await Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    EventWaitHandle _waitHandle = new AutoResetEvent(false);
+                    App.downloader.DownloadCompleted += (a, b) =>
+                    {
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            try
+                            {
+                                this.Close();
+                            }
+                            catch (Exception) { }
+                        }));
+                        _waitHandle.Set();
+                    };
+                    _waitHandle.WaitOne();
+                }
+                catch (Exception ex)
+                {
+                    AggregateExceptionArgs args = new AggregateExceptionArgs()
+                    {
+                        AggregateException = new AggregateException(ex)
+                    };
+                    App.CatchAggregateException(this, args);
+                }
+            });
         }
 
         private void Downloader_DownloadCompleted(object sender, Utils.DownloadCompletedArg e)
@@ -57,6 +95,7 @@ namespace NsisoLauncher.Windows
                 this.progressBar.Maximum = e.TaskCount;
                 this.progressBar.Value = e.TaskCount - e.LastTaskCount;
                 this.progressPerTextBlock.Text = ((double)(e.TaskCount - e.LastTaskCount) / (double)e.TaskCount).ToString("0%");
+                Tasks.Remove(e.DoneTask);
             }));
         }
 

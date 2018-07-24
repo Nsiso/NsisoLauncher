@@ -70,33 +70,44 @@ namespace NsisoLauncher.Windows
         {
             await Task.Factory.StartNew(() =>
             {
-                foreach (JWVersion item in list)
+                try
                 {
-                    string json = FunctionAPIHandler.HttpGet(item.Url);
-                    Core.Modules.Version ver = App.handler.JsonToVersion(json);
-                    string jsonPath = App.handler.GetJsonPath(ver.ID);
-
-                    string dir = System.IO.Path.GetDirectoryName(jsonPath);
-                    if (!Directory.Exists(dir))
+                    foreach (JWVersion item in list)
                     {
-                        Directory.CreateDirectory(dir);
+                        string json = FunctionAPIHandler.HttpGet(item.Url);
+                        Core.Modules.Version ver = App.handler.JsonToVersion(json);
+                        string jsonPath = App.handler.GetJsonPath(ver.ID);
+
+                        string dir = System.IO.Path.GetDirectoryName(jsonPath);
+                        if (!Directory.Exists(dir))
+                        {
+                            Directory.CreateDirectory(dir);
+                        }
+
+                        File.WriteAllText(jsonPath, json);
+
+                        List<DownloadTask> tasks = new List<DownloadTask>();
+
+                        tasks.Add(new DownloadTask("游戏核心", apiHandler.DoURLReplace(ver.Downloads.Client.URL), App.handler.GetJarPath(ver)));
+
+                        tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
+
+                        tasks.AddRange(Core.Util.GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
+
+                        App.downloader.SetDownloadTasks(tasks);
+                        App.downloader.StartDownload();
                     }
-
-                    File.WriteAllText(jsonPath, json);
-
-                    List<DownloadTask> tasks = new List<DownloadTask>();
-
-                    tasks.Add(new DownloadTask("游戏核心", apiHandler.DoURLReplace(ver.Downloads.Client.URL), App.handler.GetJarPath(ver)));
-
-                    tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
-
-                    tasks.AddRange(Core.Util.GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
-
-                    App.downloader.SetDownloadTasks(tasks);
-                    App.downloader.StartDownload();
+                }
+                catch (Exception ex)
+                {
+                    AggregateExceptionArgs args = new AggregateExceptionArgs()
+                    {
+                        AggregateException = new AggregateException(ex)
+                    };
+                    App.CatchAggregateException(this, args);
                 }
             });
-            
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

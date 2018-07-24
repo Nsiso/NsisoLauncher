@@ -7,7 +7,9 @@
     
     <sys:String x:Key="String.Base.LauncherName">Nsiso启动器</sys:String>
     <sys:String x:Key="String.Base.Launch">启动游戏</sys:String>
+    <sys:String x:Key="String.Base.Download">下载</sys:String>
     <sys:String x:Key="String.Base.Cancel">取消</sys:String>
+    <sys:String x:Key="String.Base.Unremember">不再提醒</sys:String>
     <sys:String x:Key="String.Base.Apply">应用</sys:String>
     <sys:String x:Key="String.Base.Login">登陆</sys:String>
     <sys:String x:Key="String.Base.Yes">确认</sys:String>
@@ -43,6 +45,8 @@
     <sys:String x:Key="String.Mainwindow.ServerGettingNum">获取服务器人数中...</sys:String>
     <sys:String x:Key="String.Mainwindow.ServerGettingVer">获取服务器版本中...</sys:String>
     <sys:String x:Key="String.Mainwindow.ServerGettingPing">获取服务器延迟中..</sys:String>
+    <sys:String x:Key="String.Mainwindow.NeedDownloadDepend">需要下载补全依赖库</sys:String>
+    <sys:String x:Key="String.Mainwindow.NeedDownloadDepend2">您当前启动的版本缺少了必要的依赖库文件\n若不下载补全，可能导致无法启动</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskProgress">下载进度</sys:String>

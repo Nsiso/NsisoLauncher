@@ -52,10 +52,6 @@ namespace NsisoLauncher.Core
         {
             var result = await Task.Factory.StartNew(() =>
             {
-                if (setting.MaxMemory == 0)
-                {
-                    setting.MaxMemory = SystemTools.GetBestMemory(this.Java);
-                }
                 return Launch(setting);
             });
             return result;
@@ -96,6 +92,11 @@ namespace NsisoLauncher.Core
                 if (setting.Version == null)
                 {
                     return new LaunchResult(new ArgumentException("启动所需必要的版本参数为空"));
+                }
+
+                if (setting.MaxMemory == 0)
+                {
+                    setting.MaxMemory = SystemTools.GetBestMemory(this.Java);
                 }
 
                 Stopwatch sw = new Stopwatch();

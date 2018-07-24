@@ -70,12 +70,16 @@ namespace NsisoLauncher.Core.Util
         {
             Task.Factory.StartNew(() =>
             {
-                var handle = result.Process.MainWindowHandle;
-                while (!result.Process.HasExited)
+                try
                 {
-                    SetWindowText(handle, title);
-                    Thread.Sleep(1000);
+                    var handle = result.Process.MainWindowHandle;
+                    while (!result.Process.HasExited)
+                    {
+                        SetWindowText(handle, title);
+                        Thread.Sleep(1000);
+                    }
                 }
+                catch (Exception){}
             });
         }
 
