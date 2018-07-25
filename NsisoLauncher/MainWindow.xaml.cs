@@ -260,7 +260,11 @@ namespace NsisoLauncher
                 #region 检查游戏完整
                 List<Core.Net.DownloadTask> losts = new List<Core.Net.DownloadTask>();
 
-                if (App.config.MainConfig.Environment.DownloadLostDepend)
+                var lostDepend = GetLost.GetLostDependDownloadTask(
+                    App.config.MainConfig.Download.DownloadSource,
+                    App.handler,
+                    launchSetting.Version);
+                if (App.config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadDepend2"),
@@ -274,9 +278,7 @@ namespace NsisoLauncher
                     switch (downDependResult)
                     {
                         case MessageDialogResult.Affirmative:
-                            losts.AddRange(GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource,
-                                App.handler,
-                                launchSetting.Version));
+                            losts.AddRange(lostDepend);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
                             App.config.MainConfig.Environment.DownloadLostDepend = false;
@@ -286,11 +288,34 @@ namespace NsisoLauncher
                     }
 
                 }
-                if (App.config.MainConfig.Environment.DownloadLostAssets)
-                {
-                    losts.AddRange(GetLost.GetLostAssetsDownloadTask(App.config.MainConfig.Download.DownloadSource,
+
+                var lostAssets = GetLost.GetLostAssetsDownloadTask(
+                    App.config.MainConfig.Download.DownloadSource,
                     App.handler,
-                    await App.handler.GetAssetsAsync(launchSetting.Version)));
+                    await App.handler.GetAssetsAsync(launchSetting.Version));
+                if (App.config.MainConfig.Environment.DownloadLostAssets && lostAssets.Count != 0)
+                {
+                    MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
+                        App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
+                        MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+                        {
+                            AffirmativeButtonText = App.GetResourceString("String.Base.Download"),
+                            NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                            FirstAuxiliaryButtonText = App.GetResourceString("String.Base.Unremember"),
+                            DefaultButtonFocus = MessageDialogResult.Affirmative
+                        });
+                    switch (downDependResult)
+                    {
+                        case MessageDialogResult.Affirmative:
+                            losts.AddRange(lostAssets);
+                            break;
+                        case MessageDialogResult.FirstAuxiliary:
+                            App.config.MainConfig.Environment.DownloadLostAssets = false;
+                            break;
+                        default:
+                            break;
+                    }
+                    
                 }
 
                 if (losts.Count != 0)

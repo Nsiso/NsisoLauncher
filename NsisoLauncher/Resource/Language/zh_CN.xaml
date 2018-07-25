@@ -46,7 +46,9 @@
     <sys:String x:Key="String.Mainwindow.ServerGettingVer">获取服务器版本中...</sys:String>
     <sys:String x:Key="String.Mainwindow.ServerGettingPing">获取服务器延迟中..</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadDepend">需要下载补全依赖库</sys:String>
-    <sys:String x:Key="String.Mainwindow.NeedDownloadDepend2">您当前启动的版本缺少了必要的依赖库文件\n若不下载补全，可能导致无法启动</sys:String>
+    <sys:String x:Key="String.Mainwindow.NeedDownloadDepend2">您当前启动的版本缺少了必要的依赖库文件。若不下载补全，可能导致无法启动</sys:String>
+    <sys:String x:Key="String.Mainwindow.NeedDownloadAssets">可以下载补全资源文件</sys:String>
+    <sys:String x:Key="String.Mainwindow.NeedDownloadAssets2">您当前启动的版本缺少了部分资源文件。若不下载补全，可能导致游戏内容不完整（如无声音），但并不影响正常使用</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskProgress">下载进度</sys:String>

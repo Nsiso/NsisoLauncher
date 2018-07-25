@@ -15,18 +15,32 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class DownloadWindow : MetroWindow
     {
-        private ObservableCollection<DownloadTask> Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks.Reverse());
+        private ObservableCollection<DownloadTask> Tasks;
         public DownloadWindow()
         {
             InitializeComponent();
             App.downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
             App.downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
             App.downloader.DownloadCompleted += Downloader_DownloadCompleted;
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            if (App.downloader.DownloadTasks != null)
+            {
+                Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks.Reverse());
+            }
+            else
+            {
+                Tasks = new ObservableCollection<DownloadTask>();
+            }
             downloadList.ItemsSource = Tasks;
         }
 
         public async Task ShowWhenDownloading()
         {
+            this.Topmost = true;
             this.Show();
             await Task.Factory.StartNew(() =>
             {
@@ -115,7 +129,8 @@ namespace NsisoLauncher.Windows
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            new NewDownloadTaskWindow().Show();
+            new NewDownloadTaskWindow().ShowDialog();
+            Refresh();
         }
     }
 }

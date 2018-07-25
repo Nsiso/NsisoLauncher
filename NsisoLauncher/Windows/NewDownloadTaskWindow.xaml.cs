@@ -21,6 +21,7 @@ using NsisoLauncher.Core.Net.FunctionAPI;
 using static NsisoLauncher.Core.Net.FunctionAPI.APIModules;
 using System.IO;
 using NsisoLauncher.Core.Net;
+using System.Net;
 
 namespace NsisoLauncher.Windows
 {
@@ -43,10 +44,24 @@ namespace NsisoLauncher.Windows
             loading.SetIndeterminate();
             var result = await Task.Factory.StartNew(() =>
             {
-                return apiHandler.GetVersionList();
+                try
+                {
+                    return apiHandler.GetVersionList();
+                }
+                catch (WebException)
+                {
+                    return null;
+                }
             });
-            versionListDataGrid.ItemsSource = result;
             await loading.CloseAsync();
+            if (result == null)
+            {
+                await this.ShowMessageAsync("获取版本列表失败", "请检查您的网络是否正常或更改下载源");
+            }
+            else
+            {
+                versionListDataGrid.ItemsSource = result;
+            }
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -97,6 +112,13 @@ namespace NsisoLauncher.Windows
                         App.downloader.SetDownloadTasks(tasks);
                         App.downloader.StartDownload();
                     }
+                }
+                catch (WebException ex)
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        this.ShowMessageAsync("获取版本信息失败", "请检查您的网络是否正常或更改下载源/n原因:" + ex.Message);
+                    }));
                 }
                 catch (Exception ex)
                 {
