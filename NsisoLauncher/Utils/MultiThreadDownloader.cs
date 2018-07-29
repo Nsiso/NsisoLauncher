@@ -72,10 +72,12 @@ namespace NsisoLauncher.Utils
         public event EventHandler<DownloadCompletedArg> DownloadCompleted;
         public event EventHandler<Log> DownloadLog;
 
-        public IEnumerable<DownloadTask> DownloadTasks { get => _downloadTasks.AsEnumerable(); }
+        public IEnumerable<DownloadTask> DownloadTasks { get => _viewDownloadTasks.AsEnumerable(); }
 
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
         private ConcurrentBag<DownloadTask> _downloadTasks;
+        private List<DownloadTask> _viewDownloadTasks;
+        private readonly object _viewDownloadLocker = new object();
         private int _taskCount;
         private volatile bool _shouldStop = false;
         private Thread[] _threads;
@@ -84,8 +86,33 @@ namespace NsisoLauncher.Utils
         
         public void SetDownloadTasks(List<DownloadTask> tasks)
         {
-            _downloadTasks = new ConcurrentBag<DownloadTask>(tasks);
-            _taskCount = tasks.Count;
+            if (!IsBusy)
+            {
+                _downloadTasks = new ConcurrentBag<DownloadTask>(tasks);
+                _viewDownloadTasks = new List<DownloadTask>(tasks);
+                _taskCount = tasks.Count;
+            }
+        }
+
+        public void SetDownloadTasks(DownloadTask task)
+        {
+            if (!IsBusy)
+            {
+                _downloadTasks = new ConcurrentBag<DownloadTask>();
+                _downloadTasks.Add(task);
+                _viewDownloadTasks = new List<DownloadTask>();
+                _viewDownloadTasks.Add(task);
+                _taskCount = 1;
+            }
+
+        }
+
+        private void RemoveItemFromViewTask(DownloadTask task)
+        {
+            lock (_viewDownloadLocker)
+            {
+                _viewDownloadTasks.Remove(task);
+            }
         }
 
         public void RequestStop()
@@ -179,6 +206,7 @@ namespace NsisoLauncher.Utils
                         HTTPDownload(item);
                         ApendDebugLog("下载完成:" + item.From);
                         item.SetDone();
+                        RemoveItemFromViewTask(item);
                         DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
                         //TasksObservableCollection.Remove(item);
                     }

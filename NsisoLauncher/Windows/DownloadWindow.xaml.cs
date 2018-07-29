@@ -29,7 +29,7 @@ namespace NsisoLauncher.Windows
         {
             if (App.downloader.DownloadTasks != null)
             {
-                Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks.Reverse());
+                Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks);
             }
             else
             {

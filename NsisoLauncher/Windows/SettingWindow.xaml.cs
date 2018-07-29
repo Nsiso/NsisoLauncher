@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 
 namespace NsisoLauncher.Windows
@@ -107,6 +109,26 @@ namespace NsisoLauncher.Windows
         //保存按钮点击后
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
+            #region 实时修改
+            switch (config.Environment.GamePathType)
+            {
+                case GameDirEnum.ROOT:
+                    App.handler.GameRootPath = Path.GetFullPath(".minecraft");
+                    break;
+                case GameDirEnum.APPDATA:
+                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+                    break;
+                case GameDirEnum.PROGRAMFILES:
+                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
+                    break;
+                case GameDirEnum.CUSTOM:
+                    App.handler.GameRootPath = config.Environment.GamePath;
+                    break;
+                default:
+                    throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
+            }
+            App.handler.VersionIsolation = config.Environment.VersionIsolation;
+            #endregion
             App.config.MainConfig = config;
             GameHelper.SaveOptions(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,

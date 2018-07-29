@@ -14,6 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using NsisoLauncher.Core.Util;
+using NsisoLauncher.Windows;
+using NsisoLauncher.Core.Net;
 
 namespace NsisoLauncher
 {
@@ -549,10 +551,42 @@ namespace NsisoLauncher
 
         private async void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            #region 无JAVA提示
             if (App.handler.Java == null)
             {
-                await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
+                var result = await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
+                    App.GetResourceString("String.Message.NoJava2"),
+                    MessageDialogStyle.AffirmativeAndNegative,
+                    new MetroDialogSettings()
+                    {
+                        AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                        NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                        DefaultButtonFocus = MessageDialogResult.Affirmative
+                    });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    var arch = SystemTools.GetSystemArch();
+                    switch (arch)
+                    {
+                        case ArchEnum.x32:
+                            App.downloader.SetDownloadTasks(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
+                            App.downloader.StartDownload();
+                            await new DownloadWindow().ShowWhenDownloading();
+                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
+                            break;
+                        case ArchEnum.x64:
+                            App.downloader.SetDownloadTasks(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
+                            App.downloader.StartDownload();
+                            await new DownloadWindow().ShowWhenDownloading();
+                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
+            #endregion
+
         }
     }
 }

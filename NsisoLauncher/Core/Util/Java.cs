@@ -4,10 +4,39 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
 {
+    public class InstallJavaOptions
+    {
+        /// <summary>
+        /// 是否静默安装
+        /// </summary>
+        public bool SilentInstall { get; set; }
+
+        /// <summary>
+        /// 安装目录
+        /// </summary>
+        public string InstallDir { get; set; }
+
+        public string ToArg()
+        {
+            StringBuilder str = new StringBuilder();
+            if (SilentInstall)
+            {
+                str.Append("/s INSTALL_SILENT=1 ");
+                str.Append("/L setup.log ");
+            }
+            if (!string.IsNullOrWhiteSpace(InstallDir))
+            {
+                str.AppendFormat("INSTALLDIR={0} ", InstallDir);
+            }
+            return str.ToString().Trim();
+        }
+    }
+    
     public class Java
     {
         /// <summary>
@@ -30,6 +59,26 @@ namespace NsisoLauncher.Core.Util
             this.Path = path;
             this.Version = version;
             this.Arch = arch;
+        }
+
+        /// <summary>
+        /// 安装JAVA
+        /// </summary>
+        /// <param name="installerPath">JAVA安装包路径</param>
+        /// <param name="options">JAVA安装选项</param>
+        /// <returns></returns>
+        public static Process InstallJava(string installerPath, InstallJavaOptions options)
+        {
+            Process p = Process.Start(
+                new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments =  string.Format("{0} {1}", installerPath, options.ToArg()),
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    Verb = "RunAs"
+                });
+            return p;
         }
 
         /// <summary>

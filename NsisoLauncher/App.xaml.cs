@@ -10,6 +10,7 @@ using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
+using NsisoLauncher.Windows;
 
 namespace NsisoLauncher
 {

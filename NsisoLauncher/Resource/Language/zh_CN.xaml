@@ -22,7 +22,7 @@
     <sys:String x:Key="String.Message.EmptyLaunchVersion">您未选择启动版本</sys:String>
     <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在启动版本栏选择您要启动的版本</sys:String>
     <sys:String x:Key="String.Message.NoJava">该电脑上未安装Java</sys:String>
-    <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动</sys:String>
+    <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动。是否自动帮您下载并启动JAVA安装包？</sys:String>
 
     <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">选择启动版本</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">输入游戏名称或账号</sys:String>
