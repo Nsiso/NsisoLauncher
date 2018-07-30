@@ -133,6 +133,7 @@ namespace NsisoLauncher
             #endregion
 
             #region 下载核心初始化
+            ServicePointManager.DefaultConnectionLimit = 10;
             Download downloadCfg = config.MainConfig.Download;
             downloader = new MultiThreadDownloader();
             if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
