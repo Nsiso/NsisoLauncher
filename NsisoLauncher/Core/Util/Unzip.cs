@@ -43,7 +43,11 @@ namespace NsisoLauncher.Core.Util
                     }
                     if (File.Exists(fullZipToPath))
                     {
-                        continue;
+                        FileInfo info = new FileInfo(fullZipToPath);
+                        if (info.Length == zipEntry.Size)
+                        {
+                            continue;
+                        }
                     }
 
                     using (FileStream streamWriter = File.Create(fullZipToPath))

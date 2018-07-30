@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -11,6 +12,8 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
 using NsisoLauncher.Windows;
+using System.Net;
+using NsisoLauncher.Core.Net.MojangApi.Api;
 
 namespace NsisoLauncher
 {
@@ -49,7 +52,7 @@ namespace NsisoLauncher
             config = new ConfigHandler();
 
             #region DEBUG初始化（基于配置文件）
-            if (config.MainConfig.Launcher.Debug)
+            if (config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
             {
                 Windows.DebugWindow debugWindow = new Windows.DebugWindow();
                 debugWindow.Show();
@@ -117,6 +120,11 @@ namespace NsisoLauncher
             }
 
             bool verIso = config.MainConfig.Environment.VersionIsolation;
+
+            if (string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
+            {
+                Requester.AuthURL = config.MainConfig.User.AuthServer;
+            }
             #endregion
 
             #region 启动核心初始化
@@ -125,7 +133,18 @@ namespace NsisoLauncher
             #endregion
 
             #region 下载核心初始化
+            Download downloadCfg = config.MainConfig.Download;
             downloader = new MultiThreadDownloader();
+            if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
+            {
+                WebProxy proxy = new WebProxy(downloadCfg.DownloadProxyAddress, downloadCfg.DownloadProxyPort);
+                if (!string.IsNullOrWhiteSpace(downloadCfg.ProxyUserName))
+                {
+                    NetworkCredential credential = new NetworkCredential(downloadCfg.ProxyUserName, downloadCfg.ProxyUserPassword);
+                    proxy.Credentials = credential;
+                }
+                downloader.Proxy = proxy;
+            }
             downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
             #endregion

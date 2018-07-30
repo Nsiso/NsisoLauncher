@@ -132,5 +132,13 @@ namespace NsisoLauncher.Windows
             new NewDownloadTaskWindow().ShowDialog();
             Refresh();
         }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (App.downloader.IsBusy)
+            {
+                this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
+            }
+        }
     }
 }

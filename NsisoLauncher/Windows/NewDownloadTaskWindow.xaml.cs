@@ -103,8 +103,6 @@ namespace NsisoLauncher.Windows
 
                         List<DownloadTask> tasks = new List<DownloadTask>();
 
-                        tasks.Add(new DownloadTask("游戏核心", apiHandler.DoURLReplace(ver.Downloads.Client.URL), App.handler.GetJarPath(ver)));
-
                         tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
 
                         tasks.AddRange(Core.Util.GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource, App.handler, ver));

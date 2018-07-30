@@ -220,9 +220,31 @@ namespace NsisoLauncher.Windows
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            config.User.AccessToken = null;
+            if (!string.IsNullOrWhiteSpace(config.User.AccessToken))
+            {
+                string token = config.User.AccessToken;
+                config.User.AccessToken = null;
+                Core.Net.MojangApi.Endpoints.Invalidate invalidate = new Core.Net.MojangApi.Endpoints.Invalidate(token);
+                var loading = await this.ShowProgressAsync("注销正版登陆中", "需要联网进行注销，请稍后...");
+                loading.SetIndeterminate();
+                var result = await invalidate.PerformRequestAsync();
+                await loading.CloseAsync();
+                if (result.IsSuccess)
+                {
+                    await this.ShowMessageAsync("注销成功", "已经安全,成功的取消了记住登录状态");
+                }
+                else
+                {
+                    await this.ShowMessageAsync("已取消记住登陆状态但未注销", "虽然取消并删除了本地的记住登陆状态和密匙，但未能成功联网注销密匙，请注意密匙安全");
+                }
+
+            }
+            else
+            {
+                await this.ShowMessageAsync("未进行过在线验证", "您未进行过在线验证，无需注销登陆状态");
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

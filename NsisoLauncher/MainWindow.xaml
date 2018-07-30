@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
-        Title="Nsiso Launcher" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True" Loaded="mainWindow_Loaded">
+        Title="Nsiso Launcher" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
     <controls:MetroWindow.Background>
         <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
     </controls:MetroWindow.Background>

@@ -95,7 +95,7 @@ namespace NsisoLauncher.Config
                 },
                 Environment = new Environment()
                 {
-                    VersionIsolation = true,
+                    VersionIsolation = false,
                     AutoMemory = true,
                     GamePathType = GameDirEnum.ROOT,
                     DownloadLostAssets = true,

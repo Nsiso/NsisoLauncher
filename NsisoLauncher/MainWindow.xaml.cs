@@ -456,10 +456,11 @@ namespace NsisoLauncher
 
                 #region 启动
 
-                App.handler.GameLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b; }); };
+                App.logHandler.OnLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
                 var result = await App.handler.LaunchAsync(launchSetting);
-                App.handler.GameLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b; }); };
+                App.logHandler.OnLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
 
+                //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
                     await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
@@ -470,25 +471,6 @@ namespace NsisoLauncher
                     await Task.Factory.StartNew(() =>
                     {
                         result.Process.WaitForInputIdle();
-                        //while (true)
-                        //{
-                        //    if (result.Process.HasExited)
-                        //    {
-                        //        this.Dispatcher.Invoke(new Action(() =>
-                        //        {
-                        //            this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.GameExitWithNoWindow"),
-                        //                App.GetResourceString("String.Mainwindow.GameExitWithNoWindow2"));
-                        //        }));
-                        //        break;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (result.Process.MainWindowHandle.ToInt32() != 0)
-                        //        {
-                        //            break;
-                        //        }
-                        //    }
-                        //}
                     });
                     if (App.config.MainConfig.Environment.ExitAfterLaunch)
                     {
@@ -587,6 +569,29 @@ namespace NsisoLauncher
             }
             #endregion
 
+        }
+
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (App.downloader.IsBusy)
+            {
+                var choose = this.ShowModalMessageExternal("后台正在下载中", "是否确认关闭程序？这将会取消下载"
+                , MessageDialogStyle.AffirmativeAndNegative,
+                new MetroDialogSettings()
+                {
+                    AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                    NegativeButtonText = App.GetResourceString("String.Base.Cancel")
+                });
+                if (choose == MessageDialogResult.Affirmative)
+                {
+                    App.downloader.RequestStop();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            
         }
     }
 }

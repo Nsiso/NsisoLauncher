@@ -30,6 +30,34 @@ namespace NsisoLauncher.Core.Net.Tools
             return String.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
 
+        public static string GetCoreDownloadURL(DownloadSource source, Modules.Version ver)
+        {
+            if (ver.Downloads != null)
+            {
+                switch (source)
+                {
+                    case DownloadSource.Mojang:
+                        return ver.Downloads.Client.URL;
+                    case DownloadSource.BMCLAPI:
+                        return ver.Downloads.Client.URL.Replace(MojangMainUrl, BMCLUrl);
+                    default:
+                        return ver.Downloads.Client.URL;
+                }
+                
+            }
+            else
+            {
+                return string.Format("{0}version/{1}/client", BMCLUrl, ver.ID);
+            }
+        }
+
+        public static DownloadTask GetCoreDownloadTask(DownloadSource downloadSource, Modules.Version version, LaunchHandler core)
+        {
+            string from = GetCoreDownloadURL(downloadSource, version);
+            string to = core.GetJarPath(version);
+            return new DownloadTask("游戏版本核心", from, to);
+        }
+
         /// <summary>
         /// 获取Lib下载地址
         /// </summary>

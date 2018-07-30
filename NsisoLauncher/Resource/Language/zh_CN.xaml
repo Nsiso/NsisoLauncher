@@ -141,11 +141,11 @@
     <sys:String x:Key="String.Settingwindow.User.Type.Offline">使用离线验证登陆 (无需正版账号)</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info">验证信息设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Note">*在线验证将在启动时进行登陆</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Info.UnRemember">取消记住登陆状态</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Info.UnRemember">取消记住登陆状态并注销</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Clear">重置用户信息</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Note2">*操作完后点击应用按钮生效</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Pro">高级验证信息设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Pro.Note">*此设置节点请勿随意改动,否则可能导致验证失败而无法启动</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Pro.ProxyAddress">代理验证服务器地址:</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Pro.ProxyAddress">代理验证服务器地址(重启生效):</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Pro.GUID">客户端GUID:</sys:String>
 </ResourceDictionary>

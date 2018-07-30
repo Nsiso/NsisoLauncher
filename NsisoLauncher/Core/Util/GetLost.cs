@@ -1,6 +1,7 @@
 ﻿using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net;
 using NsisoLauncher.Core.Net.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -112,6 +113,11 @@ namespace NsisoLauncher.Core.Util
         public static List<string> GetAllLostDepend(LaunchHandler core, Modules.Version version)
         {
             List<string> lost = new List<string>();
+            string jarPath = core.GetJarPath(version);
+            if (!File.Exists(jarPath))
+            {
+                lost.Add(jarPath);
+            }
             lost.AddRange(GetLostLibs(core, version).Keys);
             lost.AddRange(GetLostNatives(core, version).Keys);
             return lost;
@@ -129,6 +135,11 @@ namespace NsisoLauncher.Core.Util
             var lostLibs = GetLostLibs(core, version);
             var lostNatives = GetLostNatives(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
+            string jarPath = core.GetJarPath(version);
+            if (!File.Exists(jarPath))
+            {
+                tasks.Add(GetDownloadUrl.GetCoreDownloadTask(source, version, core));
+            }
             foreach (var item in lostLibs)
             {
                 tasks.Add(GetDownloadUrl.GetLibDownloadTask(source, item.Value, core));

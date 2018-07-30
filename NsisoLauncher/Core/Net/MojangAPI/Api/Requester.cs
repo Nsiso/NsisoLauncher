@@ -29,6 +29,11 @@ namespace NsisoLauncher.Core.Net.MojangApi.Api
         public static Encoding Encoding = Encoding.Default;
 
         /// <summary>
+        /// 定义验证服务器URL
+        /// </summary>
+        public static string AuthURL = "https://authserver.mojang.com";
+
+        /// <summary>
         /// NsisoLauncher目前名称.
         /// </summary>
         public readonly static string Name = "NsisoLauncher";
