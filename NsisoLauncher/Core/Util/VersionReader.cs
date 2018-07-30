@@ -201,6 +201,7 @@ namespace NsisoLauncher.Core.Util
 
         public List<Modules.Version> GetVersions()
         {
+            dirInfo.Refresh();
             if (!dirInfo.Exists)
             {
                 return new List<Modules.Version>();
