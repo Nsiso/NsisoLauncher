@@ -121,7 +121,7 @@ namespace NsisoLauncher
 
             bool verIso = config.MainConfig.Environment.VersionIsolation;
 
-            if (string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
+            if (!string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
             {
                 Requester.AuthURL = config.MainConfig.User.AuthServer;
             }

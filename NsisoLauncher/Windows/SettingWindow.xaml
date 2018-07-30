@@ -187,7 +187,7 @@
                                 <TextBox Text="{Binding DownloadThreadsSize}"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Width="60" HorizontalAlignment="Left"/>
+                                         Width="60" HorizontalAlignment="Left" MaxLength="2"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{DynamicResource String.Settingwindow.Download.Proxy}" Margin="0,0,0,5">

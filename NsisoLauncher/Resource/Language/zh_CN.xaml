@@ -121,7 +121,7 @@
     <sys:String x:Key="String.Settingwindow.Download.Source.Mojang">Mojang官方</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.BMCLAPI">BMCLAPI (bangbang93's minecraft launcher api)</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Thread">下载线程设置</sys:String>
-    <sys:String x:Key="String.Settingwindow.Download.Thread.Num">下载线程数量</sys:String>
+    <sys:String x:Key="String.Settingwindow.Download.Thread.Num">下载线程数量(最大10)</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Proxy">下载代理</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Proxy.Address">代理服务器地址:</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Proxy.Port">代理服务器端口:</sys:String>

@@ -103,7 +103,6 @@
     <Compile Include="Core\Util\AssetsReader.cs" />
     <Compile Include="Core\Util\GetLost.cs" />
     <Compile Include="Core\Util\LogHandler.cs" />
-    <Compile Include="Utils\IReadOnlyList.cs" />
     <Compile Include="Utils\MultiThreadDownloader.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />

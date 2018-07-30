@@ -146,6 +146,7 @@ namespace NsisoLauncher.Utils
                     //}
                     _threads = new Thread[ProcessorSize];
                     _timer.Start();
+                    
                     for (int i = 0; i < ProcessorSize; i++)
                     {
                         _threads[i] = new Thread(() =>
