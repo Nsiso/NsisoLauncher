@@ -26,7 +26,7 @@ namespace NsisoLauncher.Utils
 
     public class DownloadCompletedArg : EventArgs
     {
-        public Dictionary<DownloadTask,Exception> ErrorList { get; set; }
+        public Dictionary<DownloadTask, Exception> ErrorList { get; set; }
     }
 
     public class MultiThreadDownloader
@@ -83,7 +83,7 @@ namespace NsisoLauncher.Utils
         private Thread[] _threads;
         private int _downloadSizePerSec;
         private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
-        
+
         public void SetDownloadTasks(List<DownloadTask> tasks)
         {
             if (!IsBusy)
@@ -225,13 +225,16 @@ namespace NsisoLauncher.Utils
 
         private void HTTPDownload(DownloadTask task)
         {
+            string realFilename = task.To;
+            string buffFilename = realFilename + ".downloadtask";
             try
             {
-                if (Path.IsPathRooted(task.To))
+                if (Path.IsPathRooted(realFilename))
                 {
-                    if (!Directory.Exists(Path.GetDirectoryName(task.To)))
+                    string dirName = Path.GetDirectoryName(realFilename);
+                    if (!Directory.Exists(dirName))
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(task.To));
+                        Directory.CreateDirectory(dirName);
                     }
                 }
                 if (_shouldStop)
@@ -247,61 +250,34 @@ namespace NsisoLauncher.Utils
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
                 task.SetTotalSize(response.ContentLength);
                 Stream responseStream = response.GetResponseStream();
-                FileStream fs = new FileStream(task.To, FileMode.Create);
+                FileStream fs = new FileStream(buffFilename, FileMode.Create);
                 byte[] bArr = new byte[1024];
                 int size = responseStream.Read(bArr, 0, (int)bArr.Length);
 
                 while (size > 0)
                 {
-                    try
-                    {
-                        if (_shouldStop)
-                        {
-                            fs.Close();
-                            responseStream.Close();
-                            if (File.Exists(task.To))
-                            {
-                                File.Delete(task.To);
-                            }
-                            CompleteDownload();
-                            return;
-                        }
-                        fs.Write(bArr, 0, size);
-                        size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                        _downloadSizePerSec += size;
-                        task.IncreaseDownloadSize(size);
-                    }
-                    catch (Exception ex)
+                    if (_shouldStop)
                     {
                         fs.Close();
                         responseStream.Close();
-                        throw ex;
+                        CompleteDownload();
+                        return;
                     }
+                    fs.Write(bArr, 0, size);
+                    size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                    _downloadSizePerSec += size;
+                    task.IncreaseDownloadSize(size);
                 }
                 fs.Close();
                 responseStream.Close();
+                File.Move(buffFilename, realFilename);
             }
             catch (Exception e)
             {
-                try
+                ApendErrorLog(e);
+                if (!_errorList.ContainsKey(task))
                 {
-                    ApendErrorLog(e);
-                    if (!_errorList.ContainsKey(task))
-                    {
-                        _errorList.Add(task, e);
-                    }
-                    if (File.Exists(task.To))
-                    {
-                        File.Delete(task.To);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    AggregateExceptionArgs args = new AggregateExceptionArgs()
-                    {
-                        AggregateException = new AggregateException(ex)
-                    };
-                    App.CatchAggregateException(this, args);
+                    _errorList.Add(task, e);
                 }
             }
         }

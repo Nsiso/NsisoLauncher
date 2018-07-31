@@ -89,7 +89,7 @@ namespace NsisoLauncher.Windows
                 {
                     foreach (JWVersion item in list)
                     {
-                        string json = FunctionAPIHandler.HttpGet(item.Url);
+                        string json = FunctionAPIHandler.HttpGet(apiHandler.DoURLReplace(item.Url));
                         Core.Modules.Version ver = App.handler.JsonToVersion(json);
                         string jsonPath = App.handler.GetJsonPath(ver.ID);
 

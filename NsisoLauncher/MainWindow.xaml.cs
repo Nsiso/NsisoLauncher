@@ -42,8 +42,8 @@ namespace NsisoLauncher
 
         private async void Refresh()
         {
-            launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
+            launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
             await CustomizeRefresh();
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");

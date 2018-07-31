@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing">
+        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
     <Grid>
         <DataGrid x:Name="downloadList" Margin="10,43,10,45" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
             <DataGrid.Columns>

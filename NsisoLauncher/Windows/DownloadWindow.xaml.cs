@@ -140,5 +140,13 @@ namespace NsisoLauncher.Windows
                 this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
             }
         }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (App.downloader.Proxy != null)
+            {
+                this.ShowMessageAsync("您开启了下载代理", "请注意您现在正在使用代理进行下载，若代理设置异常可能会导致下载错误。");
+            }
+        }
     }
 }
