@@ -1,4 +1,4 @@
-# NsisoLauncher<Br/>
+# NsisoLauncher
 A New Minecraft Launcher (unofficial) from Nsiso<Br/>
 <Br/>
 感谢您关注到我们Nsiso启动器的开源项目<Br/>
@@ -6,7 +6,7 @@ A New Minecraft Launcher (unofficial) from Nsiso<Br/>
 作者：Nsiso工作室-siso<Br/>
 请注意该项目遵循GNU GPL3.0开源协议<Br/>
 <Br/>
-使用组件（由名字字母排序）：<Br/>
+使用组件（由名字字母排序）：
 -   
 BMCLAPI<Br/>
 bangbang93's minecraft launcher api<Br/>
@@ -32,7 +32,7 @@ https://www.okayapi.com/<Br/>
 <Br/>
 <Br/>
 <Br/>
-使用开源库（由名字字母排序）：<Br/>
+使用开源库（由名字字母排序）：
 -   
 Costura.Fody<Br/>
 Fody add-in for embedding references as resources.<Br/>
