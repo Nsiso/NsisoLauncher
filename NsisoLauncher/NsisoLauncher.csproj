@@ -115,9 +115,6 @@
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\InstallHelperWindow.xaml.cs">
-      <DependentUpon>InstallHelperWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\NewDownloadTaskWindow.xaml.cs">
       <DependentUpon>NewDownloadTaskWindow.xaml</DependentUpon>
     </Compile>
@@ -192,10 +189,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ErrorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\InstallHelperWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

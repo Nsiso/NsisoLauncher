@@ -317,10 +317,21 @@
                 </ScrollViewer>
 
             </TabItem>
-            <TabItem Header="关于" IsEnabled="False">
-                <Grid>
-                    <TextBox x:Name="textBox" TextWrapping="Wrap" Margin="10,0" IsReadOnly="True"/>
-                </Grid>
+            <TabItem Header="关于">
+                <StackPanel>
+                    <TextBlock>
+                        启动器开源
+                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher</Hyperlink>
+                    </TextBlock>
+                    <TextBlock>
+                        启动器声明
+                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher/blob/master/README.md</Hyperlink>
+                    </TextBlock>
+                    <TextBlock>
+                        启动器文档
+                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher/wiki</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
             </TabItem>
 
         </TabControl>

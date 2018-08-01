@@ -112,7 +112,7 @@ namespace NsisoLauncher.Windows
                     }
                 }
                 catch (WebException ex)
-                {
+               {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
                         this.ShowMessageAsync("获取版本信息失败", "请检查您的网络是否正常或更改下载源/n原因:" + ex.Message);
