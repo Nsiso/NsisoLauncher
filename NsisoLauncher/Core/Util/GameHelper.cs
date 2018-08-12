@@ -35,32 +35,35 @@ namespace NsisoLauncher.Core.Util
 
     public static class GameHelper
     {
-        public static List<VersionOption> GetOptions(LaunchHandler core, Modules.Version version)
+        public async static Task<List<VersionOption>> GetOptionsAsync(LaunchHandler core, Modules.Version version)
         {
-            if (version != null)
+            return await Task.Factory.StartNew(() =>
             {
-                string optionsPath = core.GetVersionOptions(version);
-                if (!File.Exists(optionsPath))
+                if (version != null)
+                {
+                    string optionsPath = core.GetVersionOptions(version);
+                    if (!File.Exists(optionsPath))
+                    {
+                        return null;
+                    }
+                    string[] lines = File.ReadAllLines(optionsPath);
+                    List<VersionOption> options = new List<VersionOption>();
+                    foreach (var item in lines)
+                    {
+                        string[] kv = item.Split(':');
+                        if (kv.Length != 2)
+                        {
+                            throw new Exception("版本options.txt配置文件转换错误。请确认冒号分界线是否正确");
+                        }
+                        options.Add(new VersionOption() { Key = kv[0], Value = kv[1] });
+                    }
+                    return options;
+                }
+                else
                 {
                     return null;
                 }
-                string[] lines = File.ReadAllLines(optionsPath);
-                List<VersionOption> options = new List<VersionOption>();
-                foreach (var item in lines)
-                {
-                    string[] kv = item.Split(':');
-                    if (kv.Length != 2)
-                    {
-                        throw new Exception("版本options.txt配置文件转换错误。请确认冒号分界线是否正确");
-                    }
-                    options.Add(new VersionOption() { Key = kv[0], Value = kv[1] });
-                }
-                return options;
-            }
-            else
-            {
-                return null;
-            }
+            });
         }
 
         [DllImport("User32.dll")]

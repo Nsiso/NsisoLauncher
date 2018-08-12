@@ -113,10 +113,11 @@ namespace NsisoLauncher.Core.Util
                     }
                 }
                 ver.JvmArguments = jvmArgBuilder.ToString();
-                #endregion
             }
+            #endregion
             else
             {
+
                 ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
             }
 

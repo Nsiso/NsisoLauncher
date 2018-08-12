@@ -71,6 +71,11 @@ namespace NsisoLauncher.Config
         public AuthenticationType AuthenticationType { get; set; }
 
         /// <summary>
+        /// 统一通行证服务器ID
+        /// </summary>
+        public string Nide8ServerID { get; set; }
+
+        /// <summary>
         /// 玩家选择的角色UUID
         /// </summary>
         public Uuid AuthenticationUUID { get; set; }
@@ -227,9 +232,19 @@ namespace NsisoLauncher.Config
         OFFLINE,
 
         /// <summary>
-        /// 在线验证
+        /// 官方正版验证
         /// </summary>
-        ONLINE
+        MOJANG,
+
+        /// <summary>
+        /// 统一验证
+        /// </summary>
+        NIDE8,
+
+        /// <summary>
+        /// 自定义服务器
+        /// </summary>
+        CUSTOM_SERVER
     }
 
     public enum GameDirEnum

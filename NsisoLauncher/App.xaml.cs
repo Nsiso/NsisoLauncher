@@ -121,10 +121,14 @@ namespace NsisoLauncher
 
             bool verIso = config.MainConfig.Environment.VersionIsolation;
 
-            if (!string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
-            {
-                Requester.AuthURL = config.MainConfig.User.AuthServer;
-            }
+            //if (config.MainConfig.User.UseNide8Auth && string.IsNullOrWhiteSpace(config.MainConfig.User.Nide8AuthID))
+            //{
+            //    config.MainConfig.User.AuthServer = string.Format("https://auth2.nide8.com:233/{0}/authserver", config.MainConfig.User.Nide8AuthID);
+            //}
+            //if (!string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
+            //{
+            //    Requester.AuthURL = config.MainConfig.User.AuthServer;
+            //}
             #endregion
 
             #region 启动核心初始化

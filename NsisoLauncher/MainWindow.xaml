@@ -30,29 +30,40 @@
             <Image Source="Resource/Steve.jpg" Height="60" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,30,0,0"/>
             <Ellipse  Height="100" Stroke="White" VerticalAlignment="Top" HorizontalAlignment="Center" Width="100" Margin="0,10,0,0"/>
 
-            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,115,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
+            <ComboBox x:Name="authTypeCombobox"
+                  Margin="41,115,10,0" 
+                  VerticalAlignment="Top" 
+                  Background="#33FFFFFF" BorderBrush="#99FFFFFF"
+                  DisplayMemberPath="Name"
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
+                  />
+            
+            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,147,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="launchVersionCombobox"
-                  Margin="41,120,10,0" 
+                  Margin="41,150,10,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="ID"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"
                   />
 
-            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,177,0,0" Foreground="White"/>
             <TextBox x:Name="playerNameTextBox"
                  Height="23"
-                 Margin="41,155,10,0"
+                 Margin="41,185,10,0"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                  controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
                  />
 
+            <!--
             <controls:ToggleSwitch Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Margin="41,190,10,0" Height="auto" VerticalAlignment="Top"
                                    x:Name="isOnlineLogin"
                                    OnLabel="{DynamicResource String.Mainwindow.UseOnlineAuth}"
                                    OffLabel="{DynamicResource String.Mainwindow.UseOfflineAuth}" FontSize="14"
                                    />
+            -->
 
             <Button x:Name="configButton"
                     Height="30" Margin="10,0,0,65" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="95"

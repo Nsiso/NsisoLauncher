@@ -213,7 +213,7 @@
                 <Grid>
                     <Label x:Name="label6" Content="{DynamicResource String.Settingwindow.Version.ChooseText}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
                     <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="ID" SelectionChanged="VersionsComboBox_SelectionChanged"/>
-                    <GroupBox x:Name="groupBox7" Header="{DynamicResource String.Settingwindow.Version.Options}" Margin="10,31,185,0">
+                    <GroupBox x:Name="groupBox7" Header="{DynamicResource String.Settingwindow.Version.Options}" Margin="10,31,10,0">
                         <Grid>
                             <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20">
                                 <DataGrid.Columns>
@@ -226,9 +226,12 @@
                     </GroupBox>
                     <Button x:Name="refreshVersionsButton" Content="{DynamicResource String.Settingwindow.Version.Refresh}"
                             VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Click="refreshVersionsButton_Click" Margin="0,-1,10,0"/>
+                    <!--
                     <GroupBox x:Name="groupBox" Header="{DynamicResource String.Settingwindow.Version.Control}" Margin="0,31,10,0" HorizontalAlignment="Right" Width="170">
                         <StackPanel/>
                     </GroupBox>
+                    -->
+                    
                 </Grid>
             </TabItem>
             <TabItem Header="{DynamicResource String.Settingwindow.User}">
@@ -236,10 +239,13 @@
                     <StackPanel x:Name="userGrid" Margin="10,0">
                         <Expander Header="启动验证类型设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <RadioButton Content="{DynamicResource String.Settingwindow.User.Type.Online}"
-                                             IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=1}" Margin="0,0,0,5"/>
-                                <RadioButton Content="{DynamicResource String.Settingwindow.User.Type.Offline}" 
-                                             IsChecked="{Binding Path=AuthenticationType, Converter={StaticResource SettingLoginTypeRadioButtonConverter},ConverterParameter=0}" />
+                                <ComboBox x:Name="authtypeCombobox" Margin="10,5,10,5" DisplayMemberPath="Name"/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="统一通行证验证设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="统一通行证服务器ID"/>
+                                <TextBox Margin="5,0,5,5" Text="{Binding Nide8ServerID}"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{DynamicResource String.Settingwindow.User.Info}" Margin="0,0,0,5">
@@ -319,15 +325,15 @@
             </TabItem>
             <TabItem Header="关于">
                 <StackPanel>
-                    <TextBlock>
+                    <TextBlock Margin="10,0">
                         启动器开源
                         <Hyperlink>https://github.com/Nsiso/NsisoLauncher</Hyperlink>
                     </TextBlock>
-                    <TextBlock>
+                    <TextBlock Margin="10,0">
                         启动器声明
                         <Hyperlink>https://github.com/Nsiso/NsisoLauncher/blob/master/README.md</Hyperlink>
                     </TextBlock>
-                    <TextBlock>
+                    <TextBlock Margin="10,0">
                         启动器文档
                         <Hyperlink>https://github.com/Nsiso/NsisoLauncher/wiki</Hyperlink>
                     </TextBlock>

@@ -25,9 +25,9 @@ namespace NsisoLauncher.Core
 
             if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
             {
-                jvmHead.Append("-javaagent:\"");
-                jvmHead.Append(setting.JavaAgent);
-                jvmHead.Append("\" ");
+                jvmHead.Append("-javaagent:");
+                jvmHead.Append(setting.JavaAgent.Trim());
+                jvmHead.Append(" ");
             }
             if (setting.GCEnabled)
             {
@@ -144,7 +144,7 @@ namespace NsisoLauncher.Core
             App.logHandler.AppendDebug(string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds));
             App.logHandler.AppendDebug(string.Format("启动参数:{0}", allArg));
 
-            return allArg;
+            return allArg.Trim();
         }
 
         private static string ToList(List<Net.MojangApi.Responses.AuthenticateResponse.UserData.Property> properties)

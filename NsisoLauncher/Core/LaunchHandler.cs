@@ -233,7 +233,20 @@ namespace NsisoLauncher.Core
 
         public string GetVersionOptions(string versionId)
         {
-            return string.Format(@"{0}\versions\{1}\options.txt", this.GameRootPath, versionId);
+            if (VersionIsolation)
+            {
+                return string.Format(@"{0}\versions\{1}\options.txt", this.GameRootPath, versionId);
+            }
+            else
+            {
+                return string.Format(@"{0}\options.txt", this.GameRootPath);
+            }
+            
+        }
+
+        public string GetNide8JarPath()
+        {
+            return string.Format(@"{0}\nide8auth.jar", this.GameRootPath);
         }
     }
 }

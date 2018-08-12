@@ -15,29 +15,63 @@
     <sys:String x:Key="String.Base.Yes">确认</sys:String>
     <sys:String x:Key="String.Base.Username">用户名</sys:String>
     <sys:String x:Key="String.Base.Password">密码</sys:String>
+    <sys:String x:Key="String.Base.Register">注册</sys:String>
+    <sys:String x:Key="String.Base.Choose">请选择操作</sys:String>
     <sys:String x:Key="String.Base.ShouldRememberLogin">记住登陆状态</sys:String>
 
+    <sys:String x:Key="String.Message.EmptyAuthType">您未选择验证方式</sys:String>
+    <sys:String x:Key="String.Message.EmptyAuthType2">请在右侧第一个验证方式栏选择您使用的验证类型</sys:String>
     <sys:String x:Key="String.Message.EmptyUsername">您的用户名未填写</sys:String>
-    <sys:String x:Key="String.Message.EmptyUsername2">请在用户名栏填写您的用户名</sys:String>
+    <sys:String x:Key="String.Message.EmptyUsername2">请在右侧第三个用户名栏填写您的用户名</sys:String>
     <sys:String x:Key="String.Message.EmptyLaunchVersion">您未选择启动版本</sys:String>
-    <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在启动版本栏选择您要启动的版本</sys:String>
+    <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在右侧第二个启动版本栏选择您要启动的版本</sys:String>
     <sys:String x:Key="String.Message.NoJava">该电脑上未安装Java</sys:String>
     <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动。是否自动帮您下载并启动JAVA安装包？</sys:String>
 
     <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">选择启动版本</sys:String>
+    <sys:String x:Key="String.MainWindow.ChooseAuthType">选择验证类型</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">输入游戏名称或账号</sys:String>
-    <sys:String x:Key="String.Mainwindow.UseOnlineAuth">使用正版验证</sys:String>
-    <sys:String x:Key="String.Mainwindow.UseOfflineAuth">使用离线验证</sys:String>
+    <!--<sys:String x:Key="String.Mainwindow.UseOnlineAuth">使用正版验证</sys:String>
+    <sys:String x:Key="String.Mainwindow.UseOfflineAuth">使用离线验证</sys:String>-->
     <sys:String x:Key="String.Mainwindow.Launching">启动中...</sys:String>
-    <sys:String x:Key="String.Mainwindow.Verifying">在线验证中...</sys:String>
-    <sys:String x:Key="String.Mainwindow.Verifying2">这可能需要几秒的时间，我们正在进行处理</sys:String>
-    <sys:String x:Key="String.Mainwindow.AutoVerifying">在线验证中(自动验证)...</sys:String>
-    <sys:String x:Key="String.Mainwindow.AutoVerifying2">这可能需要几秒的时间，我们正在进行处理。若您想关闭自动验证，请在设置窗口中进行设置</sys:String>
-    <sys:String x:Key="String.Mainwindow.VerificationFailed">在线验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.AutoVerificationFailed">自动在线验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆</sys:String>
-    <sys:String x:Key="String.Mainwindow.Login">请确认登陆信息</sys:String>
-    <sys:String x:Key="String.Mainwindow.Login2">您启用了在线验证</sys:String>
+     
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying">在线正版验证中...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerifying">在线正版验证中(自动验证)...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.VerificationFailed">正版验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.VerificationFailed2">请确认您的正版账号密码填写无误，并已购买正版。账户异常也可能导致登陆错误，您可以进入Mojang官网进行查询。错误信息:</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerificationFailed">自动正版验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用Mojang正版验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Login">请键入登陆信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Login2">您启用了在线验证（Mojang官方正版）</sys:String>
+
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Verifying">在线验证中（统一通行证）...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用服务器统一通行证验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerifying">在线验证中(自动验证)...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerifying2">这可能需要几秒的时间，我们正在进行处理。（正在使用服务器统一通行证验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.VerificationFailed">统一通行证验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.VerificationFailed2">请确认您的统一通行证账号密码填写无误，您可以联系服主咨询。错误信息:</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerificationFailed">自动验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用服务器统一通行证验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login">请键入登陆信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login2">您正在登陆服务器统一通行证</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.NoID">没有设置服务器ID</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.NoID2">统一验证服务器ID为空，如果您是服主，请在用户设置中填写通行证后台提供的服务器ID。</sys:String>
+
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.Verifying">在线验证中...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用自定义验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerifying">在线验证中(自动验证)...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerifying2">这可能需要几秒的时间，我们正在进行处理（正在使用自定义验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.VerificationFailed">验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.VerificationFailed2">请确认您的账号密码填写无误，以及验证服务器是否正常。错误信息:</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerificationFailed">自动验证失败</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用自定义验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.Login">请键入登陆信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.Login2">您启用了自定义验证</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress">未设置自定义验证服务器地址</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress2">请在设置：用户验证设置：高级验证中设置自定义验证服务器(authlib或其它验证系统)</sys:String>
+
     <sys:String x:Key="String.Mainwindow.LaunchError">启动错误</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow">游戏进程在未显示出窗口前退出</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow2">可能游戏启动时发生错误</sys:String>
@@ -49,6 +83,10 @@
     <sys:String x:Key="String.Mainwindow.NeedDownloadDepend2">您当前启动的版本缺少了必要的依赖库文件。若不下载补全，可能导致无法启动</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadAssets">可以下载补全资源文件</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadAssets2">您当前启动的版本缺少了部分资源文件。若不下载补全，可能导致游戏内容不完整（如无声音），但并不影响正常使用</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Offline">离线验证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Mojang">正版验证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Nide8">统一验证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Custom">自定义验证</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskProgress">下载进度</sys:String>
@@ -135,7 +173,7 @@
     <sys:String x:Key="String.Settingwindow.Version.Options.V">设置值</sys:String>
     <sys:String x:Key="String.Settingwindow.Version.Options.Note">*双击设置值即可进行更改。若设置列表为空说明Options.txt文件不存在或未选择版本。</sys:String>
     <sys:String x:Key="String.Settingwindow.Version.Control">版本操作</sys:String>
-    <sys:String x:Key="String.Settingwindow.User">用户设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.User">用户验证设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type">启动验证类型设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type.Online">使用正版验证登陆 (需要联网验证)</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type.Offline">使用离线验证登陆 (无需正版账号)</sys:String>

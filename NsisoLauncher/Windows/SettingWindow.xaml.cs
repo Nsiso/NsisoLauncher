@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -22,6 +23,13 @@ namespace NsisoLauncher.Windows
     public partial class SettingWindow : MetroWindow
     {
         private Config.MainConfig config;
+        private List<AuthTypeItem> authTypes = new List<AuthTypeItem>()
+        {
+            new AuthTypeItem(){Type = Config.AuthenticationType.OFFLINE, Name = App.GetResourceString("String.MainWindow.Auth.Offline")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.MOJANG, Name = App.GetResourceString("String.MainWindow.Auth.Mojang")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.NIDE8, Name = App.GetResourceString("String.MainWindow.Auth.Nide8")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.CUSTOM_SERVER, Name = App.GetResourceString("String.MainWindow.Auth.Custom")}
+        };
 
         public SettingWindow()
         {
@@ -43,8 +51,19 @@ namespace NsisoLauncher.Windows
             AccentColorComboBox.ItemsSource = ThemeManager.Accents;
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
             serverGroupBox.DataContext = config.Server;
+            authtypeCombobox.ItemsSource = authTypes;
+            authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.AuthenticationType; }).FirstOrDefault();
             userGrid.DataContext = config.User;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (App.config.MainConfig.Environment.VersionIsolation)
+            {
+                VersionsComboBox.IsEnabled = true;
+            }
+            else
+            {
+                VersionsComboBox.IsEnabled = false;
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new Core.Modules.Version() { ID = "null" });
+            }
         }
 
         private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)
@@ -129,11 +148,23 @@ namespace NsisoLauncher.Windows
             }
             App.handler.VersionIsolation = config.Environment.VersionIsolation;
             #endregion
+            config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
             App.config.MainConfig = config;
-            GameHelper.SaveOptions(
+            if (App.config.MainConfig.Environment.VersionIsolation)
+            {
+                GameHelper.SaveOptions(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,
                 App.handler,
                 (Core.Modules.Version)VersionsComboBox.SelectedItem);
+            }
+            else
+            {
+                GameHelper.SaveOptions(
+                (List<VersionOption>)versionOptionsGrid.ItemsSource,
+                App.handler,
+                new Core.Modules.Version() { ID = "null" });
+            }
+            
             App.config.Save();
             this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
         }
@@ -144,13 +175,13 @@ namespace NsisoLauncher.Windows
             this.Close();
         }
 
-        private void VersionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void VersionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             System.Windows.Controls.ComboBox comboBox = (System.Windows.Controls.ComboBox)sender;
 
             if (comboBox.SelectedItem != null)
             {
-                versionOptionsGrid.ItemsSource = GameHelper.GetOptions(App.handler, (Core.Modules.Version)comboBox.SelectedItem);
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, (Core.Modules.Version)comboBox.SelectedItem);
             }
             else
             {

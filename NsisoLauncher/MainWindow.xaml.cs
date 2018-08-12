@@ -16,14 +16,30 @@ using System.Threading;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Windows;
 using NsisoLauncher.Core.Net;
+using NsisoLauncher.Core.Net.MojangApi.Api;
+using NsisoLauncher.Core.LaunchException;
 
 namespace NsisoLauncher
 {
+    public class AuthTypeItem
+    {
+        public Config.AuthenticationType Type { get; set; }
+        public string Name { get; set; }
+    }
+
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private List<AuthTypeItem> authTypes = new List<AuthTypeItem>()
+        {
+            new AuthTypeItem(){Type = Config.AuthenticationType.OFFLINE, Name = App.GetResourceString("String.MainWindow.Auth.Offline")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.MOJANG, Name = App.GetResourceString("String.MainWindow.Auth.Mojang")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.NIDE8, Name = App.GetResourceString("String.MainWindow.Auth.Nide8")},
+            new AuthTypeItem(){Type = Config.AuthenticationType.CUSTOM_SERVER, Name = App.GetResourceString("String.MainWindow.Auth.Custom")}
+        };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,7 +60,9 @@ namespace NsisoLauncher
         {
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
+            authTypeCombobox.ItemsSource = this.authTypes;
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+            this.authTypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == App.config.MainConfig.User.AuthenticationType; }).FirstOrDefault();
             await CustomizeRefresh();
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
@@ -232,6 +250,12 @@ namespace NsisoLauncher
                 string userName = playerNameTextBox.Text;
 
                 #region 检查有效数据
+                if (authTypeCombobox.SelectedItem == null)
+                {
+                    await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyAuthType"),
+                        App.GetResourceString("String.Message.EmptyAuthType2"));
+                    return;
+                }
                 if (string.IsNullOrWhiteSpace(userName))
                 {
                     await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
@@ -259,13 +283,240 @@ namespace NsisoLauncher
                 this.loadingGrid.Visibility = Visibility.Visible;
                 this.loadingRing.IsActive = true;
 
+                #region 验证
+                AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
+                Requester.ClientToken = App.config.MainConfig.User.ClientToken;
+
+                #region NewData
+                string autoVerifyingMsg = null;
+                string autoVerifyingMsg2 = null;
+                string autoVerificationFailedMsg = null;
+                string autoVerificationFailedMsg2 = null;
+                string loginMsg = null;
+                string loginMsg2 = null;
+                LoginDialogSettings loginDialogSettings = new LoginDialogSettings()
+                {
+                    NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                    AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
+                    RememberCheckBoxText = App.GetResourceString("String.Base.ShouldRememberLogin"),
+                    UsernameWatermark = App.GetResourceString("String.Base.Username"),
+                    InitialUsername = userName,
+                    RememberCheckBoxVisibility = Visibility,
+                    EnablePasswordPreview = true,
+                    PasswordWatermark = App.GetResourceString("String.Base.Password"),
+                    NegativeButtonVisibility = Visibility.Visible
+                };
+                string verifyingMsg = null, verifyingMsg2 = null, verifyingFailedMsg = null, verifyingFailedMsg2 = null;
+                #endregion
+
+                switch (auth.Type)
+                {
+                    #region 离线验证
+                    case Config.AuthenticationType.OFFLINE:
+                        var loginResult = Core.Auth.OfflineAuthenticator.DoAuthenticate(userName);
+                        launchSetting.AuthenticateAccessToken = loginResult.Item1;
+                        launchSetting.AuthenticateUUID = loginResult.Item2;
+                        break;
+                    #endregion
+
+                    #region Mojang验证
+                    case Config.AuthenticationType.MOJANG:
+                        Requester.AuthURL = "https://authserver.mojang.com";
+                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerifying");
+                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerifying2");
+                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerificationFailed");
+                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerificationFailed2");
+                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.Login");
+                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2");
+                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.Verifying");
+                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.Verifying2");
+                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.VerificationFailed");
+                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.VerificationFailed2");
+                        break;
+                    #endregion
+
+                    #region 统一通行证验证
+                    case Config.AuthenticationType.NIDE8:
+                        string nide8Id = App.config.MainConfig.User.Nide8ServerID;
+                        if (string.IsNullOrWhiteSpace(nide8Id))
+                        {
+                            await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
+                                App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
+                            return;
+                        }
+                        Core.Net.Nide8API.APIHandler nide8Handler = new Core.Net.Nide8API.APIHandler(nide8Id);
+                        try
+                        { var nide8ReturnResult = await nide8Handler.GetInfoAsync(); }
+                        catch {}
+                        Requester.AuthURL = string.Format("{0}authserver", nide8Handler.BaseURL);
+                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying");
+                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying2");
+                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerificationFailed");
+                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerificationFailed2");
+                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.Login");
+                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2");
+                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.Verifying");
+                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.Verifying2");
+                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.VerificationFailed");
+                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.VerificationFailed2");
+                        loginDialogSettings.NegativeButtonVisibility = Visibility.Visible;
+                        var nide8ChooseResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"), App.GetResourceString("String.Base.Choose"),
+                            MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
+                            new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
+                                NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                                FirstAuxiliaryButtonText = App.GetResourceString("String.Base.Register"),
+                                DefaultButtonFocus = MessageDialogResult.Affirmative
+                            });
+                        if (nide8ChooseResult == MessageDialogResult.Negative)
+                        {
+                            return;
+                        }
+                        if (nide8ChooseResult == MessageDialogResult.FirstAuxiliary)
+                        {
+                            System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", nide8Id));
+                            return;
+                        }
+                        break;
+                    #endregion
+
+                    #region 自定义验证
+                    case Config.AuthenticationType.CUSTOM_SERVER:
+                        string customAuthServer = App.config.MainConfig.User.AuthServer;
+                        if (string.IsNullOrWhiteSpace(customAuthServer))
+                        {
+                            await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
+                                App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
+                            return;
+                        }
+                        else
+                        {
+                            Requester.AuthURL = customAuthServer;
+                        }
+                        
+                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerifying");
+                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerifying2");
+                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerificationFailed");
+                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerificationFailed2");
+                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.Login");
+                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.Login2");
+                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.Verifying");
+                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.Verifying2");
+                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.VerificationFailed");
+                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.VerificationFailed2");
+                        break;
+                    #endregion
+
+                    default:
+                        var defaultLoginResult = Core.Auth.OfflineAuthenticator.DoAuthenticate(userName);
+                        launchSetting.AuthenticateAccessToken = defaultLoginResult.Item1;
+                        launchSetting.AuthenticateUUID = defaultLoginResult.Item2;
+                        break;
+                }
+
+                if (auth.Type != Config.AuthenticationType.OFFLINE)
+                {
+                    try
+                    {
+                        #region 如果记住登陆(有登陆记录)
+                        if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
+                        {
+                            var loader = await this.ShowProgressAsync(autoVerifyingMsg, autoVerifyingMsg2);
+                            loader.SetIndeterminate();
+                            Validate validate = new Validate(App.config.MainConfig.User.AccessToken);
+                            var validateResult = await validate.PerformRequestAsync();
+                            if (validateResult.IsSuccess)
+                            {
+                                launchSetting.AuthenticateAccessToken = App.config.MainConfig.User.AccessToken;
+                                launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
+                                await loader.CloseAsync();
+                            }
+                            else
+                            {
+                                Refresh refresher = new Refresh(App.config.MainConfig.User.AccessToken);
+                                var refreshResult = await refresher.PerformRequestAsync();
+                                await loader.CloseAsync();
+                                if (refreshResult.IsSuccess)
+                                {
+                                    App.config.MainConfig.User.AccessToken = refreshResult.AccessToken;
+
+                                    launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
+                                    launchSetting.AuthenticateAccessToken = refreshResult.AccessToken;
+                                }
+                                else
+                                {
+                                    App.config.MainConfig.User.AccessToken = string.Empty;
+                                    App.config.Save();
+                                    await this.ShowMessageAsync(autoVerificationFailedMsg, autoVerificationFailedMsg2);
+                                    return;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        #region 从零登陆
+                        else
+                        {
+                            var loginMsgResult = await this.ShowLoginAsync(loginMsg, loginMsg2, loginDialogSettings);
+
+                            if (loginMsgResult == null)
+                            {
+                                return;
+                            }
+                            var loader = await this.ShowProgressAsync(verifyingMsg, verifyingMsg2);
+                            loader.SetIndeterminate();
+                            userName = loginMsgResult.Username;
+                            Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
+                            var aloginResult = await authenticate.PerformRequestAsync();
+                            await loader.CloseAsync();
+                            if (aloginResult.IsSuccess)
+                            {
+                                if (loginMsgResult.ShouldRemember)
+                                {
+                                    App.config.MainConfig.User.AccessToken = aloginResult.AccessToken;
+                                }
+                                App.config.MainConfig.User.AuthenticationUserData = aloginResult.User;
+                                App.config.MainConfig.User.AuthenticationUUID = aloginResult.SelectedProfile;
+
+                                launchSetting.AuthenticateAccessToken = aloginResult.AccessToken;
+                                launchSetting.AuthenticateUUID = aloginResult.SelectedProfile;
+                                launchSetting.AuthenticationUserData = aloginResult.User;
+                            }
+                            else
+                            {
+                                await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + aloginResult.Error.ErrorMessage);
+                                return;
+                            }
+                        }
+                        #endregion
+                    }
+                    catch (Exception ex)
+                    {
+                        await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + ex.Message);
+                        return;
+                    }
+                }
+                App.config.MainConfig.User.AuthenticationType = auth.Type;
+                #endregion
+
                 #region 检查游戏完整
-                List<Core.Net.DownloadTask> losts = new List<Core.Net.DownloadTask>();
+                List<DownloadTask> losts = new List<DownloadTask>();
 
                 var lostDepend = GetLost.GetLostDependDownloadTask(
                     App.config.MainConfig.Download.DownloadSource,
                     App.handler,
                     launchSetting.Version);
+
+                if (auth.Type == Config.AuthenticationType.NIDE8)
+                {
+                    string nideJarPath = App.handler.GetNide8JarPath();
+                    if (!File.Exists(nideJarPath))
+                    {
+                        lostDepend.Add(new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", nideJarPath));
+                    }
+                }
+
                 if (App.config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
@@ -317,7 +568,7 @@ namespace NsisoLauncher
                         default:
                             break;
                     }
-                    
+
                 }
 
                 if (losts.Count != 0)
@@ -329,119 +580,24 @@ namespace NsisoLauncher
 
                 #endregion
 
-                #region 验证
-
-                //在线验证
-                if ((bool)isOnlineLogin.IsChecked)
-                {
-                    Core.Net.MojangApi.Api.Requester.ClientToken = App.config.MainConfig.User.ClientToken;
-                    //如果记住登陆
-                    if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
-                    {
-                        var loader = await this.ShowProgressAsync(App.GetResourceString("String.Mainwindow.AutoVerifying"),
-                            App.GetResourceString("String.Mainwindow.AutoVerifying2"));
-                        loader.SetIndeterminate();
-                        Validate validate = new Validate(App.config.MainConfig.User.AccessToken);
-                        var validateResult = await validate.PerformRequestAsync();
-                        if (validateResult.IsSuccess)
-                        {
-                            launchSetting.AuthenticateAccessToken = App.config.MainConfig.User.AccessToken;
-                            launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
-                            await loader.CloseAsync();
-                        }
-                        else
-                        {
-                            Refresh refresher = new Refresh(App.config.MainConfig.User.AccessToken);
-                            var refreshResult = await refresher.PerformRequestAsync();
-                            await loader.CloseAsync();
-                            if (refreshResult.IsSuccess)
-                            {
-                                App.config.MainConfig.User.AccessToken = refreshResult.AccessToken;
-
-                                launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
-                                launchSetting.AuthenticateAccessToken = refreshResult.AccessToken;
-                            }
-                            else
-                            {
-                                App.config.MainConfig.User.AccessToken = string.Empty;
-                                App.config.Save();
-                                await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.AutoVerificationFailed"),
-                                    App.GetResourceString("String.Mainwindow.AutoVerificationFailed2"));
-                                return;
-                            }
-                        }
-                    }
-                    //账号密码验证
-                    else
-                    {
-                        var loginMsgResult = await this.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Login"),
-                            App.GetResourceString("String.Mainwindow.Login2"),
-                        new LoginDialogSettings()
-                        {
-                            NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
-                            AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
-                            RememberCheckBoxText = App.GetResourceString("String.Base.ShouldRememberLogin"),
-                            UsernameWatermark = App.GetResourceString("String.Base.Username"),
-                            InitialUsername = userName,
-                            RememberCheckBoxVisibility = Visibility,
-                            EnablePasswordPreview = true,
-                            PasswordWatermark = App.GetResourceString("String.Base.Password")
-                        });
-                        if (loginMsgResult == null)
-                        {
-                            return;
-                        }
-                        var loader = await this.ShowProgressAsync(App.GetResourceString("String.Mainwindow.Verifying"),
-                            App.GetResourceString("String.Mainwindow.Verifying2"));
-                        loader.SetIndeterminate();
-                        Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
-                        var loginResult = await authenticate.PerformRequestAsync();
-                        await loader.CloseAsync();
-                        if (loginResult.IsSuccess)
-                        {
-                            if (loginMsgResult.ShouldRemember)
-                            {
-                                App.config.MainConfig.User.AccessToken = loginResult.AccessToken;
-                            }
-                            App.config.MainConfig.User.AuthenticationUserData = loginResult.User;
-                            App.config.MainConfig.User.AuthenticationUUID = loginResult.SelectedProfile;
-
-                            launchSetting.AuthenticateAccessToken = loginResult.AccessToken;
-                            launchSetting.AuthenticateUUID = loginResult.SelectedProfile;
-                            launchSetting.AuthenticationUserData = loginResult.User;
-                        }
-                        else
-                        {
-                            await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.VerificationFailed"),
-                                loginResult.Error.ErrorMessage);
-                            return;
-                        }
-                    }
-                }
-                //离线验证
-                else
-                {
-                    var loginResult = Core.Auth.OfflineAuthenticator.DoAuthenticate(userName);
-                    launchSetting.AuthenticateAccessToken = loginResult.Item1;
-                    launchSetting.AuthenticateUUID = loginResult.Item2;
-                }
-
-                #endregion
-
                 #region 根据配置文件设置
-                launchSetting.AdvencedGameArguments = App.config.MainConfig.Environment.AdvencedGameArguments;
-                launchSetting.AdvencedJvmArguments = App.config.MainConfig.Environment.AdvencedJvmArguments;
-                launchSetting.GCArgument = App.config.MainConfig.Environment.GCArgument;
+                launchSetting.AdvencedGameArguments += App.config.MainConfig.Environment.AdvencedGameArguments;
+                launchSetting.AdvencedJvmArguments += App.config.MainConfig.Environment.AdvencedJvmArguments;
+                launchSetting.GCArgument += App.config.MainConfig.Environment.GCArgument;
                 launchSetting.GCEnabled = App.config.MainConfig.Environment.GCEnabled;
                 launchSetting.GCType = App.config.MainConfig.Environment.GCType;
-                launchSetting.JavaAgent = App.config.MainConfig.Environment.JavaAgent;
+                launchSetting.JavaAgent += App.config.MainConfig.Environment.JavaAgent;
+                if (auth.Type == Config.AuthenticationType.NIDE8)
+                {
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), App.config.MainConfig.User.Nide8ServerID);
+                }
                 if (App.config.MainConfig.Server.LaunchToServer)
                 {
                     launchSetting.LaunchToServer = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
                 }
                 if (App.config.MainConfig.Environment.AutoMemory)
                 {
-                    var m = Core.Util.SystemTools.GetBestMemory(App.handler.Java);
+                    var m = SystemTools.GetBestMemory(App.handler.Java);
                     App.config.MainConfig.Environment.MaxMemory = m;
                     launchSetting.MaxMemory = m;
                 }
@@ -459,7 +615,7 @@ namespace NsisoLauncher
                 App.logHandler.OnLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
                 var result = await App.handler.LaunchAsync(launchSetting);
                 App.logHandler.OnLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
-
+                
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
@@ -477,6 +633,7 @@ namespace NsisoLauncher
                         Application.Current.Shutdown();
                     }
                     this.WindowState = WindowState.Minimized;
+                    Refresh();
 
                     //自定义处理
                     if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.GameWindowTitle))
@@ -518,6 +675,7 @@ namespace NsisoLauncher
                 this.loadingRing.IsActive = false;
             }
         }
+
 
         private void downloadButton_Click(object sender, RoutedEventArgs e)
         {

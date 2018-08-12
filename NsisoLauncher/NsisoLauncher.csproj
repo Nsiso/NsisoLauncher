@@ -96,6 +96,8 @@
     <Compile Include="Core\Net\DownloadTask.cs" />
     <Compile Include="Core\Net\FunctionAPI\APIModules.cs" />
     <Compile Include="Core\Net\FunctionAPI\FunctionAPIHandler.cs" />
+    <Compile Include="Core\Net\Nide8API\APIHandler.cs" />
+    <Compile Include="Core\Net\Nide8API\APIModules.cs" />
     <Compile Include="Core\Net\Server\ForgeInfo.cs" />
     <Compile Include="Core\Net\Server\ProtocolHandler.cs" />
     <Compile Include="Core\Net\Server\ServerInfo.cs" />
