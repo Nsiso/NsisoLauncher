@@ -6,14 +6,11 @@ using System.Windows;
 using System.IO;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Core;
-using System.Threading.Tasks;
 using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
-using NsisoLauncher.Windows;
 using System.Net;
-using NsisoLauncher.Core.Net.MojangApi.Api;
 
 namespace NsisoLauncher
 {
@@ -78,7 +75,7 @@ namespace NsisoLauncher
             #endregion
 
             #region 数据初始化
-            Config.Environment env = App.config.MainConfig.Environment;
+            Config.Environment env = config.MainConfig.Environment;
 
             javaList = Java.GetJavaList();
 
@@ -110,14 +107,7 @@ namespace NsisoLauncher
             }
             else
             {
-                foreach (var item in javaList)
-                {
-                    if (item.Path == env.JavaPath)
-                    {
-                        java = item;
-                        break;
-                    }
-                }
+                java = javaList.Find(x => x.Path == env.JavaPath);
                 if (java == null)
                 {
                     java = Java.GetJavaInfo(env.JavaPath);

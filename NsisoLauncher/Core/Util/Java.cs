@@ -132,31 +132,11 @@ namespace NsisoLauncher.Core.Util
             });
         }
 
-        ///// <summary> n
-        ///// 获取本机所有JAVA列表
-        ///// </summary>
-        ///// <returns></returns>
-        //public static List<Java> GetJavaList()
-        //{
-        //    var javaPaths = GetJavaPathList();
-        //    List<Java> javas = new List<Java>();
-        //    foreach (string item in javaPaths)
-        //    {
-        //        javas.Add(GetJavaInfo(item));
-        //    }
-        //    return javas;
-        //}
-
-        ///// <summary>
-        ///// 从本机JAVA中获取最符合此电脑的JAVA版本
-        ///// </summary>
-        ///// <param name="javalist">JAVA详细信息集合</param>
-        ///// <returns>最佳JAVA详细信息</returns>
-        //public static Java GetSuitableJava()
-        //{
-        //    return GetSuitableJava(GetJavaList());
-        //}
-
+        /// <summary>
+        /// 从所给JAVA列表中寻找最适合本机的JAVA
+        /// </summary>
+        /// <param name="javalist"></param>
+        /// <returns></returns>
         public static Java GetSuitableJava(List<Java> javalist)
         {
             try
@@ -181,6 +161,10 @@ namespace NsisoLauncher.Core.Util
             { return null; }
         }
 
+        /// <summary>
+        /// 从注册表寻找本机JAVA列表
+        /// </summary>
+        /// <returns></returns>
         public static List<Java> GetJavaList()
         {
             List<Java> javas = new List<Java>();

@@ -1,10 +1,8 @@
 ﻿using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Linq;
 using System.Management;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace NsisoLauncher.Core.Util

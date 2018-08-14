@@ -17,7 +17,6 @@ using NsisoLauncher.Core.Util;
 using NsisoLauncher.Windows;
 using NsisoLauncher.Core.Net;
 using NsisoLauncher.Core.Net.MojangApi.Api;
-using NsisoLauncher.Core.LaunchException;
 
 namespace NsisoLauncher
 {

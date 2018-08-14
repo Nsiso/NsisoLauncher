@@ -1,7 +1,6 @@
 ﻿using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net;
 using NsisoLauncher.Core.Net.Tools;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
