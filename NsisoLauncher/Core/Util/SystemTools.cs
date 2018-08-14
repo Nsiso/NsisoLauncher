@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Linq;
@@ -83,72 +84,6 @@ namespace NsisoLauncher.Core.Util
         }
 
         /// <summary>
-        /// 生成机器码
-        /// </summary>
-        /// <returns></returns>
-        public static string GetMachineUUID()
-        {
-            string code = null;
-            SelectQuery query = new SelectQuery("select * from Win32_ComputerSystemProduct");
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
-            {
-                foreach (var item in searcher.Get())
-                {
-                    using (item) code = item["UUID"].ToString();
-                }
-            }
-            code = code.Replace("0", "").Replace("-", "");
-            if (code.Length == 8)
-            {
-                return code;
-            }
-            else if (code.Length < 8)
-            {
-                return code.PadRight(8, '0');
-            }
-            else
-            {
-                return code.Remove(0, 8);
-            }
-        }
-
-        /// <summary>
-        /// DES机器UUID加密
-        /// </summary>
-        /// <param name="encryptString"></param>
-        /// <returns></returns>
-        public static string DesEncrypt(string encryptString)
-        {
-            byte[] keyBytes = Encoding.UTF8.GetBytes(GetMachineUUID());
-            byte[] keyIV = keyBytes;
-            byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
-            DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
-            MemoryStream mStream = new MemoryStream();
-            CryptoStream cStream = new CryptoStream(mStream, provider.CreateEncryptor(keyBytes, keyIV), CryptoStreamMode.Write);
-            cStream.Write(inputByteArray, 0, inputByteArray.Length);
-            cStream.FlushFinalBlock();
-            return Convert.ToBase64String(mStream.ToArray());
-        }
-
-        /// <summary>
-        /// DES机器UUID解密
-        /// </summary>
-        /// <param name="decryptString"></param>
-        /// <returns></returns>
-        public static string DesDecrypt(string decryptString)
-        {
-            byte[] keyBytes = Encoding.UTF8.GetBytes(GetMachineUUID());
-            byte[] keyIV = keyBytes;
-            byte[] inputByteArray = Convert.FromBase64String(decryptString);
-            DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
-            MemoryStream mStream = new MemoryStream();
-            CryptoStream cStream = new CryptoStream(mStream, provider.CreateDecryptor(keyBytes, keyIV), CryptoStreamMode.Write);
-            cStream.Write(inputByteArray, 0, inputByteArray.Length);
-            cStream.FlushFinalBlock();
-            return Encoding.UTF8.GetString(mStream.ToArray());
-        }
-
-        /// <summary>
         /// 获取显卡信息
         /// </summary>
         /// <returns></returns>
@@ -190,6 +125,39 @@ namespace NsisoLauncher.Core.Util
             {
                 return string.Empty;
             }
+        }
+
+        public static bool IsSetupFrameworkUpdate(string name)
+        {
+            using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Updates"))
+            {
+                foreach (string baseKeyName in baseKey.GetSubKeyNames())
+                {
+                    if (baseKeyName.Contains(".NET Framework"))
+                    {
+                        using (RegistryKey updateKey = baseKey.OpenSubKey(baseKeyName))
+                        {
+                            foreach (string kbKeyName in updateKey.GetSubKeyNames())
+                            {
+                                Console.WriteLine(kbKeyName);
+                                if (kbKeyName.Equals(name))
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

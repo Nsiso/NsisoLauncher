@@ -36,7 +36,7 @@ namespace NsisoLauncher.Core.Util
             return str.ToString().Trim();
         }
     }
-    
+
     public class Java
     {
         /// <summary>
@@ -73,7 +73,7 @@ namespace NsisoLauncher.Core.Util
                 new ProcessStartInfo()
                 {
                     FileName = "cmd.exe",
-                    Arguments =  string.Format("{0} {1}", installerPath, options.ToArg()),
+                    Arguments = string.Format("{0} {1}", installerPath, options.ToArg()),
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     Verb = "RunAs"
@@ -132,112 +132,151 @@ namespace NsisoLauncher.Core.Util
             });
         }
 
-        /// <summary> n
-        /// 获取本机所有JAVA列表
-        /// </summary>
-        /// <returns></returns>
-        public static List<Java> GetJavaList()
-        {
-            var javaPaths = GetJavaPathList();
-            List<Java> javas = new List<Java>();
-            foreach (string item in javaPaths)
-            {
-                javas.Add(GetJavaInfo(item));
-            }
-            return javas;
-        }
+        ///// <summary> n
+        ///// 获取本机所有JAVA列表
+        ///// </summary>
+        ///// <returns></returns>
+        //public static List<Java> GetJavaList()
+        //{
+        //    var javaPaths = GetJavaPathList();
+        //    List<Java> javas = new List<Java>();
+        //    foreach (string item in javaPaths)
+        //    {
+        //        javas.Add(GetJavaInfo(item));
+        //    }
+        //    return javas;
+        //}
 
-        /// <summary>
-        /// 从本机JAVA中获取最符合此电脑的JAVA版本
-        /// </summary>
-        /// <param name="javalist">JAVA详细信息集合</param>
-        /// <returns>最佳JAVA详细信息</returns>
-        public static Java GetSuitableJava()
-        {
-            return GetSuitableJava(GetJavaList());
-        }
+        ///// <summary>
+        ///// 从本机JAVA中获取最符合此电脑的JAVA版本
+        ///// </summary>
+        ///// <param name="javalist">JAVA详细信息集合</param>
+        ///// <returns>最佳JAVA详细信息</returns>
+        //public static Java GetSuitableJava()
+        //{
+        //    return GetSuitableJava(GetJavaList());
+        //}
 
         public static Java GetSuitableJava(List<Java> javalist)
         {
             try
             {
                 List<Java> goodjava = new List<Java>();
-                if (SystemTools.GetSystemArch() == Util.ArchEnum.x64)
+                if (SystemTools.GetSystemArch() == ArchEnum.x64)
                 {
                     foreach (var item in javalist)
                     {
                         if (item.Arch == ArchEnum.x64)
-                        {
-                            goodjava.Add(item);
-                        }
+                        { goodjava.Add(item); }
                     }
-
                     if (goodjava.Count == 0)
-                    {
-                        goodjava.AddRange(javalist);
-                    }
+                    { goodjava.AddRange(javalist); }
                 }
                 else
-                {
-                    goodjava = javalist;
-                }
+                { goodjava = javalist; }
                 goodjava = goodjava.OrderByDescending(a => a.Version).ToList();
                 return goodjava.FirstOrDefault();
             }
             catch (Exception)
+            { return null; }
+        }
+
+        public static List<Java> GetJavaList()
+        {
+            List<Java> javas = new List<Java>();
+            try
             {
-                return null;
+                //32
+                using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE"))
+                {
+                    var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
+                    foreach (var item in registryKey.GetSubKeyNames())
+                    {
+                        if (item.Length > 3)
+                        {
+                            string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
+                            if (File.Exists(path))
+                            {
+                                javas.Add(new Java(path, item, ArchEnum.x32));
+                            }
+                        }
+                    }
+                }
+                if (SystemTools.GetSystemArch() == ArchEnum.x64)
+                {
+                    //64
+                    using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE"))
+                    {
+                        var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
+                        foreach (var item in registryKey.GetSubKeyNames())
+                        {
+                            if (item.Length > 3)
+                            {
+                                string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
+                                if (File.Exists(path))
+                                {
+                                    javas.Add(new Java(path, item, ArchEnum.x64));
+                                }
+                            }
+                        }
+                    }
+                }
+                return javas;
+            }
+            catch (Exception)
+            {
+                return javas;
             }
         }
 
-        /// <summary>
-        /// 从注册表中查找可能的javaw.exe位置
-        /// This code is from kmccc, thx
-        /// </summary>
-        /// <returns>JAVA地址列表</returns>
-        public static IEnumerable<string> GetJavaPathList()
-        {
-            try
-            {
-                var rootReg = Registry.LocalMachine.OpenSubKey("SOFTWARE");
-                return rootReg == null
-                    ? new string[0]
-                    : FindJavaPathInternal(rootReg).Union(FindJavaPathInternal(rootReg.OpenSubKey("Wow6432Node"))).Where(x =>  File.Exists(x));
-            }
-            catch
-            {
-                return new string[0];
-            }
-        }
+        ///// <summary>
+        ///// 从注册表中查找可能的javaw.exe位置
+        ///// This code is from kmccc, thx
+        ///// </summary>
+        ///// <returns>JAVA地址列表</returns>
+        //public static IEnumerable<string> GetJavaPathList()
+        //{
+        //    try
+        //    {
+        //        var rootReg = Registry.LocalMachine.OpenSubKey("SOFTWARE");
+        //        return rootReg == null
+        //            ? new string[0]
+        //            : FindJavaPathInternal(rootReg).Union(FindJavaPathInternal(rootReg.OpenSubKey("Wow6432Node"))).Where(x => File.Exists(x));
+        //    }
+        //    catch
+        //    {
+        //        return new string[0];
+        //    }
+        //}
 
-        /// <summary>
-        /// 内部注册表搜索方法
-        /// This code is from kmccc, thx
-        /// </summary>
-        /// <param name="registry">注册表</param>
-        /// <returns>JAVA可能路径</returns>
-        private static IEnumerable<string> FindJavaPathInternal(RegistryKey registry)
-        {
-            try
-            {
-                var registryKey = registry.OpenSubKey("JavaSoft");
-                if ((registryKey == null) || ((registry = registryKey.OpenSubKey("Java Runtime Environment")) == null)) return new string[0];
-                return (from ver in registry.GetSubKeyNames()
-                        select registry.OpenSubKey(ver)
-                    into command
-                        where command != null
-                        select command.GetValue("JavaHome")
-                    into javaHomes
-                        where javaHomes != null
-                        select javaHomes.ToString()
-                    into str
-                        where !String.IsNullOrWhiteSpace(str)
-                        select str + @"\bin\javaw.exe");
-            }
-            catch
-            {
-                return new string[0];
-            }
-        }
+        ///// <summary>
+        ///// 内部注册表搜索方法
+        ///// This code is from kmccc, thx
+        ///// </summary>
+        ///// <param name="registry">注册表</param>
+        ///// <returns>JAVA可能路径</returns>
+        //private static IEnumerable<string> FindJavaPathInternal(RegistryKey registry)
+        //{
+        //    try
+        //    {
+        //        var registryKey = registry.OpenSubKey("JavaSoft");
+        //        if ((registryKey == null) || ((registry = registryKey.OpenSubKey("Java Runtime Environment")) == null)) return new string[0];
+        //        return (from ver in registry.GetSubKeyNames()
+        //                select registry.OpenSubKey(ver)
+        //            into command
+        //                where command != null
+        //                select command.GetValue("JavaHome")
+        //            into javaHomes
+        //                where javaHomes != null
+        //                select javaHomes.ToString()
+        //            into str
+        //                where !String.IsNullOrWhiteSpace(str)
+        //                select str + @"\bin\javaw.exe");
+        //    }
+        //    catch
+        //    {
+        //        return new string[0];
+        //    }
+        //}
     }
 }

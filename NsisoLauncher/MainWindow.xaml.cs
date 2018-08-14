@@ -174,10 +174,16 @@ namespace NsisoLauncher
         private async Task ShowServerInfo(Server info)
         {
             Core.Net.Server.ServerInfo serverInfo = new Core.Net.Server.ServerInfo(info) { ServerName = App.config.MainConfig.Server.ServerName };
+            serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.SyncAltSolid;
+            serverPeopleTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingNum");
+            serverVersionTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingVer");
+            serverPingTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingPing");
+            serverMotdTextBlock.Text = null;
             serverInfoGrid.Visibility = Visibility.Visible;
             serverLoadingBar.Visibility = Visibility.Visible;
             serverLoadingBar.IsIndeterminate = true;
             await serverInfo.StartGetServerInfoAsync();
+            App.logHandler.AppendDebug(serverInfo.JsonResult);
             serverLoadingBar.IsIndeterminate = false;
             serverLoadingBar.Visibility = Visibility.Hidden;
             this.serverNameTextBlock.Text = serverInfo.ServerName;

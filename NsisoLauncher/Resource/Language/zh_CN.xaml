@@ -27,14 +27,15 @@
     <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在右侧第二个启动版本栏选择您要启动的版本</sys:String>
     <sys:String x:Key="String.Message.NoJava">该电脑上未安装Java</sys:String>
     <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动。是否自动帮您下载并启动JAVA安装包？</sys:String>
+    <sys:String x:Key="String.Message.NoFrameworkUpdate">当前电脑环境缺少KB2468871v2补丁</sys:String>
+    <sys:String x:Key="String.Message.NoFrameworkUpdate2">该启动器依赖于Framework KB2468871v2补丁，您的系统由于缺少该补丁导致Nsiso启动器无法启动。您需要安装Framework KB2468871v2补丁。是否帮您打开帮助页面？否将尝试启动。</sys:String>
 
     <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">选择启动版本</sys:String>
     <sys:String x:Key="String.MainWindow.ChooseAuthType">选择验证类型</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">输入游戏名称或账号</sys:String>
-    <!--<sys:String x:Key="String.Mainwindow.UseOnlineAuth">使用正版验证</sys:String>
-    <sys:String x:Key="String.Mainwindow.UseOfflineAuth">使用离线验证</sys:String>-->
     <sys:String x:Key="String.Mainwindow.Launching">启动中...</sys:String>
      
+    <!--#region 登陆-->
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying">在线正版验证中...</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerifying">在线正版验证中(自动验证)...</sys:String>
@@ -71,6 +72,7 @@
     <sys:String x:Key="String.Mainwindow.Auth.Custom.Login2">您启用了自定义验证</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress">未设置自定义验证服务器地址</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress2">请在设置：用户验证设置：高级验证中设置自定义验证服务器(authlib或其它验证系统)</sys:String>
+     <!--#endregion-->
 
     <sys:String x:Key="String.Mainwindow.LaunchError">启动错误</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow">游戏进程在未显示出窗口前退出</sys:String>
@@ -78,7 +80,7 @@
     <sys:String x:Key="String.Mainwindow.ServerName">服务器名称</sys:String>
     <sys:String x:Key="String.Mainwindow.ServerGettingNum">获取服务器人数中...</sys:String>
     <sys:String x:Key="String.Mainwindow.ServerGettingVer">获取服务器版本中...</sys:String>
-    <sys:String x:Key="String.Mainwindow.ServerGettingPing">获取服务器延迟中..</sys:String>
+    <sys:String x:Key="String.Mainwindow.ServerGettingPing">获取服务器延迟中...</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadDepend">需要下载补全依赖库</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadDepend2">您当前启动的版本缺少了必要的依赖库文件。若不下载补全，可能导致无法启动</sys:String>
     <sys:String x:Key="String.Mainwindow.NeedDownloadAssets">可以下载补全资源文件</sys:String>
