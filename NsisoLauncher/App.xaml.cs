@@ -35,7 +35,7 @@ namespace NsisoLauncher
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             #region 检查环境
-            if (System.Environment.Version.Major == 4)
+            if ((System.Environment.Version.Major == 4) && (System.Environment.Version.Minor == 0))
             {
                 if (!SystemTools.IsSetupFrameworkUpdate("KB2468871v2"))
                 {

@@ -161,6 +161,48 @@ namespace NsisoLauncher.Core.Util
             { return null; }
         }
 
+        public static Dictionary<string,string> GetJavaRegisterPath(RegistryKey key)
+        {
+            Dictionary<string, string> jres = new Dictionary<string, string>();
+
+            var oldKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Runtime Environment");
+            var newKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JRE");
+
+            //oldJre
+            if (oldKey != null)
+            {
+                foreach (var verStr in oldKey.GetSubKeyNames())
+                {
+                    if (verStr.Length > 3)
+                    {
+                        string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
+                        if (File.Exists(path))
+                        {
+                            jres.Add(verStr, path);
+                        }
+                    }
+                }
+            }
+
+            //newJre
+            if (newKey != null)
+            {
+                foreach (var verStr in newKey.GetSubKeyNames())
+                {
+                    if (verStr.Length > 3)
+                    {
+                        string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
+                        if (File.Exists(path))
+                        {
+                            jres.Add(verStr, path);
+                        }
+                    }
+                }
+            }
+
+            return jres;
+        }
+
         /// <summary>
         /// 从注册表寻找本机JAVA列表
         /// </summary>
@@ -168,49 +210,58 @@ namespace NsisoLauncher.Core.Util
         public static List<Java> GetJavaList()
         {
             List<Java> javas = new List<Java>();
-            try
+            RegistryKey localMachine = Registry.LocalMachine.OpenSubKey("SOFTWARE");
+            switch (SystemTools.GetSystemArch())
             {
-                //32
-                using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE"))
-                {
-                    var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
-                    foreach (var item in registryKey.GetSubKeyNames())
-                    {
-                        if (item.Length > 3)
-                        {
-                            string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
-                            if (File.Exists(path))
-                            {
-                                javas.Add(new Java(path, item, ArchEnum.x32));
-                            }
-                        }
-                    }
-                }
-                if (SystemTools.GetSystemArch() == ArchEnum.x64)
-                {
-                    //64
-                    using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE"))
-                    {
-                        var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
-                        foreach (var item in registryKey.GetSubKeyNames())
-                        {
-                            if (item.Length > 3)
-                            {
-                                string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
-                                if (File.Exists(path))
-                                {
-                                    javas.Add(new Java(path, item, ArchEnum.x64));
-                                }
-                            }
-                        }
-                    }
-                }
-                return javas;
+                case ArchEnum.x32:
+                    var jres = GetJavaRegisterPath(localMachine);
+                    javas.AddRange(jres.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    break;
+
+                case ArchEnum.x64:
+                    var jres64 = GetJavaRegisterPath(localMachine);
+                    javas.AddRange(jres64.Select(x => new Java(x.Value, x.Key, ArchEnum.x64)));
+                    var jres32 = GetJavaRegisterPath(localMachine.OpenSubKey("Wow6432Node"));
+                    javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    break;
             }
-            catch (Exception)
-            {
-                return javas;
-            }
+
+            ////32
+            //using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE"))
+            //{
+            //    var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
+            //    foreach (var item in registryKey.GetSubKeyNames())
+            //    {
+            //        if (item.Length > 3)
+            //        {
+            //            string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
+            //            if (File.Exists(path))
+            //            {
+            //                javas.Add(new Java(path, item, ArchEnum.x32));
+            //            }
+            //        }
+            //    }
+            //}
+            //if (SystemTools.GetSystemArch() == ArchEnum.x64)
+            //{
+            //    //64
+            //    using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE"))
+            //    {
+            //        var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
+            //        foreach (var item in registryKey.GetSubKeyNames())
+            //        {
+            //            if (item.Length > 3)
+            //            {
+            //                string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
+            //                if (File.Exists(path))
+            //                {
+            //                    javas.Add(new Java(path, item, ArchEnum.x64));
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            return javas;
         }
 
         ///// <summary>

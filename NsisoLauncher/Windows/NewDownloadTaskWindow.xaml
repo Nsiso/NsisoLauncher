@@ -28,9 +28,6 @@
                             Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70" Click="Button_Click_1"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Forge}" IsEnabled="False">
-                <Grid/>
-            </TabItem>
         </TabControl>
 
     </Grid>
