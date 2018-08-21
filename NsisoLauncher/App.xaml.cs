@@ -86,13 +86,13 @@ namespace NsisoLauncher
                     gameroot = Path.GetFullPath(".minecraft");
                     break;
                 case GameDirEnum.APPDATA:
-                    gameroot = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+                    gameroot = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
                     break;
                 case GameDirEnum.PROGRAMFILES:
-                    gameroot = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
+                    gameroot = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
                     break;
                 case GameDirEnum.CUSTOM:
-                    gameroot = env.GamePath;
+                    gameroot = env.GamePath + "\\.minecraft";
                     break;
                 default:
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");

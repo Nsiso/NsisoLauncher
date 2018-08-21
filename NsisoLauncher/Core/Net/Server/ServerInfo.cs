@@ -6,6 +6,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace NsisoLauncher.Core.Net.Server
 {
@@ -117,21 +118,24 @@ namespace NsisoLauncher.Core.Net.Server
                     // wiki.vg
                     using (TcpClient tcp = new TcpClient(this.ServerIP, this.ServerPort))
                     {
-                        tcp.ReceiveBufferSize = 1024 * 1024;
-                        byte[] packet_id = ProtocolHandler.getVarInt(0);
-                        byte[] protocol_version = ProtocolHandler.getVarInt(-1);
-                        byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerIP);
-                        byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
-                        byte[] server_port = BitConverter.GetBytes((ushort)this.ServerPort); Array.Reverse(server_port);
-                        byte[] next_state = ProtocolHandler.getVarInt(1);
-                        byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
-                        byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
-
                         try
                         {
-                            tcp.Client.Send(tosend, SocketFlags.None);
+                            tcp.ReceiveBufferSize = 1024 * 1024;
+
+                            byte[] packet_id = ProtocolHandler.getVarInt(0);
+                            byte[] protocol_version = ProtocolHandler.getVarInt(-1);
+                            byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerIP);
+                            byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
+                            byte[] server_port = BitConverter.GetBytes((ushort)this.ServerPort); Array.Reverse(server_port);
+                            byte[] next_state = ProtocolHandler.getVarInt(1);
+                            byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
+                            byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
+
                             byte[] status_request = ProtocolHandler.getVarInt(0);
                             byte[] request_packet = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(status_request.Length), status_request);
+
+                            tcp.Client.Send(tosend, SocketFlags.None);
+
                             tcp.Client.Send(request_packet, SocketFlags.None);
                             ProtocolHandler handler = new ProtocolHandler(tcp);
                             int packetLength = handler.readNextVarIntRAW();
@@ -145,6 +149,32 @@ namespace NsisoLauncher.Core.Net.Server
                                     SetInfoFromJsonText(result);
                                 }
                             }
+
+                            byte[] ping_id = ProtocolHandler.getVarInt(1);
+                            byte[] ping_content = BitConverter.GetBytes((long)233);
+                            byte[] ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
+                            byte[] ping_tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(ping_packet.Length), ping_packet);
+
+                            Stopwatch pingWatcher = new Stopwatch();
+
+                            pingWatcher.Start();
+                            tcp.Client.Send(ping_tosend, SocketFlags.None);
+
+                            int pingLenghth = handler.readNextVarIntRAW();
+                            pingWatcher.Stop();
+                            if (pingLenghth > 0)
+                            {
+                                List<byte> packetData = new List<byte>(handler.readDataRAW(pingLenghth));
+                                if (ProtocolHandler.readNextVarInt(packetData) == 0x01) //Read Packet ID
+                                {
+                                    long content = ProtocolHandler.readNextByte(packetData); //Get the Json data
+                                    if (content == 233)
+                                    {
+                                        this.Ping = pingWatcher.ElapsedMilliseconds;
+                                    }
+                                }
+                            }
+
                         }
                         catch (SocketException)
                         {
@@ -152,7 +182,7 @@ namespace NsisoLauncher.Core.Net.Server
                         }
 
                     }
-                    ReloadPing();
+                    //ReloadPing();
                 }
                 catch (SocketException)
                 {
@@ -286,18 +316,6 @@ namespace NsisoLauncher.Core.Net.Server
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        public void ReloadPing()
-        {
-            using (Ping pinger = new Ping())
-            {
-                var pingResulr = pinger.Send(this.ServerIP);
-                if (pingResulr.Status == IPStatus.Success)
-                {
-                    this.Ping = pingResulr.RoundtripTime;
-                }
             }
         }
 

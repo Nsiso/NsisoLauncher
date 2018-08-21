@@ -46,7 +46,6 @@ namespace NsisoLauncher.Windows
             environmentGrid.DataContext = config.Environment;
             downloadGrid.DataContext = config.Download;
             memorySlider.Maximum = SystemTools.GetTotalMemory();
-            VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
             customGrid.DataContext = config.Customize;
             AccentColorComboBox.ItemsSource = ThemeManager.Accents;
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
@@ -55,6 +54,7 @@ namespace NsisoLauncher.Windows
             authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.AuthenticationType; }).FirstOrDefault();
             userGrid.DataContext = config.User;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
             if (App.config.MainConfig.Environment.VersionIsolation)
             {
                 VersionsComboBox.IsEnabled = true;
@@ -135,13 +135,13 @@ namespace NsisoLauncher.Windows
                     App.handler.GameRootPath = Path.GetFullPath(".minecraft");
                     break;
                 case GameDirEnum.APPDATA:
-                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
                     break;
                 case GameDirEnum.PROGRAMFILES:
-                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
+                    App.handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
                     break;
                 case GameDirEnum.CUSTOM:
-                    App.handler.GameRootPath = config.Environment.GamePath;
+                    App.handler.GameRootPath = config.Environment.GamePath + "\\.minecraft";
                     break;
                 default:
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
