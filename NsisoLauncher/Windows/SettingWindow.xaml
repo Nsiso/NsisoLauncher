@@ -178,7 +178,7 @@
                                 <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.Mojang}"
                                              IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=0}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.BMCLAPI}"
-                                             IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}"/>
+                                             IsChecked="{Binding Path=DownloadSource, Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{DynamicResource String.Settingwindow.Download.Thread}" Margin="0,0,0,5">
@@ -242,10 +242,11 @@
                                 <ComboBox x:Name="authtypeCombobox" Margin="10,5,10,5" DisplayMemberPath="Name"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="统一通行证验证设置" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.User.Nide8}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="统一通行证服务器ID"/>
+                                <Label Content="{DynamicResource String.Settingwindow.User.Nide8.ID}"/>
                                 <TextBox Margin="5,0,5,5" Text="{Binding Nide8ServerID}"/>
+                                <CheckBox Margin="5,0,5,5" Content="{DynamicResource String.Settingwindow.User.Nide8.UsingNide8ServerIP}" IsChecked="{Binding AllUsingNide8}"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{DynamicResource String.Settingwindow.User.Info}" Margin="0,0,0,5">
@@ -254,6 +255,7 @@
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Path=UserName}"/>
                                 <Label Content="{DynamicResource String.Settingwindow.User.Info.Note}"/>
                                 <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource String.Settingwindow.User.Info.UnRemember}" Margin="0,10,0,5" Click="Button_Click"/>
+                                <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource String.Settingwindow.User.Info.Pack}" Margin="0,0,0,5" Click="Button_Click_2"/>
                                 <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource String.Settingwindow.User.Info.Clear}" Click="Button_Click_1"/>
                                 <Label Content="{DynamicResource String.Settingwindow.User.Info.Note2}"/>
                             </StackPanel>

@@ -17,12 +17,19 @@ namespace NsisoLauncher.Core.Net.Nide8API
         {
             return Task.Factory.StartNew(() =>
             {
+                return JsonConvert.DeserializeObject<APIModules>(FunctionAPI.FunctionAPIHandler.HttpGet(BaseURL));
+            });
+        }
+
+        public Task UpdateBaseURL()
+        {
+            return Task.Factory.StartNew(() =>
+            {
                 APIModules module = JsonConvert.DeserializeObject<APIModules>(FunctionAPI.FunctionAPIHandler.HttpGet(BaseURL));
                 if (!string.IsNullOrWhiteSpace(module.APIRoot))
                 {
                     this.BaseURL = module.APIRoot;
                 }
-                return module;
             });
         }
     }

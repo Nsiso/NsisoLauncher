@@ -87,7 +87,7 @@
     <sys:String x:Key="String.Mainwindow.NeedDownloadAssets2">您当前启动的版本缺少了部分资源文件。若不下载补全，可能导致游戏内容不完整（如无声音），但并不影响正常使用</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Offline">离线验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Mojang">正版验证</sys:String>
-    <sys:String x:Key="String.MainWindow.Auth.Nide8">统一验证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Nide8">统一通行证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Custom">自定义验证</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
@@ -179,9 +179,13 @@
     <sys:String x:Key="String.Settingwindow.User.Type">启动验证类型设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type.Online">使用正版验证登陆 (需要联网验证)</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type.Offline">使用离线验证登陆 (无需正版账号)</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Nide8">统一通行证验证设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Nide8.ID">统一通行证服务器ID</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Nide8.UsingNide8ServerIP">全局统一通行证设置(强制使用统一通行证，主界面显示服务器信息，启动后自动进服) *需要在后台设置服务器IP</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info">验证信息设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Note">*在线验证将在启动时进行登陆</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.UnRemember">取消记住登陆状态并注销</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Info.Pack">将用户信息设置为服务器客户端发布状态</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Clear">重置用户信息</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Note2">*操作完后点击应用按钮生效</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Pro">高级验证信息设置</sys:String>

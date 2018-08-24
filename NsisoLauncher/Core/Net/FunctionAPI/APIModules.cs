@@ -57,7 +57,6 @@ namespace NsisoLauncher.Core.Net.FunctionAPI
             public List<JWVersion> Versions { get; set; }
         }
 
-
         public class JWVersion
         {
             /// <summary>

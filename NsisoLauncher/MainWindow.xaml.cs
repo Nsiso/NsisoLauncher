@@ -61,7 +61,15 @@ namespace NsisoLauncher
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             authTypeCombobox.ItemsSource = this.authTypes;
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
-            this.authTypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == App.config.MainConfig.User.AuthenticationType; }).FirstOrDefault();
+            if ((App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8)
+            {
+                authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == Config.AuthenticationType.NIDE8);
+                authTypeCombobox.IsEnabled = false;
+            }
+            else
+            {
+                this.authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == App.config.MainConfig.User.AuthenticationType);
+            }
             await CustomizeRefresh();
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
@@ -120,7 +128,33 @@ namespace NsisoLauncher
                 }
             }
 
-            if (App.config.MainConfig.Server.ShowServerInfo)
+            if ((App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8)
+            {
+                try
+                {
+                    var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
+                    if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+                    {
+                        Server server = new Server();
+                        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                        if (serverIp.Length == 2)
+                        {
+                            server.Address = serverIp[0];
+                            server.Port = ushort.Parse(serverIp[1]);
+                        }
+                        else
+                        {
+                            server.Address = nide8ReturnResult.Meta.ServerIP;
+                            server.Port = 25565;
+                        }
+                        App.config.MainConfig.Server.ServerName = nide8ReturnResult.Meta.ServerName;
+                        await ShowServerInfo(server);
+                    }
+                }
+                catch (Exception)
+                {}
+            }
+            else if (App.config.MainConfig.Server.ShowServerInfo)
             {
                 Server server = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
                 await ShowServerInfo(server);
@@ -290,7 +324,15 @@ namespace NsisoLauncher
 
                 #region 验证
                 AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
-                Requester.ClientToken = App.config.MainConfig.User.ClientToken;
+                //设置CLIENT TOKEN
+                if (string.IsNullOrWhiteSpace(App.config.MainConfig.User.ClientToken))
+                {
+                    App.config.MainConfig.User.ClientToken = Guid.NewGuid().ToString("N");
+                }
+                else
+                {
+                    Requester.ClientToken = App.config.MainConfig.User.ClientToken;
+                }
 
                 #region NewData
                 string autoVerifyingMsg = null;
@@ -342,18 +384,13 @@ namespace NsisoLauncher
 
                     #region 统一通行证验证
                     case Config.AuthenticationType.NIDE8:
-                        string nide8Id = App.config.MainConfig.User.Nide8ServerID;
-                        if (string.IsNullOrWhiteSpace(nide8Id))
+                        if (App.nide8Handler == null)
                         {
                             await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
                                 App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
                             return;
                         }
-                        Core.Net.Nide8API.APIHandler nide8Handler = new Core.Net.Nide8API.APIHandler(nide8Id);
-                        try
-                        { var nide8ReturnResult = await nide8Handler.GetInfoAsync(); }
-                        catch {}
-                        Requester.AuthURL = string.Format("{0}authserver", nide8Handler.BaseURL);
+                        Requester.AuthURL = string.Format("{0}authserver", App.nide8Handler.BaseURL);
                         autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying");
                         autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying2");
                         autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerificationFailed");
@@ -380,7 +417,7 @@ namespace NsisoLauncher
                         }
                         if (nide8ChooseResult == MessageDialogResult.FirstAuxiliary)
                         {
-                            System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", nide8Id));
+                            System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
                             return;
                         }
                         break;
@@ -596,10 +633,34 @@ namespace NsisoLauncher
                 {
                     launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), App.config.MainConfig.User.Nide8ServerID);
                 }
-                if (App.config.MainConfig.Server.LaunchToServer)
+
+                //直连服务器设置
+                if ((auth.Type == Config.AuthenticationType.NIDE8) && App.config.MainConfig.User.AllUsingNide8)
+                {
+                    var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
+                    if (App.config.MainConfig.User.AllUsingNide8 && !string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+                    {
+                        Server server = new Server();
+                        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                        if (serverIp.Length == 2)
+                        {
+                            server.Address = serverIp[0];
+                            server.Port = ushort.Parse(serverIp[1]);
+                        }
+                        else
+                        {
+                            server.Address = nide8ReturnResult.Meta.ServerIP;
+                            server.Port = 25565;
+                        }
+                        launchSetting.LaunchToServer = server;
+                    }
+                }
+                else if (App.config.MainConfig.Server.LaunchToServer)
                 {
                     launchSetting.LaunchToServer = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
                 }
+
+                //自动内存设置
                 if (App.config.MainConfig.Environment.AutoMemory)
                 {
                     var m = SystemTools.GetBestMemory(App.handler.Java);
@@ -629,10 +690,18 @@ namespace NsisoLauncher
                 }
                 else
                 {
-                    await Task.Factory.StartNew(() =>
+                    try
                     {
-                        result.Process.WaitForInputIdle();
-                    });
+                        await Task.Factory.StartNew(() =>
+                        {
+                            result.Process.WaitForInputIdle();
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        await this.ShowMessageAsync("启动后等待游戏窗口响应异常", "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
+                        return;
+                    }
                     if (App.config.MainConfig.Environment.ExitAfterLaunch)
                     {
                         Application.Current.Shutdown();

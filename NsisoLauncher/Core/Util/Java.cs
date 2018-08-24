@@ -225,42 +225,6 @@ namespace NsisoLauncher.Core.Util
                     javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
                     break;
             }
-
-            ////32
-            //using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE"))
-            //{
-            //    var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
-            //    foreach (var item in registryKey.GetSubKeyNames())
-            //    {
-            //        if (item.Length > 3)
-            //        {
-            //            string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
-            //            if (File.Exists(path))
-            //            {
-            //                javas.Add(new Java(path, item, ArchEnum.x32));
-            //            }
-            //        }
-            //    }
-            //}
-            //if (SystemTools.GetSystemArch() == ArchEnum.x64)
-            //{
-            //    //64
-            //    using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE"))
-            //    {
-            //        var registryKey = baseKey.OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
-            //        foreach (var item in registryKey.GetSubKeyNames())
-            //        {
-            //            if (item.Length > 3)
-            //            {
-            //                string path = ((string)(registryKey.OpenSubKey(item).GetValue("JavaHome"))) + @"\bin\javaw.exe";
-            //                if (File.Exists(path))
-            //                {
-            //                    javas.Add(new Java(path, item, ArchEnum.x64));
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             return javas;
         }
 

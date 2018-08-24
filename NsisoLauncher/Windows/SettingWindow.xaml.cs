@@ -282,9 +282,20 @@ namespace NsisoLauncher.Windows
         {
             config.User = new Config.User()
             {
-                AuthenticationType = Config.AuthenticationType.OFFLINE,
-                ClientToken = Guid.NewGuid().ToString("N"),
+                AuthenticationType = Config.AuthenticationType.OFFLINE
             };
+            this.ShowMessageAsync("重置完成", "点击右下角应用按钮保存");
+        }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            config.User.AccessToken = null;
+            config.User.AuthenticationUserData = null;
+            config.User.AuthenticationUUID = null;
+            config.User.ClientToken = null;
+            config.User.UserName = null;
+            await this.ShowMessageAsync("设置发布状态成功",
+                "点击右下角应用按钮保存，保存后除了关闭启动器请不要执行任何操作（二次设置，启动游戏等），否则将导致数据重新初始化");
         }
     }
 }

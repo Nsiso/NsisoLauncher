@@ -76,6 +76,11 @@ namespace NsisoLauncher.Config
         public string Nide8ServerID { get; set; }
 
         /// <summary>
+        /// 是否使用NIDE8返回的服务器IP设置直连和服务器信息
+        /// </summary>
+        public bool AllUsingNide8 { get; set; }
+
+        /// <summary>
         /// 玩家选择的角色UUID
         /// </summary>
         public Uuid AuthenticationUUID { get; set; }

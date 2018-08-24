@@ -11,6 +11,7 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace NsisoLauncher
 {
@@ -26,6 +27,7 @@ namespace NsisoLauncher
         public static LogHandler logHandler;
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
         public static List<Java> javaList;
+        public static Core.Net.Nide8API.APIHandler nide8Handler;
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
@@ -79,6 +81,7 @@ namespace NsisoLauncher
 
             javaList = Java.GetJavaList();
 
+            //设置版本路径
             string gameroot = null;
             switch (env.GamePathType)
             {
@@ -126,16 +129,8 @@ namespace NsisoLauncher
                 logHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
             }
 
+            //设置版本独立
             bool verIso = config.MainConfig.Environment.VersionIsolation;
-
-            //if (config.MainConfig.User.UseNide8Auth && string.IsNullOrWhiteSpace(config.MainConfig.User.Nide8AuthID))
-            //{
-            //    config.MainConfig.User.AuthServer = string.Format("https://auth2.nide8.com:233/{0}/authserver", config.MainConfig.User.Nide8AuthID);
-            //}
-            //if (!string.IsNullOrWhiteSpace(config.MainConfig.User.AuthServer))
-            //{
-            //    Requester.AuthURL = config.MainConfig.User.AuthServer;
-            //}
             #endregion
 
             #region 启动核心初始化
@@ -159,6 +154,14 @@ namespace NsisoLauncher
             }
             downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
+            #endregion
+
+            #region NIDE8核心初始化
+            if (!string.IsNullOrWhiteSpace(config.MainConfig.User.Nide8ServerID))
+            {
+                nide8Handler = new Core.Net.Nide8API.APIHandler(config.MainConfig.User.Nide8ServerID);
+                nide8Handler.UpdateBaseURL();
+            }
             #endregion
 
             #region 自定义主题初始化
