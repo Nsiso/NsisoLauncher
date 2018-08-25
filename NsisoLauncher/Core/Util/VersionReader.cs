@@ -28,7 +28,6 @@ namespace NsisoLauncher.Core.Util
             if (obj.ContainsKey("arguments"))
             {
                 #region 处理新版本引导
-
                 JToken gameArg = obj["arguments"]["game"];
                 StringBuilder gameArgBuilder = new StringBuilder();
                 foreach (var arg in gameArg)
@@ -168,9 +167,11 @@ namespace NsisoLauncher.Core.Util
                 var iv = GetVersion(ver.InheritsVersion);
                 if (iv != null)
                 {
+                    ver.Assets = iv.Assets;
                     ver.AssetIndex = iv.AssetIndex;
                     ver.Natives.AddRange(iv.Natives);
                     ver.Libraries.AddRange(iv.Libraries);
+                    ver.Jar = iv.ID;
                 }
             }
             #endregion

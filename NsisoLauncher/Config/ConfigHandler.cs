@@ -108,7 +108,7 @@ namespace NsisoLauncher.Config
                 },
                 Download = new Download()
                 {
-                    DownloadSource = Core.Net.DownloadSource.BMCLAPI,
+                    DownloadSource = Core.Net.DownloadSource.Mojang,
                     DownloadThreadsSize = 5
                 },
                 Launcher = new Launcher()

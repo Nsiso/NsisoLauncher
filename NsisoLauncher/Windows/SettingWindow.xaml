@@ -245,7 +245,7 @@
                         <Expander Header="{DynamicResource String.Settingwindow.User.Nide8}" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="{DynamicResource String.Settingwindow.User.Nide8.ID}"/>
-                                <TextBox Margin="5,0,5,5" Text="{Binding Nide8ServerID}"/>
+                                <TextBox x:Name="nide8IdTextBox" Margin="5,0,5,5" Text="{Binding Nide8ServerID}"/>
                                 <CheckBox Margin="5,0,5,5" Content="{DynamicResource String.Settingwindow.User.Nide8.UsingNide8ServerIP}" IsChecked="{Binding AllUsingNide8}"/>
                             </StackPanel>
                         </Expander>

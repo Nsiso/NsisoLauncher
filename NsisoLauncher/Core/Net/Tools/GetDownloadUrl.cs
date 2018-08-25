@@ -1,5 +1,7 @@
 ﻿using NsisoLauncher.Core.Modules;
+using NsisoLauncher.Core.Util;
 using System;
+using System.Collections.Generic;
 
 namespace NsisoLauncher.Core.Net.Tools
 {
@@ -15,7 +17,35 @@ namespace NsisoLauncher.Core.Net.Tools
         private const string MojangVersionUrl = MojangJsonBaseUrl + "mc/game/version_manifest.json";
         private const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
 
-        private static string GetLibPath(Library lib)
+        public static string DoURLReplace(DownloadSource source, string url)
+        {
+            switch (source)
+            {
+                case DownloadSource.Mojang:
+                    return url;
+
+                case DownloadSource.BMCLAPI:
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add(@"https://launcher.mojang.com/", BMCLUrl);
+                    dic.Add(@"https://launchermeta.mojang.com/", BMCLUrl);
+                    return ReplaceURLByDic(url, dic);
+
+                default:
+                    return null;
+            }
+        }
+
+        private static string ReplaceURLByDic(string str, Dictionary<string, string> dic)
+        {
+            string ret = str;
+            foreach (var item in dic)
+            {
+                ret = ret.Replace(item.Key, item.Value);
+            }
+            return ret;
+        }
+
+        private static string GetLibPath(Modules.Library lib)
         {
             return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Package.Replace(".", "\\"), lib.Name, lib.Version);
         }
@@ -25,7 +55,7 @@ namespace NsisoLauncher.Core.Net.Tools
             return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Package.Replace(".", "\\"), native.Name, native.Version, native.NativeSuffix);
         }
 
-        private static string GetAssetsPath(AssetsInfo assetsInfo)
+        private static string GetAssetsPath(JAssetsInfo assetsInfo)
         {
             return String.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
@@ -64,7 +94,7 @@ namespace NsisoLauncher.Core.Net.Tools
         /// <param name="source">下载源</param>
         /// <param name="lib">lib实例</param>
         /// <returns>下载URL</returns>
-        public static string GetLibDownloadURL(DownloadSource source, Library lib)
+        public static string GetLibDownloadURL(DownloadSource source, Modules.Library lib)
         {
 
             switch (source)
@@ -88,7 +118,7 @@ namespace NsisoLauncher.Core.Net.Tools
         /// <param name="lib">lib实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetLibDownloadTask(DownloadSource source, Library lib, LaunchHandler core)
+        public static DownloadTask GetLibDownloadTask(DownloadSource source, Modules.Library lib, LaunchHandler core)
         {
             string from = GetLibDownloadURL(source, lib);
             string to = core.GetLibraryPath(lib);
@@ -137,7 +167,7 @@ namespace NsisoLauncher.Core.Net.Tools
         /// <param name="source">下载源</param>
         /// <param name="assets">assets实例</param>
         /// <returns>下载URL</returns>
-        public static string GetAssetsDownloadURL(DownloadSource source, AssetsInfo assets)
+        public static string GetAssetsDownloadURL(DownloadSource source, JAssetsInfo assets)
         {
             switch (source)
             {
@@ -160,7 +190,7 @@ namespace NsisoLauncher.Core.Net.Tools
         /// <param name="assets">assets实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetAssetsDownloadTask(DownloadSource source, AssetsInfo assets, LaunchHandler core)
+        public static DownloadTask GetAssetsDownloadTask(DownloadSource source, JAssetsInfo assets, LaunchHandler core)
         {
             string from = GetAssetsDownloadURL(source, assets);
             string to = core.GetAssetsPath(assets);

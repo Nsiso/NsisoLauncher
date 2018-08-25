@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NsisoLauncher.Core.Util;
+using System.Collections.Generic;
 
 namespace NsisoLauncher.Core.Modules
 {
@@ -25,22 +26,6 @@ namespace NsisoLauncher.Core.Modules
         /// <summary>
         /// 每一个资源文件的信息
         /// </summary>
-        public List<AssetsInfo> Infos { get; set; }
-    }
-
-    /// <summary>
-    /// 表示资源文件信息
-    /// </summary>
-    public class AssetsInfo
-    {
-        /// <summary>
-        /// Hash
-        /// </summary>
-        public string Hash { get; set; }
-
-        /// <summary>
-        /// 大小
-        /// </summary>
-        public int Size { get; set; }
+        public JAssets Infos { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using static NsisoLauncher.Core.Net.FunctionAPI.APIModules;
 using System.IO;
 using NsisoLauncher.Core.Net;
 using System.Net;
+using NsisoLauncher.Core.Net.Tools;
 
 namespace NsisoLauncher.Windows
 {
@@ -81,7 +82,7 @@ namespace NsisoLauncher.Windows
                         Core.Modules.Version ver = App.handler.JsonToVersion(json);
                         string jsonPath = App.handler.GetJsonPath(ver.ID);
 
-                        string dir = System.IO.Path.GetDirectoryName(jsonPath);
+                        string dir = Path.GetDirectoryName(jsonPath);
                         if (!Directory.Exists(dir))
                         {
                             Directory.CreateDirectory(dir);

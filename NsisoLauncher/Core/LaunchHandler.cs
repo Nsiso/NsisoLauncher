@@ -72,6 +72,11 @@ namespace NsisoLauncher.Core
             return assetsReader.GetAssets(version);
         }
 
+        public JAssets GetAssetsByJson(string json)
+        {
+            return assetsReader.GetAssetsByJson(json);
+        }
+
         public async Task<Assets> GetAssetsAsync(Modules.Version version)
         {
             return await Task.Factory.StartNew(() =>
@@ -221,7 +226,7 @@ namespace NsisoLauncher.Core
             return string.Format(@"{0}\assets\indexes\{1}.json", this.GameRootPath, assetsID);
         }
 
-        public string GetAssetsPath(AssetsInfo assetsInfo)
+        public string GetAssetsPath(JAssetsInfo assetsInfo)
         {
             return string.Format(@"{0}\assets\objects\{1}\{2}", this.GameRootPath, assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }

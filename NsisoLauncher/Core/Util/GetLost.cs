@@ -1,8 +1,11 @@
 ﻿using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net;
+using NsisoLauncher.Core.Net.FunctionAPI;
 using NsisoLauncher.Core.Net.Tools;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
 {
@@ -73,25 +76,26 @@ namespace NsisoLauncher.Core.Util
         /// <param name="core">所使用的核心</param>
         /// <param name="version">要检查的版本</param>
         /// <returns>返回Key为路径，value为资源文件信息实例的集合</returns>
-        public static Dictionary<string, AssetsInfo> GetLostAssets(LaunchHandler core, Assets assets)
+        public static Dictionary<string, JAssetsInfo> GetLostAssets(LaunchHandler core, JAssets assets)
         {
-            Dictionary<string, AssetsInfo> lostAssets = new Dictionary<string, AssetsInfo>();
+            Dictionary<string, JAssetsInfo> lostAssets = new Dictionary<string, JAssetsInfo>();
             try
             {
-                if (assets.Infos == null)
+                if (assets == null)
                 {
                     return lostAssets;
                 }
-                foreach (AssetsInfo item in assets.Infos)
+                foreach (var item in assets.Objects)
                 {
-                    string path = core.GetAssetsPath(item);
+
+                    string path = core.GetAssetsPath(item.Value);
                     if (lostAssets.ContainsKey(path))
                     {
                         continue;
                     }
                     else if (!File.Exists(path))
                     {
-                        lostAssets.Add(path, item);
+                        lostAssets.Add(item.Key, item.Value);
                     }
                 }
 
@@ -129,7 +133,7 @@ namespace NsisoLauncher.Core.Util
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public static List<DownloadTask> GetLostDependDownloadTask(DownloadSource source, LaunchHandler core, Modules.Version version)
+        public static List<DownloadTask> GetLostDependDownloadTask(DownloadSource source, LaunchHandler core, Version version)
         {
             var lostLibs = GetLostLibs(core, version);
             var lostNatives = GetLostNatives(core, version);
@@ -150,6 +154,42 @@ namespace NsisoLauncher.Core.Util
             return tasks;
         }
 
+        public static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(DownloadSource source, LaunchHandler core, Version version)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return GetLostDependDownloadTask(source, core, version);
+            });
+        }
+
+        public static async Task<bool> IsLostAssetsAsync(DownloadSource source, LaunchHandler core, Version ver)
+        {
+            string assetsPath = core.GetAssetsIndexPath(ver.AssetIndex.ID);
+            if (!File.Exists(assetsPath))
+            {
+                return true;
+            }
+            else
+            {
+                var assets = await core.GetAssetsAsync(ver);
+                return await Task.Factory.StartNew(() =>
+                {
+                    foreach (var item in assets.Infos.Objects)
+                    {
+                        if (File.Exists(core.GetAssetsPath(item.Value)))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+
         /// <summary>
         /// 获取丢失的资源文件下载任务
         /// </summary>
@@ -157,10 +197,26 @@ namespace NsisoLauncher.Core.Util
         /// <param name="core"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public static List<DownloadTask> GetLostAssetsDownloadTask(DownloadSource source, LaunchHandler core, Assets assets)
+        public static List<DownloadTask> GetLostAssetsDownloadTask(DownloadSource source, LaunchHandler core, Version ver)
         {
-            var lostAssets = GetLostAssets(core, assets);
             List<DownloadTask> tasks = new List<DownloadTask>();
+            JAssets assets = null;
+            if (ver.AssetIndex != null)
+            {
+                string assetsPath = core.GetAssetsIndexPath(ver.AssetIndex.ID);
+                if (!File.Exists(assetsPath))
+                {
+                    string jsonUrl = GetDownloadUrl.DoURLReplace(source, ver.AssetIndex.URL);
+                    string assetsJson = FunctionAPIHandler.HttpGet(jsonUrl);
+                    assets = core.GetAssetsByJson(assetsJson);
+                    tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
+                }
+                else
+                {
+                    assets = core.GetAssets(ver).Infos;
+                }
+            }
+            var lostAssets = GetLostAssets(core, assets);
             foreach (var item in lostAssets)
             {
                 DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(source, item.Value, core);
@@ -170,6 +226,14 @@ namespace NsisoLauncher.Core.Util
                 }
             }
             return tasks;
+        }
+
+        public static Task<List<DownloadTask>> GetLostAssetsDownloadTaskAsync(DownloadSource source, LaunchHandler core, Version ver)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return GetLostAssetsDownloadTask(source, core, ver);
+            });
         }
     }
 }

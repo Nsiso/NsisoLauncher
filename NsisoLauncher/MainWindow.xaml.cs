@@ -58,9 +58,7 @@ namespace NsisoLauncher
         private async void Refresh()
         {
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
-            launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             authTypeCombobox.ItemsSource = this.authTypes;
-            this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
             if ((App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8)
             {
                 authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == Config.AuthenticationType.NIDE8);
@@ -70,6 +68,8 @@ namespace NsisoLauncher
             {
                 this.authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == App.config.MainConfig.User.AuthenticationType);
             }
+            launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
+            this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
             await CustomizeRefresh();
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
@@ -545,7 +545,8 @@ namespace NsisoLauncher
                 #region 检查游戏完整
                 List<DownloadTask> losts = new List<DownloadTask>();
 
-                var lostDepend = GetLost.GetLostDependDownloadTask(
+                App.logHandler.AppendInfo("检查丢失的依赖库文件中...");
+                var lostDepend = await GetLost.GetLostDependDownloadTaskAsync(
                     App.config.MainConfig.Download.DownloadSource,
                     App.handler,
                     launchSetting.Version);
@@ -558,7 +559,6 @@ namespace NsisoLauncher
                         lostDepend.Add(new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", nideJarPath));
                     }
                 }
-
                 if (App.config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
@@ -584,11 +584,9 @@ namespace NsisoLauncher
 
                 }
 
-                var lostAssets = GetLost.GetLostAssetsDownloadTask(
-                    App.config.MainConfig.Download.DownloadSource,
-                    App.handler,
-                    await App.handler.GetAssetsAsync(launchSetting.Version));
-                if (App.config.MainConfig.Environment.DownloadLostAssets && lostAssets.Count != 0)
+                App.logHandler.AppendInfo("检查丢失的资源文件中...");
+                if (App.config.MainConfig.Environment.DownloadLostAssets && (await GetLost.IsLostAssetsAsync(App.config.MainConfig.Download.DownloadSource,
+                    App.handler, launchSetting.Version)))
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
@@ -602,6 +600,9 @@ namespace NsisoLauncher
                     switch (downDependResult)
                     {
                         case MessageDialogResult.Affirmative:
+                            var lostAssets = await GetLost.GetLostAssetsDownloadTaskAsync(
+                                App.config.MainConfig.Download.DownloadSource,
+                                App.handler, launchSetting.Version);
                             losts.AddRange(lostAssets);
                             break;
                         case MessageDialogResult.FirstAuxiliary:

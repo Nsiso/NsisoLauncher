@@ -16,31 +16,44 @@ namespace NsisoLauncher.Core.Util
             this.handler = handler;
         }
 
+        public JAssets GetAssetsByJson(string json)
+        {
+            return JsonConvert.DeserializeObject<JAssets>(json);
+        }
+
         public Assets GetAssets(Modules.Version version)
         {
             try
             {
                 lock (locker)
                 {
-                    string assetsID = version.Assets;
+                    string assetsID = null;
+                    if (string.IsNullOrWhiteSpace(version.AssetIndex.ID))
+                    {
+                        assetsID = version.AssetIndex.ID;
+                    }
+                    else
+                    {
+                        assetsID = version.Assets;
+                    }
+                    
                     string assetsPath = handler.GetAssetsIndexPath(assetsID);
                     if (!File.Exists(assetsPath))
                     {
                         return new Assets() { ID = version.Assets, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
                     }
-                    var ja = JsonConvert.DeserializeObject<JAssets>(File.ReadAllText(assetsPath));
+                    var ja = GetAssetsByJson(File.ReadAllText(assetsPath));
                     if (ja == null)
                     {
                         return new Assets() { ID = assetsID, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
                     }
-                    Assets ass = new Assets();
-                    ass.Infos = new List<AssetsInfo>();
-                    ass.ID = assetsID;
-                    foreach (var item in ja.Objects)
+                    return new Assets()
                     {
-                        ass.Infos.Add(new AssetsInfo() { Hash = item.Value.Hash, Size = item.Value.Size });
-                    }
-                    return ass;
+                        Infos = ja,
+                        ID = assetsID,
+                        IndexURL = version.AssetIndex.URL,
+                        TotalSize = version.AssetIndex.TotalSize
+                    };
                 }
             }
             catch (Exception)
@@ -53,10 +66,10 @@ namespace NsisoLauncher.Core.Util
     public class JAssets
     {
         [JsonProperty("objects")]
-        public Dictionary<string, JInfo> Objects { get; set; }
+        public Dictionary<string, JAssetsInfo> Objects { get; set; }
     }
 
-    public class JInfo
+    public class JAssetsInfo
     {
         [JsonProperty("hash")]
         public string Hash { get; set; }

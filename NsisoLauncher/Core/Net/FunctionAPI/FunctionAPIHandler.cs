@@ -4,6 +4,7 @@ using static NsisoLauncher.Core.Net.FunctionAPI.APIModules;
 using Newtonsoft.Json;
 using System.Net;
 using System.IO;
+using NsisoLauncher.Core.Net.Tools;
 
 namespace NsisoLauncher.Core.Net.FunctionAPI
 {
@@ -31,33 +32,9 @@ namespace NsisoLauncher.Core.Net.FunctionAPI
             }
         }
 
-
         public string DoURLReplace(string url)
         {
-            switch (Source)
-            {
-                case DownloadSource.Mojang:
-                    return url;
-
-                case DownloadSource.BMCLAPI:
-                    Dictionary<string, string> dic = new Dictionary<string, string>();
-                    dic.Add(@"https://launcher.mojang.com", BMCLBase);
-                    dic.Add(@"https://launchermeta.mojang.com", BMCLBase);
-                    return ReplaceURLByDic(url, dic);
-
-                default:
-                    return null;
-            }
-        }
-
-        private string ReplaceURLByDic(string str, Dictionary<string, string> dic)
-        {
-            string ret = str;
-            foreach (var item in dic)
-            {
-                ret = ret.Replace(item.Key, item.Value);
-            }
-            return ret;
+            return GetDownloadUrl.DoURLReplace(Source, url);
         }
 
         /// <summary>
