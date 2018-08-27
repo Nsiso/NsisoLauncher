@@ -126,7 +126,7 @@ namespace NsisoLauncher.Windows
         }
 
         //保存按钮点击后
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private async void saveButton_Click(object sender, RoutedEventArgs e)
         {
             #region 实时修改
             switch (config.Environment.GamePathType)
@@ -156,21 +156,21 @@ namespace NsisoLauncher.Windows
             App.config.MainConfig = config;
             if (App.config.MainConfig.Environment.VersionIsolation)
             {
-                GameHelper.SaveOptions(
+                await GameHelper.SaveOptionsAsync(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,
                 App.handler,
                 (Core.Modules.Version)VersionsComboBox.SelectedItem);
             }
             else
             {
-                GameHelper.SaveOptions(
+                await GameHelper.SaveOptionsAsync(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,
                 App.handler,
                 new Core.Modules.Version() { ID = "null" });
             }
             
             App.config.Save();
-            this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
+            await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
         }
 
         //取消按钮点击后

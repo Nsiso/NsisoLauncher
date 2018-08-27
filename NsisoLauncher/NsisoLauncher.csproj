@@ -90,7 +90,6 @@
     </ApplicationDefinition>
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\MainConfig.cs" />
-    <Compile Include="Core\Modules\Assets.cs" />
     <Compile Include="Core\Modules\Log.cs" />
     <Compile Include="Core\Net\DownloadSource.cs" />
     <Compile Include="Core\Net\DownloadTask.cs" />

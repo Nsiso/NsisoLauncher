@@ -668,6 +668,10 @@ namespace NsisoLauncher
                     App.config.MainConfig.Environment.MaxMemory = m;
                     launchSetting.MaxMemory = m;
                 }
+                else
+                {
+                    launchSetting.MaxMemory = App.config.MainConfig.Environment.MaxMemory;
+                }
                 launchSetting.VersionType = App.config.MainConfig.Customize.VersionInfo;
                 launchSetting.WindowSize = App.config.MainConfig.Environment.WindowSize;
                 #endregion
@@ -743,6 +747,10 @@ namespace NsisoLauncher
                     });
                 }
                 #endregion
+            }
+            catch(Exception ex)
+            {
+                App.logHandler.AppendFatal(ex);
             }
             finally
             {

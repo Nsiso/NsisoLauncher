@@ -21,44 +21,24 @@ namespace NsisoLauncher.Core.Util
             return JsonConvert.DeserializeObject<JAssets>(json);
         }
 
-        public Assets GetAssets(Modules.Version version)
+        public JAssets GetAssets(Modules.Version version)
         {
             try
             {
                 lock (locker)
                 {
-                    string assetsID = null;
-                    if (string.IsNullOrWhiteSpace(version.AssetIndex.ID))
-                    {
-                        assetsID = version.AssetIndex.ID;
-                    }
-                    else
-                    {
-                        assetsID = version.Assets;
-                    }
-                    
-                    string assetsPath = handler.GetAssetsIndexPath(assetsID);
+                    string assetsPath = handler.GetAssetsIndexPath(version.Assets);
                     if (!File.Exists(assetsPath))
                     {
-                        return new Assets() { ID = version.Assets, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
+                        return null;
                     }
                     var ja = GetAssetsByJson(File.ReadAllText(assetsPath));
-                    if (ja == null)
-                    {
-                        return new Assets() { ID = assetsID, IndexURL = version.AssetIndex.URL, TotalSize = version.AssetIndex.TotalSize, Infos = null };
-                    }
-                    return new Assets()
-                    {
-                        Infos = ja,
-                        ID = assetsID,
-                        IndexURL = version.AssetIndex.URL,
-                        TotalSize = version.AssetIndex.TotalSize
-                    };
+                    return ja;
                 }
             }
             catch (Exception)
             {
-                return new Assets() { ID = version.Assets, IndexURL = null, TotalSize = -1, Infos = null };
+                return null;
             }
         }
     }

@@ -93,17 +93,24 @@ namespace NsisoLauncher.Core.Util
             });
         }
 
-        public static void SaveOptions(List<VersionOption> opts, LaunchHandler core, Modules.Version version)
+        public async static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, Modules.Version version)
         {
-            if (version != null && opts != null)
+            await Task.Factory.StartNew(() =>
             {
-                List<string> optLines = new List<string>();
-                foreach (var item in opts)
+                try
                 {
-                    optLines.Add(item.ToString());
+                    if (version != null && opts != null)
+                    {
+                        List<string> optLines = new List<string>();
+                        foreach (var item in opts)
+                        {
+                            optLines.Add(item.ToString());
+                        }
+                        File.WriteAllLines(core.GetVersionOptions(version), optLines.ToArray());
+                    }
                 }
-                File.WriteAllLines(core.GetVersionOptions(version), optLines.ToArray());
-            }
+                catch (Exception){}
+            });
         }
     }
 }

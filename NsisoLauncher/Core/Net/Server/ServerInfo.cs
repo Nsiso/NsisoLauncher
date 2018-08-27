@@ -155,24 +155,33 @@ namespace NsisoLauncher.Core.Net.Server
                             byte[] ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
                             byte[] ping_tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(ping_packet.Length), ping_packet);
 
-                            Stopwatch pingWatcher = new Stopwatch();
-
-                            pingWatcher.Start();
-                            tcp.Client.Send(ping_tosend, SocketFlags.None);
-
-                            int pingLenghth = handler.readNextVarIntRAW();
-                            pingWatcher.Stop();
-                            if (pingLenghth > 0)
+                            try
                             {
-                                List<byte> packetData = new List<byte>(handler.readDataRAW(pingLenghth));
-                                if (ProtocolHandler.readNextVarInt(packetData) == 0x01) //Read Packet ID
+                                tcp.ReceiveTimeout = 1000;
+
+                                Stopwatch pingWatcher = new Stopwatch();
+
+                                pingWatcher.Start();
+                                tcp.Client.Send(ping_tosend, SocketFlags.None);
+
+                                int pingLenghth = handler.readNextVarIntRAW();
+                                pingWatcher.Stop();
+                                if (pingLenghth > 0)
                                 {
-                                    long content = ProtocolHandler.readNextByte(packetData); //Get the Json data
-                                    if (content == 233)
+                                    List<byte> packetData = new List<byte>(handler.readDataRAW(pingLenghth));
+                                    if (ProtocolHandler.readNextVarInt(packetData) == 0x01) //Read Packet ID
                                     {
-                                        this.Ping = pingWatcher.ElapsedMilliseconds;
+                                        long content = ProtocolHandler.readNextByte(packetData); //Get the Json data
+                                        if (content == 233)
+                                        {
+                                            this.Ping = pingWatcher.ElapsedMilliseconds;
+                                        }
                                     }
                                 }
+                            }
+                            catch (Exception)
+                            {
+                                this.Ping = 0;
                             }
 
                         }

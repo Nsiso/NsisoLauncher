@@ -164,17 +164,24 @@ namespace NsisoLauncher.Core.Util
 
         public static async Task<bool> IsLostAssetsAsync(DownloadSource source, LaunchHandler core, Version ver)
         {
-            string assetsPath = core.GetAssetsIndexPath(ver.AssetIndex.ID);
+            string assetsPath = core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
             {
-                return true;
+                if (ver.AssetIndex == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
                 var assets = await core.GetAssetsAsync(ver);
                 return await Task.Factory.StartNew(() =>
                 {
-                    foreach (var item in assets.Infos.Objects)
+                    foreach (var item in assets.Objects)
                     {
                         if (File.Exists(core.GetAssetsPath(item.Value)))
                         {
@@ -201,10 +208,11 @@ namespace NsisoLauncher.Core.Util
         {
             List<DownloadTask> tasks = new List<DownloadTask>();
             JAssets assets = null;
-            if (ver.AssetIndex != null)
+
+            string assetsPath = core.GetAssetsIndexPath(ver.Assets);
+            if (!File.Exists(assetsPath))
             {
-                string assetsPath = core.GetAssetsIndexPath(ver.AssetIndex.ID);
-                if (!File.Exists(assetsPath))
+                if (ver.AssetIndex != null)
                 {
                     string jsonUrl = GetDownloadUrl.DoURLReplace(source, ver.AssetIndex.URL);
                     string assetsJson = FunctionAPIHandler.HttpGet(jsonUrl);
@@ -213,8 +221,12 @@ namespace NsisoLauncher.Core.Util
                 }
                 else
                 {
-                    assets = core.GetAssets(ver).Infos;
+                    return tasks;
                 }
+            }
+            else
+            {
+                assets = core.GetAssets(ver);
             }
             var lostAssets = GetLostAssets(core, assets);
             foreach (var item in lostAssets)

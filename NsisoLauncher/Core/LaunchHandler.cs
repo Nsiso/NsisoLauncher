@@ -67,7 +67,7 @@ namespace NsisoLauncher.Core
             this.GameLog?.Invoke(this, e.Data);
         }
 
-        public Assets GetAssets(Modules.Version version)
+        public JAssets GetAssets(Modules.Version version)
         {
             return assetsReader.GetAssets(version);
         }
@@ -77,7 +77,7 @@ namespace NsisoLauncher.Core
             return assetsReader.GetAssetsByJson(json);
         }
 
-        public async Task<Assets> GetAssetsAsync(Modules.Version version)
+        public async Task<JAssets> GetAssetsAsync(Modules.Version version)
         {
             return await Task.Factory.StartNew(() =>
             {
