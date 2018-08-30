@@ -10,7 +10,6 @@ using static NsisoLauncher.Core.Net.FunctionAPI.APIModules;
 using System.IO;
 using NsisoLauncher.Core.Net;
 using System.Net;
-using NsisoLauncher.Core.Net.Tools;
 
 namespace NsisoLauncher.Windows
 {

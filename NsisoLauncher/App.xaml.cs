@@ -11,7 +11,6 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace NsisoLauncher
 {
@@ -39,7 +38,7 @@ namespace NsisoLauncher
             #region 检查环境
             if ((System.Environment.Version.Major == 4) && (System.Environment.Version.Minor == 0))
             {
-                if (!SystemTools.IsSetupFrameworkUpdate("KB2468871v2"))
+                if ((!SystemTools.IsSetupFrameworkUpdate("KB2468871v2")) && (!SystemTools.IsSetupFrameworkUpdate("KB2468871")))
                 {
                     var result = MessageBox.Show(GetResourceString("String.Message.NoFrameworkUpdate2"),
                         GetResourceString("String.Message.NoFrameworkUpdate"),

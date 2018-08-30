@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Heijden.DNS;
 
 namespace NsisoLauncher.Core.Net.Server
 {
@@ -15,7 +15,7 @@ namespace NsisoLauncher.Core.Net.Server
         /// <summary>
         /// 服务器IP地址
         /// </summary>
-        public string ServerIP { get; set; }
+        public string ServerAddress { get; set; }
 
         /// <summary>
         /// 服务器端口
@@ -97,110 +97,126 @@ namespace NsisoLauncher.Core.Net.Server
 
         public ServerInfo(string ip, ushort port)
         {
-            this.ServerIP = ip;
+            this.ServerAddress = ip;
             this.ServerPort = port;
         }
 
-        public ServerInfo(Core.Modules.Server info)
+        public ServerInfo(Modules.Server info)
         {
-            this.ServerIP = info.Address;
+            this.ServerAddress = info.Address;
             this.ServerPort = info.Port;
+        }
+
+        public void StartGetServerInfo()
+        {
+            try
+            {
+                // Some code source form:
+                // Minecraft Client v1.9.0 for Minecraft 1.4.6 to 1.9.0 - By ORelio under CDDL-1.0
+                // wiki.vg
+
+                TcpClient tcp = null;
+
+                try
+                {
+                    tcp = new TcpClient(this.ServerAddress, this.ServerPort);
+                }
+                catch (SocketException)
+                {
+                    RecordSRV result = (RecordSRV)new Resolver().Query("_minecraft._tcp." + this.ServerAddress, QType.SRV).Answers.First().RECORD;
+                    tcp = new TcpClient(result.TARGET, result.PORT);
+                    this.ServerAddress = result.TARGET;
+                    this.ServerPort = result.PORT;
+                }
+
+                try
+                {
+                    tcp.ReceiveBufferSize = 1024 * 1024;
+
+                    byte[] packet_id = ProtocolHandler.getVarInt(0);
+                    byte[] protocol_version = ProtocolHandler.getVarInt(-1);
+                    byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerAddress);
+                    byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
+                    byte[] server_port = BitConverter.GetBytes((ushort)this.ServerPort); Array.Reverse(server_port);
+                    byte[] next_state = ProtocolHandler.getVarInt(1);
+                    byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
+                    byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
+
+                    byte[] status_request = ProtocolHandler.getVarInt(0);
+                    byte[] request_packet = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(status_request.Length), status_request);
+
+                    tcp.Client.Send(tosend, SocketFlags.None);
+
+                    tcp.Client.Send(request_packet, SocketFlags.None);
+                    ProtocolHandler handler = new ProtocolHandler(tcp);
+                    int packetLength = handler.readNextVarIntRAW();
+                    if (packetLength > 0)
+                    {
+                        List<byte> packetData = new List<byte>(handler.readDataRAW(packetLength));
+                        if (ProtocolHandler.readNextVarInt(packetData) == 0x00) //Read Packet ID
+                        {
+                            string result = ProtocolHandler.readNextString(packetData); //Get the Json data
+                            this.JsonResult = result;
+                            SetInfoFromJsonText(result);
+                        }
+                    }
+
+                    byte[] ping_id = ProtocolHandler.getVarInt(1);
+                    byte[] ping_content = BitConverter.GetBytes((long)233);
+                    byte[] ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
+                    byte[] ping_tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(ping_packet.Length), ping_packet);
+
+                    try
+                    {
+                        tcp.ReceiveTimeout = 1000;
+
+                        Stopwatch pingWatcher = new Stopwatch();
+
+                        pingWatcher.Start();
+                        tcp.Client.Send(ping_tosend, SocketFlags.None);
+
+                        int pingLenghth = handler.readNextVarIntRAW();
+                        pingWatcher.Stop();
+                        if (pingLenghth > 0)
+                        {
+                            List<byte> packetData = new List<byte>(handler.readDataRAW(pingLenghth));
+                            if (ProtocolHandler.readNextVarInt(packetData) == 0x01) //Read Packet ID
+                            {
+                                long content = ProtocolHandler.readNextByte(packetData); //Get the Json data
+                                if (content == 233)
+                                {
+                                    this.Ping = pingWatcher.ElapsedMilliseconds;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        this.Ping = 0;
+                    }
+
+                }
+                catch (SocketException)
+                {
+                    this.State = StateType.NO_RESPONSE;
+                }
+                tcp.Close();
+            }
+            catch (SocketException)
+            {
+                this.State = StateType.BAD_CONNECT;
+            }
+            catch (Exception)
+            {
+                this.State = StateType.EXCEPTION;
+            }
         }
 
         public async Task StartGetServerInfoAsync()
         {
             await Task.Factory.StartNew(() =>
             {
-                try
-                {
-                    // Some code source form:
-                    // Minecraft Client v1.9.0 for Minecraft 1.4.6 to 1.9.0 - By ORelio under CDDL-1.0
-                    // wiki.vg
-                    using (TcpClient tcp = new TcpClient(this.ServerIP, this.ServerPort))
-                    {
-                        try
-                        {
-                            tcp.ReceiveBufferSize = 1024 * 1024;
-
-                            byte[] packet_id = ProtocolHandler.getVarInt(0);
-                            byte[] protocol_version = ProtocolHandler.getVarInt(-1);
-                            byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerIP);
-                            byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
-                            byte[] server_port = BitConverter.GetBytes((ushort)this.ServerPort); Array.Reverse(server_port);
-                            byte[] next_state = ProtocolHandler.getVarInt(1);
-                            byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
-                            byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
-
-                            byte[] status_request = ProtocolHandler.getVarInt(0);
-                            byte[] request_packet = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(status_request.Length), status_request);
-
-                            tcp.Client.Send(tosend, SocketFlags.None);
-
-                            tcp.Client.Send(request_packet, SocketFlags.None);
-                            ProtocolHandler handler = new ProtocolHandler(tcp);
-                            int packetLength = handler.readNextVarIntRAW();
-                            if (packetLength > 0)
-                            {
-                                List<byte> packetData = new List<byte>(handler.readDataRAW(packetLength));
-                                if (ProtocolHandler.readNextVarInt(packetData) == 0x00) //Read Packet ID
-                                {
-                                    string result = ProtocolHandler.readNextString(packetData); //Get the Json data
-                                    this.JsonResult = result;
-                                    SetInfoFromJsonText(result);
-                                }
-                            }
-
-                            byte[] ping_id = ProtocolHandler.getVarInt(1);
-                            byte[] ping_content = BitConverter.GetBytes((long)233);
-                            byte[] ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
-                            byte[] ping_tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(ping_packet.Length), ping_packet);
-
-                            try
-                            {
-                                tcp.ReceiveTimeout = 1000;
-
-                                Stopwatch pingWatcher = new Stopwatch();
-
-                                pingWatcher.Start();
-                                tcp.Client.Send(ping_tosend, SocketFlags.None);
-
-                                int pingLenghth = handler.readNextVarIntRAW();
-                                pingWatcher.Stop();
-                                if (pingLenghth > 0)
-                                {
-                                    List<byte> packetData = new List<byte>(handler.readDataRAW(pingLenghth));
-                                    if (ProtocolHandler.readNextVarInt(packetData) == 0x01) //Read Packet ID
-                                    {
-                                        long content = ProtocolHandler.readNextByte(packetData); //Get the Json data
-                                        if (content == 233)
-                                        {
-                                            this.Ping = pingWatcher.ElapsedMilliseconds;
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                this.Ping = 0;
-                            }
-
-                        }
-                        catch (SocketException)
-                        {
-                            this.State = StateType.NO_RESPONSE;
-                        }
-
-                    }
-                    //ReloadPing();
-                }
-                catch (SocketException)
-                {
-                    this.State = StateType.BAD_CONNECT;
-                }
-                catch (Exception)
-                {
-                    this.State = StateType.EXCEPTION;
-                }
+                StartGetServerInfo();
             });
         }
 
@@ -283,7 +299,7 @@ namespace NsisoLauncher.Core.Net.Server
                         //}
                         //else
                         //{
-                            
+
                         //}
                     }
 
@@ -363,5 +379,5 @@ namespace NsisoLauncher.Core.Net.Server
         //    return wpfBitmap;
 
         //}
-}
+    }
 }

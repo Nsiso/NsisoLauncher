@@ -22,34 +22,185 @@ namespace NsisoLauncher.Core.Util
 
         public Modules.Version JsonToVersion(string jsonStr)
         {
+            if (string.IsNullOrWhiteSpace(jsonStr))
+            {
+                return null;
+            }
             var obj = JObject.Parse(jsonStr);
             Modules.Version ver = new Modules.Version();
             ver = obj.ToObject<Modules.Version>();
+            JObject innerVer = null;
+            if (ver.InheritsVersion != null)
+            {
+                innerVer = JObject.Parse(GetVersionJsonText(ver.InheritsVersion));
+            }
             if (obj.ContainsKey("arguments"))
             {
                 #region 处理新版本引导
-                JToken gameArg = obj["arguments"]["game"];
-                StringBuilder gameArgBuilder = new StringBuilder();
-                foreach (var arg in gameArg)
+
+                #region 处理版本继承
+                if (innerVer != null && innerVer.ContainsKey("arguments"))
                 {
-                    if (arg.Type == JTokenType.String)
+                    JObject innerVerArg = (JObject)innerVer["arguments"];
+                    if (innerVerArg.ContainsKey("game"))
                     {
-                        gameArgBuilder.AppendFormat("{0} ", arg.ToString());
+                        ver.MinecraftArguments += string.Format("{0} ", ParseGameArgFromJson(innerVerArg["game"]));
+                    }
+                    if (innerVerArg.ContainsKey("jvm"))
+                    {
+                        ver.JvmArguments += string.Format("{0} ", ParseJvmArgFromJson(innerVerArg["jvm"]));
                     }
                 }
-                ver.MinecraftArguments = gameArgBuilder.ToString();
+                #endregion
 
-                JToken jvmArg = obj["arguments"]["jvm"];
-                StringBuilder jvmArgBuilder = new StringBuilder();
-                foreach (var arg in jvmArg)
+                JObject verArg = (JObject)obj["arguments"];
+
+                #region 游戏参数
+                if (verArg.ContainsKey("game"))
                 {
-                    if (arg.Type == JTokenType.String)
+                    JToken gameArg = verArg["game"];
+                    ver.MinecraftArguments += ParseGameArgFromJson(gameArg);
+                }
+                #endregion
+
+                #region JVM参数
+                if (verArg.ContainsKey("jvm"))
+                {
+                    JToken jvmArg = verArg["jvm"];
+                    ver.JvmArguments += ParseJvmArgFromJson(jvmArg);
+                }
+                #endregion
+            }
+            #endregion
+            else
+            {
+                #region 旧版本添加默认JVM参数
+                ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
+                #endregion
+            }
+
+            #region 处理库文件
+            ver.Libraries = new List<Modules.Library>();
+            ver.Natives = new List<Modules.Native>();
+            var libToken = obj["libraries"];
+            foreach (JToken lib in libToken)
+            {
+                var libObj = lib.ToObject<Library>();
+                var parts = libObj.Name.Split(':');
+
+                if (libObj.Natives == null)
+                {
+                    if (CheckAllowed(libObj.Rules))
                     {
-                        jvmArgBuilder.AppendFormat("{0} ", arg.ToString());
+                        Modules.Library library = new Modules.Library()
+                        {
+                            Package = parts[0],
+                            Name = parts[1],
+                            Version = parts[2]
+                        };
+                        if (!string.IsNullOrWhiteSpace(libObj.Url))
+                        {
+                            library.Url = libObj.Url;
+                        }
+                        ver.Libraries.Add(library);
                     }
-                    else if (arg.Type == JTokenType.Object)
+                }
+                else
+                {
+                    if (CheckAllowed(libObj.Rules))
+                    {
+                        var native = new Modules.Native
+                        {
+                            Package = parts[0],
+                            Name = parts[1],
+                            Version = parts[2],
+                            NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
+                        };
+                        ver.Natives.Add(native);
+                        if (libObj.Extract != null)
+                        {
+                            native.Exclude = libObj.Extract.Exculde;
+                        }
+                    }
+                }
+
+                if (((JObject)lib).ContainsKey("url"))
+                {
+
+                }
+            }
+            #endregion
+
+            #region 处理版本继承
+            if (ver.InheritsVersion != null)
+            {
+                var iv = GetVersion(ver.InheritsVersion);
+                if (iv != null)
+                {
+                    ver.Assets = iv.Assets;
+                    ver.AssetIndex = iv.AssetIndex;
+                    ver.Natives.AddRange(iv.Natives);
+                    ver.Libraries.AddRange(iv.Libraries);
+                    ver.Jar = iv.ID;
+                }
+            }
+            #endregion
+
+            return ver;
+        }
+
+        private string ParseGameArgFromJson(JToken gameArg)
+        {
+            StringBuilder gameArgBuilder = new StringBuilder();
+            foreach (var arg in gameArg)
+            {
+                if (arg.Type == JTokenType.String)
+                {
+                    gameArgBuilder.AppendFormat("{0} ", arg.ToString());
+                }
+                else if (arg.Type == JTokenType.Object)
+                {
+                    JObject argObj = (JObject)arg;
+                    if (argObj.ContainsKey("rules"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        JToken valueJtoken = argObj["value"];
+                        if (valueJtoken.Type == JTokenType.String)
+                        {
+                            gameArgBuilder.AppendFormat("{0} ", valueJtoken.ToString());
+                        }
+                        else if (valueJtoken.Type == JTokenType.Array)
+                        {
+                            foreach (var item in valueJtoken)
+                            {
+                                gameArgBuilder.AppendFormat("{0} ", item.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            return gameArgBuilder.ToString().Trim();
+        }
+
+        private string ParseJvmArgFromJson(JToken jvmArg)
+        {
+            StringBuilder jvmArgBuilder = new StringBuilder();
+            foreach (var arg in jvmArg)
+            {
+                if (arg.Type == JTokenType.String)
+                {
+                    jvmArgBuilder.AppendFormat("{0} ", arg.ToString());
+                }
+                else if (arg.Type == JTokenType.Object)
+                {
+                    JObject argObj = (JObject)arg;
+                    if (argObj.ContainsKey("rules"))
                     {
                         JToken rules = arg["rules"];
+                        #region 规则参数处理
                         foreach (var rule in rules)
                         {
                             if (rule["action"].ToString() == "allow")
@@ -109,88 +260,52 @@ namespace NsisoLauncher.Core.Util
                                 }
                             }
                         }
+                        #endregion
                     }
-                }
-                ver.JvmArguments = jvmArgBuilder.ToString();
-            }
-            #endregion
-            else
-            {
-
-                ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
-            }
-
-            #region 处理库文件
-            ver.Libraries = new List<Modules.Library>();
-            ver.Natives = new List<Modules.Native>();
-            var libToken = obj["libraries"];
-            foreach (JToken lib in libToken)
-            {
-                var libObj = lib.ToObject<Library>();
-                var parts = libObj.Name.Split(':');
-                if (libObj.Natives == null)
-                {
-                    if (CheckAllowed(libObj.Rules))
+                    else
                     {
-                        ver.Libraries.Add(new Modules.Library()
+                        JToken valueJtoken = argObj["value"];
+                        if (valueJtoken.Type == JTokenType.String)
                         {
-                            Package = parts[0],
-                            Name = parts[1],
-                            Version = parts[2]
-                        });
-                    }
-                }
-                else
-                {
-                    if (CheckAllowed(libObj.Rules))
-                    {
-                        var native = new Modules.Native
+                            jvmArgBuilder.AppendFormat("{0} ", valueJtoken.ToString());
+                        }
+                        else if (valueJtoken.Type == JTokenType.Array)
                         {
-                            Package = parts[0],
-                            Name = parts[1],
-                            Version = parts[2],
-                            NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
-                        };
-                        ver.Natives.Add(native);
-                        if (libObj.Extract != null)
-                        {
-                            native.Exclude = libObj.Extract.Exculde;
+                            foreach (var item in valueJtoken)
+                            {
+                                jvmArgBuilder.AppendFormat("{0} ", item.ToString());
+                            }
                         }
                     }
+
                 }
             }
-            #endregion
-
-            #region 处理版本继承
-            if (ver.InheritsVersion != null)
-            {
-                var iv = GetVersion(ver.InheritsVersion);
-                if (iv != null)
-                {
-                    ver.Assets = iv.Assets;
-                    ver.AssetIndex = iv.AssetIndex;
-                    ver.Natives.AddRange(iv.Natives);
-                    ver.Libraries.AddRange(iv.Libraries);
-                    ver.Jar = iv.ID;
-                }
-            }
-            #endregion
-
-            return ver;
+            return jvmArgBuilder.ToString().Trim();
         }
 
         public Modules.Version GetVersion(string ID)
         {
             lock (locker)
             {
-                string jsonPath = handler.GetJsonPath(ID);
-                if (!File.Exists(jsonPath))
+                try
+                {
+                    return JsonToVersion(GetVersionJsonText(ID));
+                }
+                catch (Exception)
                 {
                     return null;
                 }
-                string jsonStr = File.ReadAllText(jsonPath, Encoding.UTF8);
-                return JsonToVersion(jsonStr);
             }
+        }
+
+        public string GetVersionJsonText(string id)
+        {
+            string jsonPath = handler.GetJsonPath(id);
+            if (!File.Exists(jsonPath))
+            {
+                return null;
+            }
+            return File.ReadAllText(jsonPath, Encoding.UTF8);
         }
 
         public async Task<Modules.Version> GetVersionAsync(string ID)
@@ -281,6 +396,12 @@ namespace NsisoLauncher.Core.Util
         /// </summary>
         [JsonProperty("extract")]
         public Extract Extract { get; set; }
+
+        /// <summary>
+        /// 下载URL第一种表达
+        /// </summary>
+        [JsonProperty("url")]
+        public string Url { get; set; }
     }
 
     public class Rule

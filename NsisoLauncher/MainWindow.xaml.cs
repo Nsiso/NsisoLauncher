@@ -45,6 +45,7 @@ namespace NsisoLauncher
             App.logHandler.AppendDebug("启动器主窗体已载入");
             App.handler.GameExit += Handler_GameExit;
             Refresh();
+            CustomizeRefresh();
         }
 
         private void Handler_GameExit(object sender, int ret)
@@ -70,12 +71,11 @@ namespace NsisoLauncher
             }
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
-            await CustomizeRefresh();
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
 
         #region 自定义
-        private async Task CustomizeRefresh()
+        private async void CustomizeRefresh()
         {
             if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.LauncherTitle))
             {
@@ -90,41 +90,6 @@ namespace NsisoLauncher
                     ImageBrush brush = new ImageBrush(new BitmapImage(new Uri(files[random.Next(files.Count())])))
                     { TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
                     this.Background = brush;
-                }
-            }
-
-            if (App.config.MainConfig.Customize.CustomBackGroundMusic)
-            {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgmusic_?.mp3");
-                if (files.Count() != 0)
-                {
-                    Random random = new Random();
-                    mediaElement.Source = new Uri(files[random.Next(files.Count())]);
-                    this.volumeButton.Visibility = Visibility.Visible;
-                    mediaElement.Play();
-                    mediaElement.Volume = 0;
-                    await Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            for (int i = 0; i < 50; i++)
-                            {
-                                this.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    this.mediaElement.Volume += 0.01;
-                                }));
-                                Thread.Sleep(50);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            AggregateExceptionArgs args = new AggregateExceptionArgs()
-                            {
-                                AggregateException = new AggregateException(ex)
-                            };
-                            App.CatchAggregateException(this, args);
-                        }
-                    });
                 }
             }
 
@@ -163,6 +128,35 @@ namespace NsisoLauncher
             {
                 serverInfoGrid.Visibility = Visibility.Hidden;
             }
+
+            if (App.config.MainConfig.Customize.CustomBackGroundMusic)
+            {
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgmusic_?.mp3");
+                if (files.Count() != 0)
+                {
+                    Random random = new Random();
+                    mediaElement.Source = new Uri(files[random.Next(files.Count())]);
+                    this.volumeButton.Visibility = Visibility.Visible;
+                    mediaElement.Play();
+                    mediaElement.Volume = 0;
+                    await Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            for (int i = 0; i < 50; i++)
+                            {
+                                this.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    this.mediaElement.Volume += 0.01;
+                                }));
+                                Thread.Sleep(50);
+                            }
+                        }
+                        catch (Exception) { }
+                    });
+                }
+            }
+
         }
 
         private void volumeButton_Click(object sender, RoutedEventArgs e)
@@ -719,32 +713,29 @@ namespace NsisoLauncher
                     {
                         GameHelper.SetGameTitle(result, App.config.MainConfig.Customize.GameWindowTitle);
                     }
-                    await Task.Factory.StartNew(() =>
+                    if (App.config.MainConfig.Customize.CustomBackGroundMusic)
                     {
-                        try
+                        mediaElement.Volume = 0.5;
+                        await Task.Factory.StartNew(() =>
                         {
-                            for (int i = 0; i < 50; i++)
+                            try
                             {
+                                for (int i = 0; i < 50; i++)
+                                {
+                                    this.Dispatcher.Invoke(new Action(() =>
+                                    {
+                                        this.mediaElement.Volume -= 0.01;
+                                    }));
+                                    Thread.Sleep(50);
+                                }
                                 this.Dispatcher.Invoke(new Action(() =>
                                 {
-                                    this.mediaElement.Volume -= 0.01;
+                                    this.mediaElement.Stop();
                                 }));
-                                Thread.Sleep(50);
                             }
-                            this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                this.mediaElement.Stop();
-                            }));
-                        }
-                        catch (Exception ex)
-                        {
-                            AggregateExceptionArgs args = new AggregateExceptionArgs()
-                            {
-                                AggregateException = new AggregateException(ex)
-                            };
-                            App.CatchAggregateException(this, args);
-                        }
-                    });
+                            catch (Exception){}
+                        });
+                    }
                 }
                 #endregion
             }
@@ -762,14 +753,15 @@ namespace NsisoLauncher
 
         private void downloadButton_Click(object sender, RoutedEventArgs e)
         {
-            new Windows.DownloadWindow().ShowDialog();
+            new DownloadWindow().ShowDialog();
             Refresh();
         }
 
         private void configButton_Click(object sender, RoutedEventArgs e)
         {
-            new Windows.SettingWindow().ShowDialog();
+            new SettingWindow().ShowDialog();
             Refresh();
+            CustomizeRefresh();
         }
 
         private async void mainWindow_Loaded(object sender, RoutedEventArgs e)

@@ -135,6 +135,7 @@ namespace NsisoLauncher.Core
                 Task.Factory.StartNew(() =>
                 {
                     process.WaitForExit();
+                    App.logHandler.AppendInfo("游戏进程退出，代码:" + process.ExitCode);
                     GameExit?.Invoke(this, process.ExitCode);
                 });
 
@@ -160,6 +161,11 @@ namespace NsisoLauncher.Core
             {
                 return new LaunchResult(ex);
             }
+        }
+
+        public Modules.Version GetVersionByID(string id)
+        {
+            return versionReader.GetVersion(id);
         }
 
         public async Task<List<Modules.Version>> GetVersionsAsync()
@@ -217,8 +223,13 @@ namespace NsisoLauncher.Core
             }
             else
             {
-                return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, ver.ID);
+                return GetJarPath(ver.ID);
             }
+        }
+
+        public string GetJarPath(string id)
+        {
+            return string.Format(@"{0}\versions\{1}\{1}.jar", this.GameRootPath, id);
         }
 
         public string GetAssetsIndexPath(string assetsID)

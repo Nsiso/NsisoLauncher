@@ -207,7 +207,7 @@ namespace NsisoLauncher.Utils
                         ApendDebugLog("下载完成:" + item.From);
                         item.SetDone();
                         RemoveItemFromViewTask(item);
-                        DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _downloadTasks.Count, DoneTask = item });
+                        DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _viewDownloadTasks.Count, DoneTask = item });
                         //TasksObservableCollection.Remove(item);
                     }
                 }

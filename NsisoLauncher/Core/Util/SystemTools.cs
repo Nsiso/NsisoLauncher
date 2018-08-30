@@ -127,7 +127,29 @@ namespace NsisoLauncher.Core.Util
 
         public static bool IsSetupFrameworkUpdate(string name)
         {
-            using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Updates"))
+            if (GetSystemArch() == ArchEnum.x32)
+            {
+                return IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Updates"), name);
+            }
+            else
+            {
+                bool key32 = IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Updates"), name);
+                if (key32)
+                {
+                    return true;
+                }
+                bool key64 = IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Updates"), name);
+                if (key64)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static bool IsSetupFrameworkUpdateInner(RegistryKey baseKey, string name)
+        {
+            if (baseKey != null)
             {
                 foreach (string baseKeyName in baseKey.GetSubKeyNames())
                 {
@@ -154,8 +176,12 @@ namespace NsisoLauncher.Core.Util
                         continue;
                     }
                 }
+                return false;
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
     }
 }

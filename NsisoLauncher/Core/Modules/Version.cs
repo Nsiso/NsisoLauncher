@@ -184,6 +184,11 @@ namespace NsisoLauncher.Core.Modules
         /// 版本
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// 下载URL
+        /// </summary>
+        public string Url { get; set; }
     }
 
     public class Native : Library

@@ -28,6 +28,7 @@ namespace NsisoLauncher.Core.Net.Tools
                     Dictionary<string, string> dic = new Dictionary<string, string>();
                     dic.Add(@"https://launcher.mojang.com/", BMCLUrl);
                     dic.Add(@"https://launchermeta.mojang.com/", BMCLUrl);
+                    dic.Add(@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL);
                     return ReplaceURLByDic(url, dic);
 
                 default:
@@ -96,18 +97,25 @@ namespace NsisoLauncher.Core.Net.Tools
         /// <returns>下载URL</returns>
         public static string GetLibDownloadURL(DownloadSource source, Modules.Library lib)
         {
-
-            switch (source)
+            string libUrlPath = GetLibPath(lib).Replace('\\', '/');
+            if (lib.Url != null)
             {
-                case DownloadSource.Mojang:
-                    return (MojanglibrariesUrl + GetLibPath(lib)).Replace('\\', '/');
+                return DoURLReplace(source, lib.Url) + libUrlPath;
+            }
+            else
+            {
+                switch (source)
+                {
+                    case DownloadSource.Mojang:
+                        return MojanglibrariesUrl + libUrlPath;
 
-                case DownloadSource.BMCLAPI:
-                    return (BMCLLibrariesURL + GetLibPath(lib)).Replace('\\', '/');
+                    case DownloadSource.BMCLAPI:
+                        return BMCLLibrariesURL + libUrlPath;
 
-                default:
-                    throw new ArgumentNullException("source");
+                    default:
+                        throw new ArgumentNullException("source");
 
+                }
             }
         }
 

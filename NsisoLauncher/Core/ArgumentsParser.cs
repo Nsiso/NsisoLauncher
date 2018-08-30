@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NsisoLauncher.Core.Net.Server;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -109,20 +110,33 @@ namespace NsisoLauncher.Core
             }
             if (setting.LaunchToServer != null)
             {
-                if (!string.IsNullOrWhiteSpace(setting.LaunchToServer.Address))
+                ServerInfo server = new ServerInfo(setting.LaunchToServer);
+                App.logHandler.AppendDebug("正在获取服务器信息(SRV)");
+                server.StartGetServerInfo();
+                if (server.State == ServerInfo.StateType.GOOD)
                 {
-                    otherGamearg.AppendFormat(" --server {0}", setting.LaunchToServer.Address);
+                    App.logHandler.AppendDebug("服务器信息返回正常");
+                    otherGamearg.AppendFormat(" --server {0}", server.ServerAddress);
+                    otherGamearg.AppendFormat(" --port {0}", server.ServerPort);
                 }
-                if (setting.LaunchToServer.Port > 0)
+                else
                 {
-                    otherGamearg.AppendFormat(" --port {0}", setting.LaunchToServer.Port);
+                    App.logHandler.AppendDebug("服务器未正常响应，尝试使用原始地址");
+                    if (!string.IsNullOrWhiteSpace(setting.LaunchToServer.Address))
+                    {
+                        otherGamearg.AppendFormat(" --server {0}", setting.LaunchToServer.Address);
+                    }
+                    if (setting.LaunchToServer.Port > 0)
+                    {
+                        otherGamearg.AppendFormat(" --port {0}", setting.LaunchToServer.Port);
+                    }
                 }
             }
             if (!string.IsNullOrWhiteSpace(setting.AdvencedGameArguments))
             {
                 otherGamearg.Append(' ' + setting.AdvencedGameArguments);
             }
-            string gameArg = ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic) + otherGamearg.ToString();
+            string gameArg = (ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic) + otherGamearg.ToString()).Trim();
 
             #endregion
 
@@ -135,7 +149,7 @@ namespace NsisoLauncher.Core
                 {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
             };
 
-            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic);
+            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic).Trim();
             #endregion
 
             stopwatch.Stop();
@@ -160,7 +174,7 @@ namespace NsisoLauncher.Core
                 sb.AppendFormat("\"{0}\":[\"{1}\"]", item.Name, item.Value);
             }
             sb.Append("}");
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         private string GetClassPaths(List<Modules.Library> libs, Modules.Version ver)
@@ -171,12 +185,12 @@ namespace NsisoLauncher.Core
 
             foreach (var item in libs)
             {
-                stringBuilder.AppendFormat("{0};", handler.GetLibraryPath(item));
+                string libPath = handler.GetLibraryPath(item);
+                stringBuilder.AppendFormat("{0};", libPath);
             }
             stringBuilder.Append(handler.GetJarPath(ver));
-
             stringBuilder.Append('\"');
-            return stringBuilder.ToString();
+            return stringBuilder.ToString().Trim();
         }
 
         private static string ReplaceByDic(string str, Dictionary<string,string> dic)

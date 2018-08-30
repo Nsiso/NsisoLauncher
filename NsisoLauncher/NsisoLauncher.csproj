@@ -89,8 +89,78 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Config\ConfigHandler.cs" />
+    <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
     <Compile Include="Core\Modules\Log.cs" />
+    <Compile Include="Core\Net\Dns\Header.cs" />
+    <Compile Include="Core\Net\Dns\Question.cs" />
+    <Compile Include="Core\Net\Dns\RecordReader.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordA6.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordAPL.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordATMA.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordCERT.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordDHCID.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordDNSKEY.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordEID.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordGID.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordHIP.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordIPSECKEY.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNIMLOC.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC3.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC3PARAM.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordOPT.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordRRSIG.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSINK.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSPF.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSSHFP.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUID.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUINFO.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUnknown.cs" />
+    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUNSPEC.cs" />
+    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordGPOS.cs" />
+    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordMD.cs" />
+    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordMF.cs" />
+    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordNSAPPTR.cs" />
+    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordNXT.cs" />
+    <Compile Include="Core\Net\Dns\Records\Record.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordA.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordAAAA.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordAFSDB.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordCNAME.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordDNAME.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordDS.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordHINFO.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordISDN.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordKEY.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordKX.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordLOC.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordMB.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordMG.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordMINFO.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordMR.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordMX.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordNAPTR.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordNS.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordNSAP.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordNULL.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordPTR.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordPX.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordRP.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordRT.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordSIG.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordSOA.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordSRV.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordTKEY.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordTSIG.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordTXT.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordWKS.cs" />
+    <Compile Include="Core\Net\Dns\Records\RecordX25.cs" />
+    <Compile Include="Core\Net\Dns\Request.cs" />
+    <Compile Include="Core\Net\Dns\Resolver.cs" />
+    <Compile Include="Core\Net\Dns\Response.cs" />
+    <Compile Include="Core\Net\Dns\RR.cs" />
+    <Compile Include="Core\Net\Dns\Structs.cs" />
     <Compile Include="Core\Net\DownloadSource.cs" />
     <Compile Include="Core\Net\DownloadTask.cs" />
     <Compile Include="Core\Net\FunctionAPI\APIModules.cs" />
@@ -276,6 +346,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\Steve.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Core\Net\Dns\Records\totla.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

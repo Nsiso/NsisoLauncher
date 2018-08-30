@@ -4,7 +4,6 @@ using NsisoLauncher.Core.Net.FunctionAPI;
 using NsisoLauncher.Core.Net.Tools;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
@@ -141,7 +140,15 @@ namespace NsisoLauncher.Core.Util
             string jarPath = core.GetJarPath(version);
             if (!File.Exists(jarPath))
             {
-                tasks.Add(GetDownloadUrl.GetCoreDownloadTask(source, version, core));
+                if (version.InheritsVersion != null)
+                {
+                    Version inner = core.GetVersionByID(version.InheritsVersion);
+                    tasks.Add(GetDownloadUrl.GetCoreDownloadTask(source, inner, core));
+                }
+                else
+                {
+                    tasks.Add(GetDownloadUrl.GetCoreDownloadTask(source, version, core));
+                }
             }
             foreach (var item in lostLibs)
             {

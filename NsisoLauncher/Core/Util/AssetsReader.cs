@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using NsisoLauncher.Core.Modules;
 
 namespace NsisoLauncher.Core.Util
 {

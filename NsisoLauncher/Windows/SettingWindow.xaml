@@ -311,7 +311,7 @@
                                 <TextBox x:Name="textBox7" TextWrapping="NoWrap" Text="{Binding Path=ServerName}" HorizontalAlignment="Left" Width="300"/>
                                 <Label x:Name="label7" Content="服务器地址:"/>
                                 <TextBox x:Name="textBox5" TextWrapping="NoWrap" Text="{Binding Path=Address}" HorizontalAlignment="Left" Width="300"/>
-                                <Label x:Name="label8" Content="服务器端口:"/>
+                                <Label x:Name="label8" Content="服务器端口(SRV填写0):"/>
                                 <TextBox x:Name="textBox6" Text="{Binding Path=Port}"
                                      PreviewTextInput="textBox1_PreviewTextInput"
                                      InputMethod.IsInputMethodEnabled="False"

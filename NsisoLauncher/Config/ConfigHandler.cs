@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NsisoLauncher.Config
 {
@@ -18,11 +19,22 @@ namespace NsisoLauncher.Config
         public string MainConfigPath { get => Directory.FullName + @"\MainConfig.json"; }
 
         /// <summary>
+        /// 官方用户配置文件路径
+        /// </summary>
+        public string LauncherProfilesConfigPath { get => Path.GetFullPath(@".minecraft\launcher_profiles.json"); }
+
+        /// <summary>
         /// 首要配置文件内容
         /// </summary>
         public MainConfig MainConfig { get; set; }
 
-        private object locker = new object();
+        /// <summary>
+        /// 官方用户配置文件内容
+        /// </summary>
+        public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
+
+        private object mainconfigLocker = new object();
+        private object launcherProfilesLocker = new object();
 
         public ConfigHandler()
         {
@@ -39,6 +51,20 @@ namespace NsisoLauncher.Config
                 { NewConfig(); }
                 else
                 { Read(); }
+
+                string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
+                if (!System.IO.Directory.Exists(profilesConfigDir))
+                {
+                    System.IO.Directory.CreateDirectory(profilesConfigDir);
+                }
+                if (!File.Exists(LauncherProfilesConfigPath))
+                {
+                    NewProfilesConfig();
+                }
+                //else
+                //{
+                //    ReadProfilesConfig();
+                //}
             }
             catch (UnauthorizedAccessException)
             {
@@ -59,7 +85,7 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void Save()
         {
-            lock (locker)
+            lock (mainconfigLocker)
             {
                 File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig));
             }
@@ -71,10 +97,43 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void Read()
         {
-            lock (locker)
+            lock (mainconfigLocker)
             {
                 MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
             }
+        }
+
+        /// <summary>
+        /// 写配置文件
+        /// </summary>
+        public void SaveProfilesConfig()
+        {
+            lock (launcherProfilesLocker)
+            {
+                File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+            }
+        }
+
+        //public void ReadProfilesConfig()
+        //{
+        //    lock (launcherProfilesLocker)
+        //    {
+        //        LauncherProfilesConfig = JsonConvert.DeserializeObject<LauncherProfilesConfig>(File.ReadAllText(MainConfigPath));
+        //    }
+        //}
+
+        /// <summary>
+        /// 新的官方用户配置文件
+        /// </summary>
+        private void NewProfilesConfig()
+        {
+            LauncherProfilesConfig = new LauncherProfilesConfig()
+            {
+                ClientToken = "88888888-8888-8888-8888-888888888888",
+                SelectedProfile = "(Default)",
+                Profiles = JObject.Parse("{\"(Default)\":{\"name\":\"(Default)\"}}")
+            };
+            SaveProfilesConfig();
         }
 
         /// <summary>
