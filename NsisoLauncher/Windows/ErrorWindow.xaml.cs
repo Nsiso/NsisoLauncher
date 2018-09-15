@@ -58,7 +58,12 @@ namespace NsisoLauncher.Windows
             try
             {
                 string msg = (string)e.Argument;
-                if ((bool)moreInfoCheckBox.IsChecked)
+                bool moreInfo = true;
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    moreInfo = (bool)moreInfoCheckBox.IsChecked;
+                }));
+                if (moreInfo)
                 {
                     msg += ("/r/n" + GetEnvironmentInfo());
                 }
@@ -68,6 +73,7 @@ namespace NsisoLauncher.Windows
                     "NsisoLauncherReport",
                     dataJson,
                     "7B27B7B6A3C10158C28E3DE0B13785CD");
+
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(errorApiAdress);
                 req.Method = "POST";
                 req.ContentType = "application/x-www-form-urlencoded";
@@ -80,13 +86,13 @@ namespace NsisoLauncher.Windows
                     reqStream.Close();
                 }
 
-                HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-                Stream stream = resp.GetResponseStream();
-                //获取响应内容  
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    var result = reader.ReadToEnd();
-                }
+                //HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                //Stream stream = resp.GetResponseStream();
+                ////获取响应内容  
+                //using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                //{
+                //    var result = reader.ReadToEnd();
+                //}
             }
             catch (Exception ex)
             {

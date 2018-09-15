@@ -38,46 +38,32 @@ namespace NsisoLauncher.Config
 
         public ConfigHandler()
         {
-            try
+            Directory = new DirectoryInfo("Config");
+
+            if (!Directory.Exists)
             {
-                Directory = new DirectoryInfo("Config");
-
-                if (!Directory.Exists)
-                {
-                    Directory.Create();
-                }
-
-                if (!File.Exists(MainConfigPath))
-                { NewConfig(); }
-                else
-                { Read(); }
-
-                string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
-                if (!System.IO.Directory.Exists(profilesConfigDir))
-                {
-                    System.IO.Directory.CreateDirectory(profilesConfigDir);
-                }
-                if (!File.Exists(LauncherProfilesConfigPath))
-                {
-                    NewProfilesConfig();
-                }
-                //else
-                //{
-                //    ReadProfilesConfig();
-                //}
+                Directory.Create();
             }
-            catch (UnauthorizedAccessException)
+
+            if (!File.Exists(MainConfigPath))
+            { NewConfig(); }
+            else
+            { Read(); }
+
+            string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
+            if (!System.IO.Directory.Exists(profilesConfigDir))
             {
-                var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
-                    "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
-                    "而导致系统自我保护机制权限禁止写入文件。\n" +
-                    "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                    "启动器权限不足", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes)
-                {
-                    App.Reboot(true);
-                }
+                System.IO.Directory.CreateDirectory(profilesConfigDir);
             }
+            if (!File.Exists(LauncherProfilesConfigPath))
+            {
+                NewProfilesConfig();
+            }
+            //else
+            //{
+            //    ReadProfilesConfig();
+            //}
+
         }
 
         /// <summary>
@@ -87,7 +73,22 @@ namespace NsisoLauncher.Config
         {
             lock (mainconfigLocker)
             {
-                File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig));
+                try
+                {
+                    File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
+                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                        "而导致系统自我保护机制权限禁止写入文件。\n" +
+                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
+                        "启动器权限不足", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        App.Reboot(true);
+                    }
+                }
             }
 
         }
@@ -99,7 +100,22 @@ namespace NsisoLauncher.Config
         {
             lock (mainconfigLocker)
             {
-                MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
+                try
+                {
+                    MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    var result = MessageBox.Show("启动器无法正常读取配置文件。\n" +
+                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                        "而导致系统自我保护机制权限禁止写入文件。\n" +
+                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
+                        "启动器权限不足", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        App.Reboot(true);
+                    }
+                }
             }
         }
 
@@ -110,7 +126,22 @@ namespace NsisoLauncher.Config
         {
             lock (launcherProfilesLocker)
             {
-                File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+                try
+                {
+                    File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    var result = MessageBox.Show("启动器无法正常读取配置文件。\n" +
+                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                        "而导致系统自我保护机制权限禁止写入文件。\n" +
+                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
+                        "启动器权限不足", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        App.Reboot(true);
+                    }
+                }
             }
         }
 

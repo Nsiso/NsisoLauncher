@@ -8,8 +8,6 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Core.Net.MojangApi.Endpoints;
-using System.Runtime.InteropServices;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -97,36 +95,31 @@ namespace NsisoLauncher
             {
                 try
                 {
+                    Config.Server nide8Server = new Config.Server() { ShowServerInfo = true };
                     var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
                     if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
                     {
-                        Server server = new Server();
                         string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
                         if (serverIp.Length == 2)
                         {
-                            server.Address = serverIp[0];
-                            server.Port = ushort.Parse(serverIp[1]);
+                            nide8Server.Address = serverIp[0];
+                            nide8Server.Port = ushort.Parse(serverIp[1]);
                         }
                         else
                         {
-                            server.Address = nide8ReturnResult.Meta.ServerIP;
-                            server.Port = 25565;
+                            nide8Server.Address = nide8ReturnResult.Meta.ServerIP;
+                            nide8Server.Port = 25565;
                         }
-                        App.config.MainConfig.Server.ServerName = nide8ReturnResult.Meta.ServerName;
-                        await ShowServerInfo(server);
+                        nide8Server.ServerName = nide8ReturnResult.Meta.ServerName;
+                        serverInfoControl.SetServerInfo(nide8Server);
                     }
                 }
                 catch (Exception)
                 {}
             }
-            else if (App.config.MainConfig.Server.ShowServerInfo)
+            else if (App.config.MainConfig.Server != null)
             {
-                Server server = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
-                await ShowServerInfo(server);
-            }
-            else
-            {
-                serverInfoGrid.Visibility = Visibility.Hidden;
+                serverInfoControl.SetServerInfo(App.config.MainConfig.Server);
             }
 
             if (App.config.MainConfig.Customize.CustomBackGroundMusic)
@@ -168,106 +161,6 @@ namespace NsisoLauncher
         {
             mediaElement.Stop();
             mediaElement.Play();
-        }
-        #endregion
-
-        #region 显示服务器信息
-        [DllImport("gdi32.dll", SetLastError = true)]
-        private static extern bool DeleteObject(IntPtr hObject);
-
-        /// <summary>  
-        /// 从bitmap转换成ImageSource  
-        /// </summary>  
-        /// <param name="icon"></param>  
-        /// <returns></returns>  
-        public static ImageSource ChangeBitmapToImageSource(Bitmap bitmap)
-        {
-            //Bitmap bitmap = icon.ToBitmap();  
-            IntPtr hBitmap = bitmap.GetHbitmap();
-
-            ImageSource wpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                hBitmap,
-                IntPtr.Zero,
-                Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-            if (!DeleteObject(hBitmap))
-            {
-                throw new System.ComponentModel.Win32Exception();
-            }
-            return wpfBitmap;
-
-        }
-
-        private async Task ShowServerInfo(Server info)
-        {
-            Core.Net.Server.ServerInfo serverInfo = new Core.Net.Server.ServerInfo(info) { ServerName = App.config.MainConfig.Server.ServerName };
-            serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.SyncAltSolid;
-            serverPeopleTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingNum");
-            serverVersionTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingVer");
-            serverPingTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingPing");
-            serverMotdTextBlock.Text = null;
-            serverInfoGrid.Visibility = Visibility.Visible;
-            serverLoadingBar.Visibility = Visibility.Visible;
-            serverLoadingBar.IsIndeterminate = true;
-            await serverInfo.StartGetServerInfoAsync();
-            App.logHandler.AppendDebug(serverInfo.JsonResult);
-            serverLoadingBar.IsIndeterminate = false;
-            serverLoadingBar.Visibility = Visibility.Hidden;
-            this.serverNameTextBlock.Text = serverInfo.ServerName;
-            switch (serverInfo.State)
-            {
-                case Core.Net.Server.ServerInfo.StateType.GOOD:
-                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CheckCircleSolid;
-                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Green;
-                    this.serverPeopleTextBlock.Text = string.Format("人数:[{0}/{1}]", serverInfo.CurrentPlayerCount, serverInfo.MaxPlayerCount);
-                    this.serverVersionTextBlock.Text = serverInfo.GameVersion;
-                    this.serverVersionTextBlock.ToolTip = serverInfo.GameVersion;
-                    this.serverPingTextBlock.Text = string.Format("延迟:{0}ms", serverInfo.Ping);
-                    this.serverMotdTextBlock.Text = serverInfo.MOTD;
-                    this.serverMotdTextBlock.ToolTip = serverInfo.MOTD;
-                    if (serverInfo.OnlinePlayersName != null)
-                    {
-                        this.serverPeopleTextBlock.ToolTip = string.Join("\n", serverInfo.OnlinePlayersName);
-                    }
-                    if (serverInfo.IconData != null)
-                    {
-                        using (MemoryStream ms = new MemoryStream(serverInfo.IconData))
-                        {
-                            this.serverIcon.Fill = new ImageBrush(ChangeBitmapToImageSource(new Bitmap(ms)));
-                        }
-
-                    }
-                    break;
-
-                case Core.Net.Server.ServerInfo.StateType.NO_RESPONSE:
-                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
-                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
-                    this.serverPeopleTextBlock.Text = "获取失败";
-                    this.serverVersionTextBlock.Text = "获取失败";
-                    this.serverPingTextBlock.Text = "获取失败";
-                    this.serverMotdTextBlock.Text = "服务器没有响应，可能网络或服务器发生异常";
-                    break;
-
-                case Core.Net.Server.ServerInfo.StateType.BAD_CONNECT:
-                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
-                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
-                    this.serverPeopleTextBlock.Text = "获取失败";
-                    this.serverVersionTextBlock.Text = "获取失败";
-                    this.serverPingTextBlock.Text = "获取失败";
-                    this.serverMotdTextBlock.Text = "服务器连接失败，服务器可能不存在或网络异常";
-                    break;
-
-                case Core.Net.Server.ServerInfo.StateType.EXCEPTION:
-                    this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
-                    this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Red;
-                    this.serverPeopleTextBlock.Text = "获取失败";
-                    this.serverVersionTextBlock.Text = "获取失败";
-                    this.serverPingTextBlock.Text = "获取失败";
-                    this.serverMotdTextBlock.Text = "启动器获取服务器信息时发生内部异常";
-                    break;
-                default:
-                    break;
-            }
         }
         #endregion
 

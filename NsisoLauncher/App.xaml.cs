@@ -172,6 +172,9 @@ namespace NsisoLauncher
                 ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
             }
             #endregion
+
+            //debug
+            //throw new Exception();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
