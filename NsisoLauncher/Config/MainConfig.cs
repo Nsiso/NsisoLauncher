@@ -1,7 +1,7 @@
-﻿using NsisoLauncher.Core.Modules;
-using NsisoLauncher.Core.Net.MojangApi.Api;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
-using static NsisoLauncher.Core.Net.MojangApi.Responses.AuthenticateResponse;
+using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
 {
@@ -201,7 +201,7 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 下载源设置
         /// </summary>
-        public Core.Net.DownloadSource DownloadSource { get; set; }
+        public NsisoLauncherCore.Net.DownloadSource DownloadSource { get; set; }
 
         /// <summary>
         /// 线程数量

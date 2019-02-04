@@ -94,89 +94,7 @@
     <Compile Include="Controls\ServerInfoControl.xaml.cs">
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Modules\Log.cs" />
-    <Compile Include="Core\Net\Dns\Header.cs" />
-    <Compile Include="Core\Net\Dns\Question.cs" />
-    <Compile Include="Core\Net\Dns\RecordReader.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordA6.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordAPL.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordATMA.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordCERT.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordDHCID.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordDNSKEY.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordEID.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordGID.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordHIP.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordIPSECKEY.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNIMLOC.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC3.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordNSEC3PARAM.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordOPT.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordRRSIG.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSINK.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSPF.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordSSHFP.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUID.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUINFO.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUnknown.cs" />
-    <Compile Include="Core\Net\Dns\Records\NotUsed\RecordUNSPEC.cs" />
-    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordGPOS.cs" />
-    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordMD.cs" />
-    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordMF.cs" />
-    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordNSAPPTR.cs" />
-    <Compile Include="Core\Net\Dns\Records\Obsolete\RecordNXT.cs" />
-    <Compile Include="Core\Net\Dns\Records\Record.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordA.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordAAAA.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordAFSDB.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordCNAME.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordDNAME.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordDS.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordHINFO.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordISDN.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordKEY.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordKX.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordLOC.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordMB.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordMG.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordMINFO.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordMR.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordMX.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordNAPTR.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordNS.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordNSAP.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordNULL.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordPTR.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordPX.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordRP.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordRT.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordSIG.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordSOA.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordSRV.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordTKEY.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordTSIG.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordTXT.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordWKS.cs" />
-    <Compile Include="Core\Net\Dns\Records\RecordX25.cs" />
-    <Compile Include="Core\Net\Dns\Request.cs" />
-    <Compile Include="Core\Net\Dns\Resolver.cs" />
-    <Compile Include="Core\Net\Dns\Response.cs" />
-    <Compile Include="Core\Net\Dns\RR.cs" />
-    <Compile Include="Core\Net\Dns\Structs.cs" />
-    <Compile Include="Core\Net\DownloadSource.cs" />
-    <Compile Include="Core\Net\DownloadTask.cs" />
-    <Compile Include="Core\Net\FunctionAPI\APIModules.cs" />
-    <Compile Include="Core\Net\FunctionAPI\FunctionAPIHandler.cs" />
-    <Compile Include="Core\Net\Nide8API\APIHandler.cs" />
-    <Compile Include="Core\Net\Nide8API\APIModules.cs" />
-    <Compile Include="Core\Net\Server\ForgeInfo.cs" />
-    <Compile Include="Core\Net\Server\ProtocolHandler.cs" />
-    <Compile Include="Core\Net\Server\ServerInfo.cs" />
-    <Compile Include="Core\Net\Tools\GetDownloadUrl.cs" />
-    <Compile Include="Core\Util\AssetsReader.cs" />
-    <Compile Include="Core\Util\GetLost.cs" />
-    <Compile Include="Core\Util\LogHandler.cs" />
+    <Compile Include="Utils\LogHandler.cs" />
     <Compile Include="Utils\MultiThreadDownloader.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
@@ -207,45 +125,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Core\ArgumentsParser.cs" />
-    <Compile Include="Core\Auth\OfflineAuthenticator.cs" />
-    <Compile Include="Core\LaunchException\LaunchException.cs" />
-    <Compile Include="Core\LaunchException\NativeNotFoundException.cs" />
-    <Compile Include="Core\LaunchHandler.cs" />
-    <Compile Include="Core\Modules\LaunchSetting.cs" />
-    <Compile Include="Core\Net\MojangAPI\Api\Requester.cs" />
-    <Compile Include="Core\Net\MojangAPI\Api\Uuid.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\ApiStatus.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\Authentication.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\BlockedServers.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\Challenges.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\ChangeSkin.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\IEndpoint.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\NameHistory.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\Profile.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\ResetSkin.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\SecureIP.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\Statistics.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\UploadSkin.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\UuidAtTime.cs" />
-    <Compile Include="Core\Net\MojangAPI\Endpoints\UuidByNames.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\ApiStatusResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\AuthenticationResponses.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\BlockedServersResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\ChallengesResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\NameHistoryResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\ProfileResponses.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\Response.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\StatisticsResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\UuidAtTimeResponse.cs" />
-    <Compile Include="Core\Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
-    <Compile Include="Core\Modules\Version.cs" />
-    <Compile Include="Core\Util\GameHelper.cs" />
-    <Compile Include="Core\Util\Java.cs" />
-    <Compile Include="Core\Modules\LaunchResult.cs" />
-    <Compile Include="Core\Util\SystemTools.cs" />
-    <Compile Include="Core\Util\Unzip.cs" />
-    <Compile Include="Core\Util\VersionReader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -354,8 +233,6 @@
   <ItemGroup>
     <Resource Include="Resource\Steve.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Core\Net\Dns\Records\totla.txt" />
-  </ItemGroup>
+  <Import Project="..\..\NsisoLauncherCore\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-﻿using NsisoLauncher.Core.Net;
+﻿using NsisoLauncherCore.Net;
 using System.Net;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.IO;
 using System.Timers;
-using NsisoLauncher.Core.Modules;
+using NsisoLauncherCore.Modules;
 using System.Collections.Concurrent;
 
 namespace NsisoLauncher.Utils

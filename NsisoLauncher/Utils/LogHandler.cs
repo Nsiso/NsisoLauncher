@@ -1,4 +1,4 @@
-﻿using NsisoLauncher.Core.Modules;
+﻿using NsisoLauncherCore.Modules;
 using System;
 using System.IO;
 using System.Threading;

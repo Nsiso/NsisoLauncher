@@ -6,15 +6,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Core.Modules;
-using NsisoLauncher.Core.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using NsisoLauncher.Core.Util;
+using NsisoLauncherCore.Util;
 using NsisoLauncher.Windows;
-using NsisoLauncher.Core.Net;
-using NsisoLauncher.Core.Net.MojangApi.Api;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore;
+using NsisoLauncherCore.Auth;
+using Endpoints;
 
 namespace NsisoLauncher
 {
@@ -46,11 +49,15 @@ namespace NsisoLauncher
             CustomizeRefresh();
         }
 
-        private void Handler_GameExit(object sender, int ret)
+        private void Handler_GameExit(object sender, GameExitArg arg)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
                 this.WindowState = WindowState.Normal;
+                if (!arg.IsNormalExit())
+                {
+                    this.ShowMessageAsync("游戏非正常退出", "这很有可能是因为游戏崩溃导致的，退出代码:" + arg.ExitCode);
+                }
             }));
         }
 
@@ -203,7 +210,7 @@ namespace NsisoLauncher
 
                 LaunchSetting launchSetting = new LaunchSetting()
                 {
-                    Version = (Core.Modules.Version)launchVersionCombobox.SelectedItem
+                    Version = (NsisoLauncherCore.Modules.Version)launchVersionCombobox.SelectedItem
                 };
 
                 this.loadingGrid.Visibility = Visibility.Visible;
@@ -211,7 +218,8 @@ namespace NsisoLauncher
 
                 #region 验证
                 AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
-                //设置CLIENT TOKEN
+
+                #region 设置ClientToken
                 if (string.IsNullOrWhiteSpace(App.config.MainConfig.User.ClientToken))
                 {
                     App.config.MainConfig.User.ClientToken = Guid.NewGuid().ToString("N");
@@ -220,8 +228,9 @@ namespace NsisoLauncher
                 {
                     Requester.ClientToken = App.config.MainConfig.User.ClientToken;
                 }
+                #endregion
 
-                #region NewData
+                #region 多语言支持变量
                 string autoVerifyingMsg = null;
                 string autoVerifyingMsg2 = null;
                 string autoVerificationFailedMsg = null;
@@ -243,13 +252,14 @@ namespace NsisoLauncher
                 string verifyingMsg = null, verifyingMsg2 = null, verifyingFailedMsg = null, verifyingFailedMsg2 = null;
                 #endregion
 
+                //主验证器接口
+                IAuthenticator authenticator = null;
+
                 switch (auth.Type)
                 {
                     #region 离线验证
                     case Config.AuthenticationType.OFFLINE:
-                        var loginResult = Core.Auth.OfflineAuthenticator.DoAuthenticate(userName);
-                        launchSetting.AuthenticateAccessToken = loginResult.Item1;
-                        launchSetting.AuthenticateUUID = loginResult.Item2;
+                        authenticator = new OfflineAuthenticator(userName);
                         break;
                     #endregion
 
@@ -338,102 +348,130 @@ namespace NsisoLauncher
                     #endregion
 
                     default:
-                        var defaultLoginResult = Core.Auth.OfflineAuthenticator.DoAuthenticate(userName);
-                        launchSetting.AuthenticateAccessToken = defaultLoginResult.Item1;
-                        launchSetting.AuthenticateUUID = defaultLoginResult.Item2;
+                        authenticator = new OfflineAuthenticator(userName);
                         break;
                 }
 
-                if (auth.Type != Config.AuthenticationType.OFFLINE)
+                #region Old
+                //if (auth.Type != Config.AuthenticationType.OFFLINE)
+                //{
+                //    try
+                //    {
+                //        #region 如果记住登陆(有登陆记录)
+                //        if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
+                //        {
+                //            authenticator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
+                //                App.config.MainConfig.User.AuthenticationUUID,
+                //                App.config.MainConfig.User.AuthenticationUserData);
+                //            //var loader = await this.ShowProgressAsync(autoVerifyingMsg, autoVerifyingMsg2);
+                //            //loader.SetIndeterminate();
+                //            //Validate validate = new Validate(App.config.MainConfig.User.AccessToken);
+                //            //var validateResult = await validate.PerformRequestAsync();
+                //            //if (validateResult.IsSuccess)
+                //            //{
+
+                //            //    launchSetting.AuthenticateAccessToken = App.config.MainConfig.User.AccessToken;
+                //            //    launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
+                //            //    await loader.CloseAsync();
+                //            //}
+                //            //else
+                //            //{
+                //            //    Refresh refresher = new Refresh(App.config.MainConfig.User.AccessToken);
+                //            //    var refreshResult = await refresher.PerformRequestAsync();
+                //            //    await loader.CloseAsync();
+                //            //    if (refreshResult.IsSuccess)
+                //            //    {
+                //            //        App.config.MainConfig.User.AccessToken = refreshResult.AccessToken;
+
+                //            //        launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
+                //            //        launchSetting.AuthenticateAccessToken = refreshResult.AccessToken;
+                //            //    }
+                //            //    else
+                //            //    {
+                //            //        App.config.MainConfig.User.AccessToken = string.Empty;
+                //            //        App.config.Save();
+                //            //        await this.ShowMessageAsync(autoVerificationFailedMsg, autoVerificationFailedMsg2);
+                //            //        return;
+                //            //    }
+                //            //}
+                //        }
+                //        #endregion
+
+                //        #region 从零登陆
+                //        else
+                //        {
+                //            var loginMsgResult = await this.ShowLoginAsync(loginMsg, loginMsg2, loginDialogSettings);
+
+                //            if (loginMsgResult == null)
+                //            {
+                //                return;
+                //            }
+                //            var loader = await this.ShowProgressAsync(verifyingMsg, verifyingMsg2);
+                //            loader.SetIndeterminate();
+                //            userName = loginMsgResult.Username;
+                //            Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
+                //            var aloginResult = await authenticate.PerformRequestAsync();
+                //            await loader.CloseAsync();
+                //            if (aloginResult.IsSuccess)
+                //            {
+                //                if (loginMsgResult.ShouldRemember)
+                //                {
+                //                    App.config.MainConfig.User.AccessToken = aloginResult.AccessToken;
+                //                }
+                //                App.config.MainConfig.User.AuthenticationUserData = aloginResult.User;
+                //                App.config.MainConfig.User.AuthenticationUUID = aloginResult.SelectedProfile;
+
+                //                launchSetting.AuthenticateAccessToken = aloginResult.AccessToken;
+                //                launchSetting.AuthenticateUUID = aloginResult.SelectedProfile;
+                //                launchSetting.AuthenticationUserData = aloginResult.User;
+                //            }
+                //            else
+                //            {
+                //                await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + aloginResult.Error.ErrorMessage);
+                //                return;
+                //            }
+                //        }
+                //        #endregion
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + ex.Message);
+                //        return;
+                //    }
+                //}
+                #endregion
+
+                //App.config.MainConfig.User.AuthenticationType = auth.Type;
+                var loader = await this.ShowProgressAsync(verifyingMsg, verifyingMsg);
+                loader.SetIndeterminate();
+                var authResult  = await authenticator.DoAuthenticateAsync();
+                await loader.CloseAsync();
+
+                switch (authResult.State)
                 {
-                    try
-                    {
-                        #region 如果记住登陆(有登陆记录)
-                        if ((!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null))
-                        {
-                            var loader = await this.ShowProgressAsync(autoVerifyingMsg, autoVerifyingMsg2);
-                            loader.SetIndeterminate();
-                            Validate validate = new Validate(App.config.MainConfig.User.AccessToken);
-                            var validateResult = await validate.PerformRequestAsync();
-                            if (validateResult.IsSuccess)
-                            {
-                                launchSetting.AuthenticateAccessToken = App.config.MainConfig.User.AccessToken;
-                                launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
-                                await loader.CloseAsync();
-                            }
-                            else
-                            {
-                                Refresh refresher = new Refresh(App.config.MainConfig.User.AccessToken);
-                                var refreshResult = await refresher.PerformRequestAsync();
-                                await loader.CloseAsync();
-                                if (refreshResult.IsSuccess)
-                                {
-                                    App.config.MainConfig.User.AccessToken = refreshResult.AccessToken;
-
-                                    launchSetting.AuthenticateUUID = App.config.MainConfig.User.AuthenticationUUID;
-                                    launchSetting.AuthenticateAccessToken = refreshResult.AccessToken;
-                                }
-                                else
-                                {
-                                    App.config.MainConfig.User.AccessToken = string.Empty;
-                                    App.config.Save();
-                                    await this.ShowMessageAsync(autoVerificationFailedMsg, autoVerificationFailedMsg2);
-                                    return;
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region 从零登陆
-                        else
-                        {
-                            var loginMsgResult = await this.ShowLoginAsync(loginMsg, loginMsg2, loginDialogSettings);
-
-                            if (loginMsgResult == null)
-                            {
-                                return;
-                            }
-                            var loader = await this.ShowProgressAsync(verifyingMsg, verifyingMsg2);
-                            loader.SetIndeterminate();
-                            userName = loginMsgResult.Username;
-                            Authenticate authenticate = new Authenticate(new Credentials() { Username = loginMsgResult.Username, Password = loginMsgResult.Password });
-                            var aloginResult = await authenticate.PerformRequestAsync();
-                            await loader.CloseAsync();
-                            if (aloginResult.IsSuccess)
-                            {
-                                if (loginMsgResult.ShouldRemember)
-                                {
-                                    App.config.MainConfig.User.AccessToken = aloginResult.AccessToken;
-                                }
-                                App.config.MainConfig.User.AuthenticationUserData = aloginResult.User;
-                                App.config.MainConfig.User.AuthenticationUUID = aloginResult.SelectedProfile;
-
-                                launchSetting.AuthenticateAccessToken = aloginResult.AccessToken;
-                                launchSetting.AuthenticateUUID = aloginResult.SelectedProfile;
-                                launchSetting.AuthenticationUserData = aloginResult.User;
-                            }
-                            else
-                            {
-                                await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + aloginResult.Error.ErrorMessage);
-                                return;
-                            }
-                        }
-                        #endregion
-                    }
-                    catch (Exception ex)
-                    {
-                        await this.ShowMessageAsync(verifyingFailedMsg, verifyingFailedMsg2 + ex.Message);
-                        return;
-                    }
+                    case AuthState.SUCCESS:
+                        break;
+                    case AuthState.REQ_LOGIN:
+                        break;
+                    case AuthState.ERR_INVALID_CRDL:
+                        break;
+                    case AuthState.ERR_NOTFOUND:
+                        break;
+                    case AuthState.ERR_OTHER:
+                        break;
+                    case AuthState.ERR_INSIDE:
+                        break;
+                    default:
+                        break;
                 }
-                App.config.MainConfig.User.AuthenticationType = auth.Type;
+
                 #endregion
 
                 #region 检查游戏完整
                 List<DownloadTask> losts = new List<DownloadTask>();
 
                 App.logHandler.AppendInfo("检查丢失的依赖库文件中...");
-                var lostDepend = await GetLost.GetLostDependDownloadTaskAsync(
+                var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
                     App.config.MainConfig.Download.DownloadSource,
                     App.handler,
                     launchSetting.Version);
@@ -472,7 +510,7 @@ namespace NsisoLauncher
                 }
 
                 App.logHandler.AppendInfo("检查丢失的资源文件中...");
-                if (App.config.MainConfig.Environment.DownloadLostAssets && (await GetLost.IsLostAssetsAsync(App.config.MainConfig.Download.DownloadSource,
+                if (App.config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.config.MainConfig.Download.DownloadSource,
                     App.handler, launchSetting.Version)))
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
@@ -487,7 +525,7 @@ namespace NsisoLauncher
                     switch (downDependResult)
                     {
                         case MessageDialogResult.Affirmative:
-                            var lostAssets = await GetLost.GetLostAssetsDownloadTaskAsync(
+                            var lostAssets = await FileHelper.GetLostAssetsDownloadTaskAsync(
                                 App.config.MainConfig.Download.DownloadSource,
                                 App.handler, launchSetting.Version);
                             losts.AddRange(lostAssets);

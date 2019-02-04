@@ -1,6 +1,6 @@
 ﻿using NsisoLauncher.Config;
 using System.Windows.Controls;
-using NsisoLauncher.Core.Net.Server;
+using NsisoLauncherCore.Net.Server;
 using System.Runtime.InteropServices;
 using System;
 using System.Drawing;

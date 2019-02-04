@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.IO;
-using NsisoLauncher.Core.Util;
-using NsisoLauncher.Core;
-using NsisoLauncher.Core.Modules;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
 using System.Net;
+using NsisoLauncherCore;
+using NsisoLauncherCore.Util;
+using NsisoLauncher.Core.Util;
+using NsisoLauncherCore.Modules;
 
 namespace NsisoLauncher
 {
@@ -26,7 +27,7 @@ namespace NsisoLauncher
         public static LogHandler logHandler;
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
         public static List<Java> javaList;
-        public static Core.Net.Nide8API.APIHandler nide8Handler;
+        public static NsisoLauncherCore.Net.Nide8API.APIHandler nide8Handler;
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
@@ -158,7 +159,7 @@ namespace NsisoLauncher
             #region NIDE8核心初始化
             if (!string.IsNullOrWhiteSpace(config.MainConfig.User.Nide8ServerID))
             {
-                nide8Handler = new Core.Net.Nide8API.APIHandler(config.MainConfig.User.Nide8ServerID);
+                nide8Handler = new NsisoLauncherCore.Net.Nide8API.APIHandler(config.MainConfig.User.Nide8ServerID);
                 nide8Handler.UpdateBaseURL();
             }
             #endregion

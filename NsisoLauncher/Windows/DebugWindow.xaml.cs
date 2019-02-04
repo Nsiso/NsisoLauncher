@@ -1,7 +1,7 @@
-﻿using NsisoLauncher.Core.Modules;
-using System;
+﻿using System;
 using System.Windows;
 using MahApps.Metro.Controls;
+using NsisoLauncherCore.Modules;
 
 namespace NsisoLauncher.Windows
 {
