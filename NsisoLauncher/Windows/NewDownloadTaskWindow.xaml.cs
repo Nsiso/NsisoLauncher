@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Core.Net.FunctionAPI;
-using static NsisoLauncher.Core.Net.FunctionAPI.APIModules;
+using NsisoLauncherCore.Net.FunctionAPI;
+using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 using System.IO;
-using NsisoLauncher.Core.Net;
+using NsisoLauncherCore.Net;
 using System.Net;
 
 namespace NsisoLauncher.Windows
@@ -30,17 +30,15 @@ namespace NsisoLauncher.Windows
         {
             var loading = await this.ShowProgressAsync("获取版本列表中", "请稍后");
             loading.SetIndeterminate();
-            var result = await Task.Factory.StartNew(() =>
+            List<JWVersion> result = null;
+            try
             {
-                try
-                {
-                    return apiHandler.GetVersionList();
-                }
-                catch (WebException)
-                {
-                    return null;
-                }
-            });
+                result = await apiHandler.GetVersionList();
+            }
+            catch (WebException)
+            {
+                result = null;
+            }
             await loading.CloseAsync();
             if (result == null)
             {
@@ -71,50 +69,47 @@ namespace NsisoLauncher.Windows
 
         private async Task AppendVersionsDownloadTask(IList list)
         {
-            await Task.Factory.StartNew(() =>
+            try
             {
-                try
+                foreach (JWVersion item in list)
                 {
-                    foreach (JWVersion item in list)
+                    string json = await APIRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
+                    NsisoLauncherCore.Modules.Version ver = App.handler.JsonToVersion(json);
+                    string jsonPath = App.handler.GetJsonPath(ver.ID);
+
+                    string dir = Path.GetDirectoryName(jsonPath);
+                    if (!Directory.Exists(dir))
                     {
-                        string json = FunctionAPIHandler.HttpGet(apiHandler.DoURLReplace(item.Url));
-                        Core.Modules.Version ver = App.handler.JsonToVersion(json);
-                        string jsonPath = App.handler.GetJsonPath(ver.ID);
-
-                        string dir = Path.GetDirectoryName(jsonPath);
-                        if (!Directory.Exists(dir))
-                        {
-                            Directory.CreateDirectory(dir);
-                        }
-
-                        File.WriteAllText(jsonPath, json);
-
-                        List<DownloadTask> tasks = new List<DownloadTask>();
-
-                        tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
-
-                        tasks.AddRange(Core.Util.GetLost.GetLostDependDownloadTask(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
-
-                        App.downloader.SetDownloadTasks(tasks);
-                        App.downloader.StartDownload();
+                        Directory.CreateDirectory(dir);
                     }
+
+                    File.WriteAllText(jsonPath, json);
+
+                    List<DownloadTask> tasks = new List<DownloadTask>();
+
+                    tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
+
+                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
+
+                    App.downloader.SetDownloadTasks(tasks);
+                    App.downloader.StartDownload();
                 }
-                catch (WebException ex)
-               {
-                    this.Dispatcher.Invoke(new Action(() =>
-                    {
-                        this.ShowMessageAsync("获取版本信息失败", "请检查您的网络是否正常或更改下载源/n原因:" + ex.Message);
-                    }));
-                }
-                catch (Exception ex)
+            }
+            catch (WebException ex)
+            {
+                this.Dispatcher.Invoke(new Action(() =>
                 {
-                    AggregateExceptionArgs args = new AggregateExceptionArgs()
-                    {
-                        AggregateException = new AggregateException(ex)
-                    };
-                    App.CatchAggregateException(this, args);
-                }
-            });
+                    this.ShowMessageAsync("获取版本信息失败", "请检查您的网络是否正常或更改下载源/n原因:" + ex.Message);
+                }));
+            }
+            catch (Exception ex)
+            {
+                AggregateExceptionArgs args = new AggregateExceptionArgs()
+                {
+                    AggregateException = new AggregateException(ex)
+                };
+                App.CatchAggregateException(this, args);
+            }
 
         }
 

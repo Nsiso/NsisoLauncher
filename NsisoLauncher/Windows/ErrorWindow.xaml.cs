@@ -7,8 +7,8 @@ using System.Text;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Core.Util;
 using Newtonsoft.Json;
+using NsisoLauncherCore.Util;
 
 namespace NsisoLauncher.Windows
 {

@@ -17,7 +17,6 @@ using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
-using Endpoints;
 
 namespace NsisoLauncher
 {
@@ -122,7 +121,7 @@ namespace NsisoLauncher
                     }
                 }
                 catch (Exception)
-                {}
+                { }
             }
             else if (App.config.MainConfig.Server != null)
             {
@@ -230,13 +229,13 @@ namespace NsisoLauncher
                 }
                 #endregion
 
-                #region 多语言支持变量
-                string autoVerifyingMsg = null;
-                string autoVerifyingMsg2 = null;
-                string autoVerificationFailedMsg = null;
-                string autoVerificationFailedMsg2 = null;
-                string loginMsg = null;
-                string loginMsg2 = null;
+                #region 多语言支持变量(old)
+                //string autoVerifyingMsg = null;
+                //string autoVerifyingMsg2 = null;
+                //string autoVerificationFailedMsg = null;
+                //string autoVerificationFailedMsg2 = null;
+                //string loginMsg = null;
+                //string loginMsg2 = null;
                 LoginDialogSettings loginDialogSettings = new LoginDialogSettings()
                 {
                     NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
@@ -249,11 +248,15 @@ namespace NsisoLauncher
                     PasswordWatermark = App.GetResourceString("String.Base.Password"),
                     NegativeButtonVisibility = Visibility.Visible
                 };
-                string verifyingMsg = null, verifyingMsg2 = null, verifyingFailedMsg = null, verifyingFailedMsg2 = null;
+                //string verifyingMsg = null, verifyingMsg2 = null, verifyingFailedMsg = null, verifyingFailedMsg2 = null;
                 #endregion
 
                 //主验证器接口
                 IAuthenticator authenticator = null;
+                bool shouldRemember = false;
+
+                bool isSameAuthType = App.config.MainConfig.User.AuthenticationType == auth.Type;
+                bool isRemember = (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null);
 
                 switch (auth.Type)
                 {
@@ -265,17 +268,36 @@ namespace NsisoLauncher
 
                     #region Mojang验证
                     case Config.AuthenticationType.MOJANG:
-                        Requester.AuthURL = "https://authserver.mojang.com";
-                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerifying");
-                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerifying2");
-                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerificationFailed");
-                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.AutoVerificationFailed2");
-                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.Login");
-                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2");
-                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.Verifying");
-                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.Verifying2");
-                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Mojang.VerificationFailed");
-                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Mojang.VerificationFailed2");
+                        if (isSameAuthType && isRemember)
+                        {
+                            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
+                                App.config.MainConfig.User.AuthenticationUUID,
+                                App.config.MainConfig.User.AuthenticationUserData);
+                            mYggTokenAuthenticator.ProxyAuthServerAddress = new Uri("https://authserver.mojang.com");
+                            authenticator = mYggTokenAuthenticator;
+                        }
+                        else
+                        {
+                            var mojangLoginDResult = await this.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
+                                App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
+                                loginDialogSettings);
+                            if (IsValidateLoginData(mojangLoginDResult))
+                            {
+                                var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
+                                {
+                                    Username = mojangLoginDResult.Username,
+                                    Password = mojangLoginDResult.Password
+                                });
+                                mYggAuthenticator.ProxyAuthServerAddress = new Uri("https://authserver.mojang.com");
+                                authenticator = mYggAuthenticator;
+                                shouldRemember = mojangLoginDResult.ShouldRemember;
+                            }
+                            else
+                            {
+                                await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                return;
+                            }
+                        }
                         break;
                     #endregion
 
@@ -287,18 +309,6 @@ namespace NsisoLauncher
                                 App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
                             return;
                         }
-                        Requester.AuthURL = string.Format("{0}authserver", App.nide8Handler.BaseURL);
-                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying");
-                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerifying2");
-                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerificationFailed");
-                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.AutoVerificationFailed2");
-                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.Login");
-                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2");
-                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.Verifying");
-                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.Verifying2");
-                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Nide8.VerificationFailed");
-                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Nide8.VerificationFailed2");
-                        loginDialogSettings.NegativeButtonVisibility = Visibility.Visible;
                         var nide8ChooseResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"), App.GetResourceString("String.Base.Choose"),
                             MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
                             new MetroDialogSettings()
@@ -308,14 +318,49 @@ namespace NsisoLauncher
                                 FirstAuxiliaryButtonText = App.GetResourceString("String.Base.Register"),
                                 DefaultButtonFocus = MessageDialogResult.Affirmative
                             });
-                        if (nide8ChooseResult == MessageDialogResult.Negative)
+                        switch (nide8ChooseResult)
                         {
-                            return;
-                        }
-                        if (nide8ChooseResult == MessageDialogResult.FirstAuxiliary)
-                        {
-                            System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
-                            return;
+                            case MessageDialogResult.Canceled:
+                                return;
+                            case MessageDialogResult.Negative:
+                                return;
+                            case MessageDialogResult.FirstAuxiliary:
+                                System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
+                                return;
+                            case MessageDialogResult.SecondAuxiliary:
+                                if (isSameAuthType && isRemember)
+                                {
+                                    var nYggTokenCator = new Nide8TokenAuthenticator(App.config.MainConfig.User.AccessToken,
+                                        App.config.MainConfig.User.AuthenticationUUID,
+                                        App.config.MainConfig.User.AuthenticationUserData);
+                                    nYggTokenCator.ProxyAuthServerAddress = new Uri(string.Format("{0}authserver", App.nide8Handler.BaseURL));
+                                    authenticator = nYggTokenCator;
+                                }
+                                else
+                                {
+                                    var nide8LoginDResult = await this.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
+                                        App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
+                                        loginDialogSettings);
+                                    if (IsValidateLoginData(nide8LoginDResult))
+                                    {
+                                        var nYggCator = new Nide8Authenticator(new Credentials()
+                                        {
+                                            Username = nide8LoginDResult.Username,
+                                            Password = nide8LoginDResult.Password
+                                        });
+                                        nYggCator.ProxyAuthServerAddress = new Uri(string.Format("{0}authserver", App.nide8Handler.BaseURL));
+                                        authenticator = nYggCator;
+                                        shouldRemember = nide8LoginDResult.ShouldRemember;
+                                    }
+                                    else
+                                    {
+                                        await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                        return;
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     #endregion
@@ -331,19 +376,36 @@ namespace NsisoLauncher
                         }
                         else
                         {
-                            Requester.AuthURL = customAuthServer;
+                            if (shouldRemember && isSameAuthType)
+                            {
+                                var cYggTokenCator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
+                                App.config.MainConfig.User.AuthenticationUUID,
+                                App.config.MainConfig.User.AuthenticationUserData);
+                                cYggTokenCator.ProxyAuthServerAddress = new Uri(customAuthServer);
+                            }
+                            else
+                            {
+                                var customLoginDResult = await this.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
+                               App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
+                               loginDialogSettings);
+                                if (IsValidateLoginData(customLoginDResult))
+                                {
+                                    var cYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
+                                    {
+                                        Username = customLoginDResult.Username,
+                                        Password = customLoginDResult.Password
+                                    });
+                                    cYggAuthenticator.ProxyAuthServerAddress = new Uri(customAuthServer);
+                                    authenticator = cYggAuthenticator;
+                                    shouldRemember = customLoginDResult.ShouldRemember;
+                                }
+                                else
+                                {
+                                    await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                    return;
+                                }
+                            }
                         }
-                        
-                        autoVerifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerifying");
-                        autoVerifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerifying2");
-                        autoVerificationFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerificationFailed");
-                        autoVerificationFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.AutoVerificationFailed2");
-                        loginMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.Login");
-                        loginMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.Login2");
-                        verifyingMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.Verifying");
-                        verifyingMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.Verifying2");
-                        verifyingFailedMsg = App.GetResourceString("String.Mainwindow.Auth.Custom.VerificationFailed");
-                        verifyingFailedMsg2 = App.GetResourceString("String.Mainwindow.Auth.Custom.VerificationFailed2");
                         break;
                     #endregion
 
@@ -441,30 +503,58 @@ namespace NsisoLauncher
                 //}
                 #endregion
 
-                //App.config.MainConfig.User.AuthenticationType = auth.Type;
-                var loader = await this.ShowProgressAsync(verifyingMsg, verifyingMsg);
-                loader.SetIndeterminate();
-                var authResult  = await authenticator.DoAuthenticateAsync();
-                await loader.CloseAsync();
+                App.config.MainConfig.User.AuthenticationType = auth.Type;
 
-                switch (authResult.State)
+                if (auth.Type != Config.AuthenticationType.OFFLINE)
                 {
-                    case AuthState.SUCCESS:
-                        break;
-                    case AuthState.REQ_LOGIN:
-                        break;
-                    case AuthState.ERR_INVALID_CRDL:
-                        break;
-                    case AuthState.ERR_NOTFOUND:
-                        break;
-                    case AuthState.ERR_OTHER:
-                        break;
-                    case AuthState.ERR_INSIDE:
-                        break;
-                    default:
-                        break;
-                }
+                    string currentLoginType = string.Format("正在进行{0}中...", auth.Name);
+                    string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
+                    var loader = await this.ShowProgressAsync(currentLoginType, loginMsg);
+                    loader.SetIndeterminate();
+                    var authResult = await authenticator.DoAuthenticateAsync();
+                    await loader.CloseAsync();
 
+                    switch (authResult.State)
+                    {
+                        case AuthState.SUCCESS:
+                            if (shouldRemember)
+                            {
+                                App.config.MainConfig.User.AccessToken = authResult.AccessToken;
+                                App.config.MainConfig.User.AuthenticationUUID = authResult.UUID;
+                                App.config.MainConfig.User.AuthenticationUserData = authResult.UserData;
+                            }
+                            launchSetting.AuthenticateResult = authResult;
+                            break;
+                        case AuthState.REQ_LOGIN:
+                            await this.ShowMessageAsync("验证失败：您的登陆信息已过期",
+                                string.Format("请您重新进行登陆。具体信息：{0}", authResult.Error.ErrorMessage));
+                            return;
+                        case AuthState.ERR_INVALID_CRDL:
+                            await this.ShowMessageAsync("验证失败：您的登陆账号或密码错误",
+                                string.Format("请您确认您输入的账号密码正确。具体信息：{0}", authResult.Error.ErrorMessage));
+                            return;
+                        case AuthState.ERR_NOTFOUND:
+                            await this.ShowMessageAsync("验证失败：您的账号未找到",
+                                string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
+                            return;
+                        case AuthState.ERR_OTHER:
+                            await this.ShowMessageAsync("验证失败：其他错误",
+                                string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
+                            return;
+                        case AuthState.ERR_INSIDE:
+                            await this.ShowMessageAsync("验证失败：启动器内部错误",
+                                string.Format("建议您联系启动器开发者进行解决。具体信息：{0}", authResult.Error.ErrorMessage));
+                            return;
+                        default:
+                            await this.ShowMessageAsync("验证失败：未知错误",
+                                "建议您联系启动器开发者进行解决。");
+                            return;
+                    }
+                }
+                else
+                {
+                    launchSetting.AuthenticateResult = await authenticator.DoAuthenticateAsync();
+                }
                 #endregion
 
                 #region 检查游戏完整
@@ -611,7 +701,7 @@ namespace NsisoLauncher
                 App.logHandler.OnLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
                 var result = await App.handler.LaunchAsync(launchSetting);
                 App.logHandler.OnLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
-                
+
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
@@ -664,13 +754,13 @@ namespace NsisoLauncher
                                     this.mediaElement.Stop();
                                 }));
                             }
-                            catch (Exception){}
+                            catch (Exception) { }
                         });
                     }
                 }
                 #endregion
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 App.logHandler.AppendFatal(ex);
             }
@@ -755,7 +845,20 @@ namespace NsisoLauncher
                     e.Cancel = true;
                 }
             }
-            
+
+        }
+
+        private bool IsValidateLoginData(LoginDialogData data)
+        {
+            if (string.IsNullOrWhiteSpace(data.Username))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(data.Password))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

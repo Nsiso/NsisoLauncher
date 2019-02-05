@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher.Config
 {
@@ -191,14 +192,14 @@ namespace NsisoLauncher.Config
                     DownloadLostAssets = true,
                     DownloadLostDepend = true,
                     GCEnabled = true,
-                    GCType = Core.Modules.GCType.G1GC,
+                    GCType = NsisoLauncherCore.Modules.GCType.G1GC,
                     AutoJava = true,
-                    WindowSize = new Core.Modules.WindowSize() { FullScreen = false },
+                    WindowSize = new NsisoLauncherCore.Modules.WindowSize() { FullScreen = false },
                     ExitAfterLaunch = false
                 },
                 Download = new Download()
                 {
-                    DownloadSource = Core.Net.DownloadSource.Mojang,
+                    DownloadSource = DownloadSource.Mojang,
                     DownloadThreadsSize = 5
                 },
                 Launcher = new Launcher()

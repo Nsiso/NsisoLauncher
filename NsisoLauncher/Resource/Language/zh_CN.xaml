@@ -87,7 +87,7 @@
     <sys:String x:Key="String.Mainwindow.NeedDownloadAssets2">您当前启动的版本缺少了部分资源文件。若不下载补全，可能导致游戏内容不完整（如无声音），但并不影响正常使用</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Offline">离线验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Mojang">正版验证</sys:String>
-    <sys:String x:Key="String.MainWindow.Auth.Nide8">统一通行证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.Nide8">统一通行证验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Custom">自定义验证</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>

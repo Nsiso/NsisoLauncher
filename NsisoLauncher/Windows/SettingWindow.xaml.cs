@@ -14,6 +14,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncherCore.Util;
 
 namespace NsisoLauncher.Windows
 {
@@ -62,7 +63,7 @@ namespace NsisoLauncher.Windows
             else
             {
                 VersionsComboBox.IsEnabled = false;
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new Core.Modules.Version() { ID = "null" });
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
             }
         }
 
@@ -149,7 +150,7 @@ namespace NsisoLauncher.Windows
             App.handler.VersionIsolation = config.Environment.VersionIsolation;
             if (!string.IsNullOrWhiteSpace(nide8IdTextBox.Text))
             {
-                App.nide8Handler = new Core.Net.Nide8API.APIHandler(nide8IdTextBox.Text);
+                App.nide8Handler = new NsisoLauncherCore.Net.Nide8API.APIHandler(nide8IdTextBox.Text);
             }
             #endregion
             config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
@@ -159,14 +160,14 @@ namespace NsisoLauncher.Windows
                 await GameHelper.SaveOptionsAsync(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,
                 App.handler,
-                (Core.Modules.Version)VersionsComboBox.SelectedItem);
+                (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
             }
             else
             {
                 await GameHelper.SaveOptionsAsync(
                 (List<VersionOption>)versionOptionsGrid.ItemsSource,
                 App.handler,
-                new Core.Modules.Version() { ID = "null" });
+                new NsisoLauncherCore.Modules.Version() { ID = "null" });
             }
             
             App.config.Save();
@@ -185,7 +186,7 @@ namespace NsisoLauncher.Windows
 
             if (comboBox.SelectedItem != null)
             {
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, (Core.Modules.Version)comboBox.SelectedItem);
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, (NsisoLauncherCore.Modules.Version)comboBox.SelectedItem);
             }
             else
             {
@@ -261,7 +262,7 @@ namespace NsisoLauncher.Windows
             {
                 string token = config.User.AccessToken;
                 config.User.AccessToken = null;
-                Core.Net.MojangApi.Endpoints.Invalidate invalidate = new Core.Net.MojangApi.Endpoints.Invalidate(token);
+                NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate invalidate = new NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate(token);
                 var loading = await this.ShowProgressAsync("注销正版登陆中", "需要联网进行注销，请稍后...");
                 loading.SetIndeterminate();
                 var result = await invalidate.PerformRequestAsync();
