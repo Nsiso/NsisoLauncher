@@ -113,6 +113,7 @@
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Refresh">刷新</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Download">下载选中版本</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Forge">下载Forge</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Liteloader">下载Liteloader</sys:String>
 
     <sys:String x:Key="String.Settingwindow.Title">设置窗口</sys:String>
     <sys:String x:Key="String.Settingwindow.Env">全局设置</sys:String>

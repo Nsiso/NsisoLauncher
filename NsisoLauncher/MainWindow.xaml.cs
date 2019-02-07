@@ -207,6 +207,14 @@ namespace NsisoLauncher
                 }
                 #endregion
 
+                NsisoLauncherCore.Modules.Version launchVersion = (NsisoLauncherCore.Modules.Version)launchVersionCombobox.SelectedItem;
+                AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
+
+                #region 保存启动数据
+                App.config.MainConfig.History.LastLaunchVersion = launchVersion.ID;
+                App.config.MainConfig.User.UserName = userName;
+                #endregion
+
                 LaunchSetting launchSetting = new LaunchSetting()
                 {
                     Version = (NsisoLauncherCore.Modules.Version)launchVersionCombobox.SelectedItem
@@ -216,7 +224,6 @@ namespace NsisoLauncher
                 this.loadingRing.IsActive = true;
 
                 #region 验证
-                AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
 
                 #region 设置ClientToken
                 if (string.IsNullOrWhiteSpace(App.config.MainConfig.User.ClientToken))
@@ -273,7 +280,7 @@ namespace NsisoLauncher
                             var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                 App.config.MainConfig.User.AuthenticationUUID,
                                 App.config.MainConfig.User.AuthenticationUserData);
-                            mYggTokenAuthenticator.ProxyAuthServerAddress = new Uri("https://authserver.mojang.com");
+                            mYggTokenAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
                             authenticator = mYggTokenAuthenticator;
                         }
                         else
@@ -288,7 +295,7 @@ namespace NsisoLauncher
                                     Username = mojangLoginDResult.Username,
                                     Password = mojangLoginDResult.Password
                                 });
-                                mYggAuthenticator.ProxyAuthServerAddress = new Uri("https://authserver.mojang.com");
+                                mYggAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
                                 authenticator = mYggAuthenticator;
                                 shouldRemember = mojangLoginDResult.ShouldRemember;
                             }
@@ -333,7 +340,7 @@ namespace NsisoLauncher
                                     var nYggTokenCator = new Nide8TokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                         App.config.MainConfig.User.AuthenticationUUID,
                                         App.config.MainConfig.User.AuthenticationUserData);
-                                    nYggTokenCator.ProxyAuthServerAddress = new Uri(string.Format("{0}authserver", App.nide8Handler.BaseURL));
+                                    nYggTokenCator.ProxyAuthServerAddress = string.Format("{0}authserver", App.nide8Handler.BaseURL);
                                     authenticator = nYggTokenCator;
                                 }
                                 else
@@ -348,7 +355,7 @@ namespace NsisoLauncher
                                             Username = nide8LoginDResult.Username,
                                             Password = nide8LoginDResult.Password
                                         });
-                                        nYggCator.ProxyAuthServerAddress = new Uri(string.Format("{0}authserver", App.nide8Handler.BaseURL));
+                                        nYggCator.ProxyAuthServerAddress = string.Format("{0}authserver", App.nide8Handler.BaseURL);
                                         authenticator = nYggCator;
                                         shouldRemember = nide8LoginDResult.ShouldRemember;
                                     }
@@ -381,7 +388,7 @@ namespace NsisoLauncher
                                 var cYggTokenCator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                 App.config.MainConfig.User.AuthenticationUUID,
                                 App.config.MainConfig.User.AuthenticationUserData);
-                                cYggTokenCator.ProxyAuthServerAddress = new Uri(customAuthServer);
+                                cYggTokenCator.ProxyAuthServerAddress = customAuthServer;
                             }
                             else
                             {
@@ -395,7 +402,7 @@ namespace NsisoLauncher
                                         Username = customLoginDResult.Username,
                                         Password = customLoginDResult.Password
                                     });
-                                    cYggAuthenticator.ProxyAuthServerAddress = new Uri(customAuthServer);
+                                    cYggAuthenticator.ProxyAuthServerAddress = customAuthServer;
                                     authenticator = cYggAuthenticator;
                                     shouldRemember = customLoginDResult.ShouldRemember;
                                 }
@@ -503,8 +510,6 @@ namespace NsisoLauncher
                 //}
                 #endregion
 
-                App.config.MainConfig.User.AuthenticationType = auth.Type;
-
                 if (auth.Type != Config.AuthenticationType.OFFLINE)
                 {
                     string currentLoginType = string.Format("正在进行{0}中...", auth.Name);
@@ -555,6 +560,7 @@ namespace NsisoLauncher
                 {
                     launchSetting.AuthenticateResult = await authenticator.DoAuthenticateAsync();
                 }
+                App.config.MainConfig.User.AuthenticationType = auth.Type;
                 #endregion
 
                 #region 检查游戏完整
@@ -692,7 +698,6 @@ namespace NsisoLauncher
                 #endregion
 
                 #region 配置文件处理
-                App.config.MainConfig.User.UserName = userName;
                 App.config.Save();
                 #endregion
 
@@ -850,6 +855,10 @@ namespace NsisoLauncher
 
         private bool IsValidateLoginData(LoginDialogData data)
         {
+            if (data == null)
+            {
+                return false;
+            }
             if (string.IsNullOrWhiteSpace(data.Username))
             {
                 return false;
