@@ -6,6 +6,13 @@ A New Minecraft Launcher (unofficial) from Nsiso
 作者：Nsiso工作室-siso
 请注意该项目遵循GNU GPL3.0开源协议
 
+注意：
+Nsiso启动器的启动核心目前单独分离开源。
+Nsiso启动器通过核心开源<->应用开源的分离结构，以便稳定更新。同时封装后的启动核心会更方便其他人使用Nsiso启动核心。
+启动核心Github源：https://github.com/Nsiso/NsisoLauncherCore
+此项目需要依赖nsiso launcher core
+
+
 ## 使用组件（由名字字母排序）：
 
 #### BMCLAPI
