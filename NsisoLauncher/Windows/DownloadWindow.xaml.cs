@@ -74,7 +74,7 @@ namespace NsisoLauncher.Windows
 
         private void Downloader_DownloadCompleted(object sender, Utils.DownloadCompletedArg e)
         {
-            this.Dispatcher.Invoke(new Action(() =>
+            this.Dispatcher.Invoke( new Action(async() =>
             {
                 speedTextBlock.Text = "0Kb/s";
                 progressBar.Maximum = 1;
@@ -82,12 +82,13 @@ namespace NsisoLauncher.Windows
                 progressPerTextBlock.Text = "000%";
                 if (e.ErrorList == null || e.ErrorList.Count == 0)
                 {
-                    this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
+                    await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
                         App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
+                    this.Close();
                 }
                 else
                 {
-                    this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
+                    await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
                         string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
                 }
 

@@ -12,6 +12,9 @@ using NsisoLauncherCore.Net;
 using System.Net;
 using NsisoLauncherCore.Modules;
 using Version = NsisoLauncherCore.Modules.Version;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
+using System.ComponentModel;
 
 namespace NsisoLauncher.Windows
 {
@@ -20,12 +23,18 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class NewDownloadTaskWindow : MetroWindow
     {
+        ObservableCollection<JWVersion> verList = new ObservableCollection<JWVersion>();
+
         private FunctionAPIHandler apiHandler;
 
         public NewDownloadTaskWindow()
         {
             apiHandler = new FunctionAPIHandler(App.config.MainConfig.Download.DownloadSource);
             InitializeComponent();
+            versionListDataGrid.ItemsSource = verList;
+            ICollectionView vw = CollectionViewSource.GetDefaultView(verList);
+            vw.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
+            vw.SortDescriptions.Add(new SortDescription("Type",ListSortDirection.Ascending));
         }
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -55,7 +64,28 @@ namespace NsisoLauncher.Windows
             }
             else
             {
-                versionListDataGrid.ItemsSource = result;
+                verList.Clear();
+                foreach (var item in result)
+                {
+                    switch (item.Type)
+                    {
+                        case "release":
+                            item.Type = "1-正式版(Release)";
+                            break;
+                        case "snapshot":
+                            item.Type = "2-版本快照(snapshot)";
+                            break;
+                        case "old_alpha":
+                            item.Type = "3-旧alpha版本(old_alpha)";
+                            break;
+                        case "old_beta":
+                            item.Type = "4-旧beta版本(old_beta)";
+                            break;
+                        default:
+                            break;
+                    }
+                    verList.Add(item);
+                }
             }
         }
 
@@ -90,7 +120,6 @@ namespace NsisoLauncher.Windows
             else
             {
                 forgeListDataGrid.ItemsSource = result;
-
             }
         }
 
@@ -294,6 +323,16 @@ namespace NsisoLauncher.Windows
         }
 
         private void RefresLiteButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshLiteloader();
+        }
+
+        private void VerToInstallForgeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            RefreshForge();
+        }
+
+        private void VerToInstallLiteComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             RefreshLiteloader();
         }
