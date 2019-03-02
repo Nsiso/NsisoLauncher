@@ -56,15 +56,16 @@ namespace NsisoLauncher.Windows
             userGrid.DataContext = config.User;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
-            if (App.config.MainConfig.Environment.VersionIsolation)
-            {
-                VersionsComboBox.IsEnabled = true;
-            }
-            else
-            {
-                VersionsComboBox.IsEnabled = false;
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
-            }
+            //TODO:游戏内设置修复
+            //if (App.config.MainConfig.Environment.VersionIsolation)
+            //{
+            //    VersionsComboBox.IsEnabled = true;
+            //}
+            //else
+            //{
+            //    VersionsComboBox.IsEnabled = false;
+            //    versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
+            //}
         }
 
         private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)

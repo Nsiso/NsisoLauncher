@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.IO;
-using NsisoLauncher.Utils;
 using NsisoLauncher.Config;
 using MahApps.Metro;
 using System.Net;
@@ -12,6 +11,7 @@ using NsisoLauncherCore;
 using NsisoLauncherCore.Util;
 using NsisoLauncher.Core.Util;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher
 {

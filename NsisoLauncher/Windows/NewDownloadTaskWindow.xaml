@@ -8,28 +8,30 @@
                       mc:Ignorable="d"
         Title="{DynamicResource String.NewDownloadTaskWindow}" Height="450" Width="800"
                       WindowStartupLocation="CenterScreen" Loaded="MetroWindow_Loaded">
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+    </controls:MetroWindow.Resources>
     <Grid>
-        <Grid.Resources>
-            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
-        </Grid.Resources>
         <TabControl>
             <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Version}">
                 <Grid>
                     <DataGrid x:Name="versionListDataGrid" Margin="10,10,10,43"
-                              AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" VerticalScrollBarVisibility="Visible">
+                              AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" VerticalScrollBarVisibility="Visible" Tag="点击刷新获取列表">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.ID}" Binding="{Binding Path=Id}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.Type}" Binding="{Binding Path=Type}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.Time}" Binding="{Binding Path=Time}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.ReleaseTime}" Binding="{Binding Path=ReleaseTime}" IsReadOnly="True"/>
                         </DataGrid.Columns>
-                       
+                        <DataGrid.Resources>
+                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
+                        </DataGrid.Resources>
                     </DataGrid>
                     <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}"
                             Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Style="{StaticResource AccentedSquareButtonStyle}"
                             Click="DownloadVerButton_Click"/>
-                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Refresh}"
-                            Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70"
+                    <Button Content="获取/刷新"
+                            Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100"
                             Click="RefreshVerButton_Click"/>
                 </Grid>
             </TabItem>
@@ -42,10 +44,13 @@
                               SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Forge版本" Binding="{Binding Path=Version}"
-                                                IsReadOnly="True" SortDirection="Descending"/>
+                                                IsReadOnly="True"/>
                             <DataGridTextColumn Header="Build" Binding="{Binding Path=Build}"
                                                 IsReadOnly="True"/>
                         </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
+                        </DataGrid.Resources>
                     </DataGrid>
                     <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}"
                             Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Style="{StaticResource AccentedSquareButtonStyle}" Click="DownloadForgeButton_Click"/>
@@ -61,6 +66,9 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Liteloader版本" Binding="{Binding Path=Version}" IsReadOnly="True"/>
                         </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
+                        </DataGrid.Resources>
                     </DataGrid>
                     <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}"
                             Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Style="{StaticResource AccentedSquareButtonStyle}" Click="DownloadLiteloaderButton_Click"/>

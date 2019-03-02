@@ -4,10 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:chart="http"
         mc:Ignorable="d"
-        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
+        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
+                      Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
     <Grid>
-        <DataGrid x:Name="downloadList" Margin="10,43,10,45" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}" Grid.Row="0"
+                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click" Height="28"/>
+        <Button Content="{DynamicResource String.Downloadwindow.NewTask}" Grid.Row="0"
+                Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1" Height="28"/>
+        <DataGrid x:Name="downloadList" Margin="10,43,10,2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Grid.Row="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskName}" Binding="{Binding Path=TaskName}" IsReadOnly="True"/>
                 <DataGridTemplateColumn Header="{DynamicResource String.Downloadwindow.TaskProgress}" IsReadOnly="True">
@@ -28,12 +39,21 @@
                 <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskTo}" Binding="{Binding Path=To}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" />
-        <TextBlock x:Name="progressPerTextBlock" HorizontalAlignment="Left" Margin="10,0,0,25" TextWrapping="Wrap" Text="000%" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="speedTextBlock" Margin="0,0,10,25" TextWrapping="Wrap" Text="0kb/s" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}"
-                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click"/>
-        <Button Content="{DynamicResource String.Downloadwindow.NewTask}"
-                Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <lvc:CartesianChart x:Name="plotter" LegendLocation="Right"
+                            Hoverable="False" DataTooltip="{x:Null}" Grid.Row="1" Margin="10,10,10,44">
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis MinValue="0"/>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis ShowLabels="False"/>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
+        <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" Grid.Row="1" />
+        <TextBlock x:Name="progressPerTextBlock"
+                   HorizontalAlignment="Left" Margin="10,0,0,24" TextWrapping="Wrap" 
+                   Text="000%" VerticalAlignment="Bottom" Grid.Row="1" Height="15" Width="32"/>
+        <TextBlock x:Name="speedTextBlock"
+                   Margin="0,0,10,24" TextWrapping="Wrap" TextAlignment="Right" Text="0kb/s"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Height="15" Width="200"/>
     </Grid>
 </controls:MetroWindow>

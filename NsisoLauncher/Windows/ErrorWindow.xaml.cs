@@ -35,16 +35,22 @@ namespace NsisoLauncher.Windows
 
         public ErrorWindow(Exception ex)
         {
-            InitializeComponent();
-            updateThread.DoWork += UpdateThread_DoWork;
-            updateThread.RunWorkerCompleted += UpdateThread_RunWorkerCompleted;
-            Random random = new Random();
-            FunnyBlock.Text = funny[random.Next(funny.Count())];
-            moreInfoCheckBox.IsChecked = true;
-            this.textBox.Text = ex.ToString();
-            if (Environment.GetCommandLineArgs().Contains("-reboot"))
+            try
             {
-                MessageBox.Show("很抱歉启动器在重启之后再次发生错误\n您可以在左下角联系开发者加快解决这个问题，我们由衷的表示感谢");
+                InitializeComponent();
+                updateThread.DoWork += UpdateThread_DoWork;
+                updateThread.RunWorkerCompleted += UpdateThread_RunWorkerCompleted;
+                Random random = new Random();
+                FunnyBlock.Text = funny[random.Next(funny.Count())];
+                moreInfoCheckBox.IsChecked = true;
+                this.textBox.Text = ex.ToString();
+                if (Environment.GetCommandLineArgs().Contains("-reboot"))
+                {
+                    MessageBox.Show("很抱歉启动器在重启之后再次发生错误\n您可以在左下角联系开发者加快解决这个问题，我们由衷的表示感谢");
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 

@@ -212,7 +212,6 @@ namespace NsisoLauncher
 
                 #region 保存启动数据
                 App.config.MainConfig.History.LastLaunchVersion = launchVersion.ID;
-                App.config.MainConfig.User.UserName = userName;
                 #endregion
 
                 LaunchSetting launchSetting = new LaunchSetting()
@@ -264,6 +263,7 @@ namespace NsisoLauncher
 
                 bool isSameAuthType = App.config.MainConfig.User.AuthenticationType == auth.Type;
                 bool isRemember = (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null);
+                bool isSameName = userName == App.config.MainConfig.User.UserName;
 
                 switch (auth.Type)
                 {
@@ -275,7 +275,7 @@ namespace NsisoLauncher
 
                     #region Mojang验证
                     case Config.AuthenticationType.MOJANG:
-                        if (isSameAuthType && isRemember)
+                        if (isSameAuthType && isSameName && isRemember)
                         {
                             var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                 App.config.MainConfig.User.AuthenticationUUID,
@@ -335,7 +335,7 @@ namespace NsisoLauncher
                                 System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
                                 return;
                             case MessageDialogResult.SecondAuxiliary:
-                                if (isSameAuthType && isRemember)
+                                if (isSameAuthType && isSameName && isRemember)
                                 {
                                     var nYggTokenCator = new Nide8TokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                         App.config.MainConfig.User.AuthenticationUUID,
@@ -383,7 +383,7 @@ namespace NsisoLauncher
                         }
                         else
                         {
-                            if (shouldRemember && isSameAuthType)
+                            if (shouldRemember && isSameName && isSameAuthType)
                             {
                                 var cYggTokenCator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
                                 App.config.MainConfig.User.AuthenticationUUID,
@@ -561,6 +561,7 @@ namespace NsisoLauncher
                     launchSetting.AuthenticateResult = await authenticator.DoAuthenticateAsync();
                 }
                 App.config.MainConfig.User.AuthenticationType = auth.Type;
+                App.config.MainConfig.User.UserName = userName;
                 #endregion
 
                 #region 检查游戏完整

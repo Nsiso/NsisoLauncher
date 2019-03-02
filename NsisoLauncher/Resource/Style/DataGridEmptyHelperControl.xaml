@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="{x:Type DataGrid}" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Tag" Value="暂无数据"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Items.Count, RelativeSource={RelativeSource Self}}" Value="0">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <VisualBrush Stretch="None">
+                            <VisualBrush.Visual>
+                                <TextBlock Text="暂无数据" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Items, RelativeSource={RelativeSource Self}}" Value="{x:Null}">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <VisualBrush Stretch="None">
+                            <VisualBrush.Visual>
+                                <TextBlock Text="暂无数据" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

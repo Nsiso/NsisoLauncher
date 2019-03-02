@@ -15,6 +15,7 @@ using Version = NsisoLauncherCore.Modules.Version;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.ComponentModel;
+using NsisoLauncherCore.Util.Installer;
 
 namespace NsisoLauncher.Windows
 {
@@ -24,6 +25,8 @@ namespace NsisoLauncher.Windows
     public partial class NewDownloadTaskWindow : MetroWindow
     {
         ObservableCollection<JWVersion> verList = new ObservableCollection<JWVersion>();
+        ObservableCollection<JWForge> forgeList = new ObservableCollection<JWForge>();
+        ObservableCollection<JWLiteloader> liteloaderList = new ObservableCollection<JWLiteloader>();
 
         private FunctionAPIHandler apiHandler;
 
@@ -32,9 +35,13 @@ namespace NsisoLauncher.Windows
             apiHandler = new FunctionAPIHandler(App.config.MainConfig.Download.DownloadSource);
             InitializeComponent();
             versionListDataGrid.ItemsSource = verList;
-            ICollectionView vw = CollectionViewSource.GetDefaultView(verList);
-            vw.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
-            vw.SortDescriptions.Add(new SortDescription("Type",ListSortDirection.Ascending));
+            forgeListDataGrid.ItemsSource = forgeList;
+            liteloaderListDataGrid.ItemsSource = liteloaderList;
+            ICollectionView vwV = CollectionViewSource.GetDefaultView(verList);
+            vwV.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
+            vwV.SortDescriptions.Add(new SortDescription("Type",ListSortDirection.Ascending));
+            ICollectionView vwF = CollectionViewSource.GetDefaultView(forgeList);
+            vwF.SortDescriptions.Add(new SortDescription("Version", ListSortDirection.Descending));
         }
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -58,13 +65,13 @@ namespace NsisoLauncher.Windows
                 result = null;
             }
             await loading.CloseAsync();
+            verList.Clear();
             if (result == null)
             {
                 await this.ShowMessageAsync("获取版本列表失败", "请检查您的网络是否正常或更改下载源");
             }
             else
             {
-                verList.Clear();
                 foreach (var item in result)
                 {
                     switch (item.Type)
@@ -104,22 +111,27 @@ namespace NsisoLauncher.Windows
             var loading = await this.ShowProgressAsync("获取Forge列表中", "请稍后");
             loading.SetIndeterminate();
             List<JWForge> result = null;
+            forgeList.Clear();
             try
             {
                 result = await apiHandler.GetForgeList(ver);
             }
             catch (WebException)
             {
-                result = null;
+                await this.ShowMessageAsync("获取Forge列表失败", "请检查您的网络是否正常或稍后再试");
+                return;
             }
             await loading.CloseAsync();
-            if (result == null)
+            if (result == null || result.Count == 0)
             {
-                await this.ShowMessageAsync("获取Forge列表失败", "请检查您的网络是否正常或更改下载源");
+                await this.ShowMessageAsync("没有匹配该版本的Forge", "貌似没有支持这个版本的Forge，请尝试更换另一个版本");
             }
             else
             {
-                forgeListDataGrid.ItemsSource = result;
+                foreach (var item in result)
+                {
+                    forgeList.Add(item);
+                }
             }
         }
 
@@ -137,24 +149,25 @@ namespace NsisoLauncher.Windows
             }
             var loading = await this.ShowProgressAsync("获取Liteloader列表中", "请稍后");
             loading.SetIndeterminate();
-            List<JWLiteloader> result = new List<JWLiteloader>();
+            JWLiteloader result = new JWLiteloader();
+            liteloaderList.Clear();
             try
             {
-                result.Add(await apiHandler.GetLiteloaderList(ver));
+                result = await apiHandler.GetLiteloaderList(ver);
             }
             catch (WebException)
             {
-                result = null;
+                await this.ShowMessageAsync("获取Liteloader列表失败", "请检查您的网络是否正常或稍后再试");
+                return;
             }
             await loading.CloseAsync();
             if (result == null)
             {
-                await this.ShowMessageAsync("获取Liteloader列表失败", "请检查您的网络是否正常或更改下载源");
+                await this.ShowMessageAsync("没有匹配该版本的Liteloader", "貌似没有支持这个版本的Liteloader，请尝试更换另一个版本");
             }
             else
             {
-                liteloaderListDataGrid.ItemsSource = result;
-
+                liteloaderList.Add(result);
             }
         }
 
@@ -199,28 +212,36 @@ namespace NsisoLauncher.Windows
                 return;
             }
 
-            var loading = await this.ShowProgressAsync("准备进行下载", string.Format("即将为版本{0}下载安装Forge:{1}", ver.ID, forge.Version));
-            loading.SetIndeterminate();
-            //await AppendVersionsDownloadTask(selectItems);
-            await loading.CloseAsync();
+            AppendForgeDownloadTask(ver, forge);
             this.Close();
         }
 
         private async void DownloadLiteloaderButton_Click(object sender, RoutedEventArgs e)
         {
-            IList selectItems = versionListDataGrid.SelectedItems;
-            if (selectItems.Count == 0)
+            Version ver = null;
+            if (verToInstallLiteComboBox.SelectedItem != null)
             {
-                await this.ShowMessageAsync("您未选中要下载的版本", "请在版本列表中选中您要下载的版本");
+                ver = (Version)verToInstallLiteComboBox.SelectedItem;
             }
             else
             {
-                var loading = await this.ShowProgressAsync("准备进行下载", string.Format("即将为您下载{0}个版本", selectItems.Count));
-                loading.SetIndeterminate();
-                await AppendVersionsDownloadTask(selectItems);
-                await loading.CloseAsync();
-                this.Close();
+                await this.ShowMessageAsync("您未选择要安装Liteloader的Minecraft", "您需要选择一个需要安装Liteloader的Minecraft本体");
+                return;
             }
+
+            JWLiteloader liteloader = null;
+            if (liteloaderListDataGrid.SelectedItem != null)
+            {
+                liteloader = (JWLiteloader)liteloaderListDataGrid.SelectedItem;
+            }
+            else
+            {
+                await this.ShowMessageAsync("您未选择要安装的Liteloader", "您需要选择一个要安装Liteloader");
+                return;
+            }
+
+            AppendLiteloaderDownloadTask(ver, liteloader);
+            this.Close();
         }
 
         private async Task AppendVersionsDownloadTask(IList list)
@@ -269,47 +290,54 @@ namespace NsisoLauncher.Windows
 
         }
 
-        private async Task AppendForgeDownloadTask(Version ver, JWForge forge)
+        private void AppendForgeDownloadTask(Version ver, JWForge forge)
         {
-            try
+            string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
+            DownloadTask dt = new DownloadTask("forge核心",
+                string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build),
+                forgePath);
+            dt.Todo = new Func<Exception>(() =>
             {
-                //string json = await APIRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
-                //Version ver = App.handler.JsonToVersion(json);
-                //string jsonPath = App.handler.GetJsonPath(ver.ID);
-
-                //string dir = Path.GetDirectoryName(jsonPath);
-                //if (!Directory.Exists(dir))
-                //{
-                //    Directory.CreateDirectory(dir);
-                //}
-
-                //File.WriteAllText(jsonPath, json);
-
-                //List<DownloadTask> tasks = new List<DownloadTask>();
-
-                //tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
-
-                //tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
-
-                //App.downloader.SetDownloadTasks(tasks);
-                //App.downloader.StartDownload();
-            }
-            catch (WebException ex)
-            {
-                this.Dispatcher.Invoke(new Action(() =>
+                try
                 {
-                    this.ShowMessageAsync("获取版本信息失败", "请检查您的网络是否正常或更改下载源/n原因:" + ex.Message);
-                }));
-            }
-            catch (Exception ex)
-            {
-                AggregateExceptionArgs args = new AggregateExceptionArgs()
-                {
-                    AggregateException = new AggregateException(ex)
-                };
-                App.CatchAggregateException(this, args);
-            }
+                    CommonInstaller installer = new CommonInstaller(forgePath, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+                    installer.BeginInstall();
+                    return null;
+                }
+                catch (Exception ex)
+                { return ex; }
+            });
+            App.downloader.SetDownloadTasks(dt);
+            App.downloader.StartDownload();
 
+        }
+
+        private void AppendLiteloaderDownloadTask(Version ver, JWLiteloader liteloader)
+        {
+            string liteloaderPath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Liteloader_{0}-Installer.jar", liteloader.Version);
+            DownloadTask dt = new DownloadTask("liteloader核心",
+                string.Format("https://bmclapi2.bangbang93.com/liteloader/download?version={0}", liteloader.Version),
+                liteloaderPath);
+            dt.Todo = new Func<Exception>(() =>
+            {
+                try
+                {
+                    CommonInstaller installer = new CommonInstaller(liteloaderPath, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+                    installer.BeginInstall();
+                    return null;
+                }
+                catch (Exception ex)
+                { return ex; }
+            });
+            App.downloader.SetDownloadTasks(dt);
+            App.downloader.StartDownload();
+
+        }
+
+        private async Task InstallCommonExtend(string path)
+        {
+            CommonInstaller installer = new CommonInstaller(path, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+            await installer.BeginInstallAsync();
         }
 
         private void RefreshVerButton_Click(object sender, RoutedEventArgs e)

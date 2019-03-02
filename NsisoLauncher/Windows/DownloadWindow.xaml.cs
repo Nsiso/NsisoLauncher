@@ -4,18 +4,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher.Windows
 {
+
     /// <summary>
     /// DownloadWindow.xaml 的交互逻辑
     /// </summary>
     public partial class DownloadWindow : MetroWindow
     {
         private ObservableCollection<DownloadTask> Tasks;
+        private ChartValues<decimal> speedValues = new ChartValues<decimal>() {};
+
+
         public DownloadWindow()
         {
             InitializeComponent();
@@ -36,6 +43,12 @@ namespace NsisoLauncher.Windows
                 Tasks = new ObservableCollection<DownloadTask>();
             }
             downloadList.ItemsSource = Tasks;
+            for (int i = 0; i < 49; i++)
+            {
+                speedValues.Add(0);
+            }
+            plotter.Series = new SeriesCollection() { new LineSeries() { Values = speedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度"} };
+            plotter.DisableAnimations = true;
         }
 
         public async Task ShowWhenDownloading()
@@ -72,7 +85,7 @@ namespace NsisoLauncher.Windows
             });
         }
 
-        private void Downloader_DownloadCompleted(object sender, Utils.DownloadCompletedArg e)
+        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
             this.Dispatcher.Invoke( new Action(async() =>
             {
@@ -95,15 +108,17 @@ namespace NsisoLauncher.Windows
             }));
         }
 
-        private void Downloader_DownloadSpeedChanged(object sender, Utils.DownloadSpeedChangedArg e)
+        private void Downloader_DownloadSpeedChanged(object sender, DownloadSpeedChangedArg e)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
                 speedTextBlock.Text = e.SpeedValue.ToString() + e.SpeedUnit;
+                speedValues.Add(e.SpeedValue);
+                speedValues.RemoveAt(0);
             }));
         }
 
-        private void Downloader_DownloadProgressChanged(object sender, Utils.DownloadProgressChangedArg e)
+        private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
