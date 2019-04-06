@@ -42,7 +42,7 @@
         <lvc:CartesianChart x:Name="plotter" LegendLocation="Right"
                             Hoverable="False" DataTooltip="{x:Null}" Grid.Row="1" Margin="10,10,10,44">
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis MinValue="0"/>
+                <lvc:Axis x:Name="YAxis" MinValue="0" LabelFormatter="{Binding YFormatter}"/>
             </lvc:CartesianChart.AxisY>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis ShowLabels="False"/>

@@ -48,6 +48,27 @@ namespace NsisoLauncher.Windows
                 speedValues.Add(0);
             }
             plotter.Series = new SeriesCollection() { new LineSeries() { Values = speedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度"} };
+            YAxis.LabelFormatter  = value =>
+            {
+                string speedUnit;
+                double speedValue;
+                if (value > 1048576)
+                {
+                    speedUnit = "MB/s";
+                    speedValue = Math.Round(value / 1048576);
+                }
+                else if (value > 1024)
+                {
+                    speedUnit = "KB/s";
+                    speedValue = Math.Round(value / 1024);
+                }
+                else
+                {
+                    speedUnit = "B/s";
+                    speedValue = value;
+                }
+                return string.Format("{0}{1}", speedValue, speedUnit);
+            };
             plotter.DisableAnimations = true;
         }
 
@@ -93,6 +114,11 @@ namespace NsisoLauncher.Windows
                 progressBar.Maximum = 1;
                 progressBar.Value = 0;
                 progressPerTextBlock.Text = "000%";
+                speedValues.Clear();
+                for (int i = 0; i < 49; i++)
+                {
+                    speedValues.Add(0);
+                }
                 if (e.ErrorList == null || e.ErrorList.Count == 0)
                 {
                     await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
@@ -113,7 +139,7 @@ namespace NsisoLauncher.Windows
             this.Dispatcher.Invoke(new Action(() =>
             {
                 speedTextBlock.Text = e.SpeedValue.ToString() + e.SpeedUnit;
-                speedValues.Add(e.SpeedValue);
+                speedValues.Add(e.SizePerSec);
                 speedValues.RemoveAt(0);
             }));
         }

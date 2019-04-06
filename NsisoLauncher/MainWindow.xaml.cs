@@ -334,7 +334,7 @@ namespace NsisoLauncher
                             case MessageDialogResult.FirstAuxiliary:
                                 System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
                                 return;
-                            case MessageDialogResult.SecondAuxiliary:
+                            case MessageDialogResult.Affirmative:
                                 if (isSameAuthType && isSameName && isRemember)
                                 {
                                     var nYggTokenCator = new Nide8TokenAuthenticator(App.config.MainConfig.User.AccessToken,

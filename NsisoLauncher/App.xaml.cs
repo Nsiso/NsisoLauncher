@@ -140,6 +140,7 @@ namespace NsisoLauncher
 
             #region 下载核心初始化
             ServicePointManager.DefaultConnectionLimit = 10;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)192 | (SecurityProtocolType)768 | (SecurityProtocolType)3072;
             Download downloadCfg = config.MainConfig.Download;
             downloader = new MultiThreadDownloader();
             if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
