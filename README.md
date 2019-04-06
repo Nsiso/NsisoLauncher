@@ -41,8 +41,8 @@ http://www.mcbbs.net/thread-538691-1-1.html
 启动器检查更新，上传报告API接口
 小白接口，小接口做大事情
 小白接口，是免费，免开发，直接可用的云端数据接口！我们致力于为客户端开发同学提供便利的云端接口，实现快速开发！
-https://www.okayapi.com/
-
+https://www.okayapi.com/  
+  
 # NsisoLauncher开源代码许可  
 
 ## MahApps.Metro  
