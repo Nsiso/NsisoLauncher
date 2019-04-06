@@ -40,7 +40,7 @@
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
                   />
             
-            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,147,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,150,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="launchVersionCombobox"
                   Margin="41,150,20,0" 
                   VerticalAlignment="Top" 
@@ -49,7 +49,7 @@
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"
                   />
 
-            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,177,0,0" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,185,0,0" Foreground="White"/>
             <TextBox x:Name="playerNameTextBox"
                  Height="23"
                  Margin="41,185,20,0"

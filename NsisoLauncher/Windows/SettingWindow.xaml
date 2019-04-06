@@ -329,15 +329,21 @@
                 <StackPanel>
                     <TextBlock Margin="10,0">
                         启动器开源
-                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher</Hyperlink>
+                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher">
+                            https://github.com/Nsiso/NsisoLauncher
+                        </Hyperlink>
                     </TextBlock>
                     <TextBlock Margin="10,0">
                         启动器声明
-                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher/blob/master/README.md</Hyperlink>
+                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/blob/master/README.md">
+                            https://github.com/Nsiso/NsisoLauncher/blob/master/README.md
+                        </Hyperlink>
                     </TextBlock>
                     <TextBlock Margin="10,0">
                         启动器文档
-                        <Hyperlink>https://github.com/Nsiso/NsisoLauncher/wiki</Hyperlink>
+                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/wiki">
+                            https://github.com/Nsiso/NsisoLauncher/wiki
+                        </Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </TabItem>
