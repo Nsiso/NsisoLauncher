@@ -43,44 +43,86 @@ http://www.mcbbs.net/thread-538691-1-1.html
 小白接口，是免费，免开发，直接可用的云端数据接口！我们致力于为客户端开发同学提供便利的云端接口，实现快速开发！
 https://www.okayapi.com/
 
-## 使用开源库（由名字字母排序）：
-#### Costura.Fody
-Fody add-in for embedding references as resources.
-Author:Simon Cropp, Cameron MacFarland
-LICENSE:http://www.opensource.org/licenses/mit-license.php
+# NsisoLauncher开源代码许可  
 
-------------
+## MahApps.Metro  
 
-#### Fody
-Extensible tool for weaving .net assemblies.
-Author:Simon Crop
-LICENSE:http://www.opensource.org/licenses/mit-license.php
+https://github.com/MahApps/MahApps.Metro  
+Copyright (c) 2018 MahApps  
+The goal of MahApps.Metro is to allow devs to quickly and easily cobble together a "Metro" or "Modern UI" for their WPF4+ apps, with minimal effort.  
+Licensed under the MIT License(MIT);  
+https://github.com/MahApps/MahApps.Metro/blob/master-net40/LICENSE  
 
-------------
+## MahApps.Metro.IconPacks  
 
-#### MahApps.Metro
-The goal of MahApps.Metro is to allow devs to quickly and easily cobble together a "Metro" or "Modern UI" for their WPF4+ apps, with minimal effort.
-Author:Jan Karger, Dennis Daume, Brendan Forster, Paul Jenkins, Jake Ginnivan, Alex Mitchell
-LICENSE:https://github.com/MahApps/MahApps.Metro/blob/master/LICENSE
+https://github.com/MahApps/MahApps.Metro.IconPacks  
+Copyright (c) 2016-2018 MahApps, Jan Karger  
+IconPacks for stylish awesome WPF or UWP apps.  
+Licensed under the MIT License(MIT);  
+https://github.com/MahApps/MahApps.Metro.IconPacks/blob/master/LICENSE  
 
-------------
+## Newtonsoft.Json  
 
-#### MahApps.Metro.IconPacks.FontAwesome
-IconPacks for stylish awesome WPF or UWP apps.
-Author:Jan Karger
-LICENSE:https://opensource.org/licenses/MIT
+https://www.newtonsoft.com/json  
+https://github.com/JamesNK/Newtonsoft.Json  
+Copyright (c) 2007 James Newton-King  
+Json.NET is a popular high-performance JSON framework for .NET  
+Licensed under the MIT License(MIT);  
+https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md  
 
-------------
+## Fody  
 
-#### Newtonsoft.Json
-Json.NET is a popular high-performance JSON framework for .NET
-Author:James Newton-King
-LICENSE:https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
+https://github.com/Fody/Fody  
+Copyright (c) Simon Cropp and contributors  
+Extensible tool for weaving .net assemblies.  
+Licensed under the MIT License(MIT);  
+https://github.com/Fody/Fody/blob/master/License.txt  
 
-------------
+## Costura.Fody  
 
-#### SharpZipLib
-ziplib (SharpZipLib, formerly NZipLib) is a Zip, GZip, Tar and BZip2 library written entirely in C# for the .NET platform. It is implemented as an assembly (installable in the GAC), and thus can easily be incorporated into other projects (in any .NET language).
-Author:http://www.icsharpcode.net/
-LICENSE:NULL
+https://github.com/Fody/Costura  
+Copyright (c) 2012 Simon Cropp and contributors  
+Fody add-in for embedding references as resources.  
+Licensed under the MIT License(MIT);  
+https://github.com/Fody/Costura/blob/master/license.txt  
 
+## LiveCharts.Wpf  
+
+https://lvcharts.net  
+https://github.com/Live-Charts/Live-Charts  
+Copyright (c) 2016 Alberto Rodriguez & LiveCharts contributors  
+Simple, flexible, interactive and powerful data visualization for Wpf  
+Licensed under the MIT License(MIT);  
+https://github.com/Live-Charts/Live-Charts/blob/master/LICENSE.TXT  
+
+## SharpZipLib  
+
+https://github.com/icsharpcode/SharpZipLib  
+Copyright © 2000-2018 SharpZipLib Contributors  
+SharpZipLib (#ziplib, formerly NZipLib) is a compression library for Zip, GZip, BZip2, and Tar written entirely in C# for .NET. It is implemented as an assembly (installable in the GAC), and thus can easily be incorporated into other projects (in any .NET language)  
+Licensed under the MIT License(MIT);  
+https://github.com/icsharpcode/SharpZipLib/blob/master/LICENSE.txt  
+
+## MojangSharp  
+
+https://github.com/hawezo/MojangSharp  
+Copyright 2017 Enzo Innocenzi  
+MojangSharp is a C# wrapper for the Mojang API and Mojang Authentication API.  
+Licensed under the Apache License, Version 2.0;  
+https://github.com/hawezo/MojangSharp/blob/master/LICENSE  
+
+## Heijden.Dns  
+
+https://github.com/ghuntley/Heijden.Dns  
+Copyright (c) 2008-2013 Alphons van der Heijden avanderheijden@moneywise.nl Copyright (c) 2014 Geoffrey Huntley ghuntley@ghuntley.com  
+A reusable DNS resolver for .NET  
+Licensed under the MIT License(MIT);  
+https://github.com/ghuntley/Heijden.Dns/blob/master/LICENSE.md  
+
+## Minecraft-Console-Client
+
+https://github.com/ORelio/Minecraft-Console-Client  
+Copyright (c) ORelio  
+Lightweight console for Minecraft chat and automated scripts  
+Licensed under the CDDL-1.0 License;  
+https://opensource.org/licenses/CDDL-1.0  
