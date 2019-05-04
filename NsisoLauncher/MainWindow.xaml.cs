@@ -64,7 +64,10 @@ namespace NsisoLauncher
         {
             this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
             authTypeCombobox.ItemsSource = this.authTypes;
-            if ((App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8)
+
+            //全局统一验证设置
+            bool isAllUsingNide8 = (App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8;
+            if (isAllUsingNide8)
             {
                 authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == Config.AuthenticationType.NIDE8);
                 authTypeCombobox.IsEnabled = false;
@@ -73,8 +76,17 @@ namespace NsisoLauncher
             {
                 this.authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == App.config.MainConfig.User.AuthenticationType);
             }
+
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+
+            //头像自定义显示皮肤
+            bool isNeedRefreshIcon = (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AuthenticationUUID?.Value)) &&
+                App.config.MainConfig.User.AuthenticationType == Config.AuthenticationType.MOJANG;
+            if (isNeedRefreshIcon)
+            {
+                await headScul.RefreshIcon(App.config.MainConfig.User.AuthenticationUUID.Value);
+            }
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
 
@@ -510,11 +522,13 @@ namespace NsisoLauncher
                 //}
                 #endregion
 
+                //如果验证方式不是离线验证
                 if (auth.Type != Config.AuthenticationType.OFFLINE)
                 {
                     string currentLoginType = string.Format("正在进行{0}中...", auth.Name);
                     string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                    var loader = await this.ShowProgressAsync(currentLoginType, loginMsg);
+                    var loader = await this.ShowProgressAsync(currentLoginType, loginMsg, true);
+                    
                     loader.SetIndeterminate();
                     var authResult = await authenticator.DoAuthenticateAsync();
                     await loader.CloseAsync();

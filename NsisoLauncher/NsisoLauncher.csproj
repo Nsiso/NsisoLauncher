@@ -91,6 +91,9 @@
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
+    <Compile Include="Controls\HeadSculControl.xaml.cs">
+      <DependentUpon>HeadSculControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ServerInfoControl.xaml.cs">
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
@@ -112,6 +115,10 @@
     <Compile Include="Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\HeadSculControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ServerInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -137,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resource\Style\DataGridEmptyHelperControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\Style\Fonts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
