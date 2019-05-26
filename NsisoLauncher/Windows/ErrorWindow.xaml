@@ -27,19 +27,19 @@
                 Margin="0,0,155,10" FontSize="12" Click="CloseButton_Click" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100"/>
         <Button x:Name="CopyButton" Content="复制错误信息"
                 Style="{DynamicResource SquareButtonStyle}" Margin="0,0,260,10" FontSize="12" Click="CopyButton_Click" HorizontalAlignment="Right" Width="100" Height="35" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="59,0,0,10" TextWrapping="Wrap" Height="15" VerticalAlignment="Bottom">
+        
+        <StackPanel Margin="0,392,0,0" Orientation="Horizontal">
+            <TextBlock x:Name="textBlock1"  Margin="10,0,0,0" >
             <Hyperlink Click="Hyperlink_Click">作者邮箱</Hyperlink>
-        </TextBlock>
-        <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" VerticalAlignment="Bottom">
-            <Hyperlink Click="Hyperlink_Click_1">作者QQ</Hyperlink>
-        </TextBlock>
-        <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="112,0,0,10" TextWrapping="Wrap" Height="15" VerticalAlignment="Bottom">
+            </TextBlock>
+            <TextBlock x:Name="textBlock3" Margin="10,0,0,0" >
             <Hyperlink Click="Hyperlink_Click_2">作者Github</Hyperlink>
-        </TextBlock>
-        <Grid x:Name="loadingGrid" Background="#7FFFFFFF" Visibility="Hidden">
-            <controls:ProgressRing Width="60" Height="60"/>
-            <Label x:Name="label1" Content="处理中" Margin="326,242,326,147" HorizontalContentAlignment="Center"/>
-        </Grid>
+            </TextBlock>
+            <TextBlock x:Name="textBlock2" Margin="10,0,0,0" >
+            <Hyperlink Click="Hyperlink_Click_1">用户QQ群</Hyperlink>
+            </TextBlock>
+        </StackPanel>
+        
         <CheckBox x:Name="moreInfoCheckBox" Content="上传报告时附加环境信息" HorizontalAlignment="Left" Margin="10,0,0,27" Height="18" VerticalAlignment="Bottom"/>
     </Grid>
 </controls:MetroWindow>

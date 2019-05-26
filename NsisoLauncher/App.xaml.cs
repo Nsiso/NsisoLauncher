@@ -27,27 +27,35 @@ namespace NsisoLauncher
         public static LogHandler logHandler;
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
         public static List<Java> javaList;
+
+        #region API静态变量
         public static NsisoLauncherCore.Net.Nide8API.APIHandler nide8Handler;
+        public static NsisoLauncherCore.Net.PhalAPI.APIHandler nsisoAPIHandler;
+        #endregion
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
             AggregateExceptionCatched?.Invoke(sender, arg);
         }
 
+        //TODO:修复.NET无补丁环境误报(文件检测)
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             #region 检查环境
-            if ((System.Environment.Version.Major == 4) && (System.Environment.Version.Minor == 0))
+            if (!e.Args.Contains("-ignorenet"))
             {
-                if ((!SystemTools.IsSetupFrameworkUpdate("KB2468871v2")) && (!SystemTools.IsSetupFrameworkUpdate("KB2468871")))
+                if ((System.Environment.Version.Major == 4) && (System.Environment.Version.Minor == 0))
                 {
-                    var result = MessageBox.Show(GetResourceString("String.Message.NoFrameworkUpdate2"),
-                        GetResourceString("String.Message.NoFrameworkUpdate"),
-                        MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.Yes)
+                    if ((!SystemTools.IsSetupFrameworkUpdate("KB2468871v2")) && (!SystemTools.IsSetupFrameworkUpdate("KB2468871")))
                     {
-                        System.Diagnostics.Process.Start("https://github.com/Nsiso/NsisoLauncher/wiki/%E5%90%AF%E5%8A%A8%E5%99%A8%E6%8A%A5%E9%94%99%EF%BC%9A%E5%BD%93%E5%89%8D%E7%94%B5%E8%84%91%E7%8E%AF%E5%A2%83%E7%BC%BA%E5%B0%91KB2468871v2%E8%A1%A5%E4%B8%81");
-                        System.Environment.Exit(0);
+                        var result = MessageBox.Show(GetResourceString("String.Message.NoFrameworkUpdate2"),
+                            GetResourceString("String.Message.NoFrameworkUpdate"),
+                            MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start("https://github.com/Nsiso/NsisoLauncher/wiki/%E5%90%AF%E5%8A%A8%E5%99%A8%E6%8A%A5%E9%94%99%EF%BC%9A%E5%BD%93%E5%89%8D%E7%94%B5%E8%84%91%E7%8E%AF%E5%A2%83%E7%BC%BA%E5%B0%91KB2468871v2%E8%A1%A5%E4%B8%81");
+                            System.Environment.Exit(0);
+                        }
                     }
                 }
             }
@@ -74,6 +82,16 @@ namespace NsisoLauncher
                 debugWindow.Show();
                 logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
+            #endregion
+
+            #region Nsiso反馈API初始化
+
+#if DEBUG
+            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
+#else
+            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(config.MainConfig.Launcher.NoTracking);
+#endif
+
             #endregion
 
             #region 数据初始化
@@ -190,6 +208,10 @@ namespace NsisoLauncher
             return (string)Current.FindResource(key);
         }
 
+        /// <summary>
+        /// 重启启动器
+        /// </summary>
+        /// <param name="admin">是否用管理员模式重启</param>
         public static void Reboot(bool admin)
         {
             System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);

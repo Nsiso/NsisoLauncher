@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -17,9 +18,7 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class ErrorWindow : MetroWindow
     {
-        private const string errorApiAdress = "http://hn2.api.okayapi.com";
-
-        BackgroundWorker updateThread = new BackgroundWorker();
+        Exception exception;
 
         string[] funny = {
             "你所不知道的事实：参与这个启动器的开发者只有一个人，而且整个开发工作室也只有这一个人",
@@ -38,8 +37,7 @@ namespace NsisoLauncher.Windows
             try
             {
                 InitializeComponent();
-                updateThread.DoWork += UpdateThread_DoWork;
-                updateThread.RunWorkerCompleted += UpdateThread_RunWorkerCompleted;
+                exception = ex;
                 Random random = new Random();
                 FunnyBlock.Text = funny[random.Next(funny.Count())];
                 moreInfoCheckBox.IsChecked = true;
@@ -54,58 +52,6 @@ namespace NsisoLauncher.Windows
             }
         }
 
-        private void UpdateThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            App.Reboot(false);
-        }
-
-        private void UpdateThread_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string msg = (string)e.Argument;
-                bool moreInfo = true;
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    moreInfo = (bool)moreInfoCheckBox.IsChecked;
-                }));
-                if (moreInfo)
-                {
-                    msg += ("/r/n" + GetEnvironmentInfo());
-                }
-                var dataMsg = new { report_type = "ERROR", report_msg = msg };
-                var dataJson = Uri.EscapeDataString(JsonConvert.SerializeObject(dataMsg));
-                string pam = string.Format("s=App.Table.Create&model_name={0}&data={1}&app_key={2}",
-                    "NsisoLauncherReport",
-                    dataJson,
-                    "7B27B7B6A3C10158C28E3DE0B13785CD");
-
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(errorApiAdress);
-                req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-
-                byte[] data = Encoding.UTF8.GetBytes(pam);
-                req.ContentLength = data.Length;
-                using (Stream reqStream = req.GetRequestStream())
-                {
-                    reqStream.Write(data, 0, data.Length);
-                    reqStream.Close();
-                }
-
-                //HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-                //Stream stream = resp.GetResponseStream();
-                ////获取响应内容  
-                //using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                //{
-                //    var result = reader.ReadToEnd();
-                //}
-            }
-            catch (Exception ex)
-            {
-                App.logHandler.AppendError(ex);
-            }
-        }
-
         //作者邮箱点击后
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
@@ -115,7 +61,7 @@ namespace NsisoLauncher.Windows
         //作者qq点击后
         private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://wpa.qq.com/msgrd?v=3&uin=2081964100&site=qq&menu=yes");
+            System.Diagnostics.Process.Start("http://shang.qq.com/wpa/qunwpa?idkey=3b39ff435aeca097dbe8bcef6f32d26367bdb630357570693b5315e6c13f7c9f");
         }
 
         //作者github点击后
@@ -124,10 +70,26 @@ namespace NsisoLauncher.Windows
             System.Diagnostics.Process.Start("https://github.com/Nsiso");
         }
 
-        private void RebootButton_Click(object sender, RoutedEventArgs e)
+        private async void RebootButton_Click(object sender, RoutedEventArgs e)
         {
-            loadingGrid.Visibility = Visibility.Visible;
-            updateThread.RunWorkerAsync(this.textBox.Text);
+            try
+            {
+                var progress = await this.ShowProgressAsync("正在处理中", "请稍后...");
+                progress.SetIndeterminate();
+                bool moreInfo = (bool)moreInfoCheckBox.IsChecked;
+                string msg = exception.ToString();
+                if (moreInfo)
+                { msg += ("/r/n" + await GetEnvironmentInfoAsync()); }
+                await App.nsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, msg);
+            }
+            catch (Exception ex)
+            {
+                App.logHandler.AppendError(ex);
+            }
+            finally
+            {
+                App.Reboot(false);
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -154,6 +116,14 @@ namespace NsisoLauncher.Windows
             builder.Append("\r\n程序运行命令行:" + Environment.CommandLine);
             builder.Append("\r\n程序工作目录:" + Environment.CurrentDirectory);
             return builder.ToString();
+        }
+
+        private Task<string> GetEnvironmentInfoAsync()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return GetEnvironmentInfo();
+            });
         }
     }
 }

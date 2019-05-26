@@ -188,6 +188,7 @@ namespace NsisoLauncher.Windows
             }
         }
 
+        //TODO:修复FORGE刷新不成功崩溃
         private async void DownloadForgeButton_Click(object sender, RoutedEventArgs e)
         {
             Version ver = null;

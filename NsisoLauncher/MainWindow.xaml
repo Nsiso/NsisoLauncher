@@ -12,40 +12,59 @@
         WindowStartupLocation="CenterScreen"
         Title="Nsiso Launcher" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
     <controls:MetroWindow.Background>
-        <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill" />
     </controls:MetroWindow.Background>
     <Grid>
-        <MediaElement x:Name="mediaElement" Visibility="Hidden" LoadedBehavior="Manual" MediaEnded="mediaElement_MediaEnded"/>
-        <Grid Width="220" x:Name="userGrid" HorizontalAlignment="Right">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <MediaElement x:Name="mediaElement" Visibility="Hidden" LoadedBehavior="Manual" MediaEnded="mediaElement_MediaEnded" Grid.ColumnSpan="2"/>
+        <Grid x:Name="userGrid" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <!--#region 高斯模糊效果(最底层) -->
-            <Rectangle Fill="{Binding Background, ElementName=mainWindow}" >
+            <Rectangle Grid.ColumnSpan="2">
                 <Rectangle.Effect>
                     <BlurEffect Radius="20"/>
                 </Rectangle.Effect>
+                <Rectangle.Fill>
+                    <VisualBrush Stretch="UniformToFill" AlignmentX="Right" >
+                        <VisualBrush.Visual>
+                            <Rectangle Width="{Binding ActualWidth, ElementName=mainWindow}" 
+                                       Height="{Binding ActualHeight, ElementName=mainWindow}"
+                                       Fill="{Binding Background, ElementName=mainWindow}"
+                                       />
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Rectangle.Fill>
             </Rectangle>
-            <Rectangle Fill="#33FFFFFF" HorizontalAlignment="Right" Width="220"/>
+            <Rectangle Fill="White" Opacity="0.2" Grid.ColumnSpan="2"/>
             <!--#endregion-->
             <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
-                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click"/>
+                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click" Grid.ColumnSpan="2"/>
 
-            <userControl:HeadSculControl x:Name="headScul" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-            
+            <userControl:HeadSculControl x:Name="headScul" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="61,10,61,0" Grid.ColumnSpan="2"/>
+
             <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="authTypeCombobox"
                   Margin="41,120,20,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="Name"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"
                   />
-            
+
             <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,155,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="launchVersionCombobox"
                   Margin="41,155,20,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="ID"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}" Grid.ColumnSpan="2"
                   />
 
             <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,190,0,0" Foreground="White"/>
@@ -54,7 +73,7 @@
                  Margin="41,190,20,0"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
+                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2"
                  />
 
             <!--
@@ -66,26 +85,26 @@
             -->
 
             <Button x:Name="configButton"
-                    Height="30" Margin="10,0,0,65" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="95"
+                    Height="30" Margin="10,0,5,65" VerticalAlignment="Bottom"
                     Background="{x:Null}" BorderBrush="White" Foreground="White" Click="configButton_Click">
                 <iconPacks:FontAwesome Kind="CogSolid"/>
             </Button>
 
             <Button x:Name="downloadButton"
-                    Height="30" Margin="0,0,10,65" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="95"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="downloadButton_Click">
+                    Height="30" Margin="5,0,10,65" VerticalAlignment="Bottom"
+                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="downloadButton_Click" Grid.Column="1">
                 <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
             </Button>
         </Grid>
         <Button x:Name="volumeButton" Style ="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
                 Width="30" Height="30" Margin="0,10,225,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                BorderBrush="White" Visibility="Hidden" Foreground="White" Click="volumeButton_Click">
+                BorderBrush="White" Visibility="Hidden" Foreground="White" Click="volumeButton_Click" Grid.ColumnSpan="2">
             <iconPacks:FontAwesome x:Name="volumeButtonIcon" Kind="VolumeUpSolid" />
         </Button>
-        
-        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,352,0" VerticalAlignment="Top"/>
-        
-        <Grid x:Name="loadingGrid" Visibility="Hidden">
+
+        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top"/>
+
+        <Grid x:Name="loadingGrid" Visibility="Hidden" Grid.ColumnSpan="2">
             <Border Background="{Binding Background, ElementName=mainWindow}" >
                 <Border.Effect>
                     <BlurEffect Radius="20"/>

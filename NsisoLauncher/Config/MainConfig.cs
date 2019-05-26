@@ -89,6 +89,13 @@ namespace NsisoLauncher.Config
         /// 验证的用户信息
         /// </summary>
         public UserData AuthenticationUserData { get; set; }
+
+        public void ClearAuthCache()
+        {
+            AccessToken = null;
+            AuthenticationUUID = null;
+            AuthenticationUserData = null;
+        }
     }
 
 
@@ -194,6 +201,11 @@ namespace NsisoLauncher.Config
         /// 是否开启DEBUG模式
         /// </summary>
         public bool Debug { get; set; }
+
+        /// <summary>
+        /// 是否禁止数据追踪
+        /// </summary>
+        public bool NoTracking { get; set; }
     }
 
     public class Download
