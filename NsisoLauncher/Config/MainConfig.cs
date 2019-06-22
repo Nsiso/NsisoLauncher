@@ -1,6 +1,8 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
@@ -46,14 +48,9 @@ namespace NsisoLauncher.Config
     public class User
     {
         /// <summary>
-        /// 用户名/账号
+        /// 用户数据库
         /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// 验证令牌
-        /// </summary>
-        public string AccessToken { get; set; }
+        public Dictionary<string, AuthenticationNode> AuthenticationDatabase { get; set; } = new Dictionary<string, AuthenticationNode>();
 
         /// <summary>
         /// 用户端Token
@@ -66,11 +63,6 @@ namespace NsisoLauncher.Config
         public string AuthServer { get; set; }
 
         /// <summary>
-        /// 验证类型
-        /// </summary>
-        public AuthenticationType AuthenticationType { get; set; }
-
-        /// <summary>
         /// 统一通行证服务器ID
         /// </summary>
         public string Nide8ServerID { get; set; }
@@ -79,23 +71,6 @@ namespace NsisoLauncher.Config
         /// 是否使用NIDE8返回的服务器IP设置直连和服务器信息
         /// </summary>
         public bool AllUsingNide8 { get; set; }
-
-        /// <summary>
-        /// 玩家选择的角色UUID
-        /// </summary>
-        public Uuid AuthenticationUUID { get; set; }
-
-        /// <summary>
-        /// 验证的用户信息
-        /// </summary>
-        public UserData AuthenticationUserData { get; set; }
-
-        public void ClearAuthCache()
-        {
-            AccessToken = null;
-            AuthenticationUUID = null;
-            AuthenticationUserData = null;
-        }
     }
 
 
@@ -293,6 +268,11 @@ namespace NsisoLauncher.Config
     public class History
     {
         /// <summary>
+        /// 选中的用户的ID
+        /// </summary>
+        public string SelectedAuthNodeID { get; set; }
+
+        /// <summary>
         /// 上一次启动版本
         /// </summary>
         public string LastLaunchVersion { get; set; }
@@ -375,5 +355,64 @@ namespace NsisoLauncher.Config
         /// 版本信息
         /// </summary>
         public string VersionInfo { get; set; }
+    }
+
+    public class AuthenticationNode : INotifyPropertyChanged
+    {
+        /// <summary>
+        /// 验证类型
+        /// </summary>
+        public AuthenticationType AuthenticationType { get; set; }
+
+        /// <summary>
+        /// 用户名/账号
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// 验证令牌
+        /// </summary>
+        public string AccessToken { get; set; }
+
+        /// <summary>
+        /// 选中的profile UUID
+        /// </summary>
+        public string SelectProfileUUID { get; set; }
+
+        /// <summary>
+        /// 玩家选择的角色UUID
+        /// </summary>
+        public Dictionary<string, Uuid> Profiles { get; set; } = new Dictionary<string, Uuid>();
+
+        /// <summary>
+        /// 用户资料
+        /// </summary>
+        public UserData UserData { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public Uuid GetSelectProfileUUID()
+        {
+            return Profiles[SelectProfileUUID];
+        }
+
+        public void ClearAuthCache()
+        {
+            AccessToken = null;
+            SelectProfileUUID = null;
+        }
+    }
+
+    public class Profile
+    {
+        /// <summary>
+        /// 显示的玩家昵称.
+        /// </summary>
+        public string DisplayName { get; internal set; }
     }
 }

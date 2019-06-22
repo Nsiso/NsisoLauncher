@@ -49,29 +49,33 @@
 
             <userControl:HeadSculControl x:Name="headScul" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="61,10,61,0" Grid.ColumnSpan="2"/>
 
-            <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,190,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="authTypeCombobox"
-                  Margin="41,120,20,0" 
+                  Margin="41,190,20,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="Name"
+                  SelectedValuePath="Type"
+                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthenticationType}"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"
                   />
 
-            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,155,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
+            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
             <ComboBox x:Name="launchVersionCombobox"
-                  Margin="41,155,20,0" 
+                  Margin="41,120,20,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="ID"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}" Grid.ColumnSpan="2"
                   />
 
-            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,190,0,0" Foreground="White"/>
-            <TextBox x:Name="playerNameTextBox"
+            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
+            <ComboBox x:Name="userComboBox"
+                 IsEditable="True"
                  Height="23"
-                 Margin="41,190,20,0"
-                 TextWrapping="Wrap"
+                 Margin="41,155,20,0"
+                 SelectedValuePath="Key"
+                 DisplayMemberPath="Value.UserName"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                  controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2"
                  />
@@ -102,9 +106,9 @@
             <iconPacks:FontAwesome x:Name="volumeButtonIcon" Kind="VolumeUpSolid" />
         </Button>
 
-        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top"/>
+        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-        <Grid x:Name="loadingGrid" Visibility="Hidden" Grid.ColumnSpan="2">
+        <Grid x:Name="loadingGrid" Visibility="Hidden" Grid.ColumnSpan="3">
             <Border Background="{Binding Background, ElementName=mainWindow}" >
                 <Border.Effect>
                     <BlurEffect Radius="20"/>

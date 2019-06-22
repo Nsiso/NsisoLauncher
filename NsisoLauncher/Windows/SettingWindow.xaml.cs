@@ -18,6 +18,7 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 using NsisoLauncherCore.Util;
 
+//todo 对新用户配置结构进行匹配
 namespace NsisoLauncher.Windows
 {
     /// <summary>
@@ -54,7 +55,7 @@ namespace NsisoLauncher.Windows
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
             serverGroupBox.DataContext = config.Server;
             authtypeCombobox.ItemsSource = authTypes;
-            authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.AuthenticationType; }).FirstOrDefault();
+            authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.AuthenticationDatabase[config.History.SelectedAuthNodeID].AuthenticationType; }).FirstOrDefault();
             userGrid.DataContext = config.User;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
@@ -156,7 +157,7 @@ namespace NsisoLauncher.Windows
                 App.nide8Handler = new NsisoLauncherCore.Net.Nide8API.APIHandler(nide8IdTextBox.Text);
             }
             #endregion
-            config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
+            //config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
             App.config.MainConfig = config;
             if (App.config.MainConfig.Environment.VersionIsolation)
             {
@@ -259,51 +260,52 @@ namespace NsisoLauncher.Windows
             }
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private /*async*/ void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(config.User.AccessToken))
-            {
-                string token = config.User.AccessToken;
-                config.User.AccessToken = null;
-                NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate invalidate = new NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate(token);
-                var loading = await this.ShowProgressAsync("注销正版登陆中", "需要联网进行注销，请稍后...");
-                loading.SetIndeterminate();
-                var result = await invalidate.PerformRequestAsync();
-                await loading.CloseAsync();
-                if (result.IsSuccess)
-                {
-                    await this.ShowMessageAsync("注销成功", "已经安全,成功的取消了记住登录状态");
-                }
-                else
-                {
-                    await this.ShowMessageAsync("已取消记住登陆状态但未注销", "虽然取消并删除了本地的记住登陆状态和密匙，但未能成功联网注销密匙，请注意密匙安全");
-                }
+            //todo 恢复取消登陆按钮
 
-            }
-            else
-            {
-                await this.ShowMessageAsync("未进行过在线验证", "您未进行过在线验证，无需注销登陆状态");
-            }
+            //if (!string.IsNullOrWhiteSpace(config.User.AccessToken))
+            //{
+            //    string token = config.User.AccessToken;
+            //    config.User.AccessToken = null;
+            //    NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate invalidate = new NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate(token);
+            //    var loading = await this.ShowProgressAsync("注销正版登陆中", "需要联网进行注销，请稍后...");
+            //    loading.SetIndeterminate();
+            //    var result = await invalidate.PerformRequestAsync();
+            //    await loading.CloseAsync();
+            //    if (result.IsSuccess)
+            //    {
+            //        await this.ShowMessageAsync("注销成功", "已经安全,成功的取消了记住登录状态");
+            //    }
+            //    else
+            //    {
+            //        await this.ShowMessageAsync("已取消记住登陆状态但未注销", "虽然取消并删除了本地的记住登陆状态和密匙，但未能成功联网注销密匙，请注意密匙安全");
+            //    }
+
+            //}
+            //else
+            //{
+            //    await this.ShowMessageAsync("未进行过在线验证", "您未进行过在线验证，无需注销登陆状态");
+            //}
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            config.User = new Config.User()
-            {
-                AuthenticationType = Config.AuthenticationType.OFFLINE
-            };
+            config.User = new User();
             this.ShowMessageAsync("重置完成", "点击右下角应用按钮保存");
         }
 
-        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        private /*async*/ void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            config.User.AccessToken = null;
-            config.User.AuthenticationUserData = null;
-            config.User.AuthenticationUUID = null;
-            config.User.ClientToken = null;
-            config.User.UserName = null;
-            await this.ShowMessageAsync("设置发布状态成功",
-                "点击右下角应用按钮保存，保存后除了关闭启动器请不要执行任何操作（二次设置，启动游戏等），否则将导致数据重新初始化");
+            //恢复设置发布状态按钮
+
+            //config.User.AccessToken = null;
+            //config.User.AuthenticationUserData = null;
+            //config.User.AuthenticationUUID = null;
+            //config.User.ClientToken = null;
+            //config.User.UserName = null;
+            //await this.ShowMessageAsync("设置发布状态成功",
+            //    "点击右下角应用按钮保存，保存后除了关闭启动器请不要执行任何操作（二次设置，启动游戏等），否则将导致数据重新初始化");
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)

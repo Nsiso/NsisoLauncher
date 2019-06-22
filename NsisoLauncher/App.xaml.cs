@@ -194,6 +194,7 @@ namespace NsisoLauncher
             #endregion
 
             //debug
+            //nsisoAPIHandler.GetLatestLauncherVersion();
             //throw new Exception();
         }
 

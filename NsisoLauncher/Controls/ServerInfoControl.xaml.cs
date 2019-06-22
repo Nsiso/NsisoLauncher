@@ -26,6 +26,7 @@ namespace NsisoLauncher.Controls
         {
             if (server.ShowServerInfo)
             {
+                serverNameTextBlock.Text = server.ServerName;
                 serverStateIcon.Foreground = System.Windows.Media.Brushes.White;
                 serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.SyncAltSolid;
                 serverPeopleTextBlock.Text = App.GetResourceString("String.Mainwindow.ServerGettingNum");
@@ -43,7 +44,6 @@ namespace NsisoLauncher.Controls
                 App.logHandler.AppendDebug(serverInfo.JsonResult);
                 serverLoadingBar.IsIndeterminate = false;
                 serverLoadingBar.Visibility = Visibility.Hidden;
-                this.serverNameTextBlock.Text = serverInfo.ServerName;
 
                 switch (serverInfo.State)
                 {

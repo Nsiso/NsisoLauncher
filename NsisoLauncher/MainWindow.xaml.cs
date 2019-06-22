@@ -17,6 +17,9 @@ using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
+using NsisoLauncher.Config;
+using Server = NsisoLauncherCore.Modules.Server;
+using System.Collections.ObjectModel;
 
 namespace NsisoLauncher
 {
@@ -40,6 +43,7 @@ namespace NsisoLauncher
             new AuthTypeItem(){Type = Config.AuthenticationType.CUSTOM_SERVER, Name = App.GetResourceString("String.MainWindow.Auth.Custom")}
         };
         #endregion
+
 
         //TODO:增加取消启动按钮
         public MainWindow()
@@ -69,8 +73,9 @@ namespace NsisoLauncher
 
         private async void Refresh()
         {
-            this.playerNameTextBox.Text = App.config.MainConfig.User.UserName;
             authTypeCombobox.ItemsSource = this.authTypes;
+            this.userComboBox.ItemsSource = App.config.MainConfig.User.AuthenticationDatabase;
+            this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedAuthNodeID;
 
             //全局统一验证设置
             bool isAllUsingNide8 = (App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8;
@@ -79,22 +84,15 @@ namespace NsisoLauncher
                 authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == Config.AuthenticationType.NIDE8);
                 authTypeCombobox.IsEnabled = false;
             }
-            else
-            {
-                this.authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == App.config.MainConfig.User.AuthenticationType);
-            }
+            //else
+            //{
+            //    this.authTypeCombobox.SelectedItem = authTypes.Find(x => x.Type == App.config.MainConfig.User.AuthenticationType);
+            //}
 
             launchVersionCombobox.ItemsSource = await App.handler.GetVersionsAsync();
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
 
-            //头像自定义显示皮肤
-            bool isNeedRefreshIcon = (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AuthenticationUUID?.Value)) &&
-                App.config.MainConfig.User.AuthenticationType == Config.AuthenticationType.MOJANG;
-            if (isNeedRefreshIcon)
-            {
-                await headScul.RefreshIcon(App.config.MainConfig.User.AuthenticationUUID.Value);
-            }
-            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
+            
         }
 
         #region 自定义
@@ -187,6 +185,23 @@ namespace NsisoLauncher
             mediaElement.Stop();
             mediaElement.Play();
         }
+
+        private async void RefreshIcon()
+        {
+            //头像自定义显示皮肤
+            AuthenticationNode node = GetSelectedAuthNode();
+            if (node == null)
+            {
+                return;
+            }
+            bool isNeedRefreshIcon = (!string.IsNullOrWhiteSpace(node.SelectProfileUUID)) &&
+                node.AuthenticationType == AuthenticationType.MOJANG;
+            if (isNeedRefreshIcon)
+            {
+                await headScul.RefreshIcon(node.SelectProfileUUID);
+            }
+            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
+        }
         #endregion
 
 
@@ -194,7 +209,7 @@ namespace NsisoLauncher
         {
             try
             {
-                string userName = playerNameTextBox.Text;
+                string userName = userComboBox.Text;
 
                 #region 检查有效数据
                 if (authTypeCombobox.SelectedItem == null)
@@ -223,7 +238,20 @@ namespace NsisoLauncher
                 #endregion
 
                 NsisoLauncherCore.Modules.Version launchVersion = (NsisoLauncherCore.Modules.Version)launchVersionCombobox.SelectedItem;
-                AuthTypeItem auth = (AuthTypeItem)authTypeCombobox.SelectedItem;
+                AuthTypeItem authItem = (AuthTypeItem)authTypeCombobox.SelectedItem;
+
+                //todo 添加新用户的支持
+                string selectedUserUUID = (string)userComboBox.SelectedValue;
+                bool isNewUser = string.IsNullOrWhiteSpace(selectedUserUUID);
+                AuthenticationNode authNode;
+                if (!isNewUser)
+                {
+                    authNode = ((KeyValuePair<string, AuthenticationNode>)userComboBox.SelectedItem).Value;
+                }
+                else
+                {
+                    authNode = new AuthenticationNode() { AuthenticationType = ((AuthenticationType)authTypeCombobox.SelectedValue) , UserName = userName };
+                }
 
                 #region 保存启动数据
                 App.config.MainConfig.History.LastLaunchVersion = launchVersion.ID;
@@ -276,25 +304,32 @@ namespace NsisoLauncher
                 IAuthenticator authenticator = null;
                 bool shouldRemember = false;
 
-                bool isSameAuthType = App.config.MainConfig.User.AuthenticationType == auth.Type;
-                bool isRemember = (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.AccessToken)) && (App.config.MainConfig.User.AuthenticationUUID != null);
-                bool isSameName = userName == App.config.MainConfig.User.UserName;
+                //bool isSameAuthType = (authNode.AuthenticationType == auth);
+                bool isRemember = (!string.IsNullOrWhiteSpace(authNode.AccessToken)) && (authNode.SelectProfileUUID != null);
+                //bool isSameName = userName == App.config.MainConfig.User.UserName;
 
-                switch (auth.Type)
+                switch (authNode.AuthenticationType)
                 {
                     #region 离线验证
                     case Config.AuthenticationType.OFFLINE:
-                        authenticator = new OfflineAuthenticator(userName);
+                        if (isNewUser)
+                        {
+                            authenticator = new OfflineAuthenticator(userName);
+                        }
+                        else
+                        {
+                            authenticator = new OfflineAuthenticator(userName, authNode.UserData, authNode.SelectProfileUUID);
+                        }
                         break;
                     #endregion
 
                     #region Mojang验证
                     case Config.AuthenticationType.MOJANG:
-                        if (isSameAuthType && isSameName && isRemember)
+                        if (isRemember)
                         {
-                            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
-                                App.config.MainConfig.User.AuthenticationUUID,
-                                App.config.MainConfig.User.AuthenticationUserData);
+                            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(authNode.AccessToken,
+                                authNode.GetSelectProfileUUID(),
+                                authNode.UserData);
                             mYggTokenAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
                             authenticator = mYggTokenAuthenticator;
                         }
@@ -350,11 +385,11 @@ namespace NsisoLauncher
                                 System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", App.nide8Handler.ServerID));
                                 return;
                             case MessageDialogResult.Affirmative:
-                                if (isSameAuthType && isSameName && isRemember)
+                                if (isRemember)
                                 {
-                                    var nYggTokenCator = new Nide8TokenAuthenticator(App.config.MainConfig.User.AccessToken,
-                                        App.config.MainConfig.User.AuthenticationUUID,
-                                        App.config.MainConfig.User.AuthenticationUserData);
+                                    var nYggTokenCator = new Nide8TokenAuthenticator(authNode.AccessToken,
+                                        authNode.GetSelectProfileUUID(),
+                                        authNode.UserData);
                                     nYggTokenCator.ProxyAuthServerAddress = string.Format("{0}authserver", App.nide8Handler.BaseURL);
                                     authenticator = nYggTokenCator;
                                 }
@@ -398,11 +433,11 @@ namespace NsisoLauncher
                         }
                         else
                         {
-                            if (shouldRemember && isSameName && isSameAuthType)
+                            if (isRemember)
                             {
-                                var cYggTokenCator = new YggdrasilTokenAuthenticator(App.config.MainConfig.User.AccessToken,
-                                App.config.MainConfig.User.AuthenticationUUID,
-                                App.config.MainConfig.User.AuthenticationUserData);
+                                var cYggTokenCator = new YggdrasilTokenAuthenticator(authNode.AccessToken,
+                                authNode.GetSelectProfileUUID(),
+                                authNode.UserData);
                                 cYggTokenCator.ProxyAuthServerAddress = customAuthServer;
                             }
                             else
@@ -432,7 +467,14 @@ namespace NsisoLauncher
                     #endregion
 
                     default:
-                        authenticator = new OfflineAuthenticator(userName);
+                        if (isNewUser)
+                        {
+                            authenticator = new OfflineAuthenticator(userName);
+                        }
+                        else
+                        {
+                            authenticator = new OfflineAuthenticator(userName, authNode.UserData, authNode.SelectProfileUUID);
+                        }
                         break;
                 }
 
@@ -526,9 +568,9 @@ namespace NsisoLauncher
                 #endregion
 
                 //如果验证方式不是离线验证
-                if (auth.Type != Config.AuthenticationType.OFFLINE)
+                if (authNode.AuthenticationType != AuthenticationType.OFFLINE)
                 {
-                    string currentLoginType = string.Format("正在进行{0}中...", auth.Name);
+                    string currentLoginType = string.Format("正在进行{0}中...", authItem.Name);
                     string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
                     var loader = await this.ShowProgressAsync(currentLoginType, loginMsg, true);
                     
@@ -541,14 +583,20 @@ namespace NsisoLauncher
                         case AuthState.SUCCESS:
                             if (shouldRemember)
                             {
-                                App.config.MainConfig.User.AccessToken = authResult.AccessToken;
-                                App.config.MainConfig.User.AuthenticationUUID = authResult.UUID;
-                                App.config.MainConfig.User.AuthenticationUserData = authResult.UserData;
+                                authNode.AccessToken = authResult.AccessToken;
+                                authNode.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
+                                authNode.UserData = authResult.UserData;
+                                selectedUserUUID = authResult.UserData.Uuid;
+                                if (authResult.Profiles != null)
+                                {
+                                    authNode.Profiles.Clear();
+                                    authResult.Profiles.ForEach(x=>authNode.Profiles.Add(x.Value,x));
+                                }
                             }
                             launchSetting.AuthenticateResult = authResult;
                             break;
                         case AuthState.REQ_LOGIN:
-                            App.config.MainConfig.User.ClearAuthCache();
+                            authNode.ClearAuthCache();
                             await this.ShowMessageAsync("验证失败：您的登陆信息已过期",
                                 string.Format("请您重新进行登陆。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
@@ -576,10 +624,18 @@ namespace NsisoLauncher
                 }
                 else
                 {
-                    launchSetting.AuthenticateResult = await authenticator.DoAuthenticateAsync();
+                    var authResult = await authenticator.DoAuthenticateAsync();
+                    authNode.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
+                    authNode.UserData = authResult.UserData;
+                    selectedUserUUID = authResult.UserData.Uuid;
+                    launchSetting.AuthenticateResult = authResult;
                 }
-                App.config.MainConfig.User.AuthenticationType = auth.Type;
-                App.config.MainConfig.User.UserName = userName;
+
+                App.config.MainConfig.History.SelectedAuthNodeID = selectedUserUUID;
+                if (!App.config.MainConfig.User.AuthenticationDatabase.ContainsKey(selectedUserUUID))
+                {
+                    App.config.MainConfig.User.AuthenticationDatabase.Add(selectedUserUUID, authNode);
+                }
                 #endregion
 
                 #region 检查游戏完整
@@ -591,7 +647,7 @@ namespace NsisoLauncher
                     App.handler,
                     launchSetting.Version);
 
-                if (auth.Type == Config.AuthenticationType.NIDE8)
+                if (authNode.AuthenticationType == Config.AuthenticationType.NIDE8)
                 {
                     string nideJarPath = App.handler.GetNide8JarPath();
                     if (!File.Exists(nideJarPath))
@@ -670,13 +726,13 @@ namespace NsisoLauncher
                 launchSetting.GCEnabled = App.config.MainConfig.Environment.GCEnabled;
                 launchSetting.GCType = App.config.MainConfig.Environment.GCType;
                 launchSetting.JavaAgent += App.config.MainConfig.Environment.JavaAgent;
-                if (auth.Type == Config.AuthenticationType.NIDE8)
+                if (authNode.AuthenticationType == AuthenticationType.NIDE8)
                 {
                     launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), App.config.MainConfig.User.Nide8ServerID);
                 }
 
                 //直连服务器设置
-                if ((auth.Type == Config.AuthenticationType.NIDE8) && App.config.MainConfig.User.AllUsingNide8)
+                if ((authNode.AuthenticationType == AuthenticationType.NIDE8) && App.config.MainConfig.User.AllUsingNide8)
                 {
                     var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
                     if (App.config.MainConfig.User.AllUsingNide8 && !string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
@@ -806,6 +862,7 @@ namespace NsisoLauncher
         private async void launchButton_Click(object sender, RoutedEventArgs e)
         {
             await LaunchGameFromWindow();
+            Refresh();
         }
 
         //下载按钮点击
@@ -905,6 +962,19 @@ namespace NsisoLauncher
                 return false;
             }
             return true;
+        }
+
+        private AuthenticationNode GetSelectedAuthNode()
+        {
+            string userID = (string)userComboBox.SelectedValue;
+            if (App.config.MainConfig.User.AuthenticationDatabase.ContainsKey(userID))
+            {
+                return App.config.MainConfig.User.AuthenticationDatabase[userID];
+            }
+            else
+            {
+                return null;
+            }
         }
         #endregion
     }
