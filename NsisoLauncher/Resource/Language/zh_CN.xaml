@@ -88,6 +88,7 @@
     <sys:String x:Key="String.MainWindow.Auth.Offline">离线验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Mojang">正版验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Nide8">统一通行证验证</sys:String>
+    <sys:String x:Key="String.MainWindow.Auth.AI">authlib-injector验证</sys:String>
     <sys:String x:Key="String.MainWindow.Auth.Custom">自定义验证</sys:String>
 
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>

@@ -55,7 +55,8 @@ namespace NsisoLauncher.Windows
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
             serverGroupBox.DataContext = config.Server;
             authtypeCombobox.ItemsSource = authTypes;
-            authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.AuthenticationDatabase[config.History.SelectedAuthNodeID].AuthenticationType; }).FirstOrDefault();
+            //todo authtype选中物品适配
+            //authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.UserDatabase[config.History.SelectedAuthNodeID].AuthenticationType; }).FirstOrDefault();
             userGrid.DataContext = config.User;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
@@ -152,10 +153,6 @@ namespace NsisoLauncher.Windows
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
             App.handler.VersionIsolation = config.Environment.VersionIsolation;
-            if (!string.IsNullOrWhiteSpace(nide8IdTextBox.Text))
-            {
-                App.nide8Handler = new NsisoLauncherCore.Net.Nide8API.APIHandler(nide8IdTextBox.Text);
-            }
             #endregion
             //config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
             App.config.MainConfig = config;

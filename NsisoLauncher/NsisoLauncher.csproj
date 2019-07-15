@@ -94,6 +94,9 @@
     <Compile Include="Controls\HeadSculControl.xaml.cs">
       <DependentUpon>HeadSculControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MainPanelControl.xaml.cs">
+      <DependentUpon>MainPanelControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ServerInfoControl.xaml.cs">
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
@@ -116,6 +119,10 @@
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\HeadSculControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MainPanelControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

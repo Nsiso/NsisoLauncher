@@ -10,22 +10,18 @@
         mc:Ignorable="d"
         BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
-        Title="Nsiso Launcher" Height="445" Width="720" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
+        Title="Nsiso Launcher" Height="445" Width="750" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True" Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
     <controls:MetroWindow.Background>
         <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill" />
     </controls:MetroWindow.Background>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="11*"/>
         </Grid.ColumnDefinitions>
         <MediaElement x:Name="mediaElement" Visibility="Hidden" LoadedBehavior="Manual" MediaEnded="mediaElement_MediaEnded" Grid.ColumnSpan="2"/>
         <Grid x:Name="userGrid" Grid.Column="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
             <!--#region 高斯模糊效果(最底层) -->
             <Rectangle Grid.ColumnSpan="2">
                 <Rectangle.Effect>
@@ -44,61 +40,7 @@
             </Rectangle>
             <Rectangle Fill="White" Opacity="0.2" Grid.ColumnSpan="2"/>
             <!--#endregion-->
-            <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
-                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click" Grid.ColumnSpan="2"/>
-
-            <userControl:HeadSculControl x:Name="headScul" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="61,10,61,0" Grid.ColumnSpan="2"/>
-
-            <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,190,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
-            <ComboBox x:Name="authTypeCombobox"
-                  Margin="41,190,20,0" 
-                  VerticalAlignment="Top" 
-                  Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                  DisplayMemberPath="Name"
-                  SelectedValuePath="Type"
-                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthenticationType}"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"
-                  />
-
-            <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
-            <ComboBox x:Name="launchVersionCombobox"
-                  Margin="41,120,20,0" 
-                  VerticalAlignment="Top" 
-                  Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                  DisplayMemberPath="ID"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}" Grid.ColumnSpan="2"
-                  />
-
-            <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
-            <ComboBox x:Name="userComboBox"
-                 IsEditable="True"
-                 Height="23"
-                 Margin="41,155,20,0"
-                 SelectedValuePath="Key"
-                 DisplayMemberPath="Value.UserName"
-                 VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2"
-                 />
-
-            <!--
-            <controls:ToggleSwitch Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Margin="41,190,10,0" Height="auto" VerticalAlignment="Top"
-                                   x:Name="isOnlineLogin"
-                                   OnLabel="{DynamicResource String.Mainwindow.UseOnlineAuth}"
-                                   OffLabel="{DynamicResource String.Mainwindow.UseOfflineAuth}" FontSize="14"
-                                   />
-            -->
-
-            <Button x:Name="configButton"
-                    Height="30" Margin="10,0,5,65" VerticalAlignment="Bottom"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="configButton_Click">
-                <iconPacks:FontAwesome Kind="CogSolid"/>
-            </Button>
-
-            <Button x:Name="downloadButton"
-                    Height="30" Margin="5,0,10,65" VerticalAlignment="Bottom"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="downloadButton_Click" Grid.Column="1">
-                <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
-            </Button>
+            <userControl:MainPanelControl x:Name="mainPanel"/>
         </Grid>
         <Button x:Name="volumeButton" Style ="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
                 Width="30" Height="30" Margin="0,10,225,0" VerticalAlignment="Top" HorizontalAlignment="Right"

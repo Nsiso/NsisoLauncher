@@ -29,7 +29,6 @@ namespace NsisoLauncher
         public static List<Java> javaList;
 
         #region API静态变量
-        public static NsisoLauncherCore.Net.Nide8API.APIHandler nide8Handler;
         public static NsisoLauncherCore.Net.PhalAPI.APIHandler nsisoAPIHandler;
         #endregion
 
@@ -154,11 +153,14 @@ namespace NsisoLauncher
             #region 启动核心初始化
             handler = new LaunchHandler(gameroot, java, verIso);
             handler.GameLog += (s, log) => logHandler.AppendLog(s, new Log() { LogLevel = LogLevel.GAME, Message = log });
+            handler.LaunchLog += (s, log) => logHandler.AppendLog(s, log);
             #endregion
 
             #region 下载核心初始化
             ServicePointManager.DefaultConnectionLimit = 10;
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)192 | (SecurityProtocolType)768 | (SecurityProtocolType)3072;
+            //there have some broblem QAQ
+            //ServicePointManager.SecurityProtocol = (SecurityProtocolType)192 | (SecurityProtocolType)768 | (SecurityProtocolType)3072;
+
             Download downloadCfg = config.MainConfig.Download;
             downloader = new MultiThreadDownloader();
             if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
@@ -173,14 +175,6 @@ namespace NsisoLauncher
             }
             downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
-            #endregion
-
-            #region NIDE8核心初始化
-            if (!string.IsNullOrWhiteSpace(config.MainConfig.User.Nide8ServerID))
-            {
-                nide8Handler = new NsisoLauncherCore.Net.Nide8API.APIHandler(config.MainConfig.User.Nide8ServerID);
-                nide8Handler.UpdateBaseURL();
-            }
             #endregion
 
             #region 自定义主题初始化

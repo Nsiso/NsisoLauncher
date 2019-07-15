@@ -7,6 +7,64 @@ using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
 {
+    #region Enum
+
+    public enum AuthenticationType
+    {
+        /// <summary>
+        /// 离线验证
+        /// </summary>
+        OFFLINE,
+
+        /// <summary> 
+        /// 官方正版验证
+        /// </summary>
+        MOJANG,
+
+        /// <summary>
+        /// 统一验证
+        /// </summary>
+        NIDE8,
+
+        /// <summary>
+        /// authlib-injector验证
+        /// </summary>
+        AUTHLIB_INJECTOR,
+
+        /// <summary>
+        /// 自定义服务器验证
+        /// </summary>
+        CUSTOM_SERVER
+    }
+
+    public enum GameDirEnum
+    {
+        /// <summary>
+        /// 启动器根目录
+        /// </summary>
+        ROOT = 0,
+
+        /// <summary>
+        /// 系统AppData
+        /// </summary>
+        APPDATA = 1,
+
+        /// <summary>
+        /// 系统程序文件夹
+        /// </summary>
+        PROGRAMFILES = 2,
+
+        /// <summary>
+        /// 自定义
+        /// </summary>
+        CUSTOM = 3
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 主设置
+    /// </summary>
     public class MainConfig
     {
         /// <summary>
@@ -43,14 +101,27 @@ namespace NsisoLauncher.Config
         /// 自定义设置
         /// </summary>
         public Customize Customize { get; set; }
+
+        /// <summary>
+        /// 配置文件版本
+        /// </summary>
+        public System.Version ConfigVersion { get; set; }
     }
 
+    /// <summary>
+    /// 用户基本设置
+    /// </summary>
     public class User
     {
         /// <summary>
         /// 用户数据库
         /// </summary>
-        public Dictionary<string, AuthenticationNode> AuthenticationDatabase { get; set; } = new Dictionary<string, AuthenticationNode>();
+        public Dictionary<string, UserNode> UserDatabase { get; set; }
+
+        /// <summary>
+        /// 验证节点
+        /// </summary>
+        public Dictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
 
         /// <summary>
         /// 用户端Token
@@ -58,21 +129,10 @@ namespace NsisoLauncher.Config
         public string ClientToken { get; set; }
 
         /// <summary>
-        /// 验证服务器
+        /// 锁定全局验证
         /// </summary>
-        public string AuthServer { get; set; }
-
-        /// <summary>
-        /// 统一通行证服务器ID
-        /// </summary>
-        public string Nide8ServerID { get; set; }
-
-        /// <summary>
-        /// 是否使用NIDE8返回的服务器IP设置直连和服务器信息
-        /// </summary>
-        public bool AllUsingNide8 { get; set; }
+        public string LockAuthName { get; set; }
     }
-
 
     /// <summary>
     /// 启动环境基本设置
@@ -170,6 +230,9 @@ namespace NsisoLauncher.Config
         public bool ExitAfterLaunch { get; set; }
     }
 
+    /// <summary>
+    /// 启动器设置
+    /// </summary>
     public class Launcher
     {
         /// <summary>
@@ -183,6 +246,9 @@ namespace NsisoLauncher.Config
         public bool NoTracking { get; set; }
     }
 
+    /// <summary>
+    /// 下载设置
+    /// </summary>
     public class Download
     {
         /// <summary>
@@ -216,61 +282,15 @@ namespace NsisoLauncher.Config
         public string ProxyUserPassword { get; set; }
     }
 
-    public enum AuthenticationType
-    {
-        /// <summary>
-        /// 离线验证
-        /// </summary>
-        OFFLINE,
-
-        /// <summary>
-        /// 官方正版验证
-        /// </summary>
-        MOJANG,
-
-        /// <summary>
-        /// 统一验证
-        /// </summary>
-        NIDE8,
-
-        /// <summary>
-        /// 自定义服务器
-        /// </summary>
-        CUSTOM_SERVER
-    }
-
-    public enum GameDirEnum
-    {
-        /// <summary>
-        /// 启动器根目录
-        /// </summary>
-        ROOT = 0,
-
-        /// <summary>
-        /// 系统AppData
-        /// </summary>
-        APPDATA = 1,
-
-        /// <summary>
-        /// 系统程序文件夹
-        /// </summary>
-        PROGRAMFILES = 2,
-
-        /// <summary>
-        /// 自定义
-        /// </summary>
-        CUSTOM = 3
-    }
-
     /// <summary>
-    /// 历史记录类
+    /// 历史记录设置
     /// </summary>
     public class History
     {
         /// <summary>
         /// 选中的用户的ID
         /// </summary>
-        public string SelectedAuthNodeID { get; set; }
+        public string SelectedUserNodeID { get; set; }
 
         /// <summary>
         /// 上一次启动版本
@@ -289,7 +309,7 @@ namespace NsisoLauncher.Config
     }
 
     /// <summary>
-    /// 服务器设置类
+    /// 服务器设置
     /// </summary>
     public class Server
     {
@@ -319,6 +339,9 @@ namespace NsisoLauncher.Config
         public ushort Port { get; set; }
     }
 
+    /// <summary>
+    /// 自定义设置
+    /// </summary>
     public class Customize
     {
         /// <summary>
@@ -357,12 +380,15 @@ namespace NsisoLauncher.Config
         public string VersionInfo { get; set; }
     }
 
-    public class AuthenticationNode : INotifyPropertyChanged
+    /// <summary>
+    /// 用户验证节点设置
+    /// </summary>
+    public class UserNode/* : INotifyPropertyChanged*/
     {
         /// <summary>
-        /// 验证类型
+        /// 所使用的验证模型
         /// </summary>
-        public AuthenticationType AuthenticationType { get; set; }
+        public string AuthModule { get; set; }
 
         /// <summary>
         /// 用户名/账号
@@ -389,12 +415,12 @@ namespace NsisoLauncher.Config
         /// </summary>
         public UserData UserData { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //protected void OnPropertyChanged(string propertyName)
+        //{
+        //    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         public Uuid GetSelectProfileUUID()
         {
@@ -408,6 +434,25 @@ namespace NsisoLauncher.Config
         }
     }
 
+    /// <summary>
+    /// 验证节点设置
+    /// </summary>
+    public class AuthenticationNode
+    {
+        public string Name { get; set; }
+
+        public AuthenticationType AuthType { get; set; }
+
+        /// <summary>
+        /// authserver:验证服务器地址
+        /// nide8ID:NIDE8的验证ID
+        /// </summary>
+        public Dictionary<string,string> Property { get; set; }
+    }
+
+    /// <summary>
+    /// profile文件
+    /// </summary>
     public class Profile
     {
         /// <summary>
