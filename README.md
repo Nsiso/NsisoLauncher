@@ -1,5 +1,6 @@
 # NsisoLauncher
 A New Minecraft Launcher (unofficial) from Nsiso
+[![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=master)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=master)
 
 感谢您关注到我们Nsiso启动器的开源项目
 此开源项目是为了帮助各位学习，方便纠错，以及证明用户安全保
