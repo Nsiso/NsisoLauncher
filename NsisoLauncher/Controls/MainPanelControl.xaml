@@ -13,6 +13,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            
         </Grid.ColumnDefinitions>
         <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
                     FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click" Grid.ColumnSpan="2"/>
@@ -21,13 +22,17 @@
 
         <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,190,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
         <ComboBox x:Name="authTypeCombobox"
-                  Margin="41,190,20,0" 
+                  Margin="41,190,60,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="Value.Name"
                   SelectedValuePath="Key"
                   SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"/>
+        <Button  Grid.Column="1" Margin="0,190,20,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="35" ToolTip="{DynamicResource String.Mainwindow.Auth.Add}"
+                 Background="{x:Null}" BorderBrush="White" Foreground="White">
+            <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
+        </Button>
 
         <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" HorizontalAlignment ="Left" Margin="10,120,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
         <ComboBox x:Name="launchVersionCombobox"

@@ -57,6 +57,13 @@ namespace NsisoLauncher.Controls
 
         public async void Refresh()
         {
+            //更新用户列表
+            userList.Clear();
+            foreach (var item in App.config.MainConfig.User.UserDatabase)
+            {
+                userList.Add(item);
+            }
+
             //更新验证模型列表
             authNodeList.Clear();
             authNodeList.Add(new KeyValuePair<string, AuthenticationNode>("offline", new AuthenticationNode()
@@ -74,22 +81,16 @@ namespace NsisoLauncher.Controls
                 authNodeList.Add(item);
             }
 
-            //更新用户列表
-            userList.Clear();
-            foreach (var item in App.config.MainConfig.User.UserDatabase)
-            {
-                userList.Add(item);
-            }
-            this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
-
             //更新版本列表
-            versionList.Clear();
             List<NsisoLauncherCore.Modules.Version> versions = await App.handler.GetVersionsAsync();
+            versionList.Clear();
             foreach (var item in versions)
             {
                 versionList.Add(item);
             }
+
             this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+            this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
 
             App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
@@ -172,7 +173,6 @@ namespace NsisoLauncher.Controls
             //CustomizeRefresh();
         }
         #endregion
-
     }
 
     public class LaunchEventArgs : EventArgs

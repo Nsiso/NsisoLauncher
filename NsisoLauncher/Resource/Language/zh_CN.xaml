@@ -72,7 +72,9 @@
     <sys:String x:Key="String.Mainwindow.Auth.Custom.Login2">您启用了自定义验证</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress">未设置自定义验证服务器地址</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress2">请在设置：用户验证设置：高级验证中设置自定义验证服务器(authlib或其它验证系统)</sys:String>
-     <!--#endregion-->
+
+    <sys:String x:Key="String.Mainwindow.Auth.Add">添加新验证方式</sys:String>
+    <!--#endregion-->
 
     <sys:String x:Key="String.Mainwindow.LaunchError">启动错误</sys:String>
     <sys:String x:Key="String.Mainwindow.GameExitWithNoWindow">游戏进程在未显示出窗口前退出</sys:String>
