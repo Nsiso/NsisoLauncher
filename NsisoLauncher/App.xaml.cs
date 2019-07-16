@@ -188,8 +188,6 @@ namespace NsisoLauncher
             #endregion
 
             //debug
-            //nsisoAPIHandler.GetLatestLauncherVersion();
-            //throw new Exception();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
