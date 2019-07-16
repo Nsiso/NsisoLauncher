@@ -1,34 +1,27 @@
 # NsisoLauncher
-A New Minecraft Launcher (unofficial) from Nsiso
+A New Minecraft Launcher (unofficial) from Nsiso  
 [![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=master)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=master)
 
-感谢您关注到我们Nsiso启动器的开源项目
-此开源项目是为了帮助各位学习，方便纠错，以及证明用户安全保
-作者：Nsiso工作室-siso
-请注意该项目遵循GNU GPL3.0开源协议
-
-注意：
-Nsiso启动器的启动核心目前单独分离开源。
-Nsiso启动器通过核心开源<->应用开源的分离结构，以便稳定更新。同时封装后的启动核心会更方便其他人使用Nsiso启动核心。
-启动核心Github源：https://github.com/Nsiso/NsisoLauncherCore
-此项目需要依赖nsiso launcher core
-
-
+感谢您关注到我们Nsiso启动器的开源项目  
+此项目开源目的在于学习，错误排查，公开安全策略  
+作者：Nsiso工作室-siso  
+请注意该项目遵循GNU GPL3.0开源协议  
+  
 ## 使用组件（由名字字母排序）：
 
 #### BMCLAPI
-bangbang93's minecraft launcher api
-https://bmclapidoc.bangbang93.com/
-> 关于
-BMCLAPI是@bangbang93开发的BMCL的一部分，用于解决国内线路对Forge和Minecraft官方使用的Amazon S3 速度缓慢的问题。BMCLAPI是对外开放的，所有需要Minecraft资源的启动器均可调用。
-协议
-BMCLAPI下的所有文件，除BMCLAPI本身的源码之外，归源站点所有
-BMCLAPI会尽量保证文件的完整性、有效性和实时性，对于使用BMCLAPI带来的一切纠纷，与BMCLAPI无关。
-BMCLAPI和BMCL不同，属于非开源项目
-所有使用BMCLAPI的程序必需在下载界面或其他可视部分标明来源
-禁止在BMCLAPI上二次封装其他协议
-捐助
-服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com
+bangbang93's minecraft launcher api  
+https://bmclapidoc.bangbang93.com/  
+> 关于  
+BMCLAPI是@bangbang93开发的BMCL的一部分，用于解决国内线路对Forge和Minecraft官方使用的Amazon S3 速度缓慢的问题。BMCLAPI是对外开放的，所有需要Minecraft资源的启动器均可调用。  
+协议  
+BMCLAPI下的所有文件，除BMCLAPI本身的源码之外，归源站点所有  
+BMCLAPI会尽量保证文件的完整性、有效性和实时性，对于使用BMCLAPI带来的一切纠纷，与BMCLAPI无关。  
+BMCLAPI和BMCL不同，属于非开源项目  
+所有使用BMCLAPI的程序必需在下载界面或其他可视部分标明来源  
+禁止在BMCLAPI上二次封装其他协议  
+捐助  
+服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com  
 
 ------------
 
