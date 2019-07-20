@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using NsisoLauncherCore.Modules;
+using System;
+using System.Windows;
 
 namespace NsisoLauncher.Windows
 {
@@ -22,7 +22,7 @@ namespace NsisoLauncher.Windows
                 this.textBox.AppendText(string.Format("[{0}][{1}]{2}\n", log.LogLevel.ToString(), DateTime.Now.ToString(), log.Message));
                 textBox.ScrollToEnd();
             }));
-            
+
         }
 
         public void AppendGameLog(object sender, string gamelog)

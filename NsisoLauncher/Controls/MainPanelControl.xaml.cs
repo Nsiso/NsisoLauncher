@@ -1,19 +1,10 @@
 ﻿using NsisoLauncher.Config;
+using NsisoLauncher.Windows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using NsisoLauncher.Windows;
 
 namespace NsisoLauncher.Controls
 {
@@ -57,42 +48,51 @@ namespace NsisoLauncher.Controls
 
         public async void Refresh()
         {
-            //更新用户列表
-            userList.Clear();
-            foreach (var item in App.config.MainConfig.User.UserDatabase)
+            try
             {
-                userList.Add(item);
+                //更新用户列表
+                userList.Clear();
+                foreach (var item in App.config.MainConfig.User.UserDatabase)
+                {
+                    userList.Add(item);
+                }
+
+                //更新验证模型列表
+                authNodeList.Clear();
+                authNodeList.Add(new KeyValuePair<string, AuthenticationNode>("offline", new AuthenticationNode()
+                {
+                    AuthType = AuthenticationType.OFFLINE,
+                    Name = App.GetResourceString("String.MainWindow.Auth.Offline")
+                }));
+                authNodeList.Add(new KeyValuePair<string, AuthenticationNode>("mojang", new AuthenticationNode()
+                {
+                    AuthType = AuthenticationType.MOJANG,
+                    Name = App.GetResourceString("String.MainWindow.Auth.Mojang")
+                }));
+                foreach (var item in App.config.MainConfig.User.AuthenticationDic)
+                {
+                    authNodeList.Add(item);
+                }
+
+                //更新版本列表
+                List<NsisoLauncherCore.Modules.Version> versions = await App.handler.GetVersionsAsync();
+                versionList.Clear();
+                foreach (var item in versions)
+                {
+                    versionList.Add(item);
+                }
+
+                this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
+                if (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID))
+                {
+                    this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
+                }
+                App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
             }
-
-            //更新验证模型列表
-            authNodeList.Clear();
-            authNodeList.Add(new KeyValuePair<string, AuthenticationNode>("offline", new AuthenticationNode()
+            catch (Exception e)
             {
-                AuthType = AuthenticationType.OFFLINE,
-                Name = App.GetResourceString("String.MainWindow.Auth.Offline")
-            }));
-            authNodeList.Add(new KeyValuePair<string, AuthenticationNode>("mojang", new AuthenticationNode()
-            {
-                AuthType = AuthenticationType.MOJANG,
-                Name = App.GetResourceString("String.MainWindow.Auth.Mojang")
-            }));
-            foreach (var item in App.config.MainConfig.User.AuthenticationDic)
-            {
-                authNodeList.Add(item);
+                App.CatchAggregateException(this, new AggregateExceptionArgs() { AggregateException = new AggregateException("启动器致命错误", e) });
             }
-
-            //更新版本列表
-            List<NsisoLauncherCore.Modules.Version> versions = await App.handler.GetVersionsAsync();
-            versionList.Clear();
-            foreach (var item in versions)
-            {
-                versionList.Add(item);
-            }
-
-            this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
-            this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
-
-            App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
         }
 
         public async void RefreshIcon()
@@ -153,9 +153,9 @@ namespace NsisoLauncher.Controls
             {
                 userNode = null;
             }
-            
 
-            this.Launch?.Invoke(new LaunchEventArgs() { AuthNode = authNode, UserNode = userNode, LaunchVersion = launchVersion, IsNewUser = isNewUser});
+
+            this.Launch?.Invoke(new LaunchEventArgs() { AuthNode = authNode, UserNode = userNode, LaunchVersion = launchVersion, IsNewUser = isNewUser });
         }
 
         //下载按钮点击
@@ -173,6 +173,14 @@ namespace NsisoLauncher.Controls
             //CustomizeRefresh();
         }
         #endregion
+
+        private void addAuthButton_Click(object sender, RoutedEventArgs e)
+        {
+            var a = new SettingWindow();
+            a.ShowAddAuthModule();
+            a.ShowDialog();
+            Refresh();
+        }
     }
 
     public class LaunchEventArgs : EventArgs

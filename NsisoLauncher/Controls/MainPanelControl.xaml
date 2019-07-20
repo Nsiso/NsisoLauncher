@@ -30,7 +30,7 @@
                   SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"/>
         <Button  Grid.Column="1" Margin="0,190,20,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="35" ToolTip="{DynamicResource String.Mainwindow.Auth.Add}"
-                 Background="{x:Null}" BorderBrush="White" Foreground="White">
+                 Background="{x:Null}" BorderBrush="White" Foreground="White" Height="26" Click="addAuthButton_Click">
             <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
         </Button>
 

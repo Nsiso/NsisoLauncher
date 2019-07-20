@@ -68,36 +68,36 @@ change the SOA RR with known semantics.
 namespace Heijden.DNS
 {
     public class RecordSOA : Record
-	{
-		public string MNAME;
-		public string RNAME;
-		public uint SERIAL;
-		public uint REFRESH;
-		public uint RETRY;
-		public uint EXPIRE;
-		public uint MINIMUM;
+    {
+        public string MNAME;
+        public string RNAME;
+        public uint SERIAL;
+        public uint REFRESH;
+        public uint RETRY;
+        public uint EXPIRE;
+        public uint MINIMUM;
 
-		public RecordSOA(RecordReader rr)
-		{
-			MNAME = rr.ReadDomainName();
-			RNAME = rr.ReadDomainName();
-			SERIAL = rr.ReadUInt32();
-			REFRESH = rr.ReadUInt32();
-			RETRY = rr.ReadUInt32();
-			EXPIRE = rr.ReadUInt32();
-			MINIMUM = rr.ReadUInt32();
-		}
+        public RecordSOA(RecordReader rr)
+        {
+            MNAME = rr.ReadDomainName();
+            RNAME = rr.ReadDomainName();
+            SERIAL = rr.ReadUInt32();
+            REFRESH = rr.ReadUInt32();
+            RETRY = rr.ReadUInt32();
+            EXPIRE = rr.ReadUInt32();
+            MINIMUM = rr.ReadUInt32();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2} {3} {4} {5} {6}",
-				MNAME,
-				RNAME,
-				SERIAL,
-				REFRESH,
-				RETRY,
-				EXPIRE,
-				MINIMUM);
-		}
-	}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} {3} {4} {5} {6}",
+                MNAME,
+                RNAME,
+                SERIAL,
+                REFRESH,
+                RETRY,
+                EXPIRE,
+                MINIMUM);
+        }
+    }
 }

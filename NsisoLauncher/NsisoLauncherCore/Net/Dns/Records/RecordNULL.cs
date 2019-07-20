@@ -16,22 +16,22 @@ experimental extensions of the DNS.
 namespace Heijden.DNS
 {
     public class RecordNULL : Record
-	{
-		public byte[] ANYTHING;
+    {
+        public byte[] ANYTHING;
 
-		public RecordNULL(RecordReader rr)
-		{
-			rr.Position -= 2;
-			// re-read length
-			ushort RDLENGTH = rr.ReadUInt16();
-			ANYTHING = new byte[RDLENGTH];
-			ANYTHING = rr.ReadBytes(RDLENGTH);
-		}
+        public RecordNULL(RecordReader rr)
+        {
+            rr.Position -= 2;
+            // re-read length
+            ushort RDLENGTH = rr.ReadUInt16();
+            ANYTHING = new byte[RDLENGTH];
+            ANYTHING = rr.ReadBytes(RDLENGTH);
+        }
 
-		public override string ToString()
-		{
-			return string.Format("...binary data... ({0}) bytes",ANYTHING.Length);
-		}
+        public override string ToString()
+        {
+            return string.Format("...binary data... ({0}) bytes", ANYTHING.Length);
+        }
 
-	}
+    }
 }

@@ -1,15 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncherCore.Util;
+using System;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using Newtonsoft.Json;
-using NsisoLauncherCore.Util;
 
 namespace NsisoLauncher.Windows
 {

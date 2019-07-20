@@ -16,18 +16,18 @@
 namespace Heijden.DNS
 {
     public class RecordDNAME : Record
-	{
-		public string TARGET;
+    {
+        public string TARGET;
 
-		public RecordDNAME(RecordReader rr)
-		{
-			TARGET = rr.ReadDomainName();
-		}
+        public RecordDNAME(RecordReader rr)
+        {
+            TARGET = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return TARGET;
-		}
+        public override string ToString()
+        {
+            return TARGET;
+        }
 
-	}
+    }
 }

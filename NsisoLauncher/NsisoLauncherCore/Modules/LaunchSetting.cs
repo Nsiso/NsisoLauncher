@@ -1,5 +1,4 @@
 ﻿using NsisoLauncherCore.Auth;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Modules
 {

@@ -1,12 +1,11 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Responses;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
-using NsisoLauncherCore.Net.MojangApi;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 {
@@ -79,7 +78,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                             Demo = null
                         });
                     }
-                        
+
 
                     return new AuthenticateResponse(this.Response)
                     {

@@ -2,11 +2,8 @@
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse.UserData;
 
 namespace NsisoLauncherCore.Auth
 {
@@ -143,9 +140,12 @@ namespace NsisoLauncherCore.Auth
                 var result = resultTask.Result;
                 if (result.IsSuccess)
                 {
-                    return new AuthenticateResult(AuthState.SUCCESS) { AccessToken = this.AccessToken,
+                    return new AuthenticateResult(AuthState.SUCCESS)
+                    {
+                        AccessToken = this.AccessToken,
                         SelectedProfileUUID = this.SelectedProfileUUID,
-                        UserData = this.UserData };
+                        UserData = this.UserData
+                    };
                 }
                 else
                 {
@@ -183,7 +183,8 @@ namespace NsisoLauncherCore.Auth
             }
             catch (Exception ex)
             {
-                return new AuthenticateResult(AuthState.ERR_INSIDE) {
+                return new AuthenticateResult(AuthState.ERR_INSIDE)
+                {
                     Error = new Net.MojangApi.Error() { ErrorMessage = ex.Message, Exception = ex },
                     AccessToken = AccessToken = this.AccessToken,
                     UserData = this.UserData,

@@ -1,10 +1,10 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using NsisoLauncherCore.LaunchException;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using NsisoLauncherCore.LaunchException;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore

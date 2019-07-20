@@ -1,13 +1,13 @@
 ﻿using NsisoLauncher.Config;
-using System.Windows.Controls;
 using NsisoLauncherCore.Net.Server;
-using System.Runtime.InteropServices;
 using System;
 using System.Drawing;
-using System.Windows.Media;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Controls
 {
@@ -37,7 +37,7 @@ namespace NsisoLauncher.Controls
                 serverLoadingBar.Visibility = Visibility.Visible;
                 serverLoadingBar.IsIndeterminate = true;
 
-                
+
                 ServerInfo serverInfo = new ServerInfo(server.Address, server.Port);
                 await serverInfo.StartGetServerInfoAsync();
 

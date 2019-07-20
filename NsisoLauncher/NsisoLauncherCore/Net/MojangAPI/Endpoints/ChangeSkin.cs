@@ -33,7 +33,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         public async override Task<Response> PerformRequestAsync()
         {
             this.Response = await Requester.Post(this, new Dictionary<string, string>() {
-                { "model", (bool.Parse(Arguments[2]) == true ? "slim" : null) }, 
+                { "model", (bool.Parse(Arguments[2]) == true ? "slim" : null) },
                 { "url", Arguments[1] },
             });
 

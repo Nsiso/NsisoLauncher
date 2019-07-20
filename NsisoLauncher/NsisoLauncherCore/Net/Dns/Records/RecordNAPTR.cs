@@ -43,34 +43,34 @@
 namespace Heijden.DNS
 {
     public class RecordNAPTR : Record
-	{
-		public ushort ORDER;
-		public ushort PREFERENCE;
-		public string FLAGS;
-		public string SERVICES;
-		public string REGEXP;
-		public string REPLACEMENT;
+    {
+        public ushort ORDER;
+        public ushort PREFERENCE;
+        public string FLAGS;
+        public string SERVICES;
+        public string REGEXP;
+        public string REPLACEMENT;
 
-		public RecordNAPTR(RecordReader rr)
-		{
-			ORDER = rr.ReadUInt16();
-			PREFERENCE = rr.ReadUInt16();
-			FLAGS = rr.ReadString();
-			SERVICES = rr.ReadString();
-			REGEXP = rr.ReadString();
-			REPLACEMENT = rr.ReadDomainName();
-		}
+        public RecordNAPTR(RecordReader rr)
+        {
+            ORDER = rr.ReadUInt16();
+            PREFERENCE = rr.ReadUInt16();
+            FLAGS = rr.ReadString();
+            SERVICES = rr.ReadString();
+            REGEXP = rr.ReadString();
+            REPLACEMENT = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} \"{2}\" \"{3}\" \"{4}\" {5}",
-				ORDER,
-				PREFERENCE,
-				FLAGS,
-				SERVICES,
-				REGEXP,
-				REPLACEMENT);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} \"{2}\" \"{3}\" \"{4}\" {5}",
+                ORDER,
+                PREFERENCE,
+                FLAGS,
+                SERVICES,
+                REGEXP,
+                REPLACEMENT);
+        }
 
-	}
+    }
 }

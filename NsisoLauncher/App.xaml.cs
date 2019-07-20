@@ -1,17 +1,17 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.IO;
-using NsisoLauncher.Config;
 using MahApps.Metro;
-using System.Net;
-using NsisoLauncherCore;
-using NsisoLauncherCore.Util;
+using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Windows;
 
 namespace NsisoLauncher
 {

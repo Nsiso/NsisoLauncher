@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Timers;
-
-namespace NsisoLauncherCore.Net
+﻿namespace NsisoLauncherCore.Net
 {
     //public class NewDownloader
     //{
@@ -51,7 +43,7 @@ namespace NsisoLauncherCore.Net
     //    /// <param name="e"></param>
     //    private void _timer_Elapsed(object sender, ElapsedEventArgs e)
     //    {
-            
+
     //    }
     //    #endregion
     //}

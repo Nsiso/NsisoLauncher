@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace NsisoLauncherCore.Util
 {
@@ -68,7 +67,7 @@ namespace NsisoLauncherCore.Util
 
                         if (keepRead)
                         {
-                            builder.AppendLine(allLogArr[i-1]);
+                            builder.AppendLine(allLogArr[i - 1]);
                         }
 
                         //最简单的检查

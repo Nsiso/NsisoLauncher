@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NsisoLauncherCore.Net.MojangApi.Api;
+using System;
 using System.Threading.Tasks;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Auth

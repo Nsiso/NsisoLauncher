@@ -1,12 +1,8 @@
 ﻿using NsisoLauncherCore.Net.MojangApi;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse.UserData;
 
 namespace NsisoLauncherCore.Auth
 {

@@ -1,10 +1,8 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.FunctionAPI;
 using NsisoLauncherCore.Net.Tools;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +40,7 @@ namespace NsisoLauncherCore.Util
             {
                 return false;
             }
-            
+
         }
         #endregion
 
@@ -224,7 +222,7 @@ namespace NsisoLauncherCore.Util
             var lostLibs = GetLostLibs(core, version);
             var lostNatives = GetLostNatives(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
-            if (IsLostJarCore(core,version))
+            if (IsLostJarCore(core, version))
             {
                 if (version.Jar == null)
                 {
@@ -255,7 +253,7 @@ namespace NsisoLauncherCore.Util
                 {
                     tasks.AddRange(await GetLostDependDownloadTaskAsync(source, core, innerVer));
                 }
-                
+
             }
             foreach (var item in lostLibs)
             {

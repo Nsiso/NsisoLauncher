@@ -275,7 +275,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version));
-                
+
 
                 using (var contents = new MultipartFormDataContent())
                 {

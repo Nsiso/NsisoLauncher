@@ -40,25 +40,25 @@
 namespace Heijden.DNS
 {
     public class RecordGPOS : Record
-	{
-		public string LONGITUDE;
-		public string LATITUDE;
-		public string ALTITUDE;
+    {
+        public string LONGITUDE;
+        public string LATITUDE;
+        public string ALTITUDE;
 
-		public RecordGPOS(RecordReader rr)
-		{
-			LONGITUDE = rr.ReadString();
-			LATITUDE = rr.ReadString();
-			ALTITUDE = rr.ReadString();
-		}
+        public RecordGPOS(RecordReader rr)
+        {
+            LONGITUDE = rr.ReadString();
+            LATITUDE = rr.ReadString();
+            ALTITUDE = rr.ReadString();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2}",
-				LONGITUDE,
-				LATITUDE,
-				ALTITUDE);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}",
+                LONGITUDE,
+                LATITUDE,
+                ALTITUDE);
+        }
 
-	}
+    }
 }

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Net.MojangApi.Responses;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Auth

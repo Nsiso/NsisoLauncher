@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Responses;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 {
@@ -26,7 +26,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// </summary>
         public async override Task<ApiStatusResponse> PerformRequestAsync()
         {
-           this.Response = await Requester.Get(this);
+            this.Response = await Requester.Get(this);
 
             if (this.Response.IsSuccess)
             {
@@ -64,6 +64,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 
         }
     }
-    
+
 
 }

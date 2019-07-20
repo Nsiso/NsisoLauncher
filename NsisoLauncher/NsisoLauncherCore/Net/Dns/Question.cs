@@ -46,83 +46,83 @@ namespace Heijden.DNS
     #endregion
 
     public class Question
-	{
-		private string m_QName;
-		public string QName
-		{
-			get
-			{
-				return m_QName;
-			}
-			set
-			{
-				m_QName = value;
-				if (!m_QName.EndsWith("."))
-					m_QName += ".";
-			}
-		}
-		public QType QType;
-		public QClass QClass;
+    {
+        private string m_QName;
+        public string QName
+        {
+            get
+            {
+                return m_QName;
+            }
+            set
+            {
+                m_QName = value;
+                if (!m_QName.EndsWith("."))
+                    m_QName += ".";
+            }
+        }
+        public QType QType;
+        public QClass QClass;
 
-		public Question(string QName,QType QType,QClass QClass)
-		{
-			this.QName = QName;
-			this.QType = QType;
-			this.QClass = QClass;
-		}
+        public Question(string QName, QType QType, QClass QClass)
+        {
+            this.QName = QName;
+            this.QType = QType;
+            this.QClass = QClass;
+        }
 
-		public Question(RecordReader rr)
-		{
-			QName = rr.ReadDomainName();
-			QType = (QType)rr.ReadUInt16();
-			QClass = (QClass)rr.ReadUInt16();
-		}
+        public Question(RecordReader rr)
+        {
+            QName = rr.ReadDomainName();
+            QType = (QType)rr.ReadUInt16();
+            QClass = (QClass)rr.ReadUInt16();
+        }
 
-		private byte[] WriteName(string src)
-		{
-			if (!src.EndsWith("."))
-				src += ".";
+        private byte[] WriteName(string src)
+        {
+            if (!src.EndsWith("."))
+                src += ".";
 
-			if (src == ".")
-				return new byte[1];
+            if (src == ".")
+                return new byte[1];
 
-			StringBuilder sb = new StringBuilder();
-			int intI, intJ, intLen = src.Length;
-			sb.Append('\0');
-			for (intI = 0, intJ = 0; intI < intLen; intI++, intJ++)
-			{
-				sb.Append(src[intI]);
-				if (src[intI] == '.')
-				{
-					sb[intI - intJ] = (char)(intJ & 0xff);
-					intJ = -1;
-				}
-			}
-			sb[sb.Length - 1] = '\0';
-			return Encoding.ASCII.GetBytes(sb.ToString());
-		}
+            StringBuilder sb = new StringBuilder();
+            int intI, intJ, intLen = src.Length;
+            sb.Append('\0');
+            for (intI = 0, intJ = 0; intI < intLen; intI++, intJ++)
+            {
+                sb.Append(src[intI]);
+                if (src[intI] == '.')
+                {
+                    sb[intI - intJ] = (char)(intJ & 0xff);
+                    intJ = -1;
+                }
+            }
+            sb[sb.Length - 1] = '\0';
+            return Encoding.ASCII.GetBytes(sb.ToString());
+        }
 
-		public byte[] Data
-		{
-			get
-			{
-				List<byte> data = new List<byte>();
-				data.AddRange(WriteName(QName));
-				data.AddRange(WriteShort((ushort)QType));
-				data.AddRange(WriteShort((ushort)QClass));
-				return data.ToArray();
-			}
-		}
+        public byte[] Data
+        {
+            get
+            {
+                List<byte> data = new List<byte>();
+                data.AddRange(WriteName(QName));
+                data.AddRange(WriteShort((ushort)QType));
+                data.AddRange(WriteShort((ushort)QClass));
+                return data.ToArray();
+            }
+        }
 
-		private byte[] WriteShort(ushort sValue)
-		{
-			return BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)sValue));
-		}
+        private byte[] WriteShort(ushort sValue)
+        {
+            return BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)sValue));
+        }
 
 
-		public override string ToString()
-		{
-			return string.Format("{0,-32}\t{1}\t{2}", QName, QClass, QType);
-		}
-	}
+        public override string ToString()
+        {
+            return string.Format("{0,-32}\t{1}\t{2}", QName, QClass, QType);
+        }
+    }
 }

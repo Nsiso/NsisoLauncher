@@ -1,5 +1,11 @@
-﻿using System;
+﻿using MahApps.Metro;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
+using NsisoLauncherCore.Util;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -11,14 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using MahApps.Metro;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncher.Core.Util;
-using NsisoLauncherCore.Util;
 
-//todo 对新用户配置结构进行匹配
 namespace NsisoLauncher.Windows
 {
     /// <summary>
@@ -26,40 +25,47 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class SettingWindow : MetroWindow
     {
-        private Config.MainConfig config;
-        private List<AuthTypeItem> authTypes = new List<AuthTypeItem>()
-        {
-            new AuthTypeItem(){Type = Config.AuthenticationType.OFFLINE, Name = App.GetResourceString("String.MainWindow.Auth.Offline")},
-            new AuthTypeItem(){Type = Config.AuthenticationType.MOJANG, Name = App.GetResourceString("String.MainWindow.Auth.Mojang")},
-            new AuthTypeItem(){Type = Config.AuthenticationType.NIDE8, Name = App.GetResourceString("String.MainWindow.Auth.Nide8")},
-            new AuthTypeItem(){Type = Config.AuthenticationType.CUSTOM_SERVER, Name = App.GetResourceString("String.MainWindow.Auth.Custom")}
-        };
+        private MainConfig config;
 
         public SettingWindow()
         {
             InitializeComponent();
-
+            FirstBinding();
             Refresh();
+        }
+
+        private void FirstBinding()
+        {
+            AccentColorComboBox.ItemsSource = ThemeManager.Accents;
+            appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
+            authModuleCombobox.ItemsSource = authModules;
+            versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private async void Refresh()
         {
+            //深度克隆设置
             config = DeepCloneObject(App.config.MainConfig);
-            debugCheckBox.DataContext = config.Launcher;
+
+            //绑定content设置
+            this.DataContext = config;
+
+            #region 元素初始化
             javaPathComboBox.ItemsSource = App.javaList;
-            environmentGrid.DataContext = config.Environment;
-            downloadGrid.DataContext = config.Download;
             memorySlider.Maximum = SystemTools.GetTotalMemory();
-            customGrid.DataContext = config.Customize;
-            AccentColorComboBox.ItemsSource = ThemeManager.Accents;
-            appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
-            serverGroupBox.DataContext = config.Server;
-            authtypeCombobox.ItemsSource = authTypes;
-            //todo authtype选中物品适配
-            //authtypeCombobox.SelectedItem = authTypes.Where(x => { return x.Type == config.User.UserDatabase[config.History.SelectedAuthNodeID].AuthenticationType; }).FirstOrDefault();
-            userGrid.DataContext = config.User;
-            versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            #region 自定义验证模型
+            authModules.Clear();
+            foreach (var item in config.User.AuthenticationDic)
+            {
+                authModules.Add(new KeyValuePair<string, AuthenticationNode>(item.Key, item.Value));
+            }
+            #endregion
+
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
+
+            #endregion
+
             //TODO:游戏内设置修复
             //if (App.config.MainConfig.Environment.VersionIsolation)
             //{
@@ -70,6 +76,15 @@ namespace NsisoLauncher.Windows
             //    VersionsComboBox.IsEnabled = false;
             //    versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
             //}
+
+            //debug
+        }
+
+        public void ShowAddAuthModule()
+        {
+            tabControl.SelectedIndex = 3;
+            addAuthModuleExpander.IsExpanded = true;
+            addAuthModuleExpander.Focus();
         }
 
         private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)
@@ -82,7 +97,7 @@ namespace NsisoLauncher.Windows
             if (dialog.ShowDialog() == true)
             {
                 Java java = await Java.GetJavaInfoAsync(dialog.FileName);
-                if (java!=null)
+                if (java != null)
                 {
                     this.javaPathComboBox.Text = java.Path;
                     this.javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
@@ -170,7 +185,13 @@ namespace NsisoLauncher.Windows
                 App.handler,
                 new NsisoLauncherCore.Modules.Version() { ID = "null" });
             }
-            
+
+            //config.User.AuthenticationDic.Clear();
+            //foreach (var item in authModules)
+            //{
+            //    config.User.AuthenticationDic.Add(item.Key, item.Value);
+            //}
+
             App.config.Save();
             await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
         }
@@ -222,6 +243,7 @@ namespace NsisoLauncher.Windows
             }
         }
 
+        #region Tools
         private static T DeepCloneObject<T>(T t) where T : class
         {
             T model = Activator.CreateInstance<T>();                     //实例化一个T类型对象
@@ -234,16 +256,16 @@ namespace NsisoLauncher.Windows
                     //如果convertsionType为nullable类，声明一个NullableConverter类，该类提供从Nullable类到基础基元类型的转换
                     NullableConverter nullableConverter = new NullableConverter(propertyInfo.PropertyType);
                     //将convertsionType转换为nullable对的基础基元类型
-                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t,null), nullableConverter.UnderlyingType), null);
+                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t, null), nullableConverter.UnderlyingType), null);
                 }
                 else
                 {
-                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t,null), propertyInfo.PropertyType), null);
+                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t, null), propertyInfo.PropertyType), null);
                 }
             }
             return model;
         }
-
+        #endregion
         private void javaPathComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Java java = (Java)(((System.Windows.Controls.ComboBox)sender).SelectedItem);
@@ -257,52 +279,59 @@ namespace NsisoLauncher.Windows
             }
         }
 
-        private /*async*/ void Button_Click(object sender, RoutedEventArgs e)
+        private /*async*/ void forgetUserButton_Click(object sender, RoutedEventArgs e)
         {
-            //todo 恢复取消登陆按钮
+            if (userComboBox.SelectedItem == null)
+            {
+                this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+                return;
+            }
 
-            //if (!string.IsNullOrWhiteSpace(config.User.AccessToken))
-            //{
-            //    string token = config.User.AccessToken;
-            //    config.User.AccessToken = null;
-            //    NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate invalidate = new NsisoLauncherCore.Net.MojangApi.Endpoints.Invalidate(token);
-            //    var loading = await this.ShowProgressAsync("注销正版登陆中", "需要联网进行注销，请稍后...");
-            //    loading.SetIndeterminate();
-            //    var result = await invalidate.PerformRequestAsync();
-            //    await loading.CloseAsync();
-            //    if (result.IsSuccess)
-            //    {
-            //        await this.ShowMessageAsync("注销成功", "已经安全,成功的取消了记住登录状态");
-            //    }
-            //    else
-            //    {
-            //        await this.ShowMessageAsync("已取消记住登陆状态但未注销", "虽然取消并删除了本地的记住登陆状态和密匙，但未能成功联网注销密匙，请注意密匙安全");
-            //    }
-
-            //}
-            //else
-            //{
-            //    await this.ShowMessageAsync("未进行过在线验证", "您未进行过在线验证，无需注销登陆状态");
-            //}
+            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
+            UserNode node = selectedItem.Value;
+            //todo （后）恢复注销用户功能
+            node.AccessToken = null;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void clearUserButton_Click(object sender, RoutedEventArgs e)
         {
-            config.User = new User();
-            this.ShowMessageAsync("重置完成", "点击右下角应用按钮保存");
+            if (userComboBox.SelectedItem == null)
+            {
+                this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+                return;
+            }
+
+            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
+            UserNode node = selectedItem.Value;
+            node.AccessToken = null;
+            node.Profiles = null;
+            node.UserData = null;
+            node.SelectProfileUUID = null;
         }
 
-        private /*async*/ void Button_Click_2(object sender, RoutedEventArgs e)
+        private void delUserButton_Click(object sender, RoutedEventArgs e)
         {
-            //恢复设置发布状态按钮
+            if (userComboBox.SelectedItem == null)
+            {
+                this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+                return;
+            }
 
-            //config.User.AccessToken = null;
-            //config.User.AuthenticationUserData = null;
-            //config.User.AuthenticationUUID = null;
-            //config.User.ClientToken = null;
-            //config.User.UserName = null;
-            //await this.ShowMessageAsync("设置发布状态成功",
-            //    "点击右下角应用按钮保存，保存后除了关闭启动器请不要执行任何操作（二次设置，启动游戏等），否则将导致数据重新初始化");
+            string key = (string)userComboBox.SelectedValue;
+            config.User.UserDatabase.Remove(key);
+            this.ShowMessageAsync("删除用户成功", "请保存以生效");
+        }
+
+        private void delAllAuthnodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            config.User.AuthenticationDic.Clear();
+            this.ShowMessageAsync("清除成功", "请保存以生效");
+        }
+
+        private void delAllUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            config.User.UserDatabase.Clear();
+            this.ShowMessageAsync("清除成功", "请保存以生效");
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
@@ -311,5 +340,52 @@ namespace NsisoLauncher.Windows
             // 激活的是当前默认的浏览器
             Process.Start(new ProcessStartInfo(link.NavigateUri.AbsoluteUri));
         }
+        #region 自定义验证模型
+        ObservableCollection<KeyValuePair<string, AuthenticationNode>> authModules = new ObservableCollection<KeyValuePair<string, AuthenticationNode>>();
+
+        private void AuthModuleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            object selectedItem = authModuleCombobox.SelectedItem;
+            if (selectedItem == null)
+            {
+                authmoduleControl.ClearAll();
+            }
+            else
+            {
+                authmoduleControl.SelectionChangedAccept((KeyValuePair<string, AuthenticationNode>)selectedItem);
+            }
+        }
+
+        public async void AddAuthModule(string name, AuthenticationNode authmodule)
+        {
+            if (authModules.Any(x => x.Key == name))
+            {
+                await this.ShowMessageAsync("添加的验证模型名称已存在", "您可以尝试更换可用的验证模型名称");
+                return;
+            }
+            var item = new KeyValuePair<string, AuthenticationNode>(name, authmodule);
+            authModules.Add(item);
+            config.User.AuthenticationDic.Add(name, authmodule);
+            await this.ShowMessageAsync("添加成功", "记得点击应用按钮保存噢");
+            authModuleCombobox.SelectedItem = item;
+        }
+
+        public async void SaveAuthModule(KeyValuePair<string, AuthenticationNode> node)
+        {
+            await this.ShowMessageAsync("保存成功", "记得点击应用按钮保存噢");
+        }
+
+        public async void DeleteAuthModule(KeyValuePair<string, AuthenticationNode> node)
+        {
+            authModules.Remove(node);
+            config.User.AuthenticationDic.Remove(node.Key);
+            await this.ShowMessageAsync("删除成功", "记得点击应用按钮保存噢");
+        }
+
+        private void ClearAuthselectButton_Click(object sender, RoutedEventArgs e)
+        {
+            authModuleCombobox.SelectedItem = null;
+        }
+        #endregion
     }
 }

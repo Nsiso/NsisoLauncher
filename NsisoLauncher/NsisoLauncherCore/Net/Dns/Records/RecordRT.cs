@@ -54,22 +54,22 @@
 namespace Heijden.DNS
 {
     public class RecordRT : Record
-	{
-		public ushort PREFERENCE;
-		public string INTERMEDIATEHOST;
+    {
+        public ushort PREFERENCE;
+        public string INTERMEDIATEHOST;
 
-		public RecordRT(RecordReader rr)
-		{
-			PREFERENCE = rr.ReadUInt16();
-			INTERMEDIATEHOST = rr.ReadDomainName();
-		}
+        public RecordRT(RecordReader rr)
+        {
+            PREFERENCE = rr.ReadUInt16();
+            INTERMEDIATEHOST = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1}",
-				PREFERENCE,
-				INTERMEDIATEHOST);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1}",
+                PREFERENCE,
+                INTERMEDIATEHOST);
+        }
 
-	}
+    }
 }

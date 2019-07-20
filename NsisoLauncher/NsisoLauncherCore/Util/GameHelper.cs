@@ -89,7 +89,7 @@ namespace NsisoLauncherCore.Util
                         Thread.Sleep(1000);
                     }
                 }
-                catch (Exception){}
+                catch (Exception) { }
             });
         }
 
@@ -109,7 +109,7 @@ namespace NsisoLauncherCore.Util
                         File.WriteAllLines(core.GetVersionOptionsPath(version), optLines.ToArray());
                     }
                 }
-                catch (Exception){}
+                catch (Exception) { }
             });
         }
     }

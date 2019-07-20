@@ -198,7 +198,7 @@ namespace NsisoLauncherCore
             return stringBuilder.ToString().Trim();
         }
 
-        private static string ReplaceByDic(string str, Dictionary<string,string> dic)
+        private static string ReplaceByDic(string str, Dictionary<string, string> dic)
         {
             if (str == null)
             {

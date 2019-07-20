@@ -1,8 +1,6 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NsisoLauncherCore
 {
@@ -112,7 +110,7 @@ namespace NsisoLauncherCore
             }
             else
             {
-                return GetJarPath(gameRootPath,ver.ID);
+                return GetJarPath(gameRootPath, ver.ID);
             }
         }
 

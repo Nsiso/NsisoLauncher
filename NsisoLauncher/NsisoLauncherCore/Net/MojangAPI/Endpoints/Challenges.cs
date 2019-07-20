@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Responses;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.MojangApi.Responses.ChallengesResponse;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints

@@ -23,18 +23,18 @@ preference of 10. */
 namespace Heijden.DNS
 {
     public class RecordMF : Record
-	{
-		public string MADNAME;
+    {
+        public string MADNAME;
 
-		public RecordMF(RecordReader rr)
-		{
-			MADNAME = rr.ReadDomainName();
-		}
+        public RecordMF(RecordReader rr)
+        {
+            MADNAME = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return MADNAME;
-		}
+        public override string ToString()
+        {
+            return MADNAME;
+        }
 
-	}
+    }
 }

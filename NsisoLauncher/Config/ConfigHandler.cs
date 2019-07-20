@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher.Config
 {
@@ -222,7 +222,7 @@ namespace NsisoLauncher.Config
                     AccentColor = "Blue",
                     AppThme = "BaseLight"
                 },
-                ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version
+                ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };
             Save();
         }

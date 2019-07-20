@@ -32,34 +32,34 @@ using System;
  */
 namespace Heijden.DNS
 {
-	public class RecordKX : Record, IComparable
-	{
-		public ushort PREFERENCE;
-		public string EXCHANGER;
+    public class RecordKX : Record, IComparable
+    {
+        public ushort PREFERENCE;
+        public string EXCHANGER;
 
-		public RecordKX(RecordReader rr)
-		{
-			PREFERENCE = rr.ReadUInt16();
-			EXCHANGER = rr.ReadDomainName();
-		}
+        public RecordKX(RecordReader rr)
+        {
+            PREFERENCE = rr.ReadUInt16();
+            EXCHANGER = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1}", PREFERENCE, EXCHANGER);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", PREFERENCE, EXCHANGER);
+        }
 
-		public int CompareTo(object objA)
-		{
-			RecordKX recordKX = objA as RecordKX;
-			if (recordKX == null)
-				return -1;
-			else if (this.PREFERENCE > recordKX.PREFERENCE)
-				return 1;
-			else if (this.PREFERENCE < recordKX.PREFERENCE)
-				return -1;
-			else // they are the same, now compare case insensitive names
-				return string.Compare(this.EXCHANGER, recordKX.EXCHANGER, true);
-		}
+        public int CompareTo(object objA)
+        {
+            RecordKX recordKX = objA as RecordKX;
+            if (recordKX == null)
+                return -1;
+            else if (this.PREFERENCE > recordKX.PREFERENCE)
+                return 1;
+            else if (this.PREFERENCE < recordKX.PREFERENCE)
+                return -1;
+            else // they are the same, now compare case insensitive names
+                return string.Compare(this.EXCHANGER, recordKX.EXCHANGER, true);
+        }
 
-	}
+    }
 }

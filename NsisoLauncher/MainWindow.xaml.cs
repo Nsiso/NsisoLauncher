@@ -1,25 +1,23 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
+using NsisoLauncher.Windows;
+using NsisoLauncherCore;
+using NsisoLauncherCore.Auth;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using NsisoLauncherCore.Util;
-using NsisoLauncher.Windows;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore;
-using NsisoLauncherCore.Auth;
-using NsisoLauncher.Config;
-using Server = NsisoLauncherCore.Modules.Server;
-using System.Collections.ObjectModel;
 
 namespace NsisoLauncher
 {
@@ -34,16 +32,6 @@ namespace NsisoLauncher
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        //#region AuthTypeItems
-        //private List<AuthTypeItem> authTypes = new List<AuthTypeItem>()
-        //{
-        //    new AuthTypeItem(){Type = Config.AuthenticationType.OFFLINE, Name = App.GetResourceString("String.MainWindow.Auth.Offline")},
-        //    new AuthTypeItem(){Type = Config.AuthenticationType.MOJANG, Name = App.GetResourceString("String.MainWindow.Auth.Mojang")},
-        //    new AuthTypeItem(){Type = Config.AuthenticationType.NIDE8, Name = App.GetResourceString("String.MainWindow.Auth.Nide8")},
-        //    new AuthTypeItem(){Type = Config.AuthenticationType.AUTHLIB_INJECTOR, Name = App.GetResourceString("String.MainWindow.Auth.AI")},
-        //    new AuthTypeItem(){Type = Config.AuthenticationType.CUSTOM_SERVER, Name = App.GetResourceString("String.MainWindow.Auth.Custom")}
-        //};
-        //#endregion
 
         //TODO:增加取消启动按钮
         public MainWindow()
@@ -468,7 +456,7 @@ namespace NsisoLauncher
                                 args.UserNode.SelectProfileUUID);
                         }
                         break;
-                     #endregion
+                        #endregion
                 }
 
                 //如果验证方式不是离线验证

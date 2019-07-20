@@ -64,7 +64,7 @@ namespace NsisoLauncher.Core.Util
 
         public void AppendDebug(string msg)
         {
-           AppendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
+            AppendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
         }
 
         public void AppendInfo(string msg)

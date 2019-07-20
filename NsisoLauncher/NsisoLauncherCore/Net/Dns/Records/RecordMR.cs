@@ -18,18 +18,18 @@ mailbox.
 namespace Heijden.DNS
 {
     public class RecordMR : Record
-	{
-		public string NEWNAME;
+    {
+        public string NEWNAME;
 
-		public RecordMR(RecordReader rr)
-		{
-			NEWNAME = rr.ReadDomainName();
-		}
+        public RecordMR(RecordReader rr)
+        {
+            NEWNAME = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return NEWNAME;
-		}
+        public override string ToString()
+        {
+            return NEWNAME;
+        }
 
-	}
+    }
 }

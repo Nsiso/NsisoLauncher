@@ -1,6 +1,6 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses

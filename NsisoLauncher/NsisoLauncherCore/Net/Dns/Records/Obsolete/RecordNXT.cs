@@ -38,42 +38,42 @@ using System.Text;
 namespace Heijden.DNS
 {
     public class RecordNXT : Record
-	{
-		public string NEXTDOMAINNAME;
-		public byte[] BITMAP;
+    {
+        public string NEXTDOMAINNAME;
+        public byte[] BITMAP;
 
-		public RecordNXT(RecordReader rr)
-		{
-			ushort length = rr.ReadUInt16(-2);
-			NEXTDOMAINNAME = rr.ReadDomainName();
-			length -= (ushort)rr.Position;
-			BITMAP = new byte[length];
-			BITMAP = rr.ReadBytes(length);
-		}
+        public RecordNXT(RecordReader rr)
+        {
+            ushort length = rr.ReadUInt16(-2);
+            NEXTDOMAINNAME = rr.ReadDomainName();
+            length -= (ushort)rr.Position;
+            BITMAP = new byte[length];
+            BITMAP = rr.ReadBytes(length);
+        }
 
-		private bool IsSet(int bitNr)
-		{
-			int intByte = (int)(bitNr / 8);
-			int intOffset = (bitNr % 8);
-			byte b = BITMAP[intByte];
-			int intTest = 1 << intOffset;
-			if ((b & intTest) == 0)
-				return false;
-			else
-				return true;
-		}
+        private bool IsSet(int bitNr)
+        {
+            int intByte = (int)(bitNr / 8);
+            int intOffset = (bitNr % 8);
+            byte b = BITMAP[intByte];
+            int intTest = 1 << intOffset;
+            if ((b & intTest) == 0)
+                return false;
+            else
+                return true;
+        }
 
 
-		public override string ToString()
-		{
-			StringBuilder sb = new StringBuilder();
-			for (int bitNr = 1; bitNr < (BITMAP.Length * 8); bitNr++)
-			{
-				if (IsSet(bitNr))
-					sb.Append(" " + (Type)bitNr);
-			}
-			return string.Format("{0}{1}", NEXTDOMAINNAME, sb.ToString());
-		}
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int bitNr = 1; bitNr < (BITMAP.Length * 8); bitNr++)
+            {
+                if (IsSet(bitNr))
+                    sb.Append(" " + (Type)bitNr);
+            }
+            return string.Format("{0}{1}", NEXTDOMAINNAME, sb.ToString());
+        }
 
-	}
+    }
 }

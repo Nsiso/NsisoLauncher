@@ -37,29 +37,29 @@ using System;
 
 namespace Heijden.DNS
 {
-	public class RecordKEY : Record
-	{
-		public UInt16 FLAGS;
-		public byte PROTOCOL;
-		public byte ALGORITHM;
-		public string PUBLICKEY;
+    public class RecordKEY : Record
+    {
+        public UInt16 FLAGS;
+        public byte PROTOCOL;
+        public byte ALGORITHM;
+        public string PUBLICKEY;
 
-		public RecordKEY(RecordReader rr)
-		{
-			FLAGS = rr.ReadUInt16();
-			PROTOCOL = rr.ReadByte();
-			ALGORITHM = rr.ReadByte();
-			PUBLICKEY = rr.ReadString();
-		}
+        public RecordKEY(RecordReader rr)
+        {
+            FLAGS = rr.ReadUInt16();
+            PROTOCOL = rr.ReadByte();
+            ALGORITHM = rr.ReadByte();
+            PUBLICKEY = rr.ReadString();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2} \"{3}\"",
-				FLAGS,
-				PROTOCOL,
-				ALGORITHM,
-				PUBLICKEY);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} \"{3}\"",
+                FLAGS,
+                PROTOCOL,
+                ALGORITHM,
+                PUBLICKEY);
+        }
 
-	}
+    }
 }

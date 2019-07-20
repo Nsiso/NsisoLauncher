@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
-using Newtonsoft.Json;
-using System.Net;
-using System.IO;
-using NsisoLauncherCore.Net.Tools;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Tools;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 
 namespace NsisoLauncherCore.Net.FunctionAPI
 {

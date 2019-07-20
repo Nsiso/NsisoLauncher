@@ -1,13 +1,12 @@
-﻿using System.Net;
+﻿using NsisoLauncherCore.Modules;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.IO;
-using System.Timers;
-using NsisoLauncherCore.Modules;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Timers;
 
 namespace NsisoLauncherCore.Net
 {

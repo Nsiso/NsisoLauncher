@@ -30,35 +30,35 @@ using System.Text;
 
 namespace Heijden.DNS
 {
-	public class RecordDS : Record
-	{
-		public UInt16 KEYTAG;
-		public byte ALGORITHM;
-		public byte DIGESTTYPE;
-		public byte[] DIGEST;
+    public class RecordDS : Record
+    {
+        public UInt16 KEYTAG;
+        public byte ALGORITHM;
+        public byte DIGESTTYPE;
+        public byte[] DIGEST;
 
-		public RecordDS(RecordReader rr)
-		{
-			ushort length = rr.ReadUInt16(-2);
-			KEYTAG = rr.ReadUInt16();
-			ALGORITHM = rr.ReadByte();
-			DIGESTTYPE = rr.ReadByte();
-			length -= 4;
-			DIGEST = new byte[length];
-			DIGEST = rr.ReadBytes(length);
-		}
+        public RecordDS(RecordReader rr)
+        {
+            ushort length = rr.ReadUInt16(-2);
+            KEYTAG = rr.ReadUInt16();
+            ALGORITHM = rr.ReadByte();
+            DIGESTTYPE = rr.ReadByte();
+            length -= 4;
+            DIGEST = new byte[length];
+            DIGEST = rr.ReadBytes(length);
+        }
 
-		public override string ToString()
-		{
-			StringBuilder sb = new StringBuilder();
-			for (int intI = 0; intI < DIGEST.Length; intI++)
-				sb.AppendFormat("{0:x2}", DIGEST[intI]);
-			return string.Format("{0} {1} {2} {3}",
-				KEYTAG,
-				ALGORITHM,
-				DIGESTTYPE,
-				sb.ToString());
-		}
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int intI = 0; intI < DIGEST.Length; intI++)
+                sb.AppendFormat("{0:x2}", DIGEST[intI]);
+            return string.Format("{0} {1} {2} {3}",
+                KEYTAG,
+                ALGORITHM,
+                DIGESTTYPE,
+                sb.ToString());
+        }
 
-	}
+    }
 }

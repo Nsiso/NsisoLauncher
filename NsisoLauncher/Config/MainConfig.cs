@@ -2,7 +2,6 @@
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
@@ -105,7 +104,7 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 配置文件版本
         /// </summary>
-        public System.Version ConfigVersion { get; set; }
+        public string ConfigVersion { get; set; }
     }
 
     /// <summary>
@@ -447,7 +446,7 @@ namespace NsisoLauncher.Config
         /// authserver:验证服务器地址
         /// nide8ID:NIDE8的验证ID
         /// </summary>
-        public Dictionary<string,string> Property { get; set; }
+        public Dictionary<string, string> Property { get; set; } = new Dictionary<string, string>();
     }
 
     /// <summary>

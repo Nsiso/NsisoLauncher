@@ -1,21 +1,20 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.FunctionAPI;
+using NsisoLauncherCore.Util.Installer;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncherCore.Net.FunctionAPI;
-using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
-using System.IO;
-using NsisoLauncherCore.Net;
-using System.Net;
-using NsisoLauncherCore.Modules;
-using Version = NsisoLauncherCore.Modules.Version;
-using System.Collections.ObjectModel;
 using System.Windows.Data;
-using System.ComponentModel;
-using NsisoLauncherCore.Util.Installer;
+using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.Windows
 {
@@ -39,7 +38,7 @@ namespace NsisoLauncher.Windows
             liteloaderListDataGrid.ItemsSource = liteloaderList;
             ICollectionView vwV = CollectionViewSource.GetDefaultView(verList);
             vwV.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
-            vwV.SortDescriptions.Add(new SortDescription("Type",ListSortDirection.Ascending));
+            vwV.SortDescriptions.Add(new SortDescription("Type", ListSortDirection.Ascending));
             ICollectionView vwF = CollectionViewSource.GetDefaultView(forgeList);
             vwF.SortDescriptions.Add(new SortDescription("Version", ListSortDirection.Descending));
         }
@@ -180,7 +179,7 @@ namespace NsisoLauncher.Windows
             }
             else
             {
-                var loading = await this.ShowProgressAsync("准备进行下载", string.Format("即将为您下载{0}个版本",selectItems.Count));
+                var loading = await this.ShowProgressAsync("准备进行下载", string.Format("即将为您下载{0}个版本", selectItems.Count));
                 loading.SetIndeterminate();
                 await AppendVersionsDownloadTask(selectItems);
                 await loading.CloseAsync();

@@ -86,7 +86,7 @@ namespace NsisoLauncherCore.Net.Tools
                     default:
                         return ver.Downloads.Client.URL;
                 }
-                
+
             }
             else
             {
@@ -138,7 +138,7 @@ namespace NsisoLauncherCore.Net.Tools
         /// <param name="lib">lib实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetLibDownloadTask(DownloadSource source, KeyValuePair<string, Modules.Library>lib)
+        public static DownloadTask GetLibDownloadTask(DownloadSource source, KeyValuePair<string, Modules.Library> lib)
         {
             string from = GetLibDownloadURL(source, lib.Value);
             return new DownloadTask("版本依赖库文件" + lib.Value.Name, from, lib.Key);
@@ -173,7 +173,7 @@ namespace NsisoLauncherCore.Net.Tools
         /// <param name="native">native实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetNativeDownloadTask(DownloadSource source, KeyValuePair<string,Native> native)
+        public static DownloadTask GetNativeDownloadTask(DownloadSource source, KeyValuePair<string, Native> native)
         {
             string from = GetNativeDownloadURL(source, native.Value);
             return new DownloadTask("版本系统依赖库文件" + native.Value.Name, from, native.Key);

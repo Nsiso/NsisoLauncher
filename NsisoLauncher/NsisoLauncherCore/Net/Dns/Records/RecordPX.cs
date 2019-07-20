@@ -72,26 +72,26 @@ using System;
 
 namespace Heijden.DNS
 {
-	public class RecordPX : Record
-	{
-		public UInt16 PREFERENCE;
-		public string MAP822;
-		public string MAPX400;
+    public class RecordPX : Record
+    {
+        public UInt16 PREFERENCE;
+        public string MAP822;
+        public string MAPX400;
 
-		public RecordPX(RecordReader rr)
-		{
-			PREFERENCE = rr.ReadUInt16();
-			MAP822 = rr.ReadDomainName();
-			MAPX400 = rr.ReadDomainName();
-		}
+        public RecordPX(RecordReader rr)
+        {
+            PREFERENCE = rr.ReadUInt16();
+            MAP822 = rr.ReadDomainName();
+            MAPX400 = rr.ReadDomainName();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2}",
-				PREFERENCE,
-				MAP822,
-				MAPX400);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}",
+                PREFERENCE,
+                MAP822,
+                MAPX400);
+        }
 
-	}
+    }
 }

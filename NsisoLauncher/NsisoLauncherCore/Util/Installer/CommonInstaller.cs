@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using ICSharpCode.SharpZipLib;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Util.Installer
@@ -81,7 +77,7 @@ namespace NsisoLauncherCore.Util.Installer
                 Directory.CreateDirectory(libDir);
             }
             File.Copy(tempPath + '\\' + jsonObj.Install.FilePath, libPath, true);
-            
+
 
             string newPath = PathManager.GetJsonPath(gameRootPath, jsonObj.Install.Target);
             string newDir = Path.GetDirectoryName(newPath);

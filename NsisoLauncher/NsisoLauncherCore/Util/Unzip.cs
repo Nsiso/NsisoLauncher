@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace NsisoLauncherCore.Util
 {
@@ -27,7 +27,7 @@ namespace NsisoLauncherCore.Util
                     {
                         continue;
                     }
-                    if (exclude !=null && exclude.Any(zipEntry.Name.StartsWith))
+                    if (exclude != null && exclude.Any(zipEntry.Name.StartsWith))
                     {
                         continue;
                     }

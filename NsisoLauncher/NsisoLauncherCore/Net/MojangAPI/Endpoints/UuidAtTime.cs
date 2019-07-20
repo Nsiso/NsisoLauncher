@@ -1,6 +1,6 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Responses;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 

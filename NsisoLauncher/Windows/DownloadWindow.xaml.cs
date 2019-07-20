@@ -1,15 +1,14 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncherCore.Net;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Wpf;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher.Windows
 {
@@ -20,7 +19,7 @@ namespace NsisoLauncher.Windows
     public partial class DownloadWindow : MetroWindow
     {
         private ObservableCollection<DownloadTask> Tasks;
-        private ChartValues<decimal> speedValues = new ChartValues<decimal>() {};
+        private ChartValues<decimal> speedValues = new ChartValues<decimal>() { };
 
 
         public DownloadWindow()
@@ -47,28 +46,28 @@ namespace NsisoLauncher.Windows
             {
                 speedValues.Add(0);
             }
-            plotter.Series = new SeriesCollection() { new LineSeries() { Values = speedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度"} };
-            YAxis.LabelFormatter  = value =>
-            {
-                string speedUnit;
-                double speedValue;
-                if (value > 1048576)
-                {
-                    speedUnit = "MB/s";
-                    speedValue = Math.Round(value / 1048576);
-                }
-                else if (value > 1024)
-                {
-                    speedUnit = "KB/s";
-                    speedValue = Math.Round(value / 1024);
-                }
-                else
-                {
-                    speedUnit = "B/s";
-                    speedValue = value;
-                }
-                return string.Format("{0}{1}", speedValue, speedUnit);
-            };
+            plotter.Series = new SeriesCollection() { new LineSeries() { Values = speedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度" } };
+            YAxis.LabelFormatter = value =>
+           {
+               string speedUnit;
+               double speedValue;
+               if (value > 1048576)
+               {
+                   speedUnit = "MB/s";
+                   speedValue = Math.Round(value / 1048576);
+               }
+               else if (value > 1024)
+               {
+                   speedUnit = "KB/s";
+                   speedValue = Math.Round(value / 1024);
+               }
+               else
+               {
+                   speedUnit = "B/s";
+                   speedValue = value;
+               }
+               return string.Format("{0}{1}", speedValue, speedUnit);
+           };
             plotter.DisableAnimations = true;
         }
 
@@ -108,30 +107,30 @@ namespace NsisoLauncher.Windows
 
         private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
-            this.Dispatcher.Invoke( new Action(async() =>
-            {
-                speedTextBlock.Text = "0Kb/s";
-                progressBar.Maximum = 1;
-                progressBar.Value = 0;
-                progressPerTextBlock.Text = "000%";
-                speedValues.Clear();
-                for (int i = 0; i < 49; i++)
-                {
-                    speedValues.Add(0);
-                }
-                if (e.ErrorList == null || e.ErrorList.Count == 0)
-                {
-                    await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
-                        App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
-                    this.Close();
-                }
-                else
-                {
-                    await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                        string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
-                }
+            this.Dispatcher.Invoke(new Action(async () =>
+           {
+               speedTextBlock.Text = "0Kb/s";
+               progressBar.Maximum = 1;
+               progressBar.Value = 0;
+               progressPerTextBlock.Text = "000%";
+               speedValues.Clear();
+               for (int i = 0; i < 49; i++)
+               {
+                   speedValues.Add(0);
+               }
+               if (e.ErrorList == null || e.ErrorList.Count == 0)
+               {
+                   await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
+                       App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
+                   this.Close();
+               }
+               else
+               {
+                   await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
+                       string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
+               }
 
-            }));
+           }));
         }
 
         private void Downloader_DownloadSpeedChanged(object sender, DownloadSpeedChangedArg e)
@@ -158,10 +157,13 @@ namespace NsisoLauncher.Windows
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
-                App.GetResourceString("String.Downloadwindow.MakesureCancel"), 
+                App.GetResourceString("String.Downloadwindow.MakesureCancel"),
                 MessageDialogStyle.AffirmativeAndNegative,
-                new MetroDialogSettings() { AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
-                    NegativeButtonText = App.GetResourceString("String.Base.Cancel") });
+                new MetroDialogSettings()
+                {
+                    AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                    NegativeButtonText = App.GetResourceString("String.Base.Cancel")
+                });
             if (result == MessageDialogResult.Affirmative)
             {
                 App.downloader.RequestStop();

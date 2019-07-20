@@ -34,44 +34,44 @@ using System;
 
 namespace Heijden.DNS
 {
-	public class RecordSIG : Record
-	{
-		public UInt16 TYPECOVERED;
-		public byte ALGORITHM;
-		public byte LABELS;
-		public UInt32 ORIGINALTTL;
-		public UInt32 SIGNATUREEXPIRATION;
-		public UInt32 SIGNATUREINCEPTION;
-		public UInt16 KEYTAG;
-		public string SIGNERSNAME;
-		public string SIGNATURE;
+    public class RecordSIG : Record
+    {
+        public UInt16 TYPECOVERED;
+        public byte ALGORITHM;
+        public byte LABELS;
+        public UInt32 ORIGINALTTL;
+        public UInt32 SIGNATUREEXPIRATION;
+        public UInt32 SIGNATUREINCEPTION;
+        public UInt16 KEYTAG;
+        public string SIGNERSNAME;
+        public string SIGNATURE;
 
-		public RecordSIG(RecordReader rr)
-		{
-			TYPECOVERED = rr.ReadUInt16();
-			ALGORITHM = rr.ReadByte();
-			LABELS = rr.ReadByte();
-			ORIGINALTTL = rr.ReadUInt32();
-			SIGNATUREEXPIRATION = rr.ReadUInt32();
-			SIGNATUREINCEPTION = rr.ReadUInt32();
-			KEYTAG = rr.ReadUInt16();
-			SIGNERSNAME = rr.ReadDomainName();
-			SIGNATURE = rr.ReadString();
-		}
+        public RecordSIG(RecordReader rr)
+        {
+            TYPECOVERED = rr.ReadUInt16();
+            ALGORITHM = rr.ReadByte();
+            LABELS = rr.ReadByte();
+            ORIGINALTTL = rr.ReadUInt32();
+            SIGNATUREEXPIRATION = rr.ReadUInt32();
+            SIGNATUREINCEPTION = rr.ReadUInt32();
+            KEYTAG = rr.ReadUInt16();
+            SIGNERSNAME = rr.ReadDomainName();
+            SIGNATURE = rr.ReadString();
+        }
 
-		public override string ToString()
-		{
-			return string.Format("{0} {1} {2} {3} {4} {5} {6} {7} \"{8}\"",
-				TYPECOVERED,
-				ALGORITHM,
-				LABELS,
-				ORIGINALTTL,
-				SIGNATUREEXPIRATION,
-				SIGNATUREINCEPTION,
-				KEYTAG,
-				SIGNERSNAME,
-				SIGNATURE);
-		}
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} {3} {4} {5} {6} {7} \"{8}\"",
+                TYPECOVERED,
+                ALGORITHM,
+                LABELS,
+                ORIGINALTTL,
+                SIGNATUREEXPIRATION,
+                SIGNATUREINCEPTION,
+                KEYTAG,
+                SIGNERSNAME,
+                SIGNATURE);
+        }
 
-	}
+    }
 }
