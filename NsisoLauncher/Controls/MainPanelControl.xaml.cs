@@ -13,7 +13,7 @@ namespace NsisoLauncher.Controls
     /// </summary>
     public partial class MainPanelControl : UserControl
     {
-        public event Action<LaunchEventArgs> Launch;
+        public event Action<object, LaunchEventArgs> Launch;
 
         private ObservableCollection<KeyValuePair<string, UserNode>> userList = new ObservableCollection<KeyValuePair<string, UserNode>>();
         private ObservableCollection<KeyValuePair<string, AuthenticationNode>> authNodeList = new ObservableCollection<KeyValuePair<string, AuthenticationNode>>();
@@ -155,7 +155,7 @@ namespace NsisoLauncher.Controls
             }
 
 
-            this.Launch?.Invoke(new LaunchEventArgs() { AuthNode = authNode, UserNode = userNode, LaunchVersion = launchVersion, IsNewUser = isNewUser });
+            this.Launch?.Invoke(this, new LaunchEventArgs() { AuthNode = authNode, UserNode = userNode, LaunchVersion = launchVersion, IsNewUser = isNewUser });
         }
 
         //下载按钮点击

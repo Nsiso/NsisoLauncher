@@ -42,7 +42,7 @@ namespace NsisoLauncher
             App.handler.GameExit += Handler_GameExit;
         }
 
-        private async void MainPanel_Launch(Controls.LaunchEventArgs obj)
+        private async void MainPanel_Launch(object sender, Controls.LaunchEventArgs obj)
         {
             await LaunchGameFromArgs(obj);
         }
