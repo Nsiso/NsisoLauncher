@@ -40,6 +40,7 @@ namespace NsisoLauncher
             App.logHandler.AppendDebug("启动器主窗体已载入");
             mainPanel.Launch += MainPanel_Launch;
             App.handler.GameExit += Handler_GameExit;
+            CustomizeRefresh();
         }
 
         private async void MainPanel_Launch(object sender, Controls.LaunchEventArgs obj)
@@ -64,7 +65,7 @@ namespace NsisoLauncher
         #endregion
 
         #region 自定义
-        private async void CustomizeRefresh()
+        public async void CustomizeRefresh()
         {
             if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.LauncherTitle))
             {
@@ -82,37 +83,42 @@ namespace NsisoLauncher
                 }
             }
 
-            //todo 锁定验证方式的支持
-            //if ((App.nide8Handler != null) && App.config.MainConfig.User.AllUsingNide8)
-            //{
-            //    try
-            //    {
-            //        Config.Server nide8Server = new Config.Server() { ShowServerInfo = true };
-            //        var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
-            //        if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
-            //        {
-            //            string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
-            //            if (serverIp.Length == 2)
-            //            {
-            //                nide8Server.Address = serverIp[0];
-            //                nide8Server.Port = ushort.Parse(serverIp[1]);
-            //            }
-            //            else
-            //            {
-            //                nide8Server.Address = nide8ReturnResult.Meta.ServerIP;
-            //                nide8Server.Port = 25565;
-            //            }
-            //            nide8Server.ServerName = nide8ReturnResult.Meta.ServerName;
-            //            serverInfoControl.SetServerInfo(nide8Server);
-            //        }
-            //    }
-            //    catch (Exception)
-            //    { }
-            //}
-            //else if (App.config.MainConfig.Server != null)
-            //{
-            //    serverInfoControl.SetServerInfo(App.config.MainConfig.Server);
-            //}
+            if (App.config.MainConfig.User.Nide8ServerDependence)
+            {
+                try
+                {
+                    var lockAuthNode = App.config.MainConfig.User.GetLockAuthNode();
+                    if ((lockAuthNode != null) &&
+                        (lockAuthNode.AuthType == AuthenticationType.NIDE8))
+                    {
+                        Config.Server nide8Server = new Config.Server() { ShowServerInfo = true };
+                        var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                        if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+                        {
+                            string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                            if (serverIp.Length == 2)
+                            {
+                                nide8Server.Address = serverIp[0];
+                                nide8Server.Port = ushort.Parse(serverIp[1]);
+                            }
+                            else
+                            {
+                                nide8Server.Address = nide8ReturnResult.Meta.ServerIP;
+                                nide8Server.Port = 25565;
+                            }
+                            nide8Server.ServerName = nide8ReturnResult.Meta.ServerName;
+                            serverInfoControl.SetServerInfo(nide8Server);
+                        }
+                    }
+
+                }
+                catch (Exception)
+                { }
+            }
+            else if (App.config.MainConfig.Server != null)
+            {
+                serverInfoControl.SetServerInfo(App.config.MainConfig.Server);
+            }
 
             if (App.config.MainConfig.Customize.CustomBackGroundMusic)
             {
@@ -630,32 +636,34 @@ namespace NsisoLauncher
                     launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), args.AuthNode.Property["nide8ID"]);
                 }
 
-                //todo 直连服务器匹配
                 //直连服务器设置
-                //if ((authNode.AuthenticationType == AuthenticationType.NIDE8) && App.config.MainConfig.User.AllUsingNide8)
-                //{
-                //    var nide8ReturnResult = await App.nide8Handler.GetInfoAsync();
-                //    if (App.config.MainConfig.User.AllUsingNide8 && !string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
-                //    {
-                //        Server server = new Server();
-                //        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
-                //        if (serverIp.Length == 2)
-                //        {
-                //            server.Address = serverIp[0];
-                //            server.Port = ushort.Parse(serverIp[1]);
-                //        }
-                //        else
-                //        {
-                //            server.Address = nide8ReturnResult.Meta.ServerIP;
-                //            server.Port = 25565;
-                //        }
-                //        launchSetting.LaunchToServer = server;
-                //    }
-                //}
-                //else if (App.config.MainConfig.Server.LaunchToServer)
-                //{
-                //    launchSetting.LaunchToServer = new Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
-                //}
+                var lockAuthNode = App.config.MainConfig.User.GetLockAuthNode();
+                if (App.config.MainConfig.User.Nide8ServerDependence &&
+                    (lockAuthNode != null) &&
+                        (lockAuthNode.AuthType == AuthenticationType.NIDE8))
+                {
+                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                    if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+                    {
+                        NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
+                        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                        if (serverIp.Length == 2)
+                        {
+                            server.Address = serverIp[0];
+                            server.Port = ushort.Parse(serverIp[1]);
+                        }
+                        else
+                        {
+                            server.Address = nide8ReturnResult.Meta.ServerIP;
+                            server.Port = 25565;
+                        }
+                        launchSetting.LaunchToServer = server;
+                    }
+                }
+                else if (App.config.MainConfig.Server.LaunchToServer)
+                {
+                    launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
+                }
 
                 //自动内存设置
                 if (App.config.MainConfig.Environment.AutoMemory)

@@ -83,10 +83,26 @@ namespace NsisoLauncher.Controls
                 }
 
                 this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
-                if (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID))
+                if ((App.config.MainConfig.History.SelectedUserNodeID != null) && 
+                    (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID)))
                 {
                     this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
                 }
+
+                //锁定验证模型处理
+                if (!string.IsNullOrWhiteSpace(App.config.MainConfig.User.LockAuthName))
+                {
+                    if (App.config.MainConfig.User.AuthenticationDic.ContainsKey(App.config.MainConfig.User.LockAuthName))
+                    {
+                        authTypeCombobox.SelectedValue = App.config.MainConfig.User.LockAuthName;
+                        authTypeCombobox.IsEnabled = false;
+                    }
+                }
+                else
+                {
+                    authTypeCombobox.IsEnabled = true;
+                }
+
                 App.logHandler.AppendDebug("启动器主窗体数据重载完毕");
             }
             catch (Exception e)
@@ -170,7 +186,7 @@ namespace NsisoLauncher.Controls
         {
             new SettingWindow().ShowDialog();
             Refresh();
-            //CustomizeRefresh();
+            ((MainWindow)Window.GetWindow(this)).CustomizeRefresh();
         }
         #endregion
 

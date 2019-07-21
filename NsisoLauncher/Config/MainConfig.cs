@@ -131,6 +131,27 @@ namespace NsisoLauncher.Config
         /// 锁定全局验证
         /// </summary>
         public string LockAuthName { get; set; }
+
+        /// <summary>
+        /// 全局是否对NIDE8服务器依赖
+        /// </summary>
+        public bool Nide8ServerDependence { get; set; }
+
+        /// <summary>
+        /// 获取锁定验证模型，若不存在返回NULL
+        /// </summary>
+        /// <returns>锁定的验证模型</returns>
+        public AuthenticationNode GetLockAuthNode()
+        {
+            if ((!string.IsNullOrWhiteSpace(LockAuthName)) && (AuthenticationDic.ContainsKey(LockAuthName)))
+            {
+                return AuthenticationDic[LockAuthName];
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
     /// <summary>

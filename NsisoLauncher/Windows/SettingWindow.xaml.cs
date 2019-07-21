@@ -387,5 +387,10 @@ namespace NsisoLauncher.Windows
             authModuleCombobox.SelectedItem = null;
         }
         #endregion
+
+        private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
+        {
+            lockauthCombobox.SelectedItem = null;
+        }
     }
 }

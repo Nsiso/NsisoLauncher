@@ -219,7 +219,6 @@
     <Compile Include="NsisoLauncherCore\Net\MojangAPI\Responses\UuidAtTimeResponse.cs" />
     <Compile Include="NsisoLauncherCore\Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
     <Compile Include="NsisoLauncherCore\Net\MultiThreadDownloader.cs" />
-    <Compile Include="NsisoLauncherCore\Net\NewDownloader.cs" />
     <Compile Include="NsisoLauncherCore\Net\Nide8API\APIHandler.cs" />
     <Compile Include="NsisoLauncherCore\Net\Nide8API\APIModules.cs" />
     <Compile Include="NsisoLauncherCore\Net\PhalAPI\APIHandler.cs" />

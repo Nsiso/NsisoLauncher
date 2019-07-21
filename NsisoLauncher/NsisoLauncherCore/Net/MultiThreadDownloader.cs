@@ -84,14 +84,14 @@ namespace NsisoLauncherCore.Net
         public IEnumerable<DownloadTask> DownloadTasks { get => _viewDownloadTasks.AsEnumerable(); }
 
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
-        private ConcurrentQueue<DownloadTask> _downloadTasks;
+        private ConcurrentQueue<DownloadTask> _downloadTasks = new ConcurrentQueue<DownloadTask>();
         private List<DownloadTask> _viewDownloadTasks;
         private readonly object _viewDownloadLocker = new object();
         private int _taskCount;
-        private volatile bool _shouldStop = false;
         private Thread[] _threads;
         private int _downloadSizePerSec;
         private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
+        private CancellationTokenSource cancellationTokenSource;
 
         /// <summary>
         /// 设置一群下载内容
@@ -101,7 +101,7 @@ namespace NsisoLauncherCore.Net
         {
             if (!IsBusy)
             {
-                _downloadTasks = new ConcurrentQueue<DownloadTask>(tasks);
+                tasks.ForEach(x => _downloadTasks.Enqueue(x));
                 _viewDownloadTasks = new List<DownloadTask>(tasks);
                 _taskCount = tasks.Count;
             }
@@ -115,7 +115,6 @@ namespace NsisoLauncherCore.Net
         {
             if (!IsBusy)
             {
-                _downloadTasks = new ConcurrentQueue<DownloadTask>();
                 _downloadTasks.Enqueue(task);
                 _viewDownloadTasks = new List<DownloadTask>();
                 _viewDownloadTasks.Add(task);
@@ -136,12 +135,9 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        /// <summary>
-        /// 申请停止
-        /// </summary>
         public void RequestStop()
         {
-            _shouldStop = true;
+            cancellationTokenSource.Cancel();
             CompleteDownload();
             ApendDebugLog("已申请取消下载");
         }
@@ -155,7 +151,7 @@ namespace NsisoLauncherCore.Net
             {
                 if (!IsBusy)
                 {
-                    _shouldStop = false;
+                    cancellationTokenSource = new CancellationTokenSource();
                     IsBusy = true;
                     if (ProcessorSize == 0)
                     {
@@ -167,21 +163,22 @@ namespace NsisoLauncherCore.Net
                         IsBusy = false;
                         return;
                     }
-                    //foreach (var item in _downloadTasks.Reverse())
-                    //{
-                    //    TasksObservableCollection.Add(item);
-                    //}
                     _threads = new Thread[ProcessorSize];
                     _timer.Start();
+
+                    #region 新建工作线程
                     for (int i = 0; i < ProcessorSize; i++)
                     {
                         _threads[i] = new Thread(() =>
                         {
-                            ThreadDownloadWork();
+                            ThreadDownloadWork(cancellationTokenSource.Token);
                         });
                         _threads[i].Name = string.Format("下载线程{0}号", i);
                         _threads[i].Start();
                     }
+                    #endregion
+
+                    #region 监视线程
                     var checkThread = new Thread(() =>
                     {
                         try
@@ -204,6 +201,7 @@ namespace NsisoLauncherCore.Net
                     });
                     checkThread.Name = "下载监视线程";
                     checkThread.Start();
+                    #endregion
                 }
             }
             catch (Exception ex)
@@ -212,7 +210,7 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        private void ThreadDownloadWork()
+        private void ThreadDownloadWork(CancellationToken cancelToken)
         {
             try
             {
@@ -221,15 +219,20 @@ namespace NsisoLauncherCore.Net
                 {
                     if (_downloadTasks.TryDequeue(out item))
                     {
-                        if (_shouldStop)
+                        if (cancelToken.IsCancellationRequested)
                         {
-                            CompleteDownload();
-                            return;
+                            ApendDebugLog("放弃下载:" + item.TaskName);
+                            RemoveItemFromViewTask(item);
+                            continue;
                         }
                         ApendDebugLog("开始下载:" + item.From);
                         item.SetState("下载中");
-                        HTTPDownload(item);
+
+                        HTTPDownload(item, cancelToken);
+
                         ApendDebugLog("下载完成:" + item.From);
+
+                        #region 校验SHA1
                         if (!string.IsNullOrWhiteSpace(item.SHA1))
                         {
                             item.SetState("校验中");
@@ -244,6 +247,9 @@ namespace NsisoLauncherCore.Net
                                 }
                             }
                         }
+                        #endregion
+
+                        #region 执行下载后函数
                         if (item.Todo != null)
                         {
                             ApendDebugLog(string.Format("开始执行{0}下载后的安装过程", item.TaskName));
@@ -258,10 +264,11 @@ namespace NsisoLauncherCore.Net
                                 }
                             }
                         }
+                        #endregion
+
                         item.SetDone();
                         RemoveItemFromViewTask(item);
                         DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() { TaskCount = _taskCount, LastTaskCount = _viewDownloadTasks.Count, DoneTask = item });
-                        //TasksObservableCollection.Remove(item);
                     }
                 }
             }
@@ -272,7 +279,7 @@ namespace NsisoLauncherCore.Net
 
         }
 
-        private void HTTPDownload(DownloadTask task)
+        private void HTTPDownload(DownloadTask task, CancellationToken cancelToken)
         {
             string realFilename = task.To;
             string buffFilename = realFilename + ".downloadtask";
@@ -294,12 +301,8 @@ namespace NsisoLauncherCore.Net
                 {
                     File.Delete(buffFilename);
                 }
-                if (_shouldStop)
-                {
-                    CompleteDownload();
-                    return;
-                }
                 HttpWebRequest request = WebRequest.Create(task.From) as HttpWebRequest;
+                request.Timeout = 5000;
                 if (Proxy != null)
                 {
                     request.Proxy = Proxy;
@@ -307,17 +310,19 @@ namespace NsisoLauncherCore.Net
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
                 task.SetTotalSize(response.ContentLength);
                 Stream responseStream = response.GetResponseStream();
+                responseStream.ReadTimeout = 5000;
                 FileStream fs = new FileStream(buffFilename, FileMode.Create);
                 byte[] bArr = new byte[1024];
                 int size = responseStream.Read(bArr, 0, (int)bArr.Length);
 
                 while (size > 0)
                 {
-                    if (_shouldStop)
+                    if (cancelToken.IsCancellationRequested)
                     {
+                        ApendDebugLog("放弃下载:" + task.TaskName);
                         fs.Close();
                         responseStream.Close();
-                        CompleteDownload();
+                        RemoveItemFromViewTask(task);
                         return;
                     }
                     fs.Write(bArr, 0, size);
@@ -341,7 +346,6 @@ namespace NsisoLauncherCore.Net
 
         private void CompleteDownload()
         {
-            //TasksObservableCollection.Clear();
             _timer.Stop();
             _taskCount = 0;
             _downloadSizePerSec = 0;
