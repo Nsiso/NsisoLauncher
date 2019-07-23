@@ -51,15 +51,17 @@
         <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
         <Grid x:Name="loadingGrid" Visibility="Hidden" Grid.ColumnSpan="3">
-            <Border Background="{Binding Background, ElementName=mainWindow}" >
-                <Border.Effect>
+            <Rectangle Fill="{Binding Background, ElementName=mainWindow}" >
+                <Rectangle.Effect>
                     <BlurEffect Radius="20"/>
-                </Border.Effect>
-            </Border>
-            <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="False"/>
-            <TextBlock Text="{DynamicResource String.Mainwindow.Launching}" Height="140" TextAlignment="Center" Foreground="Gray"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="False"/>
+                <TextBlock Text="{DynamicResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
+                <Button x:Name="cancelLaunchButton" Content="取消启动" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
+            </StackPanel>
             <TextBlock x:Name="launchInfoBlock" Height="20" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
-
         </Grid>
     </Grid>
 </controls:MetroWindow>

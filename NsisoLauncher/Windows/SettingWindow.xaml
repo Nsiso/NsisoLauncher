@@ -233,7 +233,7 @@
                     <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="ID" SelectionChanged="VersionsComboBox_SelectionChanged"/>
                     <GroupBox x:Name="groupBox7" Header="{DynamicResource String.Settingwindow.Version.Options}" Margin="10,31,10,0">
                         <Grid>
-                            <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20">
+                            <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20" CellEditEnding="VersionOptionsGrid_CellEditEnding">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{DynamicResource String.Settingwindow.Version.Options.T}" Binding="{Binding Key}" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource String.Settingwindow.Version.Options.V}" Binding="{Binding Value}"/>

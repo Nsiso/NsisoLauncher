@@ -27,6 +27,8 @@ namespace NsisoLauncher.Windows
     {
         private MainConfig config;
 
+        private bool _isGameSettingChanged = false;
+
         public SettingWindow()
         {
             InitializeComponent();
@@ -64,18 +66,17 @@ namespace NsisoLauncher.Windows
 
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
 
-            #endregion
+        #endregion
 
-            //TODO:游戏内设置修复
-            //if (App.config.MainConfig.Environment.VersionIsolation)
-            //{
-            //    VersionsComboBox.IsEnabled = true;
-            //}
-            //else
-            //{
-            //    VersionsComboBox.IsEnabled = false;
-            //    versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
-            //}
+            if (App.config.MainConfig.Environment.VersionIsolation)
+            {
+                VersionsComboBox.IsEnabled = true;
+            }
+            else
+            {
+                VersionsComboBox.IsEnabled = false;
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
+            }
 
             //debug
         }
@@ -169,28 +170,26 @@ namespace NsisoLauncher.Windows
             }
             App.handler.VersionIsolation = config.Environment.VersionIsolation;
             #endregion
-            //config.User.AuthenticationType = ((AuthTypeItem)authtypeCombobox.SelectedItem).Type;
-            App.config.MainConfig = config;
-            if (App.config.MainConfig.Environment.VersionIsolation)
-            {
-                await GameHelper.SaveOptionsAsync(
-                (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                App.handler,
-                (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
-            }
-            else
-            {
-                await GameHelper.SaveOptionsAsync(
-                (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                App.handler,
-                new NsisoLauncherCore.Modules.Version() { ID = "null" });
-            }
 
-            //config.User.AuthenticationDic.Clear();
-            //foreach (var item in authModules)
-            //{
-            //    config.User.AuthenticationDic.Add(item.Key, item.Value);
-            //}
+            App.config.MainConfig = config;
+
+            if (_isGameSettingChanged)
+            {
+                if (App.config.MainConfig.Environment.VersionIsolation)
+                {
+                    await GameHelper.SaveOptionsAsync(
+                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
+                    App.handler,
+                    (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
+                }
+                else
+                {
+                    await GameHelper.SaveOptionsAsync(
+                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
+                    App.handler,
+                    new NsisoLauncherCore.Modules.Version() { ID = "null" });
+                }
+            }
 
             App.config.Save();
             await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
@@ -391,6 +390,11 @@ namespace NsisoLauncher.Windows
         private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
         {
             lockauthCombobox.SelectedItem = null;
+        }
+
+        private void VersionOptionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            _isGameSettingChanged = true;
         }
     }
 }

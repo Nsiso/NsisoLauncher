@@ -711,6 +711,9 @@ namespace NsisoLauncher
                 }
                 else
                 {
+                    cancelLaunchButton.Click += (x, y) => { CancelLaunching(result); };
+
+                    #region 等待游戏响应
                     try
                     {
                         await Task.Factory.StartNew(() =>
@@ -723,6 +726,9 @@ namespace NsisoLauncher
                         await this.ShowMessageAsync("启动后等待游戏窗口响应异常", "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
                         return;
                     }
+                    #endregion
+
+                    cancelLaunchButton.Click -= (x, y) => { CancelLaunching(result); };
 
                     #region 数据反馈
                     //API使用次数计数器+1
@@ -864,7 +870,13 @@ namespace NsisoLauncher
             return true;
         }
 
-
+        private void CancelLaunching(LaunchResult result)
+        {
+            if (!result.Process.HasExited)
+            {
+                result.Process.Kill();
+            }
+        }
         #endregion
     }
 }

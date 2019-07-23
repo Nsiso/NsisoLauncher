@@ -86,7 +86,7 @@ namespace NsisoLauncher.Config
                         "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
                         "而导致系统自我保护机制权限禁止写入文件。\n" +
                         "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo);
+                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
                     if (result == MessageBoxResult.Yes)
                     {
                         App.Reboot(true);
@@ -106,6 +106,15 @@ namespace NsisoLauncher.Config
                 try
                 {
                     MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
+#if !DEBUG
+                    if (string.IsNullOrWhiteSpace(MainConfig.ConfigVersion) || 
+                        (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
+                    {
+                        MessageBox.Show("启动器配置文件版本不符。\n" +
+                            "这可能是因为配置文件为旧版本启动器生成而导致的，继续使用可能导致bug出现，请重新生成（删除）原配置文件以保证平稳运行",
+                            "启动器配置文件版本不符", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+#endif
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -113,7 +122,7 @@ namespace NsisoLauncher.Config
                         "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
                         "而导致系统自我保护机制权限禁止写入文件。\n" +
                         "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo);
+                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
                     if (result == MessageBoxResult.Yes)
                     {
                         App.Reboot(true);
@@ -135,11 +144,11 @@ namespace NsisoLauncher.Config
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    var result = MessageBox.Show("启动器无法正常读取配置文件。\n" +
+                    var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
                         "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
                         "而导致系统自我保护机制权限禁止写入文件。\n" +
                         "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo);
+                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
                     if (result == MessageBoxResult.Yes)
                     {
                         App.Reboot(true);
