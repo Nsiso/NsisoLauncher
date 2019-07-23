@@ -560,6 +560,15 @@ namespace NsisoLauncher
                         lostDepend.Add(new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", nideJarPath));
                     }
                 }
+                else if (args.AuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
+                {
+                    string aiJarPath = App.handler.GetAIJarPath();
+                    if (!File.Exists(aiJarPath))
+                    {
+                        lostDepend.Add(await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.config.MainConfig.Download.DownloadSource, aiJarPath));
+                    }
+                }
+
                 if (App.config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
@@ -634,6 +643,10 @@ namespace NsisoLauncher
                 if (args.AuthNode.AuthType == AuthenticationType.NIDE8)
                 {
                     launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), args.AuthNode.Property["nide8ID"]);
+                }
+                else if (args.AuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
+                {
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetAIJarPath(), args.AuthNode.Property["authserver"] + "/authserver");
                 }
 
                 //直连服务器设置

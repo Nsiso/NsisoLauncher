@@ -232,19 +232,22 @@ namespace NsisoLauncherCore.Net
 
                         ApendDebugLog("下载完成:" + item.From);
 
-                        #region 校验SHA1
-                        if (!string.IsNullOrWhiteSpace(item.SHA1))
+                        #region 校验
+                        if (item.Checker != null)
                         {
                             item.SetState("校验中");
-                            string sha1 = Util.FileHelper.GetSHA1(item.To);
-                            if (item.SHA1 != sha1)
+                            if (!item.Checker.CheckFilePass())
                             {
-                                ApendDebugLog("SHA1校验失败");
+                                ApendDebugLog("校验失败");
                                 File.Delete(item.To);
                                 if (!_errorList.ContainsKey(item))
                                 {
-                                    _errorList.Add(item, new Exception("文件SHA1校验失败"));
+                                    _errorList.Add(item, new Exception("文件校验失败"));
                                 }
+                            }
+                            else
+                            {
+                                item.SetState("校验成功");
                             }
                         }
                         #endregion

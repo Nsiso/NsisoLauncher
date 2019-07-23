@@ -2,6 +2,7 @@
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
 {
@@ -213,6 +214,22 @@ namespace NsisoLauncherCore.Net.Tools
             string from = GetAssetsDownloadURL(source, assets);
             string to = core.GetAssetsPath(assets);
             return new DownloadTask("游戏资源文件" + assets.Hash, from, to);
+        }
+
+        /// <summary>
+        /// 获取NIDE8核心下载任务
+        /// </summary>
+        /// <param name="downloadTo">下载目的路径</param>
+        /// <returns>下载任务</returns>
+        public static DownloadTask GetNide8CoreDownloadTask(string downloadTo)
+        {
+            return new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", downloadTo);
+        }
+
+        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
+        {
+            AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
+            return await handler.GetLatestAICoreDownloadTask(source, downloadTo);
         }
     }
 }

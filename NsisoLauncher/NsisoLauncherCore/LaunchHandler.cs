@@ -268,6 +268,11 @@ namespace NsisoLauncherCore
             return PathManager.GetNide8JarPath(GameRootPath);
         }
 
+        public string GetAIJarPath()
+        {
+            return PathManager.GetAIJarPath(GameRootPath);
+        }
+
         public string GetVersionOptionsPath(Modules.Version version)
         {
             return PathManager.GetVersionOptionsPath(VersionIsolation, GameRootPath, version);

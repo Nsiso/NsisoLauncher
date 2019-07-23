@@ -37,29 +37,8 @@ namespace NsisoLauncher
             AggregateExceptionCatched?.Invoke(sender, arg);
         }
 
-        //TODO:修复.NET无补丁环境误报(文件检测)
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            #region 检查环境
-            if (!e.Args.Contains("-ignorenet"))
-            {
-                if ((System.Environment.Version.Major == 4) && (System.Environment.Version.Minor == 0))
-                {
-                    if ((!SystemTools.IsSetupFrameworkUpdate("KB2468871v2")) && (!SystemTools.IsSetupFrameworkUpdate("KB2468871")))
-                    {
-                        var result = MessageBox.Show(GetResourceString("String.Message.NoFrameworkUpdate2"),
-                            GetResourceString("String.Message.NoFrameworkUpdate"),
-                            MessageBoxButton.YesNo);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            System.Diagnostics.Process.Start("https://github.com/Nsiso/NsisoLauncher/wiki/%E5%90%AF%E5%8A%A8%E5%99%A8%E6%8A%A5%E9%94%99%EF%BC%9A%E5%BD%93%E5%89%8D%E7%94%B5%E8%84%91%E7%8E%AF%E5%A2%83%E7%BC%BA%E5%B0%91KB2468871v2%E8%A1%A5%E4%B8%81");
-                            System.Environment.Exit(0);
-                        }
-                    }
-                }
-            }
-            #endregion
-
             #region DEBUG初始化
             //debug
             logHandler = new LogHandler(true);
@@ -158,8 +137,6 @@ namespace NsisoLauncher
 
             #region 下载核心初始化
             ServicePointManager.DefaultConnectionLimit = 10;
-            //there have some broblem QAQ
-            //ServicePointManager.SecurityProtocol = (SecurityProtocolType)192 | (SecurityProtocolType)768 | (SecurityProtocolType)3072;
 
             Download downloadCfg = config.MainConfig.Download;
             downloader = new MultiThreadDownloader();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Util.Checker;
+using System;
 using System.ComponentModel;
 
 namespace NsisoLauncherCore.Net
@@ -33,9 +34,9 @@ namespace NsisoLauncherCore.Net
         public Func<Exception> Todo { get; set; }
 
         /// <summary>
-        /// 校验SHA1，不设置即不校验
+        /// 校验器，不设置即不校验
         /// </summary>
-        public string SHA1 { get; set; }
+        public IChecker Checker { get; set; }
 
         #region 界面绑定属性
 

@@ -158,6 +158,16 @@ namespace NsisoLauncherCore
         }
 
         /// <summary>
+        /// 获取Authlib-injector核心路径
+        /// </summary>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <returns>NIDE8路径</returns>
+        public static string GetAIJarPath(string gameRootPath)
+        {
+            return string.Format(@"{0}\Authlib-injector.jar", gameRootPath);
+        }
+
+        /// <summary>
         /// 获取版本设置文件路径
         /// </summary>
         /// <param name="versionIsolation">版本是否隔离</param>
