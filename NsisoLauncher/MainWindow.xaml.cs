@@ -169,10 +169,10 @@ namespace NsisoLauncher
             try
             {
                 #region 检查有效数据
-                if (args.AuthNode == null)
+                if (args.LaunchVersion == null)
                 {
-                    await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyAuthType"),
-                        App.GetResourceString("String.Message.EmptyAuthType2"));
+                    await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
+                        App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
                 if (args.UserNode == null)
@@ -181,10 +181,10 @@ namespace NsisoLauncher
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
-                if (args.LaunchVersion == null)
+                if (args.AuthNode == null)
                 {
-                    await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
-                        App.GetResourceString("String.Message.EmptyLaunchVersion2"));
+                    await this.ShowMessageAsync(App.GetResourceString("String.Message.EmptyAuthType"),
+                        App.GetResourceString("String.Message.EmptyAuthType2"));
                     return;
                 }
                 if (App.handler.Java == null)
@@ -479,16 +479,16 @@ namespace NsisoLauncher
                     switch (authResult.State)
                     {
                         case AuthState.SUCCESS:
+                            args.UserNode.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
+                            args.UserNode.UserData = authResult.UserData;
+                            if (authResult.Profiles != null)
+                            {
+                                args.UserNode.Profiles.Clear();
+                                authResult.Profiles.ForEach(x => args.UserNode.Profiles.Add(x.Value, x));
+                            }
                             if (shouldRemember)
                             {
                                 args.UserNode.AccessToken = authResult.AccessToken;
-                                args.UserNode.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
-                                args.UserNode.UserData = authResult.UserData;
-                                if (authResult.Profiles != null)
-                                {
-                                    args.UserNode.Profiles.Clear();
-                                    authResult.Profiles.ForEach(x => args.UserNode.Profiles.Add(x.Value, x));
-                                }
                             }
                             launchSetting.AuthenticateResult = authResult;
                             break;

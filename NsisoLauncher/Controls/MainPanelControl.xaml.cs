@@ -3,6 +3,7 @@ using NsisoLauncher.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -36,7 +37,7 @@ namespace NsisoLauncher.Controls
         private UserNode GetSelectedAuthNode()
         {
             string userID = (string)userComboBox.SelectedValue;
-            if (App.config.MainConfig.User.UserDatabase.ContainsKey(userID))
+            if ((userID != null) && App.config.MainConfig.User.UserDatabase.ContainsKey(userID))
             {
                 return App.config.MainConfig.User.UserDatabase[userID];
             }
@@ -87,6 +88,7 @@ namespace NsisoLauncher.Controls
                     (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID)))
                 {
                     this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
+                    await RefreshIcon();
                 }
 
                 //锁定验证模型处理
@@ -111,7 +113,7 @@ namespace NsisoLauncher.Controls
             }
         }
 
-        public async void RefreshIcon()
+        public async Task RefreshIcon()
         {
             //头像自定义显示皮肤
             UserNode node = GetSelectedAuthNode();
@@ -196,6 +198,11 @@ namespace NsisoLauncher.Controls
             a.ShowAddAuthModule();
             a.ShowDialog();
             Refresh();
+        }
+
+        private async void UserComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await RefreshIcon();
         }
     }
 

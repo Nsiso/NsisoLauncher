@@ -52,7 +52,7 @@
                  SelectedValuePath="Key"
                  DisplayMemberPath="Value.UserName"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2"
+                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2" SelectionChanged="UserComboBox_SelectionChanged"
                  />
 
         <Button x:Name="configButton"

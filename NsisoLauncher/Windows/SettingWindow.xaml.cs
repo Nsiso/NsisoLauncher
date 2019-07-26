@@ -290,6 +290,7 @@ namespace NsisoLauncher.Windows
             UserNode node = selectedItem.Value;
             //todo （后）恢复注销用户功能
             node.AccessToken = null;
+            this.ShowMessageAsync("注销成功", "请保存以生效");
         }
 
         private void clearUserButton_Click(object sender, RoutedEventArgs e)
@@ -306,6 +307,7 @@ namespace NsisoLauncher.Windows
             node.Profiles = null;
             node.UserData = null;
             node.SelectProfileUUID = null;
+            this.ShowMessageAsync("重置用户成功", "请保存以生效");
         }
 
         private void delUserButton_Click(object sender, RoutedEventArgs e)
