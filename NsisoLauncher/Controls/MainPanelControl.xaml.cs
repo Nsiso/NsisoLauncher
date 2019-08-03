@@ -84,7 +84,7 @@ namespace NsisoLauncher.Controls
                 }
 
                 this.launchVersionCombobox.Text = App.config.MainConfig.History.LastLaunchVersion;
-                if ((App.config.MainConfig.History.SelectedUserNodeID != null) && 
+                if ((App.config.MainConfig.History.SelectedUserNodeID != null) &&
                     (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID)))
                 {
                     this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;

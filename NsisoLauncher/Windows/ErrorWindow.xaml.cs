@@ -15,6 +15,7 @@ namespace NsisoLauncher.Windows
     public partial class ErrorWindow : MetroWindow
     {
         Exception exception;
+        string report;
 
         string[] funny = {
             "你所不知道的事实：参与这个启动器的开发者只有一个人，而且整个开发工作室也只有这一个人",
@@ -37,7 +38,10 @@ namespace NsisoLauncher.Windows
                 Random random = new Random();
                 FunnyBlock.Text = funny[random.Next(funny.Count())];
                 moreInfoCheckBox.IsChecked = true;
-                this.textBox.Text = ex.ToString();
+
+                report = GetReport();
+
+                this.textBox.Text = report;
                 if (Environment.GetCommandLineArgs().Contains("-reboot"))
                 {
                     MessageBox.Show("很抱歉启动器在重启之后再次发生错误\n您可以在左下角联系开发者加快解决这个问题，我们由衷的表示感谢");
@@ -73,10 +77,9 @@ namespace NsisoLauncher.Windows
                 var progress = await this.ShowProgressAsync("正在处理中", "请稍后...");
                 progress.SetIndeterminate();
                 bool moreInfo = (bool)moreInfoCheckBox.IsChecked;
-                string msg = exception.ToString();
                 if (moreInfo)
-                { msg += ("/r/n" + await GetEnvironmentInfoAsync()); }
-                await App.nsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, msg);
+                { report += ("/r/n" + await GetEnvironmentInfoAsync()); }
+                await App.nsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, report);
             }
             catch (Exception ex)
             {
@@ -120,6 +123,16 @@ namespace NsisoLauncher.Windows
             {
                 return GetEnvironmentInfo();
             });
+        }
+
+        private string GetReport()
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("========NsisoLauncher Error Report========");
+            strBuilder.AppendFormat("Date:{0}    Launcher Version:{1}", DateTime.Now, App.ResourceAssembly.GetName().Version).AppendLine();
+            strBuilder.AppendLine("Exception Detail:");
+            strBuilder.AppendLine(exception?.ToString());
+            return strBuilder.ToString();
         }
     }
 }

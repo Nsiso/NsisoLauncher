@@ -9,7 +9,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
 {
     public class APIHandler
     {
-        const string APIUrl = "http://api.nsiso.com/";
+        const string APIUrl = "http://hn2.api.okayapi.com/";
         const string App_key = "7B27B7B6A3C10158C28E3DE0B13785CD";
 
         public bool NoTracking { get; set; }
@@ -21,21 +21,28 @@ namespace NsisoLauncherCore.Net.PhalAPI
 
         public async Task<NsisoLauncherVersionResponse> GetLatestLauncherVersion()
         {
-            Dictionary<string, string> args = new Dictionary<string, string>();
-            args.Add("app_key", App_key);
-            //表模型
-            args.Add("model_name", "VersionList");
-            //order
-            args.Add("order", "[\"id DESC\"]");
-            //查询规则（ID>0）
-            args.Add("where", "[[\"id\", \">\", \"0\"]]");
-            //仅返回一条（即ID最高的最新版本）
-            args.Add("perpage", "1");
-            string result = await APIRequester.HttpPostReadAsStringForString(APIUrl + "?s=App.Table.FreeQuery", args);
-            PhalApiClientResponse desObj = JsonConvert.DeserializeObject<PhalApiClientResponse>(result);
-            JObject listJobj = desObj.Data;
-            NsisoLauncherVersionListResponse list = listJobj.ToObject<NsisoLauncherVersionListResponse>();
-            return list.List.FirstOrDefault();
+            try
+            {
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("app_key", App_key);
+                //表模型
+                args.Add("model_name", "VersionList");
+                //order
+                args.Add("order", "[\"id DESC\"]");
+                //查询规则（ID>0）
+                args.Add("where", "[[\"id\", \">\", \"0\"]]");
+                //仅返回一条（即ID最高的最新版本）
+                args.Add("perpage", "1");
+                string result = await APIRequester.HttpPostReadAsStringForString(APIUrl + "?s=App.Table.FreeQuery", args);
+                PhalApiClientResponse desObj = JsonConvert.DeserializeObject<PhalApiClientResponse>(result);
+                JObject listJobj = desObj.Data;
+                NsisoLauncherVersionListResponse list = listJobj.ToObject<NsisoLauncherVersionListResponse>();
+                return list.List.FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -63,12 +70,17 @@ namespace NsisoLauncherCore.Net.PhalAPI
         {
             if (!NoTracking)
             {
-                Dictionary<string, string> args = new Dictionary<string, string>();
-                args.Add("app_key", App_key);
-                args.Add("type", "forever");
-                args.Add("name", "NsisoLauncherUsingTimes");
-                args.Add("value", "1");
-                await APIRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
+                try
+                {
+                    Dictionary<string, string> args = new Dictionary<string, string>();
+                    args.Add("app_key", App_key);
+                    args.Add("type", "forever");
+                    args.Add("name", "NsisoLauncherUsingTimes");
+                    args.Add("value", "1");
+                    await APIRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
+                }
+                catch
+                { }
             }
         }
     }

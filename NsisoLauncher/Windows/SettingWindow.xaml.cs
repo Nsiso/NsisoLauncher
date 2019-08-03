@@ -66,7 +66,7 @@ namespace NsisoLauncher.Windows
 
             VersionsComboBox.ItemsSource = await App.handler.GetVersionsAsync();
 
-        #endregion
+            #endregion
 
             if (App.config.MainConfig.Environment.VersionIsolation)
             {

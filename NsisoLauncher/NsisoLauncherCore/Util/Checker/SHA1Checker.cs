@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace NsisoLauncherCore.Util.Checker
 {
@@ -21,7 +18,7 @@ namespace NsisoLauncherCore.Util.Checker
             return string.Equals(CheckSum, GetFileChecksum());
         }
 
-        public string GetFileChecksum() 
+        public string GetFileChecksum()
         {
             if (string.IsNullOrWhiteSpace(FilePath))
             {

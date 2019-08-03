@@ -156,18 +156,25 @@ namespace NsisoLauncher.Windows
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
-                App.GetResourceString("String.Downloadwindow.MakesureCancel"),
-                MessageDialogStyle.AffirmativeAndNegative,
-                new MetroDialogSettings()
-                {
-                    AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
-                    NegativeButtonText = App.GetResourceString("String.Base.Cancel")
-                });
-            if (result == MessageDialogResult.Affirmative)
+            if (App.downloader.IsBusy)
             {
-                App.downloader.RequestStop();
-                this.progressBar.Value = 0;
+                var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
+               App.GetResourceString("String.Downloadwindow.MakesureCancel"),
+               MessageDialogStyle.AffirmativeAndNegative,
+               new MetroDialogSettings()
+               {
+                   AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                   NegativeButtonText = App.GetResourceString("String.Base.Cancel")
+               });
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    App.downloader.RequestStop();
+                    this.progressBar.Value = 0;
+                }
+            }
+            else
+            {
+                await this.ShowMessageAsync("没有需要取消下载的任务", "当前下载器并没有在工作");
             }
         }
 

@@ -158,8 +158,8 @@
     <sys:String x:Key="String.Settingwindow.Env.AutoFill.Assets">自动补全丢失的资源库</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Habbit">习惯设置</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Habbit.Exit">启动后退出启动器</sys:String>
-    <sys:String x:Key="String.Settingwindow.Env.Debug">开发者选项</sys:String>
-    <sys:String x:Key="String.Settingwindow.Env.Debug.Mode">DEBUG模式</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Launcher">启动器设置</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Launcher.DebugMode">DEBUG模式</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Note">*请注意：本页面(全局设置)中大部分设置需要重启启动器后才能生效</sys:String>
     <sys:String x:Key="String.Settingwindow.Download">下载设置</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source">首选下载源</sys:String>

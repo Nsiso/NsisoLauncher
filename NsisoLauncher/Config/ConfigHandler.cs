@@ -78,7 +78,7 @@ namespace NsisoLauncher.Config
             {
                 try
                 {
-                    File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig));
+                    File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented));
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -216,7 +216,9 @@ namespace NsisoLauncher.Config
                 },
                 Launcher = new Launcher()
                 {
-                    Debug = false
+                    Debug = false,
+                    CheckUpdate = true,
+                    NoTracking = false
                 },
                 Server = new Server()
                 {

@@ -133,4 +133,18 @@ namespace NsisoLauncher.Utils
         }
         #endregion
     }
+
+    //public class AccentResourcesToAccentColorConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        ResourceDictionary accent = (ResourceDictionary)value;
+    //        return accent["AccentColor"];
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return null;
+    //    }
+    //}
 }

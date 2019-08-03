@@ -11,18 +11,23 @@
         mc:Ignorable="d"
         Title="{DynamicResource String.Settingwindow.Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.Resources>
+        <!--#region 值转换器-->
         <util:BoolToOppositeBoolConverter x:Key="BoolToOppositeBoolConverter"/>
         <util:SettingDirRadioButtonConverter x:Key="SettingDirRadioButtonConverter" />
         <util:SettingDownloadRadioButtonConverter x:Key="SettingDownloadRadioButtonConverter" />
         <util:SettingLoginTypeRadioButtonConverter x:Key="SettingLoginTypeRadioButtonConverter"/>
         <util:SettingCGRadioButtonConverter x:Key="SettingCGRadioButtonConverter"/>
         <util:StringToIntConverter x:Key="StringToIntConverter" />
+        <!--<util:AccentResourcesToAccentColorConverter x:Key="AccentResourcesToAccentColorConverter"/>-->
+        <!--#endregion-->   
     </Controls:MetroWindow.Resources>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
         </Grid.Resources>
         <TabControl x:Name="tabControl" Margin="0,0,0,50">
+            
+            <!--#region 全局设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Env}">
                 <ScrollViewer>
                     <StackPanel Margin="10,0">
@@ -171,20 +176,20 @@
                                 <CheckBox Content="{DynamicResource String.Settingwindow.Env.Habbit.Exit}" IsChecked="{Binding Environment.ExitAfterLaunch}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="{DynamicResource String.Settingwindow.Env.Debug}" Margin="0,0,0,5">
+                        <Expander Header="{DynamicResource String.Settingwindow.Env.Launcher}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.Debug.Mode}" IsChecked="{Binding Launcher.Debug}"/>
-                            </StackPanel>
-                        </Expander>
-                        <Expander Header="隐私" Margin="0,0,0,5">
-                            <StackPanel>
-                                <CheckBox Content="禁用数据收集" IsChecked="{Binding Launcher.NoTracking}"/>
+                                <CheckBox Content="自动检查启动器更新" IsChecked="{Binding Launcher.CheckUpdate}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{DynamicResource String.Settingwindow.Env.Launcher.DebugMode}" IsChecked="{Binding Launcher.Debug}" Margin="0,0,0,5"/>
+                                <CheckBox Content="禁用数据收集" IsChecked="{Binding Launcher.NoTracking}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <TextBlock TextWrapping="Wrap" Text="{DynamicResource String.Settingwindow.Env.Note}"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            <!--#endregion-->
+            
+            <!--#region 下载设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Download}">
                 <ScrollViewer>
                     <StackPanel x:Name="downloadGrid" Margin="10,0">
@@ -227,6 +232,9 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            <!--#endregion-->
+            
+            <!--#region 版本设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Version}">
                 <Grid>
                     <Label x:Name="label6" Content="{DynamicResource String.Settingwindow.Version.ChooseText}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
@@ -252,6 +260,9 @@
 
                 </Grid>
             </TabItem>
+            <!--#endregion-->
+            
+            <!--#region 用户验证设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.User}">
                 <ScrollViewer>
                     <StackPanel x:Name="userGrid" Margin="10,0">
@@ -289,7 +300,7 @@
                                     DisplayMemberPath="Value.Name" ItemsSource="{Binding User.AuthenticationDic}"
                                     SelectedValuePath="Key" SelectedValue="{Binding User.LockAuthName}"/>
                                     <Button Width="100" Content="清除全局验证选择" Click="clearAllauthButton_Click"/>
-                                    </StackPanel>
+                                </StackPanel>
                                 <CheckBox Margin="0,0,0,10" Content="统一通行证服务器依赖（仅在全局使用统一通行证验证模型，且统一通行证后台正确设置后生效）" IsChecked="{Binding User.Nide8ServerDependence}"/>
                                 <Button Style="{DynamicResource SquareButtonStyle}" Content="删除全部验证模型" Background="IndianRed" Foreground="White" Margin="0,0,0,5" Click="delAllAuthnodeButton_Click"/>
                                 <Button Style="{DynamicResource SquareButtonStyle}" Content="删除全部用户" Background="IndianRed" Foreground="White" Click="delAllUserButton_Click"/>
@@ -330,12 +341,16 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            <!--#endregion-->
+            
+            <!--#region 自定义设置-->
             <TabItem Header="自定义">
                 <ScrollViewer>
                     <StackPanel x:Name="customGrid" Margin="10,0,10,0">
                         <Expander Header="启动器主题设置" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="启动器主题颜色:"/>
+
                                 <ComboBox x:Name="AccentColorComboBox" DisplayMemberPath="Name" SelectionChanged="AccentColorComboBox_SelectionChanged"
                                           Text="{Binding Customize.AccentColor}" HorizontalAlignment="Left" Width="200"/>
                                 <Label Content="启动器主题:"/>
@@ -381,8 +396,10 @@
                         </Expander>
                     </StackPanel>
                 </ScrollViewer>
-
             </TabItem>
+            <!--#endregion-->
+            
+            <!--#region 关于-->
             <TabItem Header="关于">
                 <StackPanel>
                     <TextBlock Margin="10,0">
@@ -405,6 +422,7 @@
                     </TextBlock>
                 </StackPanel>
             </TabItem>
+            <!--#endregion-->
 
         </TabControl>
         <Button x:Name="saveButton" Content="{DynamicResource String.Base.Apply}"

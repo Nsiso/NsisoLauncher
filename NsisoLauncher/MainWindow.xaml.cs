@@ -826,6 +826,13 @@ namespace NsisoLauncher
                 }
             }
             #endregion
+
+            #region 检查更新
+            if (App.config.MainConfig.Launcher.CheckUpdate)
+            {
+                await CheckUpdate();
+            }
+            #endregion
         }
 
         private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -875,6 +882,20 @@ namespace NsisoLauncher
             if (!result.Process.HasExited)
             {
                 result.Process.Kill();
+            }
+        }
+
+        private async Task CheckUpdate()
+        {
+            var ver = await App.nsisoAPIHandler.GetLatestLauncherVersion();
+            if (ver != null)
+            {
+                System.Version currentVersion = Application.ResourceAssembly.GetName().Version;
+                if ((ver.Version > currentVersion) &&
+                    ver.ReleaseType.Equals("release", StringComparison.OrdinalIgnoreCase))
+                {
+                    new UpdateWindow(ver).Show();
+                }
             }
         }
         #endregion

@@ -264,6 +264,11 @@ namespace NsisoLauncher.Config
         /// 是否禁止数据追踪
         /// </summary>
         public bool NoTracking { get; set; }
+
+        /// <summary>
+        /// 是否检查更新
+        /// </summary>
+        public bool CheckUpdate { get; set; }
     }
 
     /// <summary>
