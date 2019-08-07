@@ -11,7 +11,7 @@
     <sys:String x:Key="String.Base.Cancel">取消</sys:String>
     <sys:String x:Key="String.Base.Unremember">不再提醒</sys:String>
     <sys:String x:Key="String.Base.Apply">应用</sys:String>
-    <sys:String x:Key="String.Base.Login">登陆</sys:String>
+    <sys:String x:Key="String.Base.Login">登录</sys:String>
     <sys:String x:Key="String.Base.Yes">确认</sys:String>
     <sys:String x:Key="String.Base.Username">用户名</sys:String>
     <sys:String x:Key="String.Base.Password">密码</sys:String>
