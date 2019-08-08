@@ -377,6 +377,7 @@ namespace NsisoLauncher
                                     args.UserNode.AccessToken,
                                     args.UserNode.GetSelectProfileUUID(),
                                     args.UserNode.UserData);
+                                authenticator = cYggTokenCator;
                             }
                             else
                             {
@@ -646,7 +647,7 @@ namespace NsisoLauncher
                 }
                 else if (args.AuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                 {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetAIJarPath(), args.AuthNode.Property["authserver"] + "/authserver");
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetAIJarPath(), args.AuthNode.Property["authserver"]);
                 }
 
                 //直连服务器设置

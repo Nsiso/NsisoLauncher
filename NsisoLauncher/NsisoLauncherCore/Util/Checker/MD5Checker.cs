@@ -15,7 +15,7 @@ namespace NsisoLauncherCore.Util.Checker
             {
                 throw new ArgumentException("检验器缺少校验值");
             }
-            return string.Equals(CheckSum, GetFileChecksum());
+            return string.Equals(CheckSum, GetFileChecksum(), StringComparison.OrdinalIgnoreCase);
         }
 
         public string GetFileChecksum()
