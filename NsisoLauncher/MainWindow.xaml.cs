@@ -288,7 +288,7 @@ namespace NsisoLauncher
                             }
                             else
                             {
-                                await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                 return;
                             }
                         }
@@ -349,7 +349,7 @@ namespace NsisoLauncher
                                     }
                                     else
                                     {
-                                        await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                        await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                         return;
                                     }
                                 }
@@ -398,7 +398,7 @@ namespace NsisoLauncher
                                 }
                                 else
                                 {
-                                    await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                    await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                     return;
                                 }
                             }
@@ -442,7 +442,7 @@ namespace NsisoLauncher
                                 }
                                 else
                                 {
-                                    await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登陆信息");
+                                    await this.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                     return;
                                 }
                             }
@@ -495,11 +495,11 @@ namespace NsisoLauncher
                             break;
                         case AuthState.REQ_LOGIN:
                             args.UserNode.ClearAuthCache();
-                            await this.ShowMessageAsync("验证失败：您的登陆信息已过期",
-                                string.Format("请您重新进行登陆。具体信息：{0}", authResult.Error.ErrorMessage));
+                            await this.ShowMessageAsync("验证失败：您的登录信息已过期",
+                                string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_INVALID_CRDL:
-                            await this.ShowMessageAsync("验证失败：您的登陆账号或密码错误",
+                            await this.ShowMessageAsync("验证失败：您的登录账号或密码错误",
                                 string.Format("请您确认您输入的账号密码正确。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_NOTFOUND:

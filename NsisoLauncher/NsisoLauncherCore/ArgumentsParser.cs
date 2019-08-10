@@ -25,15 +25,19 @@ namespace NsisoLauncherCore
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            #region 处理JVM启动头参数
+            #region JVM头参数部分
             StringBuilder jvmHead = new StringBuilder();
 
+            #region 处理JavaAgent
             if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
             {
                 jvmHead.Append("-javaagent:");
                 jvmHead.Append(setting.JavaAgent.Trim());
-                jvmHead.Append(" ");
+                jvmHead.Append(' ');
             }
+            #endregion
+
+            #region 处理JVM启动头参数  
             if (setting.GCEnabled)
             {
                 switch (setting.GCType)
@@ -71,7 +75,22 @@ namespace NsisoLauncherCore
             {
                 jvmHead.Append(setting.AdvencedJvmArguments).Append(' ');
             }
+            #endregion
+
+            #region 处理游戏JVM参数
+            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
+            {
+                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(setting.Version), @"\$natives") },
+                {"${launcher_name}","NsisoLauncher5" },
+                {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
+                {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
+            };
+
+            jvmHead.Append(ReplaceByDic(setting.Version.JvmArguments, jvmArgDic)?.Trim());
+            jvmHead.Append(' ');
             jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
+            #endregion
+
             #endregion
 
             #region 处理游戏参数
@@ -144,22 +163,9 @@ namespace NsisoLauncherCore
 
             #endregion
 
-            #region 处理游戏JVM参数
-            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
-            {
-                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(setting.Version), @"\$natives") },
-                {"${launcher_name}","NsisoLauncher5" },
-                {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
-            };
-
-
-            string jvmArg = ReplaceByDic(setting.Version.JvmArguments, jvmArgDic)?.Trim();
-            #endregion
-
             stopwatch.Stop();
 
-            string allArg = jvmHead.ToString() + jvmArg + ' ' + setting.Version.MainClass + ' ' + gameArg;
+            string allArg = jvmHead.ToString() + setting.Version.MainClass + ' ' + gameArg;
             SendDebugLog(string.Format("完成启动参数转换,用时:{0}ms", stopwatch.ElapsedMilliseconds));
             SendDebugLog(string.Format("启动参数:{0}", allArg));
 

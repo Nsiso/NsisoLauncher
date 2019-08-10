@@ -17,7 +17,7 @@
     <sys:String x:Key="String.Base.Password">密码</sys:String>
     <sys:String x:Key="String.Base.Register">注册</sys:String>
     <sys:String x:Key="String.Base.Choose">请选择操作</sys:String>
-    <sys:String x:Key="String.Base.ShouldRememberLogin">记住登陆状态</sys:String>
+    <sys:String x:Key="String.Base.ShouldRememberLogin">记住登录状态</sys:String>
 
     <sys:String x:Key="String.Message.EmptyAuthType">您未选择验证方式</sys:String>
     <sys:String x:Key="String.Message.EmptyAuthType2">请在右侧第一个验证方式栏选择您使用的验证类型</sys:String>
@@ -35,16 +35,16 @@
     <sys:String x:Key="String.Mainwindow.InputPlayerName">输入/选择游戏名称或账号</sys:String>
     <sys:String x:Key="String.Mainwindow.Launching">启动中...</sys:String>
      
-    <!--#region 登陆-->
+    <!--#region 登录-->
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying">在线正版验证中...</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerifying">在线正版验证中(自动验证)...</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.VerificationFailed">正版验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Mojang.VerificationFailed2">请确认您的正版账号密码填写无误，并已购买正版。账户异常也可能导致登陆错误，您可以进入Mojang官网进行查询。错误信息:</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.VerificationFailed2">请确认您的正版账号密码填写无误，并已购买正版。账户异常也可能导致登录错误，您可以进入Mojang官网进行查询。错误信息:</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerificationFailed">自动正版验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用Mojang正版验证）</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Login">请键入登陆信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.AutoVerificationFailed2">保存的验证信息已过期，请重新登录（正在使用Mojang正版验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Mojang.Login">请键入登录信息</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Login2">您启用了在线验证（Mojang官方正版）</sys:String>
 
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.Verifying">在线验证中（统一通行证）...</sys:String>
@@ -54,9 +54,9 @@
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.VerificationFailed">统一通行证验证失败</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.VerificationFailed2">请确认您的统一通行证账号密码填写无误，您可以联系服主咨询。错误信息:</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerificationFailed">自动验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用服务器统一通行证验证）</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login">请键入登陆信息</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login2">您正在登陆服务器统一通行证</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.AutoVerificationFailed2">保存的验证信息已过期，请重新登录（正在使用服务器统一通行证验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login">请键入登录信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Nide8.Login2">您正在登录服务器统一通行证</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.NoID">没有设置服务器ID</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Nide8.NoID2">统一验证服务器ID为空，如果您是服主，请在用户设置中填写通行证后台提供的服务器ID。</sys:String>
 
@@ -67,8 +67,8 @@
     <sys:String x:Key="String.Mainwindow.Auth.Custom.VerificationFailed">验证失败</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.VerificationFailed2">请确认您的账号密码填写无误，以及验证服务器是否正常。错误信息:</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerificationFailed">自动验证失败</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerificationFailed2">保存的验证信息已过期，请重新登陆（正在使用自定义验证）</sys:String>
-    <sys:String x:Key="String.Mainwindow.Auth.Custom.Login">请键入登陆信息</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.AutoVerificationFailed2">保存的验证信息已过期，请重新登录（正在使用自定义验证）</sys:String>
+    <sys:String x:Key="String.Mainwindow.Auth.Custom.Login">请键入登录信息</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.Login2">您启用了自定义验证</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress">未设置自定义验证服务器地址</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Custom.NoAdrress2">请在设置：用户验证设置：高级验证中设置自定义验证服务器(authlib或其它验证系统)</sys:String>
@@ -183,14 +183,14 @@
     <sys:String x:Key="String.Settingwindow.Version.Control">版本操作</sys:String>
     <sys:String x:Key="String.Settingwindow.User">用户验证设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Type">启动验证类型设置</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Type.Online">使用正版验证登陆 (需要联网验证)</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Type.Offline">使用离线验证登陆 (无需正版账号)</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Type.Online">使用正版验证登录 (需要联网验证)</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Type.Offline">使用离线验证登录 (无需正版账号)</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Nide8">统一通行证验证设置</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Nide8.ID">统一通行证服务器ID</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Nide8.UsingNide8ServerIP">全局统一通行证设置(强制使用统一通行证，主界面显示服务器信息，启动后自动进服) *需要在后台设置服务器IP</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info">验证信息设置</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Info.Note">*在线验证将在启动时进行登陆</sys:String>
-    <sys:String x:Key="String.Settingwindow.User.Info.UnRemember">取消记住登陆状态并注销</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Info.Note">*在线验证将在启动时进行登录</sys:String>
+    <sys:String x:Key="String.Settingwindow.User.Info.UnRemember">取消记住登录状态并注销</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Pack">将用户信息设置为服务器客户端发布状态</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Clear">重置用户信息</sys:String>
     <sys:String x:Key="String.Settingwindow.User.Info.Del">删除用户</sys:String>

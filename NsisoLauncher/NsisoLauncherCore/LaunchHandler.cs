@@ -121,6 +121,7 @@ namespace NsisoLauncherCore
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
+
                 if (setting.LaunchType == LaunchType.SAFE)
                 {
                     setting.AdvencedGameArguments = null;

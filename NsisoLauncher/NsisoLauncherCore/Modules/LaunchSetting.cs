@@ -164,7 +164,7 @@ namespace NsisoLauncherCore.Modules
         public string AdvencedGameArguments { get; set; }
 
         /// <summary>
-        /// 设置启动时登陆的服务器IP地址
+        /// 设置启动时登录的服务器IP地址
         /// </summary>
         public Server LaunchToServer { get; set; }
 

@@ -267,13 +267,29 @@ namespace NsisoLauncherCore.Util
 
                                 if (arg["value"].Type == JTokenType.String)
                                 {
-                                    jvmArgBuilder.AppendFormat("{0} ", arg["value"].ToString());
+                                    string value = arg["value"].ToString();
+                                    if (value.Contains(" "))
+                                    {
+                                        jvmArgBuilder.AppendFormat("\"{0}\" ", value);
+                                    }
+                                    else
+                                    {
+                                        jvmArgBuilder.AppendFormat("{0} ", value);
+                                    }
                                 }
                                 else if (arg["value"].Type == JTokenType.Array)
                                 {
                                     foreach (var str in arg["value"])
                                     {
-                                        jvmArgBuilder.AppendFormat("{0} ", str);
+                                        string value = str.ToString();
+                                        if (value.Contains(" "))
+                                        {
+                                            jvmArgBuilder.AppendFormat("\"{0}\" ", value);
+                                        }
+                                        else
+                                        {
+                                            jvmArgBuilder.AppendFormat("{0} ", value);
+                                        }
                                     }
                                 }
                             }
