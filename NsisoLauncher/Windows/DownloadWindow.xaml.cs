@@ -71,12 +71,13 @@ namespace NsisoLauncher.Windows
             plotter.DisableAnimations = true;
         }
 
-        public async Task ShowWhenDownloading()
+        public async Task<DownloadCompletedArg> ShowWhenDownloading()
         {
             this.Topmost = true;
             this.Show();
-            await Task.Factory.StartNew(() =>
+            return await Task.Factory.StartNew(() =>
             {
+                DownloadCompletedArg completedArg = null;
                 try
                 {
                     EventWaitHandle _waitHandle = new AutoResetEvent(false);
@@ -91,6 +92,7 @@ namespace NsisoLauncher.Windows
                             catch (Exception) { }
                         }));
                         _waitHandle.Set();
+                        completedArg = b;
                     };
                     _waitHandle.WaitOne();
                 }
@@ -102,6 +104,7 @@ namespace NsisoLauncher.Windows
                     };
                     App.CatchAggregateException(this, args);
                 }
+                return completedArg;
             });
         }
 

@@ -153,6 +153,7 @@ namespace NsisoLauncherCore.Net
                 {
                     cancellationTokenSource = new CancellationTokenSource();
                     IsBusy = true;
+                    _errorList.Clear();
                     if (ProcessorSize == 0)
                     {
                         IsBusy = false;
@@ -315,27 +316,42 @@ namespace NsisoLauncherCore.Net
                 Stream responseStream = response.GetResponseStream();
                 responseStream.ReadTimeout = 5000;
                 FileStream fs = new FileStream(buffFilename, FileMode.Create);
-                byte[] bArr = new byte[1024];
-                int size = responseStream.Read(bArr, 0, (int)bArr.Length);
 
-                while (size > 0)
+                try
                 {
-                    if (cancelToken.IsCancellationRequested)
+                    byte[] bArr = new byte[1024];
+                    int size = responseStream.Read(bArr, 0, (int)bArr.Length);
+
+                    while (size > 0)
                     {
-                        ApendDebugLog("放弃下载:" + task.TaskName);
-                        fs.Close();
-                        responseStream.Close();
-                        RemoveItemFromViewTask(task);
-                        return;
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            ApendDebugLog("放弃下载:" + task.TaskName);
+                            fs.Close();
+                            responseStream.Close();
+                            RemoveItemFromViewTask(task);
+                            return;
+                        }
+                        fs.Write(bArr, 0, size);
+                        size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                        _downloadSizePerSec += size;
+                        task.IncreaseDownloadSize(size);
                     }
-                    fs.Write(bArr, 0, size);
-                    size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                    _downloadSizePerSec += size;
-                    task.IncreaseDownloadSize(size);
+
+                    fs.Close();
+                    responseStream.Close();
+                    File.Move(buffFilename, realFilename);
                 }
-                fs.Close();
-                responseStream.Close();
-                File.Move(buffFilename, realFilename);
+                catch (Exception e)
+                {
+                    fs.Close();
+                    responseStream.Close();
+                    ApendErrorLog(e);
+                    if (!_errorList.ContainsKey(task))
+                    {
+                        _errorList.Add(task, e);
+                    }
+                }
             }
             catch (Exception e)
             {

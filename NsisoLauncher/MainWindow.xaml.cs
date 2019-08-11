@@ -627,9 +627,21 @@ namespace NsisoLauncher
 
                 if (losts.Count != 0)
                 {
-                    App.downloader.SetDownloadTasks(losts);
-                    App.downloader.StartDownload();
-                    await new Windows.DownloadWindow().ShowWhenDownloading();
+                    if (!App.downloader.IsBusy)
+                    {
+                        App.downloader.SetDownloadTasks(losts);
+                        App.downloader.StartDownload();
+                        var downloadResult = await new DownloadWindow().ShowWhenDownloading();
+                        if (downloadResult?.ErrorList?.Count != 0)
+                        {
+                            await this.ShowMessageAsync(string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
+                                "这可能是因为本地网络问题或下载源问题，您可以尝试检查网络环境或在设置中切换首选下载源，启动器将继续尝试启动");
+                        }
+                    }
+                    else
+                    {
+                        await this.ShowMessageAsync("无法下载补全：当前有正在下载中的任务", "请等待其下载完毕或取消下载，启动器将尝试继续启动");
+                    }
                 }
 
                 #endregion
