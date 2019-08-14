@@ -189,6 +189,11 @@ namespace NsisoLauncherCore.Modules
         /// 下载URL
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// 库文件下载信息
+        /// </summary>
+        public PathSha1SizeUrl LibDownloadInfo { get; set; }
     }
 
     public class Native : Library
@@ -202,6 +207,11 @@ namespace NsisoLauncherCore.Modules
         /// 不解压的文件夹
         /// </summary>
         public List<string> Exclude { get; set; }
+
+        /// <summary>
+        /// native文件下载信息
+        /// </summary>
+        public PathSha1SizeUrl NativeDownloadInfo { get; set; }
     }
 
 
@@ -261,5 +271,17 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         [JsonProperty("url")]
         public string URL { get; set; }
+    }
+
+    /// <summary>
+    /// 基本要素类
+    /// </summary>
+    public class PathSha1SizeUrl : Sha1SizeUrl
+    {
+        /// <summary>
+        /// 路径
+        /// </summary>
+        [JsonProperty("path")]
+        public string Path { get; set; }
     }
 }

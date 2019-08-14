@@ -30,7 +30,7 @@ namespace NsisoLauncherCore.Util.Checker
             md5.Dispose();//释放当前实例使用的所有资源
             file.Dispose();
             string result = BitConverter.ToString(md5Bytes);//将运算结果转为string类型
-            result = result.Replace("-", "").ToUpper();
+            result = result.Replace("-", "");
             return result;
         }
     }

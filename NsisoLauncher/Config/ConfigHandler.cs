@@ -212,7 +212,8 @@ namespace NsisoLauncher.Config
                 Download = new Download()
                 {
                     DownloadSource = DownloadSource.Mojang,
-                    DownloadThreadsSize = 5
+                    DownloadThreadsSize = 5,
+                    CheckDownloadFileHash = true
                 },
                 Launcher = new Launcher()
                 {

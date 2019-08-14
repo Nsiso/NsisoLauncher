@@ -86,53 +86,64 @@ namespace NsisoLauncherCore.Util
             }
 
             #region 处理依赖
-            ver.Libraries = new List<Modules.Library>();
+            ver.Libraries = new List<Library>();
             ver.Natives = new List<Native>();
             var libToken = obj["libraries"];
             foreach (JToken lib in libToken)
             {
-                var libObj = lib.ToObject<Library>();
-                var parts = libObj.Name.Split(':');
+                var libObj = lib.ToObject<JLibrary>();
 
-                if (libObj.Natives == null)
+                if (CheckAllowed(libObj.Rules))
                 {
-                    if (CheckAllowed(libObj.Rules))
+                    var parts = libObj.Name.Split(':');
+
+                    string package = parts[0];
+                    string name = parts[1];
+                    string version = parts[2];
+
+                    if (libObj.Natives == null)
                     {
-                        Modules.Library library = new Modules.Library()
+                        //不为native
+                        Library library = new Library()
                         {
-                            Package = parts[0],
-                            Name = parts[1],
-                            Version = parts[2]
+                            Package = package,
+                            Name = name,
+                            Version = version
                         };
                         if (!string.IsNullOrWhiteSpace(libObj.Url))
                         {
                             library.Url = libObj.Url;
                         }
+                        if (libObj.Downloads?.Artifact != null)
+                        {
+                            library.LibDownloadInfo = libObj.Downloads.Artifact;
+                        }
                         ver.Libraries.Add(library);
                     }
-                }
-                else
-                {
-                    if (CheckAllowed(libObj.Rules))
+                    else
                     {
-                        var native = new Native
+                        //为native
+                        var native = new Native()
                         {
-                            Package = parts[0],
-                            Name = parts[1],
-                            Version = parts[2],
+                            Package = package,
+                            Name = name,
+                            Version = version,
                             NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
                         };
-                        ver.Natives.Add(native);
                         if (libObj.Extract != null)
                         {
                             native.Exclude = libObj.Extract.Exculde;
                         }
+                        if (libObj.Downloads?.Artifact != null)
+                        {
+                            native.LibDownloadInfo = libObj.Downloads.Artifact;
+                        }
+                        if (libObj.Downloads?.Classifiers?.Natives != null)
+                        {
+                            native.NativeDownloadInfo = libObj.Downloads.Classifiers.Natives;
+                        }
+                        ver.Natives.Add(native);
                     }
-                }
-
-                if (((JObject)lib).ContainsKey("url"))
-                {
-
                 }
             }
             #endregion
@@ -385,7 +396,7 @@ namespace NsisoLauncherCore.Util
         /// </summary>
         /// <param name="rules">规则列表</param>
         /// <returns>是否启用</returns>
-        private bool CheckAllowed(List<Rule> rules)
+        private bool CheckAllowed(List<JRule> rules)
         {
             if (rules == null || rules.Count == 0)
             {
@@ -412,7 +423,7 @@ namespace NsisoLauncherCore.Util
         }
     }
 
-    public class Library
+    public class JLibrary
     {
         /// <summary>
         /// 库名称
@@ -430,13 +441,19 @@ namespace NsisoLauncherCore.Util
         /// 规则
         /// </summary>
         [JsonProperty("rules")]
-        public List<Rule> Rules { get; set; }
+        public List<JRule> Rules { get; set; }
 
         /// <summary>
         /// 解压声明
         /// </summary>
         [JsonProperty("extract")]
-        public Extract Extract { get; set; }
+        public JExtract Extract { get; set; }
+
+        /// <summary>
+        /// 下载引导
+        /// </summary>
+        [JsonProperty("downloads")]
+        public JDownloads Downloads { get; set; }
 
         /// <summary>
         /// 下载URL第一种表达
@@ -445,7 +462,7 @@ namespace NsisoLauncherCore.Util
         public string Url { get; set; }
     }
 
-    public class Rule
+    public class JRule
     {
         /// <summary>
         /// action
@@ -457,10 +474,10 @@ namespace NsisoLauncherCore.Util
         /// 操作系统
         /// </summary>
         [JsonProperty("os")]
-        public OperatingSystem OS { get; set; }
+        public JOperatingSystem OS { get; set; }
     }
 
-    public class OperatingSystem
+    public class JOperatingSystem
     {
         /// <summary>
         /// 系统名称
@@ -469,12 +486,36 @@ namespace NsisoLauncherCore.Util
         public string Name { get; set; }
     }
 
-    public class Extract
+    public class JExtract
     {
         /// <summary>
         /// 排除列表
         /// </summary>
         [JsonProperty("exclude")]
         public List<string> Exculde { get; set; }
+    }
+
+    public class JDownloads
+    {
+        /// <summary>
+        /// 库文件
+        /// </summary>
+        [JsonProperty("artifact")]
+        public PathSha1SizeUrl Artifact { get; set; }
+
+        /// <summary>
+        /// 本地组件文件
+        /// </summary>
+        [JsonProperty("classifiers")]
+        public JClassifiers Classifiers { get; set; }
+    }
+
+    public class JClassifiers
+    {
+        /// <summary>
+        /// 库文件
+        /// </summary>
+        [JsonProperty("natives-windows")]
+        public PathSha1SizeUrl Natives { get; set; }
     }
 }

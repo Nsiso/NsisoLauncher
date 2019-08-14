@@ -151,6 +151,7 @@ namespace NsisoLauncher
                 downloader.Proxy = proxy;
             }
             downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
+            downloader.CheckFileHash = App.config.MainConfig.Download.CheckDownloadFileHash;
             downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
             #endregion
 

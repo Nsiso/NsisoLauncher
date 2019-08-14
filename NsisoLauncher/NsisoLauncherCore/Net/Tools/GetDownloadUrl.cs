@@ -1,5 +1,6 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
+using NsisoLauncherCore.Util.Checker;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -47,17 +48,31 @@ namespace NsisoLauncherCore.Net.Tools
             return ret;
         }
 
-        private static string GetLibPath(Modules.Library lib)
+        private static string GetLibBasePath(Library lib)
         {
-            return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Package.Replace(".", "\\"), lib.Name, lib.Version);
+            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Path))
+            {
+                return lib.LibDownloadInfo.Path;
+            }
+            else
+            {
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Package.Replace(".", "\\"), lib.Name, lib.Version);
+            }
         }
 
-        private static string GetNativePath(Native native)
+        private static string GetNativeBasePath(Native native)
         {
-            return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Package.Replace(".", "\\"), native.Name, native.Version, native.NativeSuffix);
+            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.Path))
+            {
+                return native.NativeDownloadInfo.Path;
+            }
+            else
+            {
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Package.Replace(".", "\\"), native.Name, native.Version, native.NativeSuffix);
+            }
         }
 
-        private static string GetAssetsPath(JAssetsInfo assetsInfo)
+        private static string GetAssetsBasePath(JAssetsInfo assetsInfo)
         {
             return String.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
@@ -76,7 +91,7 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static string GetCoreJarDownloadURL(DownloadSource source, Modules.Version ver)
         {
-            if (ver.Downloads != null)
+            if (ver.Downloads?.Client != null)
             {
                 switch (source)
                 {
@@ -99,7 +114,12 @@ namespace NsisoLauncherCore.Net.Tools
         {
             string to = core.GetJarPath(version);
             string from = GetCoreJarDownloadURL(downloadSource, version);
-            return new DownloadTask("游戏版本核心Jar文件", from, to);
+            DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", from, to);
+            if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.SHA1))
+            {
+                downloadTask.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.SHA1, FilePath = to };
+            }
+            return downloadTask;
         }
 
         /// <summary>
@@ -108,26 +128,33 @@ namespace NsisoLauncherCore.Net.Tools
         /// <param name="source">下载源</param>
         /// <param name="lib">lib实例</param>
         /// <returns>下载URL</returns>
-        public static string GetLibDownloadURL(DownloadSource source, Modules.Library lib)
+        public static string GetLibDownloadURL(DownloadSource source, Library lib)
         {
-            string libUrlPath = GetLibPath(lib).Replace('\\', '/');
-            if (lib.Url != null)
+            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.URL))
             {
-                return DoURLReplace(source, lib.Url) + libUrlPath;
+                return DoURLReplace(source, lib.LibDownloadInfo.URL);
             }
             else
             {
-                switch (source)
+                string libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
+                if (lib.Url != null)
                 {
-                    case DownloadSource.Mojang:
-                        return MojanglibrariesUrl + libUrlPath;
+                    return DoURLReplace(source, lib.Url) + libUrlPath;
+                }
+                else
+                {
+                    switch (source)
+                    {
+                        case DownloadSource.Mojang:
+                            return MojanglibrariesUrl + libUrlPath;
 
-                    case DownloadSource.BMCLAPI:
-                        return BMCLLibrariesURL + libUrlPath;
+                        case DownloadSource.BMCLAPI:
+                            return BMCLLibrariesURL + libUrlPath;
 
-                    default:
-                        throw new ArgumentNullException("source");
+                        default:
+                            throw new ArgumentNullException("source");
 
+                    }
                 }
             }
         }
@@ -139,10 +166,16 @@ namespace NsisoLauncherCore.Net.Tools
         /// <param name="lib">lib实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetLibDownloadTask(DownloadSource source, KeyValuePair<string, Modules.Library> lib)
+        public static DownloadTask GetLibDownloadTask(DownloadSource source, KeyValuePair<string, Library> lib)
         {
             string from = GetLibDownloadURL(source, lib.Value);
-            return new DownloadTask("版本依赖库文件" + lib.Value.Name, from, lib.Key);
+            string to = lib.Key;
+            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Name, from, to);
+            if (lib.Value.LibDownloadInfo != null)
+            {
+                task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.SHA1, FilePath = to };
+            }
+            return task;
         }
 
         /// <summary>
@@ -153,17 +186,24 @@ namespace NsisoLauncherCore.Net.Tools
         /// <returns>下载URL</returns>
         public static string GetNativeDownloadURL(DownloadSource source, Native native)
         {
-            switch (source)
+            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.URL))
             {
-                case DownloadSource.Mojang:
-                    return (MojanglibrariesUrl + GetNativePath(native)).Replace('\\', '/');
+                return DoURLReplace(source, native.NativeDownloadInfo.URL);
+            }
+            else
+            {
+                switch (source)
+                {
+                    case DownloadSource.Mojang:
+                        return (MojanglibrariesUrl + GetNativeBasePath(native)).Replace('\\', '/');
 
-                case DownloadSource.BMCLAPI:
-                    return (BMCLLibrariesURL + GetNativePath(native)).Replace('\\', '/');
+                    case DownloadSource.BMCLAPI:
+                        return (BMCLLibrariesURL + GetNativeBasePath(native)).Replace('\\', '/');
 
-                default:
-                    throw new ArgumentNullException("source");
+                    default:
+                        throw new ArgumentNullException("source");
 
+                }
             }
         }
 
@@ -177,7 +217,13 @@ namespace NsisoLauncherCore.Net.Tools
         public static DownloadTask GetNativeDownloadTask(DownloadSource source, KeyValuePair<string, Native> native)
         {
             string from = GetNativeDownloadURL(source, native.Value);
-            return new DownloadTask("版本系统依赖库文件" + native.Value.Name, from, native.Key);
+            string to = native.Key;
+            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Name, from, to);
+            if (native.Value.NativeDownloadInfo != null)
+            {
+                task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.SHA1, FilePath = to };
+            }
+            return task;
         }
 
         /// <summary>
@@ -191,10 +237,10 @@ namespace NsisoLauncherCore.Net.Tools
             switch (source)
             {
                 case DownloadSource.Mojang:
-                    return (MojangAssetsBaseUrl + GetAssetsPath(assets)).Replace('\\', '/');
+                    return (MojangAssetsBaseUrl + GetAssetsBasePath(assets)).Replace('\\', '/');
 
                 case DownloadSource.BMCLAPI:
-                    return (BMCLUrl + "objects\\" + GetAssetsPath(assets)).Replace('\\', '/');
+                    return (BMCLUrl + "objects\\" + GetAssetsBasePath(assets)).Replace('\\', '/');
 
                 default:
                     throw new ArgumentNullException("source");

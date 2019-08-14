@@ -233,7 +233,7 @@ namespace NsisoLauncherCore.Util
             if (version.InheritsVersion != null)
             {
                 string innerJsonPath = core.GetJsonPath(version.InheritsVersion);
-                string innerJsonStr = null;
+                string innerJsonStr;
                 if (!File.Exists(innerJsonPath))
                 {
                     innerJsonStr = await APIRequester.HttpGetStringAsync(GetDownloadUrl.GetCoreJsonDownloadURL(source, version.InheritsVersion));

@@ -75,6 +75,7 @@ namespace NsisoLauncherCore.Net
         public int ProcessorSize { get; set; } = 5;
         public bool IsBusy { get; private set; } = false;
         public WebProxy Proxy { get; set; }
+        public bool CheckFileHash { get; set; }
 
         public event EventHandler<DownloadProgressChangedArg> DownloadProgressChanged;
         public event EventHandler<DownloadSpeedChangedArg> DownloadSpeedChanged;
@@ -234,12 +235,13 @@ namespace NsisoLauncherCore.Net
                         ApendDebugLog("下载完成:" + item.From);
 
                         #region 校验
-                        if (item.Checker != null)
+                        if (CheckFileHash && item.Checker != null)
                         {
                             item.SetState("校验中");
                             if (!item.Checker.CheckFilePass())
                             {
-                                ApendDebugLog("校验失败");
+                                item.SetState("校验失败");
+                                ApendDebugLog(string.Format("{0}校验哈希值失败，目标哈希值:{1}", item.TaskName, item.Checker.CheckSum));
                                 File.Delete(item.To);
                                 if (!_errorList.ContainsKey(item))
                                 {
@@ -249,6 +251,7 @@ namespace NsisoLauncherCore.Net
                             else
                             {
                                 item.SetState("校验成功");
+                                ApendDebugLog(string.Format("{0}校验哈希值成功:{1}", item.TaskName, item.Checker.CheckSum));
                             }
                         }
                         #endregion
