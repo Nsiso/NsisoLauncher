@@ -169,6 +169,7 @@ namespace NsisoLauncher.Windows
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
             App.handler.VersionIsolation = config.Environment.VersionIsolation;
+            App.downloader.CheckFileHash = config.Download.CheckDownloadFileHash;
             #endregion
 
             App.config.MainConfig = config;

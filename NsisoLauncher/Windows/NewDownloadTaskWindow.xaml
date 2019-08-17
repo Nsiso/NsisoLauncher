@@ -58,7 +58,7 @@
                             Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70" Click="RefreshForgeButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Liteloader}" IsEnabled="False">
+            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Liteloader}" IsEnabled="False" Visibility="Hidden">
                 <Grid>
                     <Label Content="要安装Liteloader的版本：" Margin="10,10,0,0" HorizontalAlignment="Left" Width="150" VerticalAlignment="Top"/>
                     <ComboBox x:Name="verToInstallLiteComboBox" HorizontalAlignment="Left" Margin="165,10,0,0" VerticalAlignment="Top" Width="300" DisplayMemberPath="ID" SelectionChanged="VerToInstallLiteComboBox_SelectionChanged"/>
