@@ -160,7 +160,8 @@ namespace NsisoLauncherCore
                 { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
                 var process = Process.Start(startInfo);
                 sw.Stop();
-                AppendLaunchInfoLog(string.Format("成功启动游戏进程,总共用时:{0}ms", sw.ElapsedMilliseconds));
+                long launchUsingMsTime = sw.ElapsedMilliseconds;
+                AppendLaunchInfoLog(string.Format("成功启动游戏进程,总共用时:{0}ms", launchUsingMsTime));
 
                 Task.Factory.StartNew(() =>
                 {
@@ -181,7 +182,7 @@ namespace NsisoLauncherCore
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
 
-                return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg };
+                return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime };
             }
             catch (LaunchException.LaunchException ex)
             {

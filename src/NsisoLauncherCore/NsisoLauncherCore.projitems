@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>5c2d381d-748d-4809-bfe3-179ccca2dc0d</SharedGUID>
+    <SharedGUID>14e2fa92-77f6-4bff-9654-38fa29034aa9</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>NsisoLauncherCore</Import_RootNamespace>
@@ -23,6 +23,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\APIRequester.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\AuthlibInjectorAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\CrafatarAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Question.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\RR.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Structs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\APIModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\FunctionAPIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Api\Requester.cs" />
@@ -123,11 +126,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\UuidAtTimeResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MultiThreadDownloader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\NewDownloader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Nide8API\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Nide8API\APIModules.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\APIRequester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\PhalAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\PhalAPI\APIModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ForgeInfo.cs" />
@@ -136,6 +136,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\AssetsReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\IChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\MD5Checker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\SHA1Checker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\SHA256Checker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\CrashHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\FileHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\GameHelper.cs" />

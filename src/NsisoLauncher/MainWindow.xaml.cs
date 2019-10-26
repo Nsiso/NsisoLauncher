@@ -194,9 +194,9 @@ namespace NsisoLauncher
                 }
                 #endregion
 
-
                 #region 保存启动数据
                 App.config.MainConfig.History.LastLaunchVersion = args.LaunchVersion.ID;
+                App.config.MainConfig.History.LastLaunchTime = DateTime.Now;
                 #endregion
 
                 LaunchSetting launchSetting = new LaunchSetting()
@@ -748,6 +748,7 @@ namespace NsisoLauncher
                     await App.nsisoAPIHandler.RefreshUsingTimesCounter();
                     #endregion
 
+                    App.config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
                     if (App.config.MainConfig.Environment.ExitAfterLaunch)
                     {
                         Application.Current.Shutdown();

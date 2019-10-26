@@ -25,6 +25,11 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public LaunchException.LaunchException LaunchException { get; set; }
 
+        /// <summary>
+        /// 启动使用的时间
+        /// </summary>
+        public long LaunchUsingMs { get; set; }
+
 
         public LaunchResult() { }
 
