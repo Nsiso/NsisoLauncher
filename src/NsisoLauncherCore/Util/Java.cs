@@ -183,6 +183,7 @@ namespace NsisoLauncherCore.Util
 
             var oldKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Runtime Environment");
             var newKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JRE");
+            var jdkKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Development Kit");
 
             //oldJre
             if (oldKey != null)
@@ -208,6 +209,22 @@ namespace NsisoLauncherCore.Util
                     if (verStr.Length > 3)
                     {
                         string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
+                        if (File.Exists(path))
+                        {
+                            jres.Add(verStr, path);
+                        }
+                    }
+                }
+            }
+
+            //jdk
+            if (jdkKey != null)
+            {
+                foreach (var verStr in jdkKey.GetSubKeyNames())
+                {
+                    if (verStr.Length > 3)
+                    {
+                        string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\jre\bin\javaw.exe";
                         if (File.Exists(path))
                         {
                             jres.Add(verStr, path);

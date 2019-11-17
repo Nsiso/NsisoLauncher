@@ -88,7 +88,7 @@ namespace NsisoLauncher.Controls
                     (App.config.MainConfig.User.UserDatabase.ContainsKey(App.config.MainConfig.History.SelectedUserNodeID)))
                 {
                     this.userComboBox.SelectedValue = App.config.MainConfig.History.SelectedUserNodeID;
-                    await RefreshIcon();
+                    //await RefreshIcon();
                 }
 
                 //锁定验证模型处理
@@ -113,21 +113,22 @@ namespace NsisoLauncher.Controls
             }
         }
 
-        public async Task RefreshIcon()
-        {
-            //头像自定义显示皮肤
-            UserNode node = GetSelectedAuthNode();
-            if (node == null)
-            {
-                return;
-            }
-            bool isNeedRefreshIcon = (!string.IsNullOrWhiteSpace(node.SelectProfileUUID)) &&
-                node.AuthModule == "mojang";
-            if (isNeedRefreshIcon)
-            {
-                await headScul.RefreshIcon(node.SelectProfileUUID);
-            }
-        }
+        //todo 添加头像支持
+        //public async Task RefreshIcon()
+        //{
+        //    //头像自定义显示皮肤
+        //    UserNode node = GetSelectedAuthNode();
+        //    if (node == null)
+        //    {
+        //        return;
+        //    }
+        //    bool isNeedRefreshIcon = (!string.IsNullOrWhiteSpace(node.SelectProfileUUID)) &&
+        //        node.AuthModule == "mojang";
+        //    if (isNeedRefreshIcon)
+        //    {
+        //        await headScul.RefreshIcon(node.SelectProfileUUID);
+        //    }
+        //}
 
         #region button click event
 
@@ -200,9 +201,9 @@ namespace NsisoLauncher.Controls
             Refresh();
         }
 
-        private async void UserComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private /*async*/ void UserComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await RefreshIcon();
+            //await RefreshIcon();
         }
     }
 

@@ -11,13 +11,9 @@ namespace NsisoLauncher.Test
         LaunchHandler launchHandler;
 
         [TestMethod]
-        public async void TestLaunching()
+        public void TestLaunching()
         {
-            //launchHandler = new LaunchHandler(".minecraft/", Java.GetSuitableJava(), true);
-            //await launchHandler.LaunchAsync(new NsisoLauncherCore.Modules.LaunchSetting()
-            //{
-                
-            //});
+            launchHandler = new LaunchHandler(".minecraft/", Java.GetSuitableJava(), true);
         }
     }
 }

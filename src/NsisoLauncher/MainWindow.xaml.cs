@@ -11,6 +11,7 @@ using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -25,6 +26,11 @@ namespace NsisoLauncher
     {
         public Config.AuthenticationType Type { get; set; }
         public string Name { get; set; }
+    }
+
+    public class MainWindowViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
