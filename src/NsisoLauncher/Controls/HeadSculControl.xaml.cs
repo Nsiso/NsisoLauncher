@@ -13,12 +13,13 @@ namespace NsisoLauncher.Controls
             InitializeComponent();
         }
 
-        public async Task RefreshIcon(string uuid)
-        {
-            NsisoLauncherCore.Net.CrafatarAPI.APIHandler handler = new NsisoLauncherCore.Net.CrafatarAPI.APIHandler();
-            progressRing.IsActive = true;
-            iconImage.Source = await handler.GetHeadSculSource(uuid);
-            progressRing.IsActive = false;
-        }
+        //todo 添加回头像支持
+        //public async Task RefreshIcon(string uuid)
+        //{
+        //    NsisoLauncherCore.Net.CrafatarAPI.APIHandler handler = new NsisoLauncherCore.Net.CrafatarAPI.APIHandler();
+        //    progressRing.IsActive = true;
+        //    iconImage.Source = await handler.GetHeadSculSource(uuid);
+        //    progressRing.IsActive = false;
+        //}
     }
 }

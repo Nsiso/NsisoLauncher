@@ -14,6 +14,9 @@
     <controls:MetroWindow.Background>
         <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill" />
     </controls:MetroWindow.Background>
+    <controls:MetroWindow.Resources>
+        <local:MainWindowViewModel x:Key="mainWindowViewObj"/>
+    </controls:MetroWindow.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10*"/>

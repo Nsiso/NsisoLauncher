@@ -8,32 +8,61 @@ namespace NsisoLauncherCore.Net
     {
         public async static Task<HttpResponseMessage> HttpGetAsync(string uri)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                return await client.GetAsync(uri);
+                using (HttpClient client = new HttpClient())
+                {
+                    return await client.GetAsync(uri);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
         }
 
         public async static Task<string> HttpGetStringAsync(string uri)
         {
-            using (HttpClient client = new HttpClient())
+            
+            try
             {
-                return await client.GetStringAsync(uri);
+                using (HttpClient client = new HttpClient())
+                {
+                    return await client.GetStringAsync(uri);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
             }
         }
 
         public async static Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
-                return await client.PostAsync(uri, new FormUrlEncodedContent(arg));
+                using (HttpClient client = new HttpClient())
+                {
+                    return await client.PostAsync(uri, new FormUrlEncodedContent(arg));
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
         }
 
         public async static Task<string> HttpPostReadAsStringForString(string uri, Dictionary<string, string> arg)
         {
-            var result = await HttpPostAsync(uri, arg);
-            return await result.Content.ReadAsStringAsync();
+            try
+            {
+                var result = await HttpPostAsync(uri, arg);
+                return await result.Content.ReadAsStringAsync();
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
         }
     }
 }
