@@ -20,7 +20,7 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: '$(solution)/src'
 
 - task: VSBuild@1
   inputs:
