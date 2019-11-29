@@ -110,7 +110,7 @@ namespace NsisoLauncherCore
                 {"${auth_access_token}",setting.AuthenticateResult.AccessToken },
                 {"${user_properties}",ToList(setting.AuthenticateResult.UserData?.Properties) },
                 {"${user_type}",legacy },
-                {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":setting.VersionType }
+                {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) }
             };
             StringBuilder otherGamearg = new StringBuilder();
             if (setting.WindowSize != null)
