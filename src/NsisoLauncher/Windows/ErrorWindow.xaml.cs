@@ -83,7 +83,7 @@ namespace NsisoLauncher.Windows
             }
             catch (Exception ex)
             {
-                App.logHandler.AppendError(ex);
+                App.LogHandler.AppendError(ex);
             }
             finally
             {

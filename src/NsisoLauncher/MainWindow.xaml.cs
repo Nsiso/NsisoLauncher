@@ -11,27 +11,24 @@ using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher
 {
-    public class AuthTypeItem
-    {
-        public Config.AuthenticationType Type { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class MainWindowViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-    }
+    //public class AuthTypeItem
+    //{
+    //    public Config.AuthenticationType Type { get; set; }
+    //    public string Name { get; set; }
+    //}
 
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -43,9 +40,8 @@ namespace NsisoLauncher
         public MainWindow()
         {
             InitializeComponent();
-            App.logHandler.AppendDebug("启动器主窗体已载入");
-            mainPanel.Launch += MainPanel_Launch;
-            App.handler.GameExit += Handler_GameExit;
+            App.LogHandler.AppendDebug("启动器主窗体已载入");
+            App.Handler.GameExit += Handler_GameExit;
             CustomizeRefresh();
         }
 
@@ -73,13 +69,13 @@ namespace NsisoLauncher
         #region 自定义
         public async void CustomizeRefresh()
         {
-            if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.LauncherTitle))
+            if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.LauncherTitle))
             {
-                this.Title = App.config.MainConfig.Customize.LauncherTitle;
+                this.Title = App.Config.MainConfig.Customize.LauncherTitle;
             }
-            if (App.config.MainConfig.Customize.CustomBackGroundPicture)
+            if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
             {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgpic_?.png");
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
                 if (files.Count() != 0)
                 {
                     Random random = new Random();
@@ -89,11 +85,11 @@ namespace NsisoLauncher
                 }
             }
 
-            if (App.config.MainConfig.User.Nide8ServerDependence)
+            if (App.Config.MainConfig.User.Nide8ServerDependence)
             {
                 try
                 {
-                    var lockAuthNode = App.config.MainConfig.User.GetLockAuthNode();
+                    var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
                     if ((lockAuthNode != null) &&
                         (lockAuthNode.AuthType == AuthenticationType.NIDE8))
                     {
@@ -121,14 +117,14 @@ namespace NsisoLauncher
                 catch (Exception)
                 { }
             }
-            else if (App.config.MainConfig.Server != null)
+            else if (App.Config.MainConfig.Server != null)
             {
-                serverInfoControl.SetServerInfo(App.config.MainConfig.Server);
+                serverInfoControl.SetServerInfo(App.Config.MainConfig.Server);
             }
 
-            if (App.config.MainConfig.Customize.CustomBackGroundMusic)
+            if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
             {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.config.MainConfigPath), "bgmusic_?.mp3");
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgmusic_?.mp3");
                 if (files.Count() != 0)
                 {
                     Random random = new Random();
@@ -193,7 +189,7 @@ namespace NsisoLauncher
                         App.GetResourceString("String.Message.EmptyAuthType2"));
                     return;
                 }
-                if (App.handler.Java == null)
+                if (App.Handler.Java == null)
                 {
                     await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
                     return;
@@ -201,8 +197,8 @@ namespace NsisoLauncher
                 #endregion
 
                 #region 保存启动数据
-                App.config.MainConfig.History.LastLaunchVersion = args.LaunchVersion.ID;
-                App.config.MainConfig.History.LastLaunchTime = DateTime.Now;
+                App.Config.MainConfig.History.LastLaunchVersion = args.LaunchVersion.ID;
+                App.Config.MainConfig.History.LastLaunchTime = DateTime.Now;
                 #endregion
 
                 LaunchSetting launchSetting = new LaunchSetting()
@@ -216,13 +212,13 @@ namespace NsisoLauncher
                 #region 验证
 
                 #region 设置ClientToken
-                if (string.IsNullOrWhiteSpace(App.config.MainConfig.User.ClientToken))
+                if (string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
                 {
-                    App.config.MainConfig.User.ClientToken = Guid.NewGuid().ToString("N");
+                    App.Config.MainConfig.User.ClientToken = Guid.NewGuid().ToString("N");
                 }
                 else
                 {
-                    Requester.ClientToken = App.config.MainConfig.User.ClientToken;
+                    Requester.ClientToken = App.Config.MainConfig.User.ClientToken;
                 }
                 #endregion
 
@@ -543,25 +539,25 @@ namespace NsisoLauncher
                     args.UserNode.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                 }
 
-                App.config.MainConfig.History.SelectedUserNodeID = args.UserNode.UserData.Uuid;
-                if (!App.config.MainConfig.User.UserDatabase.ContainsKey(args.UserNode.UserData.Uuid))
+                App.Config.MainConfig.History.SelectedUserNodeID = args.UserNode.UserData.Uuid;
+                if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(args.UserNode.UserData.Uuid))
                 {
-                    App.config.MainConfig.User.UserDatabase.Add(args.UserNode.UserData.Uuid, args.UserNode);
+                    App.Config.MainConfig.User.UserDatabase.Add(args.UserNode.UserData.Uuid, args.UserNode);
                 }
                 #endregion
 
                 #region 检查游戏完整
                 List<DownloadTask> losts = new List<DownloadTask>();
 
-                App.logHandler.AppendInfo("检查丢失的依赖库文件中...");
+                App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
-                    App.config.MainConfig.Download.DownloadSource,
-                    App.handler,
+                    App.Config.MainConfig.Download.DownloadSource,
+                    App.Handler,
                     launchSetting.Version);
 
                 if (args.AuthNode.AuthType == AuthenticationType.NIDE8)
                 {
-                    string nideJarPath = App.handler.GetNide8JarPath();
+                    string nideJarPath = App.Handler.GetNide8JarPath();
                     if (!File.Exists(nideJarPath))
                     {
                         lostDepend.Add(new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", nideJarPath));
@@ -569,14 +565,14 @@ namespace NsisoLauncher
                 }
                 else if (args.AuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                 {
-                    string aiJarPath = App.handler.GetAIJarPath();
+                    string aiJarPath = App.Handler.GetAIJarPath();
                     if (!File.Exists(aiJarPath))
                     {
-                        lostDepend.Add(await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.config.MainConfig.Download.DownloadSource, aiJarPath));
+                        lostDepend.Add(await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource, aiJarPath));
                     }
                 }
 
-                if (App.config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
+                if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadDepend2"),
@@ -593,7 +589,7 @@ namespace NsisoLauncher
                             losts.AddRange(lostDepend);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
-                            App.config.MainConfig.Environment.DownloadLostDepend = false;
+                            App.Config.MainConfig.Environment.DownloadLostDepend = false;
                             break;
                         default:
                             break;
@@ -601,9 +597,9 @@ namespace NsisoLauncher
 
                 }
 
-                App.logHandler.AppendInfo("检查丢失的资源文件中...");
-                if (App.config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.config.MainConfig.Download.DownloadSource,
-                    App.handler, launchSetting.Version)))
+                App.LogHandler.AppendInfo("检查丢失的资源文件中...");
+                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Config.MainConfig.Download.DownloadSource,
+                    App.Handler, launchSetting.Version)))
                 {
                     MessageDialogResult downDependResult = await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
@@ -618,12 +614,12 @@ namespace NsisoLauncher
                     {
                         case MessageDialogResult.Affirmative:
                             var lostAssets = await FileHelper.GetLostAssetsDownloadTaskAsync(
-                                App.config.MainConfig.Download.DownloadSource,
-                                App.handler, launchSetting.Version);
+                                App.Config.MainConfig.Download.DownloadSource,
+                                App.Handler, launchSetting.Version);
                             losts.AddRange(lostAssets);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
-                            App.config.MainConfig.Environment.DownloadLostAssets = false;
+                            App.Config.MainConfig.Environment.DownloadLostAssets = false;
                             break;
                         default:
                             break;
@@ -633,10 +629,10 @@ namespace NsisoLauncher
 
                 if (losts.Count != 0)
                 {
-                    if (!App.downloader.IsBusy)
+                    if (!App.Downloader.IsBusy)
                     {
-                        App.downloader.SetDownloadTasks(losts);
-                        App.downloader.StartDownload();
+                        App.Downloader.SetDownloadTasks(losts);
+                        App.Downloader.StartDownload();
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
                         {
@@ -653,24 +649,24 @@ namespace NsisoLauncher
                 #endregion
 
                 #region 根据配置文件设置
-                launchSetting.AdvencedGameArguments += App.config.MainConfig.Environment.AdvencedGameArguments;
-                launchSetting.AdvencedJvmArguments += App.config.MainConfig.Environment.AdvencedJvmArguments;
-                launchSetting.GCArgument += App.config.MainConfig.Environment.GCArgument;
-                launchSetting.GCEnabled = App.config.MainConfig.Environment.GCEnabled;
-                launchSetting.GCType = App.config.MainConfig.Environment.GCType;
-                launchSetting.JavaAgent += App.config.MainConfig.Environment.JavaAgent;
+                launchSetting.AdvencedGameArguments += App.Config.MainConfig.Environment.AdvencedGameArguments;
+                launchSetting.AdvencedJvmArguments += App.Config.MainConfig.Environment.AdvencedJvmArguments;
+                launchSetting.GCArgument += App.Config.MainConfig.Environment.GCArgument;
+                launchSetting.GCEnabled = App.Config.MainConfig.Environment.GCEnabled;
+                launchSetting.GCType = App.Config.MainConfig.Environment.GCType;
+                launchSetting.JavaAgent += App.Config.MainConfig.Environment.JavaAgent;
                 if (args.AuthNode.AuthType == AuthenticationType.NIDE8)
                 {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetNide8JarPath(), args.AuthNode.Property["nide8ID"]);
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(), args.AuthNode.Property["nide8ID"]);
                 }
                 else if (args.AuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                 {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.handler.GetAIJarPath(), args.AuthNode.Property["authserver"]);
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetAIJarPath(), args.AuthNode.Property["authserver"]);
                 }
 
                 //直连服务器设置
-                var lockAuthNode = App.config.MainConfig.User.GetLockAuthNode();
-                if (App.config.MainConfig.User.Nide8ServerDependence &&
+                var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
+                if (App.Config.MainConfig.User.Nide8ServerDependence &&
                     (lockAuthNode != null) &&
                         (lockAuthNode.AuthType == AuthenticationType.NIDE8))
                 {
@@ -692,41 +688,41 @@ namespace NsisoLauncher
                         launchSetting.LaunchToServer = server;
                     }
                 }
-                else if (App.config.MainConfig.Server.LaunchToServer)
+                else if (App.Config.MainConfig.Server.LaunchToServer)
                 {
-                    launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.config.MainConfig.Server.Address, Port = App.config.MainConfig.Server.Port };
+                    launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
                 }
 
                 //自动内存设置
-                if (App.config.MainConfig.Environment.AutoMemory)
+                if (App.Config.MainConfig.Environment.AutoMemory)
                 {
-                    var m = SystemTools.GetBestMemory(App.handler.Java);
-                    App.config.MainConfig.Environment.MaxMemory = m;
+                    var m = SystemTools.GetBestMemory(App.Handler.Java);
+                    App.Config.MainConfig.Environment.MaxMemory = m;
                     launchSetting.MaxMemory = m;
                 }
                 else
                 {
-                    launchSetting.MaxMemory = App.config.MainConfig.Environment.MaxMemory;
+                    launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
                 }
-                launchSetting.VersionType = App.config.MainConfig.Customize.VersionInfo;
-                launchSetting.WindowSize = App.config.MainConfig.Environment.WindowSize;
+                launchSetting.VersionType = App.Config.MainConfig.Customize.VersionInfo;
+                launchSetting.WindowSize = App.Config.MainConfig.Environment.WindowSize;
                 #endregion
 
                 #region 配置文件处理
-                App.config.Save();
+                App.Config.Save();
                 #endregion
 
                 #region 启动
 
-                App.logHandler.OnLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
-                var result = await App.handler.LaunchAsync(launchSetting);
-                App.logHandler.OnLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
+                App.LogHandler.OnLog += (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
+                var result = await App.Handler.LaunchAsync(launchSetting);
+                App.LogHandler.OnLog -= (a, b) => { this.Invoke(() => { launchInfoBlock.Text = b.Message; }); };
 
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
                     await this.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
-                    App.logHandler.AppendError(result.LaunchException);
+                    App.LogHandler.AppendError(result.LaunchException);
                 }
                 else
                 {
@@ -754,21 +750,19 @@ namespace NsisoLauncher
                     await App.nsisoAPIHandler.RefreshUsingTimesCounter();
                     #endregion
 
-                    App.config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
-                    if (App.config.MainConfig.Environment.ExitAfterLaunch)
+                    App.Config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
+                    if (App.Config.MainConfig.Environment.ExitAfterLaunch)
                     {
                         Application.Current.Shutdown();
                     }
                     this.WindowState = WindowState.Minimized;
 
-                    mainPanel.Refresh();
-
                     //自定义处理
-                    if (!string.IsNullOrWhiteSpace(App.config.MainConfig.Customize.GameWindowTitle))
+                    if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
                     {
-                        GameHelper.SetGameTitle(result, App.config.MainConfig.Customize.GameWindowTitle);
+                        GameHelper.SetGameTitle(result, App.Config.MainConfig.Customize.GameWindowTitle);
                     }
-                    if (App.config.MainConfig.Customize.CustomBackGroundMusic)
+                    if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
                     {
                         mediaElement.Volume = 0.5;
                         await Task.Factory.StartNew(() =>
@@ -796,7 +790,7 @@ namespace NsisoLauncher
             }
             catch (Exception ex)
             {
-                App.logHandler.AppendFatal(ex);
+                App.LogHandler.AppendFatal(ex);
             }
             finally
             {
@@ -812,7 +806,7 @@ namespace NsisoLauncher
         private async void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             #region 无JAVA提示
-            if (App.handler.Java == null)
+            if (App.Handler.Java == null)
             {
                 var result = await this.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
                     App.GetResourceString("String.Message.NoJava2"),
@@ -829,14 +823,14 @@ namespace NsisoLauncher
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.downloader.SetDownloadTasks(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
-                            App.downloader.StartDownload();
+                            App.Downloader.SetDownloadTasks(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
+                            App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.downloader.SetDownloadTasks(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
-                            App.downloader.StartDownload();
+                            App.Downloader.SetDownloadTasks(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
+                            App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
                             break;
@@ -848,7 +842,7 @@ namespace NsisoLauncher
             #endregion
 
             #region 检查更新
-            if (App.config.MainConfig.Launcher.CheckUpdate)
+            if (App.Config.MainConfig.Launcher.CheckUpdate)
             {
                 await CheckUpdate();
             }
@@ -857,7 +851,7 @@ namespace NsisoLauncher
 
         private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (App.downloader.IsBusy)
+            if (App.Downloader.IsBusy)
             {
                 var choose = this.ShowModalMessageExternal("后台正在下载中", "是否确认关闭程序？这将会取消下载"
                 , MessageDialogStyle.AffirmativeAndNegative,
@@ -868,7 +862,7 @@ namespace NsisoLauncher
                 });
                 if (choose == MessageDialogResult.Affirmative)
                 {
-                    App.downloader.RequestStop();
+                    App.Downloader.RequestStop();
                 }
                 else
                 {

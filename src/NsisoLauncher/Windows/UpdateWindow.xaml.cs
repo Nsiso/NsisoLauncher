@@ -47,8 +47,8 @@ namespace NsisoLauncher.Windows
             Process.Start(new ProcessStartInfo(VersionResponse.DownloadSource_manual));
             if ((bool)noCheckBox.IsChecked)
             {
-                App.config.MainConfig.Launcher.CheckUpdate = false;
-                App.config.Save();
+                App.Config.MainConfig.Launcher.CheckUpdate = false;
+                App.Config.Save();
             }
         }
 
@@ -56,8 +56,8 @@ namespace NsisoLauncher.Windows
         {
             if ((bool)noCheckBox.IsChecked)
             {
-                App.config.MainConfig.Launcher.CheckUpdate = false;
-                App.config.Save();
+                App.Config.MainConfig.Launcher.CheckUpdate = false;
+                App.Config.Save();
             }
             this.Close();
         }

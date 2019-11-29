@@ -21,12 +21,14 @@ namespace NsisoLauncher
     /// </summary>
     public partial class App : Application
     {
-        public static LaunchHandler handler;
-        public static ConfigHandler config;
-        public static MultiThreadDownloader downloader;
-        public static LogHandler logHandler;
+        public static LaunchHandler Handler { get; private set; }
+        public static ConfigHandler Config { get; private set; }
+        public static MultiThreadDownloader Downloader { get; private set; }
+        public static LogHandler LogHandler { get; private set; }
+        public static List<Java> JavaList { get; private set; }
+
+
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
-        public static List<Java> javaList;
 
         #region API静态变量
         public static NsisoLauncherCore.Net.PhalAPI.APIHandler nsisoAPIHandler;
@@ -41,24 +43,24 @@ namespace NsisoLauncher
         {
             #region DEBUG初始化
             //debug
-            logHandler = new LogHandler(true);
-            AggregateExceptionCatched += (a, b) => logHandler.AppendFatal(b.AggregateException);
+            LogHandler = new LogHandler(true);
+            AggregateExceptionCatched += (a, b) => LogHandler.AppendFatal(b.AggregateException);
             if (e.Args.Contains("-debug"))
             {
                 Windows.DebugWindow debugWindow = new Windows.DebugWindow();
                 debugWindow.Show();
-                logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
+                LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
             #endregion
 
-            config = new ConfigHandler();
+            Config = new ConfigHandler();
 
             #region DEBUG初始化（基于配置文件）
-            if (config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
+            if (Config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
             {
                 Windows.DebugWindow debugWindow = new Windows.DebugWindow();
                 debugWindow.Show();
-                logHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
+                LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
             #endregion
 
@@ -73,9 +75,9 @@ namespace NsisoLauncher
             #endregion
 
             #region 数据初始化
-            Config.Environment env = config.MainConfig.Environment;
+            Config.Environment env = Config.MainConfig.Environment;
 
-            javaList = Java.GetJavaList();
+            JavaList = Java.GetJavaList();
 
             //设置版本路径
             string gameroot = null;
@@ -96,17 +98,17 @@ namespace NsisoLauncher
                 default:
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
-            logHandler.AppendInfo("核心初始化->游戏根目录(默认则为空):" + gameroot);
+            LogHandler.AppendInfo("核心初始化->游戏根目录(默认则为空):" + gameroot);
 
             //设置JAVA
             Java java = null;
             if (env.AutoJava)
             {
-                java = Java.GetSuitableJava(javaList);
+                java = Java.GetSuitableJava(JavaList);
             }
             else
             {
-                java = javaList.Find(x => x.Path == env.JavaPath);
+                java = JavaList.Find(x => x.Path == env.JavaPath);
                 if (java == null)
                 {
                     java = Java.GetJavaInfo(env.JavaPath);
@@ -116,30 +118,30 @@ namespace NsisoLauncher
             if (java != null)
             {
                 env.JavaPath = java.Path;
-                logHandler.AppendInfo("核心初始化->Java路径:" + java.Path);
-                logHandler.AppendInfo("核心初始化->Java版本:" + java.Version);
-                logHandler.AppendInfo("核心初始化->Java位数:" + java.Arch);
+                LogHandler.AppendInfo("核心初始化->Java路径:" + java.Path);
+                LogHandler.AppendInfo("核心初始化->Java版本:" + java.Version);
+                LogHandler.AppendInfo("核心初始化->Java位数:" + java.Arch);
             }
             else
             {
-                logHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
+                LogHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
             }
 
             //设置版本独立
-            bool verIso = config.MainConfig.Environment.VersionIsolation;
+            bool verIso = Config.MainConfig.Environment.VersionIsolation;
             #endregion
 
             #region 启动核心初始化
-            handler = new LaunchHandler(gameroot, java, verIso);
-            handler.GameLog += (s, log) => logHandler.AppendLog(s, new Log() { LogLevel = LogLevel.GAME, Message = log });
-            handler.LaunchLog += (s, log) => logHandler.AppendLog(s, log);
+            Handler = new LaunchHandler(gameroot, java, verIso);
+            Handler.GameLog += (s, log) => LogHandler.AppendLog(s, new Log() { LogLevel = LogLevel.GAME, Message = log });
+            Handler.LaunchLog += (s, log) => LogHandler.AppendLog(s, log);
             #endregion
 
             #region 下载核心初始化
             ServicePointManager.DefaultConnectionLimit = 10;
 
-            Download downloadCfg = config.MainConfig.Download;
-            downloader = new MultiThreadDownloader();
+            Download downloadCfg = Config.MainConfig.Download;
+            Downloader = new MultiThreadDownloader();
             if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
             {
                 WebProxy proxy = new WebProxy(downloadCfg.DownloadProxyAddress, downloadCfg.DownloadProxyPort);
@@ -148,19 +150,19 @@ namespace NsisoLauncher
                     NetworkCredential credential = new NetworkCredential(downloadCfg.ProxyUserName, downloadCfg.ProxyUserPassword);
                     proxy.Credentials = credential;
                 }
-                downloader.Proxy = proxy;
+                Downloader.Proxy = proxy;
             }
-            downloader.ProcessorSize = App.config.MainConfig.Download.DownloadThreadsSize;
-            downloader.CheckFileHash = App.config.MainConfig.Download.CheckDownloadFileHash;
-            downloader.DownloadLog += (s, log) => logHandler?.AppendLog(s, log);
+            Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
+            Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+            Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
             #endregion
 
             #region 自定义主题初始化
-            var custom = config.MainConfig.Customize;
+            var custom = Config.MainConfig.Customize;
             if (!string.IsNullOrWhiteSpace(custom.AccentColor) && !string.IsNullOrWhiteSpace(custom.AppThme))
             {
-                logHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
-                logHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
+                LogHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
+                LogHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
                 ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
             }
             #endregion
@@ -168,7 +170,7 @@ namespace NsisoLauncher
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            App.logHandler.AppendFatal(e.Exception);
+            App.LogHandler.AppendFatal(e.Exception);
             e.Handled = true;
         }
 

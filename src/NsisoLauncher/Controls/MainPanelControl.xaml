@@ -8,29 +8,31 @@
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="300">
+             d:DesignHeight="450" d:DesignWidth="250">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            
         </Grid.ColumnDefinitions>
-        <Button x:Name="launchButton" Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
-                    FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Click="launchButton_Click" Grid.ColumnSpan="2"/>
-
-        <userControl:HeadSculControl x:Name="headScul" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="61,10,61,0" Grid.ColumnSpan="2"/>
+        <userControl:HeadSculControl VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.ColumnSpan="2"/>
+        <Button Content="{DynamicResource String.Base.Launch}" Margin="10,0,10,10" Height="50" VerticalAlignment="Bottom"
+                FontSize="14" Background="#19000000" BorderBrush="White" Foreground="White" Grid.ColumnSpan="2"
+                Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"/>
 
         <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" HorizontalAlignment ="Left" Margin="10,190,0,0" Height="auto" VerticalAlignment="Top" Foreground="White"/>
         <ComboBox x:Name="authTypeCombobox"
                   Margin="41,190,60,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                  DisplayMemberPath="Value.Name"
-                  SelectedValuePath="Key"
+                  DisplayMemberPath="Name"
                   SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}" Grid.ColumnSpan="2"/>
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
+                  Grid.ColumnSpan="2"
+                  ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=AuthNodesSource}"
+                  SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"
+                  />
         <Button  Grid.Column="1" Margin="0,190,20,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="35" ToolTip="{DynamicResource String.Mainwindow.Auth.Add}"
-                 Background="{x:Null}" BorderBrush="White" Foreground="White" Height="26" Click="addAuthButton_Click">
+                 Background="{x:Null}" BorderBrush="White" Foreground="White" Height="26">
             <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
         </Button>
 
@@ -40,8 +42,10 @@
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                   DisplayMemberPath="ID"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}" Grid.ColumnSpan="2"
-                  />
+                  ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=VersionsSource}"
+                  SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedVersion}"
+                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"
+                  Grid.ColumnSpan="2"/>
 
         <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
         <ComboBox x:Name="userComboBox"
@@ -52,18 +56,22 @@
                  SelectedValuePath="Key"
                  DisplayMemberPath="Value.UserName"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}" Grid.ColumnSpan="2" SelectionChanged="UserComboBox_SelectionChanged"
-                 />
+                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
+                 Grid.ColumnSpan="2"
+                 ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
+                 SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUser}"
+                 Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
+                  />
 
         <Button x:Name="configButton"
                     Height="30" Margin="10,0,5,65" VerticalAlignment="Bottom"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="configButton_Click">
+                    Background="{x:Null}" BorderBrush="White" Foreground="White">
             <iconPacks:FontAwesome Kind="CogSolid"/>
         </Button>
 
         <Button x:Name="downloadButton"
                     Height="30" Margin="5,0,10,65" VerticalAlignment="Bottom"
-                    Background="{x:Null}" BorderBrush="White" Foreground="White" Click="downloadButton_Click" Grid.Column="1">
+                    Background="{x:Null}" BorderBrush="White" Foreground="White" Grid.Column="1">
             <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
         </Button>
     </Grid>

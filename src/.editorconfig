@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0067: 从不使用事件“MainWindowViewModel.PropertyChanged”
+dotnet_diagnostic.CS0067.severity = silent

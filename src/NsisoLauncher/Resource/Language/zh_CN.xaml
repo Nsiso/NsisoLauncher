@@ -30,9 +30,9 @@
     <sys:String x:Key="String.Message.NoFrameworkUpdate">当前电脑环境缺少KB2468871v2补丁</sys:String>
     <sys:String x:Key="String.Message.NoFrameworkUpdate2">该启动器依赖于Framework KB2468871v2补丁，您的系统由于缺少该补丁导致Nsiso启动器无法启动。您需要安装Framework KB2468871v2补丁。是否帮您打开帮助页面？否将尝试启动。</sys:String>
 
-    <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">选择启动版本</sys:String>
-    <sys:String x:Key="String.MainWindow.ChooseAuthType">选择验证类型</sys:String>
-    <sys:String x:Key="String.Mainwindow.InputPlayerName">输入/选择游戏名称或账号</sys:String>
+    <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">启动版本</sys:String>
+    <sys:String x:Key="String.MainWindow.ChooseAuthType">验证类型</sys:String>
+    <sys:String x:Key="String.Mainwindow.InputPlayerName">用户名</sys:String>
     <sys:String x:Key="String.Mainwindow.Launching">启动中...</sys:String>
      
     <!--#region 登录-->
