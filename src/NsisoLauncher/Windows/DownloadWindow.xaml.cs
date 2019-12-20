@@ -25,17 +25,17 @@ namespace NsisoLauncher.Windows
         public DownloadWindow()
         {
             InitializeComponent();
-            App.downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-            App.downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
-            App.downloader.DownloadCompleted += Downloader_DownloadCompleted;
+            App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+            App.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
+            App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
             Refresh();
         }
 
         private void Refresh()
         {
-            if (App.downloader.DownloadTasks != null)
+            if (App.Downloader.DownloadTasks != null)
             {
-                Tasks = new ObservableCollection<DownloadTask>(App.downloader.DownloadTasks);
+                Tasks = new ObservableCollection<DownloadTask>(App.Downloader.DownloadTasks);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace NsisoLauncher.Windows
                 try
                 {
                     EventWaitHandle _waitHandle = new AutoResetEvent(false);
-                    App.downloader.DownloadCompleted += (a, b) =>
+                    App.Downloader.DownloadCompleted += (a, b) =>
                     {
                         this.Dispatcher.Invoke(new Action(() =>
                         {
@@ -159,7 +159,7 @@ namespace NsisoLauncher.Windows
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (App.downloader.IsBusy)
+            if (App.Downloader.IsBusy)
             {
                 var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
                App.GetResourceString("String.Downloadwindow.MakesureCancel"),
@@ -171,7 +171,7 @@ namespace NsisoLauncher.Windows
                });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    App.downloader.RequestStop();
+                    App.Downloader.RequestStop();
                     this.progressBar.Value = 0;
                 }
             }
@@ -189,7 +189,7 @@ namespace NsisoLauncher.Windows
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (App.downloader.IsBusy)
+            if (App.Downloader.IsBusy)
             {
                 this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
             }
@@ -197,7 +197,7 @@ namespace NsisoLauncher.Windows
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (App.downloader.Proxy != null)
+            if (App.Downloader.Proxy != null)
             {
                 this.ShowMessageAsync("您开启了下载代理", "请注意您现在正在使用代理进行下载，若代理设置异常可能会导致下载错误。");
             }

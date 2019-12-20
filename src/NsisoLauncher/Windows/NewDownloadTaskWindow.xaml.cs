@@ -31,7 +31,7 @@ namespace NsisoLauncher.Windows
 
         public NewDownloadTaskWindow()
         {
-            apiHandler = new FunctionAPIHandler(App.config.MainConfig.Download.DownloadSource);
+            apiHandler = new FunctionAPIHandler(App.Config.MainConfig.Download.DownloadSource);
             InitializeComponent();
             versionListDataGrid.ItemsSource = verList;
             forgeListDataGrid.ItemsSource = forgeList;
@@ -45,7 +45,7 @@ namespace NsisoLauncher.Windows
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Version> vers = await App.handler.GetVersionsAsync();
+            List<Version> vers = await App.Handler.GetVersionsAsync();
             verToInstallForgeComboBox.ItemsSource = vers;
             verToInstallLiteComboBox.ItemsSource = vers;
         }
@@ -251,8 +251,8 @@ namespace NsisoLauncher.Windows
                 foreach (JWVersion item in list)
                 {
                     string json = await APIRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
-                    NsisoLauncherCore.Modules.Version ver = App.handler.JsonToVersion(json);
-                    string jsonPath = App.handler.GetJsonPath(ver.ID);
+                    NsisoLauncherCore.Modules.Version ver = App.Handler.JsonToVersion(json);
+                    string jsonPath = App.Handler.GetJsonPath(ver.ID);
 
                     string dir = Path.GetDirectoryName(jsonPath);
                     if (!Directory.Exists(dir))
@@ -264,12 +264,12 @@ namespace NsisoLauncher.Windows
 
                     List<DownloadTask> tasks = new List<DownloadTask>();
 
-                    tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.handler.GetAssetsIndexPath(ver.Assets)));
+                    tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.Handler.GetAssetsIndexPath(ver.Assets)));
 
-                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.config.MainConfig.Download.DownloadSource, App.handler, ver));
+                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Config.MainConfig.Download.DownloadSource, App.Handler, ver));
 
-                    App.downloader.SetDownloadTasks(tasks);
-                    App.downloader.StartDownload();
+                    App.Downloader.SetDownloadTasks(tasks);
+                    App.Downloader.StartDownload();
                 }
             }
             catch (WebException ex)
@@ -300,15 +300,15 @@ namespace NsisoLauncher.Windows
             {
                 try
                 {
-                    CommonInstaller installer = new CommonInstaller(forgePath, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+                    CommonInstaller installer = new CommonInstaller(forgePath, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
                     installer.BeginInstall();
                     return null;
                 }
                 catch (Exception ex)
                 { return ex; }
             });
-            App.downloader.SetDownloadTasks(dt);
-            App.downloader.StartDownload();
+            App.Downloader.SetDownloadTasks(dt);
+            App.Downloader.StartDownload();
 
         }
 
@@ -322,21 +322,21 @@ namespace NsisoLauncher.Windows
             {
                 try
                 {
-                    CommonInstaller installer = new CommonInstaller(liteloaderPath, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+                    CommonInstaller installer = new CommonInstaller(liteloaderPath, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
                     installer.BeginInstall();
                     return null;
                 }
                 catch (Exception ex)
                 { return ex; }
             });
-            App.downloader.SetDownloadTasks(dt);
-            App.downloader.StartDownload();
+            App.Downloader.SetDownloadTasks(dt);
+            App.Downloader.StartDownload();
 
         }
 
         private async Task InstallCommonExtend(string path)
         {
-            CommonInstaller installer = new CommonInstaller(path, new CommonInstallOptions() { GameRootPath = App.handler.GameRootPath });
+            CommonInstaller installer = new CommonInstaller(path, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
             await installer.BeginInstallAsync();
         }
 

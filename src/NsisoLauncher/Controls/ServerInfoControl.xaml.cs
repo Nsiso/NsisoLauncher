@@ -41,7 +41,7 @@ namespace NsisoLauncher.Controls
                 ServerInfo serverInfo = new ServerInfo(server.Address, server.Port);
                 await serverInfo.StartGetServerInfoAsync();
 
-                App.logHandler.AppendDebug(serverInfo.JsonResult);
+                App.LogHandler.AppendDebug(serverInfo.JsonResult);
                 serverLoadingBar.IsIndeterminate = false;
                 serverLoadingBar.Visibility = Visibility.Hidden;
 
