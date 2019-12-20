@@ -1,7 +1,7 @@
 # NsisoLauncher
 A New Minecraft Launcher (unofficial) from Nsiso  
-[![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher)
-[![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=dev)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f/branch/master?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher/branch/master)
+[![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=master)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=master)
 
 感谢您关注到我们Nsiso启动器的开源项目  
 此项目开源目的在于学习，错误排查，公开安全策略  
@@ -23,12 +23,6 @@ BMCLAPI和BMCL不同，属于非开源项目
 禁止在BMCLAPI上二次封装其他协议  
 捐助  
 服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com  
-
-------------
-
-#### mcbbs新闻API
-http://www.mcbbs.net/thread-538691-1-1.html
-来源：mcbbs
 
 ------------
 
