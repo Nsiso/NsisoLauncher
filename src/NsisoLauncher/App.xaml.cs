@@ -69,7 +69,7 @@ namespace NsisoLauncher
 #if DEBUG
             nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
 #else
-            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(config.MainConfig.Launcher.NoTracking);
+            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
 #endif
 
             #endregion
