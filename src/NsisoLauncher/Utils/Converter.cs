@@ -3,6 +3,7 @@ using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace NsisoLauncher.Utils
@@ -11,7 +12,7 @@ namespace NsisoLauncher.Utils
     {
         #region IValueConverter Members
         public object Convert(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
+            CultureInfo culture)
         {
             if (targetType != typeof(bool))
                 throw new InvalidOperationException("The target must be a boolean");
@@ -20,7 +21,7 @@ namespace NsisoLauncher.Utils
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
-            System.Globalization.CultureInfo culture)
+            CultureInfo culture)
         {
             throw new NotSupportedException();
         }
@@ -72,13 +73,13 @@ namespace NsisoLauncher.Utils
     public class SettingDownloadRadioButtonConverter : IValueConverter
     {
         #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             DownloadSource s = (DownloadSource)value;
             return s == (DownloadSource)int.Parse(parameter.ToString());
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isChecked = (bool)value;
             if (!isChecked)
@@ -93,13 +94,13 @@ namespace NsisoLauncher.Utils
     public class SettingLoginTypeRadioButtonConverter : IValueConverter
     {
         #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             AuthenticationType s = (AuthenticationType)value;
             return s == (AuthenticationType)int.Parse(parameter.ToString());
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isChecked = (bool)value;
             if (!isChecked)
@@ -114,7 +115,7 @@ namespace NsisoLauncher.Utils
     public class StringToIntConverter : IValueConverter
     {
         #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string str = (string)value;
             if (string.IsNullOrEmpty(str))
@@ -127,24 +128,10 @@ namespace NsisoLauncher.Utils
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value.ToString();
         }
         #endregion
     }
-
-    //public class AccentResourcesToAccentColorConverter : IValueConverter
-    //{
-    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        ResourceDictionary accent = (ResourceDictionary)value;
-    //        return accent["AccentColor"];
-    //    }
-
-    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        return null;
-    //    }
-    //}
 }

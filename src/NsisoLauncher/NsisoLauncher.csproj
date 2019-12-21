@@ -113,6 +113,7 @@
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\DelegateCommand.cs" />
+    <Compile Include="Utils\EventToCommand.cs" />
     <Compile Include="Utils\LogHandler.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
@@ -280,6 +281,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Gu.Wpf.Media">
+      <Version>0.5.0.2</Version>
+    </PackageReference>
     <PackageReference Include="LiveCharts.Wpf">
       <Version>0.9.7</Version>
     </PackageReference>
@@ -310,7 +314,9 @@
   <ItemGroup>
     <Resource Include="Resource\Steve.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="bg.png" />
+  </ItemGroup>
   <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

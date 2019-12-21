@@ -20,11 +20,11 @@
     <sys:String x:Key="String.Base.ShouldRememberLogin">记住登录状态</sys:String>
 
     <sys:String x:Key="String.Message.EmptyAuthType">您未选择验证方式</sys:String>
-    <sys:String x:Key="String.Message.EmptyAuthType2">请在右侧第一个验证方式栏选择您使用的验证类型</sys:String>
+    <sys:String x:Key="String.Message.EmptyAuthType2">请在右侧第三行验证方式栏选择您使用的验证类型</sys:String>
     <sys:String x:Key="String.Message.EmptyUsername">您的用户名未填写</sys:String>
-    <sys:String x:Key="String.Message.EmptyUsername2">请在右侧第三个用户名栏填写您的用户名</sys:String>
+    <sys:String x:Key="String.Message.EmptyUsername2">请在右侧第二行用户名栏填写您的用户名</sys:String>
     <sys:String x:Key="String.Message.EmptyLaunchVersion">您未选择启动版本</sys:String>
-    <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在右侧第二个启动版本栏选择您要启动的版本</sys:String>
+    <sys:String x:Key="String.Message.EmptyLaunchVersion2">请在右侧第一行启动版本栏选择您要启动的版本</sys:String>
     <sys:String x:Key="String.Message.NoJava">该电脑上未安装Java</sys:String>
     <sys:String x:Key="String.Message.NoJava2">Minecraft依赖于Java启动，请您移步安装Java，否则将无法启动。是否自动帮您下载并启动JAVA安装包？</sys:String>
     <sys:String x:Key="String.Message.NoFrameworkUpdate">当前电脑环境缺少KB2468871v2补丁</sys:String>

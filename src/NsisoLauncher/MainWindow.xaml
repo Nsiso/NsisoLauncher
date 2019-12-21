@@ -9,29 +9,32 @@
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
         Dialog:DialogParticipation.Register="{Binding}"
-        Title="Nsiso Launcher" Height="445" Width="750" MinHeight="445" MinWidth="720" ShowMaxRestoreButton="False" ShowMinButton="True"
-                      Loaded="mainWindow_Loaded" Closing="mainWindow_Closing">
+        Title="{Binding WindowTitle}" MinHeight="445" MinWidth="750" ShowMaxRestoreButton="False" ShowMinButton="True"
+        WindowState="{Binding WindowState}" 
+        Closing="mainWindow_Closing">
     <controls:MetroWindow.Resources>
-        <vm:MainWindowViewModel x:Key="MainWindowVm" Instance="{x:Static Dialog:DialogCoordinator.Instance}"/>
+        <vm:MainWindowViewModel x:Key="MainWindowVm"
+                                Instance="{x:Static Dialog:DialogCoordinator.Instance}"
+                                BackgroundImageSource="Resource/bg.png"
+                                WindowTitle="Nsiso Launcher"/>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.DataContext>
         <Binding Source="{StaticResource MainWindowVm}"/>
     </controls:MetroWindow.DataContext>
     <controls:MetroWindow.Background>
-        <ImageBrush ImageSource="Resource/bg.png" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="{Binding BackgroundImageSource}" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
     </controls:MetroWindow.Background>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <MediaElement x:Name="mediaElement" Visibility="Hidden" LoadedBehavior="Manual" MediaEnded="mediaElement_MediaEnded" Grid.ColumnSpan="2"/>
-        <Grid x:Name="userGrid" Grid.Column="2">
+        <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Hidden"
+                                   IsPlaying="{Binding IsPlaying}" d:DataContext=""/>
+
+        <Grid HorizontalAlignment="Right" MinWidth="250" MaxWidth="500">
             <!--#region 高斯模糊效果(最底层) -->
             <Rectangle VerticalAlignment="Bottom" Height="{Binding ActualHeight, ElementName=mainWindow}">
                 <Rectangle.Effect>
@@ -49,33 +52,35 @@
             </Rectangle>
             <Rectangle Fill="White" Opacity="0.2" Grid.ColumnSpan="2"/>
             <!--#endregion-->
-            <userControl:MainPanelControl x:Name="mainPanel" 
-                                          AuthNodesSource="{Binding AuthNodes}" VersionsSource="{Binding Versions}" UsersSource="{Binding Users}"
+            <userControl:MainPanelControl AuthNodesSource="{Binding AuthNodes}" VersionsSource="{Binding Versions}" UsersSource="{Binding Users}"
                                           SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}" SelectedUser="{Binding LaunchUser, Mode=TwoWay}"
                                           SelectedAuthNode="{Binding LaunchAuthNode, Mode=TwoWay}" UserNameText="{Binding LaunchUserNameText, Mode=TwoWay}"
                                           LaunchCommand="{Binding LaunchCmd}"
                                           />
         </Grid>
-        <Button x:Name="volumeButton" Style ="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
-                Width="30" Height="30" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                BorderBrush="White" Foreground="White" Click="volumeButton_Click" Grid.ColumnSpan="2" Visibility="Hidden">
-            <iconPacks:FontAwesome x:Name="volumeButtonIcon" Kind="VolumeUpSolid" />
-        </Button>
+        <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"
+                      Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                      IsChecked="{Binding IsPlaying}"
+                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource bool2VisibilityConverter}}"
+                >
+            <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
+        </ToggleButton>
 
         <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-        <Grid x:Name="loadingGrid" Visibility="Hidden" Grid.ColumnSpan="3">
-            <Rectangle Fill="{Binding Background, ElementName=mainWindow}" >
+        <Grid x:Name="loadingGrid" Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}" Grid.ColumnSpan="3">
+            <Rectangle VerticalAlignment="Bottom" Height="{Binding ActualHeight, ElementName=mainWindow}" 
+                       Fill="{Binding Background, ElementName=mainWindow}" >
                 <Rectangle.Effect>
                     <BlurEffect Radius="20"/>
                 </Rectangle.Effect>
             </Rectangle>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="False"/>
+                <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="{Binding IsLaunching}"/>
                 <TextBlock Text="{DynamicResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
-                <Button x:Name="cancelLaunchButton" Content="取消启动" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
+                <Button x:Name="cancelLaunchButton" Content="取消启动" Command="{Binding CancelLaunchingCmd}" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
             </StackPanel>
-            <TextBlock x:Name="launchInfoBlock" Height="20" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
+            <TextBlock x:Name="launchInfoBlock" Text="{Binding LogLine}" Height="20" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
         </Grid>
     </Grid>
 </controls:MetroWindow>

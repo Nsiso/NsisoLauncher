@@ -415,10 +415,10 @@ namespace NsisoLauncher.Config
     /// </summary>
     public class UserNode/* : INotifyPropertyChanged*/
     {
-        /// <summary>
-        /// 所使用的验证模型
-        /// </summary>
-        public string AuthModule { get; set; }
+        ///// <summary>
+        ///// 所使用的验证模型
+        ///// </summary>
+        //public string AuthModule { get; set; }
 
         /// <summary>
         /// 用户名/账号
