@@ -1,5 +1,5 @@
 # NsisoLauncher(Master)
-A New Minecraft Launcher (unofficial) from Nsiso (Master)
+A New Minecraft Launcher (unofficial) from Nsiso (Master)  
 [![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f/branch/master?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher/branch/master)
 [![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=master)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=master)
 
