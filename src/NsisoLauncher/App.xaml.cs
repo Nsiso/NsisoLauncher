@@ -8,10 +8,13 @@ using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher
 {
@@ -26,13 +29,11 @@ namespace NsisoLauncher
         public static MultiThreadDownloader Downloader { get; private set; }
         public static LogHandler LogHandler { get; private set; }
         public static List<Java> JavaList { get; private set; }
+        public  static ObservableCollection<Version> VersionList { get; private set; }
+        public static NsisoLauncherCore.Net.PhalAPI.APIHandler NsisoAPIHandler { get; private set; }
 
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
-
-        #region API静态变量
-        public static NsisoLauncherCore.Net.PhalAPI.APIHandler nsisoAPIHandler;
-        #endregion
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
@@ -67,7 +68,7 @@ namespace NsisoLauncher
             #region Nsiso反馈API初始化
 
 #if DEBUG
-            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
+            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
 #else
             nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
 #endif
@@ -198,6 +199,26 @@ namespace NsisoLauncher
             info.Arguments += "-reboot";
             System.Diagnostics.Process.Start(info);
             App.Current.Shutdown();
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            try
+            {
+                Config.Save();
+            }
+            catch (Exception)
+            { }
+        }
+
+        public async static Task RefreshVersionList()
+        {
+            var list = await Handler.GetVersionsAsync();
+            VersionList.Clear();
+            foreach (var item in list)
+            {
+                VersionList.Add(item);
+            }
         }
     }
 

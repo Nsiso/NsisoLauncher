@@ -52,10 +52,13 @@
             </Rectangle>
             <Rectangle Fill="White" Opacity="0.2" Grid.ColumnSpan="2"/>
             <!--#endregion-->
-            <userControl:MainPanelControl AuthNodesSource="{Binding AuthNodes}" VersionsSource="{Binding Versions}" UsersSource="{Binding Users}"
-                                          SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}" SelectedUser="{Binding LaunchUser, Mode=TwoWay}"
-                                          SelectedAuthNode="{Binding LaunchAuthNode, Mode=TwoWay}" UserNameText="{Binding LaunchUserNameText, Mode=TwoWay}"
+            <userControl:MainPanelControl AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
+                                          VersionsSource="{Binding Versions, Mode=OneWay}"
+                                          UsersSource="{Binding Users, Mode=OneWay}"
+                                          SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}" SelectedUser="{Binding LaunchUserKey, Mode=TwoWay}"
+                                          SelectedAuthNode="{Binding LaunchAuthNodeKey, Mode=TwoWay}" UserNameText="{Binding LaunchUserNameText, Mode=TwoWay}"
                                           LaunchCommand="{Binding LaunchCmd}"
+                                          OpenDownloadingCommand="{Binding OpenDownloadingCmd}"
                                           />
         </Grid>
         <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"

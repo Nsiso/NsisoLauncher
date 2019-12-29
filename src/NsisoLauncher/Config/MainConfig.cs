@@ -2,40 +2,14 @@
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 using System.Collections.Generic;
+using NsisoLauncher.Utils;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace NsisoLauncher.Config
 {
     #region Enum
-
-    public enum AuthenticationType
-    {
-        /// <summary>
-        /// 离线验证
-        /// </summary>
-        OFFLINE,
-
-        /// <summary> 
-        /// 官方正版验证
-        /// </summary>
-        MOJANG,
-
-        /// <summary>
-        /// 统一验证
-        /// </summary>
-        NIDE8,
-
-        /// <summary>
-        /// authlib-injector验证
-        /// </summary>
-        AUTHLIB_INJECTOR,
-
-        /// <summary>
-        /// 自定义服务器验证
-        /// </summary>
-        CUSTOM_SERVER
-    }
-
     public enum GameDirEnum
     {
         /// <summary>
@@ -110,17 +84,17 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 用户基本设置
     /// </summary>
-    public class User
+    public class User : INotifyPropertyChanged
     {
         /// <summary>
         /// 用户数据库
         /// </summary>
-        public Dictionary<string, UserNode> UserDatabase { get; set; }
+        public ObservableDictionary<string, UserNode> UserDatabase { get; set; }
 
-        /// <summary>
+        /// <summary> 
         /// 验证节点
         /// </summary>
-        public Dictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
+        public ObservableDictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
 
         /// <summary>
         /// 用户端Token
@@ -136,6 +110,8 @@ namespace NsisoLauncher.Config
         /// 全局是否对NIDE8服务器依赖
         /// </summary>
         public bool Nide8ServerDependence { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// 获取锁定验证模型，若不存在返回NULL
@@ -157,7 +133,7 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 启动环境基本设置
     /// </summary>
-    public class Environment
+    public class Environment : INotifyPropertyChanged
     {
         /// <summary>
         /// 版本隔离
@@ -248,12 +224,14 @@ namespace NsisoLauncher.Config
         /// 启动后退出启动器
         /// </summary>
         public bool ExitAfterLaunch { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 启动器设置
     /// </summary>
-    public class Launcher
+    public class Launcher : INotifyPropertyChanged
     {
         /// <summary>
         /// 是否开启DEBUG模式
@@ -269,12 +247,14 @@ namespace NsisoLauncher.Config
         /// 是否检查更新
         /// </summary>
         public bool CheckUpdate { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 下载设置
     /// </summary>
-    public class Download
+    public class Download : INotifyPropertyChanged
     {
         /// <summary>
         /// 下载源设置
@@ -310,12 +290,14 @@ namespace NsisoLauncher.Config
         /// 下载后是否检查哈希值（前提为可用）
         /// </summary>
         public bool CheckDownloadFileHash { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 历史记录设置
     /// </summary>
-    public class History
+    public class History : INotifyPropertyChanged
     {
         /// <summary>
         /// 选中的用户的ID
@@ -336,12 +318,14 @@ namespace NsisoLauncher.Config
         /// 上次启动使用的时间(Ms)
         /// </summary>
         public long LastLaunchUsingMs { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 服务器设置
     /// </summary>
-    public class Server
+    public class Server : INotifyPropertyChanged
     {
         /// <summary>
         /// 服务器名称
@@ -367,12 +351,14 @@ namespace NsisoLauncher.Config
         /// 服务器端口
         /// </summary>
         public ushort Port { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 自定义设置
     /// </summary>
-    public class Customize
+    public class Customize : INotifyPropertyChanged
     {
         /// <summary>
         /// 是否使用自定义壁纸
@@ -408,22 +394,29 @@ namespace NsisoLauncher.Config
         /// 版本信息
         /// </summary>
         public string VersionInfo { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>
     /// 用户验证节点设置
     /// </summary>
-    public class UserNode/* : INotifyPropertyChanged*/
+    public class UserNode : INotifyPropertyChanged
     {
-        ///// <summary>
-        ///// 所使用的验证模型
-        ///// </summary>
-        //public string AuthModule { get; set; }
+        /// <summary>
+        /// 所使用的验证模型
+        /// </summary>
+        public string AuthModule { get; set; }
 
         /// <summary>
         /// 用户名/账号
         /// </summary>
         public string UserName { get; set; }
+
+        /// <summary>
+        /// 用户唯一UUID
+        /// </summary>
+        public string UserUUID { get; set; }
 
         /// <summary>
         /// 验证令牌
@@ -445,12 +438,7 @@ namespace NsisoLauncher.Config
         /// </summary>
         public UserData UserData { get; set; }
 
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //protected void OnPropertyChanged(string propertyName)
-        //{
-        //    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public Uuid GetSelectProfileUUID()
         {
@@ -467,7 +455,7 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 验证节点设置
     /// </summary>
-    public class AuthenticationNode
+    public class AuthenticationNode : INotifyPropertyChanged
     {
         public string Name { get; set; }
 
@@ -478,16 +466,7 @@ namespace NsisoLauncher.Config
         /// nide8ID:NIDE8的验证ID
         /// </summary>
         public Dictionary<string, string> Property { get; set; } = new Dictionary<string, string>();
-    }
 
-    /// <summary>
-    /// profile文件
-    /// </summary>
-    public class Profile
-    {
-        /// <summary>
-        /// 显示的玩家昵称.
-        /// </summary>
-        public string DisplayName { get; internal set; }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

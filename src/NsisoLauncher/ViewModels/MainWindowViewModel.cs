@@ -28,9 +28,9 @@ namespace NsisoLauncher.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<AuthenticationNode> AuthNodes { get; set; }
-        public ObservableCollection<AuthenticationNode> Versions { get; set; }
-        public ObservableCollection<AuthenticationNode> Users { get; set; }
+        public ObservableDictionary<string, AuthenticationNode> AuthNodes { get; }
+        public ObservableCollection<Version> Versions { get; }
+        public ObservableDictionary<string, UserNode> Users { get; }
 
         #region Commands
         /// <summary>
@@ -56,8 +56,8 @@ namespace NsisoLauncher.ViewModels
 
         #region Launch Data
         public Version LaunchVersion { get; set; }
-        public UserNode LaunchUser { get; set; }
-        public AuthenticationNode LaunchAuthNode { get; set; }
+        public string LaunchUserKey { get; set; }
+        public string LaunchAuthNodeKey { get; set; }
         public string LaunchUserNameText { get; set; }
         #endregion
 
@@ -90,14 +90,8 @@ namespace NsisoLauncher.ViewModels
         /// </summary>
         public string LogLine { get; set; }
 
-        private bool isTogglingPlayState = false;
-
         public MainWindowViewModel()
         {
-            AuthNodes = new ObservableCollection<AuthenticationNode>()
-            {
-                new AuthenticationNode() { Name = "666", AuthType = AuthenticationType.MOJANG }
-            };
             #region 命令初始化
             LaunchCmd = new DelegateCommand(
                //launch
@@ -108,11 +102,19 @@ namespace NsisoLauncher.ViewModels
                    else
                        return !App.Handler.IsBusyLaunching;
                });
+            OpenDownloadingCmd = new DelegateCommand((obj) =>
+            {
+                new DownloadWindow().ShowDialog();
+            });
             #endregion
 
 
             if (App.Handler != null)
             {
+                AuthNodes = App.Config.MainConfig.User.AuthenticationDic;
+                Users = App.Config.MainConfig.User.UserDatabase;
+                Versions = App.VersionList;
+
                 App.Handler.GameExit += Handler_GameExit;
                 _ = CustomizeRefresh();
                 //检查环境
@@ -148,7 +150,7 @@ namespace NsisoLauncher.ViewModels
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
-                if (LaunchAuthNode == null)
+                if (!AuthNodes.ContainsKey(LaunchAuthNodeKey))
                 {
                     await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.EmptyAuthType"),
                         App.GetResourceString("String.Message.EmptyAuthType2"));
@@ -168,7 +170,13 @@ namespace NsisoLauncher.ViewModels
 
                 #region 用户处理
                 bool isNewUser = false;
-                if (LaunchUser == null)
+                UserNode LaunchUser = null;
+                if ((!string.IsNullOrEmpty(LaunchUserKey)) && (Users.ContainsKey(LaunchUserKey)))
+                {
+                    isNewUser = false;
+                    LaunchUser = Users[LaunchUserKey];
+                }
+                else
                 {
                     isNewUser = true;
                     LaunchUser = new UserNode() { UserName = LaunchUserNameText };
@@ -185,6 +193,7 @@ namespace NsisoLauncher.ViewModels
                 IsLaunching = true;
 
                 #region 验证
+                AuthenticationNode LaunchAuthNode = AuthNodes[LaunchAuthNodeKey];
 
                 #region 设置ClientToken
                 if (string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
@@ -721,7 +730,7 @@ namespace NsisoLauncher.ViewModels
 
                     #region 数据反馈
                     //API使用次数计数器+1
-                    await App.nsisoAPIHandler.RefreshUsingTimesCounter();
+                    await App.NsisoAPIHandler.RefreshUsingTimesCounter();
                     #endregion
 
                     App.Config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
@@ -770,7 +779,7 @@ namespace NsisoLauncher.ViewModels
             }
             if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
             {
-                string[] files = Directory.GetFiles( Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
                 if (files.Count() != 0)
                 {
                     Random random = new Random();
@@ -919,7 +928,7 @@ namespace NsisoLauncher.ViewModels
         {
             try
             {
-                var ver = await App.nsisoAPIHandler.GetLatestLauncherVersion();
+                var ver = await App.NsisoAPIHandler.GetLatestLauncherVersion();
                 if (ver != null)
                 {
                     System.Version currentVersion = Application.ResourceAssembly.GetName().Version;

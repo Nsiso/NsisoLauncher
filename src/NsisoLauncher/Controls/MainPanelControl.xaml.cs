@@ -58,27 +58,27 @@ namespace NsisoLauncher.Controls
         #endregion
 
         #region Propdp(Sources)
-        public IEnumerable<UserNode> UsersSource
+        public IEnumerable<KeyValuePair<string, UserNode>> UsersSource
         {
-            get { return (IEnumerable<UserNode>)GetValue(UsersSourceProperty); }
+            get { return (IEnumerable<KeyValuePair<string, UserNode>>)GetValue(UsersSourceProperty); }
             set { SetValue(UsersSourceProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for UsersSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty UsersSourceProperty =
-            DependencyProperty.Register("UsersSource", typeof(IEnumerable<UserNode>), typeof(MainPanelControl), new PropertyMetadata(null));
+            DependencyProperty.Register("UsersSource", typeof(IEnumerable<KeyValuePair<string, UserNode>>), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
-        public IEnumerable<AuthenticationNode> AuthNodesSource
+        public IEnumerable<KeyValuePair<string, AuthenticationNode>> AuthNodesSource
         {
-            get { return (IEnumerable<AuthenticationNode>)GetValue(AuthNodesSourceProperty); }
+            get { return (IEnumerable<KeyValuePair<string, AuthenticationNode>>)GetValue(AuthNodesSourceProperty); }
             set { SetValue(AuthNodesSourceProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for AuthNodesSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty AuthNodesSourceProperty =
-            DependencyProperty.Register("AuthNodesSource", typeof(IEnumerable<AuthenticationNode>), typeof(MainPanelControl), new PropertyMetadata(null));
+            DependencyProperty.Register("AuthNodesSource", typeof(IEnumerable<KeyValuePair<string, AuthenticationNode>>), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
@@ -108,27 +108,27 @@ namespace NsisoLauncher.Controls
 
 
 
-        public UserNode SelectedUser
+        public string SelectedUser
         {
-            get { return (UserNode)GetValue(SelectedUserProperty); }
+            get { return (string)GetValue(SelectedUserProperty); }
             set { SetValue(SelectedUserProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for SelectedUser.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedUserProperty =
-            DependencyProperty.Register("SelectedUser", typeof(UserNode), typeof(MainPanelControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedUser", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
-        public AuthenticationNode SelectedAuthNode
+        public string SelectedAuthNode
         {
-            get { return (AuthenticationNode)GetValue(SelectedAuthNodeProperty); }
+            get { return (string)GetValue(SelectedAuthNodeProperty); }
             set { SetValue(SelectedAuthNodeProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for SelectedAuthNode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedAuthNodeProperty =
-            DependencyProperty.Register("SelectedAuthNode", typeof(AuthenticationNode), typeof(MainPanelControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedAuthNode", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
@@ -333,7 +333,7 @@ namespace NsisoLauncher.Controls
 
     public class LaunchEventArgs : EventArgs
     {
-        public NsisoLauncherCore.Modules.Version LaunchVersion { get; set; }
+        public Version LaunchVersion { get; set; }
         public AuthenticationNode AuthNode { get; set; }
         public UserNode UserNode { get; set; }
         public bool IsNewUser { get; set; }

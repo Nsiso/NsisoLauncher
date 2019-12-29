@@ -24,13 +24,14 @@
                   Margin="41,190,60,0" 
                   VerticalAlignment="Top" 
                   Background="#33FFFFFF" BorderBrush="#99FFFFFF"
-                  DisplayMemberPath="Name"
-                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
+                  DisplayMemberPath="Value.Name"
+                  SelectedValuePath="Key"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
                   Grid.ColumnSpan="2"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=AuthNodesSource}"
-                  SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"
+                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
                   />
+        <!--SelectedValue="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"/>-->
         <Button  Grid.Column="1" Margin="0,190,20,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="35" ToolTip="{DynamicResource String.Mainwindow.Auth.Add}"
                  Background="{x:Null}" BorderBrush="White" Foreground="White" Height="26">
             <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
@@ -50,16 +51,15 @@
         <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Margin="10,155,0,0" Foreground="White"/>
         <ComboBox x:Name="userComboBox"
                  IsEditable="True"
-                 Height="23"
+                 Height="23" Grid.ColumnSpan="2"
                  controls:TextBoxHelper.ClearTextButton="True"
                  Margin="41,155,20,0"
                  SelectedValuePath="Key"
                  DisplayMemberPath="Value.UserName"
                  VerticalAlignment="Top" Background="#33FFFFFF" BorderBrush="#99FFFFFF"
                  controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
-                 Grid.ColumnSpan="2"
                  ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
-                 SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUser}"
+                 SelectedValue="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUser}"
                  Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
                   />
 
@@ -71,6 +71,7 @@
 
         <Button x:Name="downloadButton"
                     Height="30" Margin="5,0,10,65" VerticalAlignment="Bottom"
+                    Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenDownloadingCommand}"
                     Background="{x:Null}" BorderBrush="White" Foreground="White" Grid.Column="1">
             <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
         </Button>

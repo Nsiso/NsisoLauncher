@@ -324,18 +324,6 @@ namespace NsisoLauncher.Windows
             this.ShowMessageAsync("删除用户成功", "请保存以生效");
         }
 
-        private void delAllAuthnodeButton_Click(object sender, RoutedEventArgs e)
-        {
-            config.User.AuthenticationDic.Clear();
-            this.ShowMessageAsync("清除成功", "请保存以生效");
-        }
-
-        private void delAllUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            config.User.UserDatabase.Clear();
-            this.ShowMessageAsync("清除成功", "请保存以生效");
-        }
-
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = sender as Hyperlink;

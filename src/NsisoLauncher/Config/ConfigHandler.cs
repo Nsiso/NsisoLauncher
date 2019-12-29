@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncher.Utils;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
 using System;
@@ -186,8 +187,15 @@ namespace NsisoLauncher.Config
                 User = new User()
                 {
                     ClientToken = Guid.NewGuid().ToString("N"),
-                    UserDatabase = new Dictionary<string, UserNode>(),
-                    AuthenticationDic = new Dictionary<string, AuthenticationNode>()
+                    UserDatabase = new ObservableDictionary<string, UserNode>()
+                    {
+                        {"aasd", new UserNode() {UserName="dddd", AuthModule = "testid" } }
+                    },
+                    AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
+                    {
+                        {"testid", new AuthenticationNode(){Name="!!auth1"} },
+                        {"testid2", new AuthenticationNode(){Name="!!auth2"} }
+                    }
                 },
                 History = new History()
                 {
