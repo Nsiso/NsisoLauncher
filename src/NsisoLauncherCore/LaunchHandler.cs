@@ -230,6 +230,18 @@ namespace NsisoLauncherCore
             }
         }
 
+        public List<Modules.Version> GetVersions()
+        {
+            try
+            {
+                return versionReader.GetVersions();
+            }
+            catch (Exception)
+            {
+                return new List<Modules.Version>();
+            }
+        }
+
         public Modules.Version JsonToVersion(string json)
         {
             return versionReader.JsonToVersion(json);

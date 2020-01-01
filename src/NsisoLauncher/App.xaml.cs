@@ -70,7 +70,7 @@ namespace NsisoLauncher
 #if DEBUG
             NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
 #else
-            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
+            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
 #endif
 
             #endregion
@@ -167,6 +167,11 @@ namespace NsisoLauncher
                 ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
             }
             #endregion
+
+            #region 读取版本
+            VersionList = new ObservableCollection<Version>();
+            RefreshVersionList();
+            #endregion
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -211,9 +216,19 @@ namespace NsisoLauncher
             { }
         }
 
-        public async static Task RefreshVersionList()
+        public async static Task RefreshVersionListAsync()
         {
             var list = await Handler.GetVersionsAsync();
+            VersionList.Clear();
+            foreach (var item in list)
+            {
+                VersionList.Add(item);
+            }
+        }
+
+        public static void RefreshVersionList()
+        {
+            var list = Handler.GetVersions();
             VersionList.Clear();
             foreach (var item in list)
             {

@@ -108,27 +108,27 @@ namespace NsisoLauncher.Controls
 
 
 
-        public string SelectedUser
+        public KeyValuePair<string, UserNode>? SelectedUserNode
         {
-            get { return (string)GetValue(SelectedUserProperty); }
-            set { SetValue(SelectedUserProperty, value); }
+            get { return (KeyValuePair<string, UserNode>?)GetValue(SelectedUserNodeProperty); }
+            set { SetValue(SelectedUserNodeProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for SelectedUser.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectedUserProperty =
-            DependencyProperty.Register("SelectedUser", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedUserNodeProperty =
+            DependencyProperty.Register("SelectedUserNode", typeof(KeyValuePair<string, UserNode>?), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
-        public string SelectedAuthNode
+        public KeyValuePair<string, AuthenticationNode>? SelectedAuthNode
         {
-            get { return (string)GetValue(SelectedAuthNodeProperty); }
+            get { return (KeyValuePair<string, AuthenticationNode>?)GetValue(SelectedAuthNodeProperty); }
             set { SetValue(SelectedAuthNodeProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for SelectedAuthNode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedAuthNodeProperty =
-            DependencyProperty.Register("SelectedAuthNode", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedAuthNode", typeof(KeyValuePair<string, AuthenticationNode>?), typeof(MainPanelControl), new PropertyMetadata(null));
 
 
 
@@ -142,6 +142,22 @@ namespace NsisoLauncher.Controls
         public static readonly DependencyProperty UserNameTextProperty =
             DependencyProperty.Register("UserNameText", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
 
+
+
+        #endregion
+
+        #region Propdp(data)
+
+
+        public int DownloadTaskCount
+        {
+            get { return (int)GetValue(DownloadTaskCountProperty); }
+            set { SetValue(DownloadTaskCountProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DownloadTaskCount.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DownloadTaskCountProperty =
+            DependencyProperty.Register("DownloadTaskCount", typeof(int), typeof(MainPanelControl), new PropertyMetadata(0));
 
 
         #endregion

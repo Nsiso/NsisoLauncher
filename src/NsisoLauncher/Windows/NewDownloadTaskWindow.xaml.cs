@@ -268,7 +268,7 @@ namespace NsisoLauncher.Windows
 
                     tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Config.MainConfig.Download.DownloadSource, App.Handler, ver));
 
-                    App.Downloader.SetDownloadTasks(tasks);
+                    App.Downloader.AddDownloadTask(tasks);
                     App.Downloader.StartDownload();
                 }
             }
@@ -307,7 +307,7 @@ namespace NsisoLauncher.Windows
                 catch (Exception ex)
                 { return ex; }
             });
-            App.Downloader.SetDownloadTasks(dt);
+            App.Downloader.AddDownloadTask(dt);
             App.Downloader.StartDownload();
 
         }
@@ -329,7 +329,7 @@ namespace NsisoLauncher.Windows
                 catch (Exception ex)
                 { return ex; }
             });
-            App.Downloader.SetDownloadTasks(dt);
+            App.Downloader.AddDownloadTask(dt);
             App.Downloader.StartDownload();
 
         }

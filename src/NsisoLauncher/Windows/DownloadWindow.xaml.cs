@@ -18,64 +18,16 @@ namespace NsisoLauncher.Windows
     /// </summary>
     public partial class DownloadWindow : MetroWindow
     {
-        private ObservableCollection<DownloadTask> Tasks;
-        private ChartValues<decimal> speedValues = new ChartValues<decimal>() { };
-
-
         public DownloadWindow()
         {
             InitializeComponent();
-            App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-            App.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
-            App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
-            Refresh();
-        }
-
-        private void Refresh()
-        {
-            if (App.Downloader.DownloadTasks != null)
-            {
-                Tasks = new ObservableCollection<DownloadTask>(App.Downloader.DownloadTasks);
-            }
-            else
-            {
-                Tasks = new ObservableCollection<DownloadTask>();
-            }
-            downloadList.ItemsSource = Tasks;
-            for (int i = 0; i < 49; i++)
-            {
-                speedValues.Add(0);
-            }
-            plotter.Series = new SeriesCollection() { new LineSeries() { Values = speedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度" } };
-            YAxis.LabelFormatter = value =>
-           {
-               string speedUnit;
-               double speedValue;
-               if (value > 1048576)
-               {
-                   speedUnit = "MB/s";
-                   speedValue = Math.Round(value / 1048576);
-               }
-               else if (value > 1024)
-               {
-                   speedUnit = "KB/s";
-                   speedValue = Math.Round(value / 1024);
-               }
-               else
-               {
-                   speedUnit = "B/s";
-                   speedValue = value;
-               }
-               return string.Format("{0}{1}", speedValue, speedUnit);
-           };
-            plotter.DisableAnimations = true;
         }
 
         public async Task<DownloadCompletedArg> ShowWhenDownloading()
         {
             this.Topmost = true;
             this.Show();
-            return await Task.Factory.StartNew(() =>
+            return await Task.Run(() =>
             {
                 DownloadCompletedArg completedArg = null;
                 try
@@ -108,54 +60,7 @@ namespace NsisoLauncher.Windows
             });
         }
 
-        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
-        {
-            this.Dispatcher.Invoke(new Action(async () =>
-           {
-               speedTextBlock.Text = "0Kb/s";
-               progressBar.Maximum = 1;
-               progressBar.Value = 0;
-               progressPerTextBlock.Text = "000%";
-               speedValues.Clear();
-               for (int i = 0; i < 49; i++)
-               {
-                   speedValues.Add(0);
-               }
-               if (e.ErrorList == null || e.ErrorList.Count == 0)
-               {
-                   await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
-                       App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
-                   this.Close();
-               }
-               else
-               {
-                   await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                       string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
-               }
-
-           }));
-        }
-
-        private void Downloader_DownloadSpeedChanged(object sender, DownloadSpeedChangedArg e)
-        {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                speedTextBlock.Text = e.SpeedValue.ToString() + e.SpeedUnit;
-                speedValues.Add(e.SizePerSec);
-                speedValues.RemoveAt(0);
-            }));
-        }
-
-        private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
-        {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                this.progressBar.Maximum = e.TaskCount;
-                this.progressBar.Value = e.TaskCount - e.LastTaskCount;
-                this.progressPerTextBlock.Text = ((double)(e.TaskCount - e.LastTaskCount) / (double)e.TaskCount).ToString("0%");
-                Tasks.Remove(e.DoneTask);
-            }));
-        }
+        
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -171,7 +76,7 @@ namespace NsisoLauncher.Windows
                });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    App.Downloader.RequestStop();
+                    App.Downloader.RequestCancel();
                     this.progressBar.Value = 0;
                 }
             }
@@ -184,7 +89,6 @@ namespace NsisoLauncher.Windows
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             new NewDownloadTaskWindow().ShowDialog();
-            Refresh();
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

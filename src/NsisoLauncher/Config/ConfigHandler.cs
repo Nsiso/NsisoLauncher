@@ -187,14 +187,10 @@ namespace NsisoLauncher.Config
                 User = new User()
                 {
                     ClientToken = Guid.NewGuid().ToString("N"),
-                    UserDatabase = new ObservableDictionary<string, UserNode>()
-                    {
-                        {"aasd", new UserNode() {UserName="dddd", AuthModule = "testid" } }
-                    },
+                    UserDatabase = new ObservableDictionary<string, UserNode>(),
                     AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
                     {
-                        {"testid", new AuthenticationNode(){Name="!!auth1"} },
-                        {"testid2", new AuthenticationNode(){Name="!!auth2"} }
+                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} }
                     }
                 },
                 History = new History()

@@ -56,8 +56,8 @@ namespace NsisoLauncher.ViewModels
 
         #region Launch Data
         public Version LaunchVersion { get; set; }
-        public string LaunchUserKey { get; set; }
-        public string LaunchAuthNodeKey { get; set; }
+        public KeyValuePair<string, UserNode>? LaunchUserPair { get; set; }
+        public KeyValuePair<string, AuthenticationNode>? LaunchAuthNodePair { get; set; }
         public string LaunchUserNameText { get; set; }
         #endregion
 
@@ -90,6 +90,11 @@ namespace NsisoLauncher.ViewModels
         /// </summary>
         public string LogLine { get; set; }
 
+        /// <summary>
+        /// 下载数
+        /// </summary>
+        public int DownloadTaskCount { get; set; }
+
         public MainWindowViewModel()
         {
             #region 命令初始化
@@ -105,6 +110,10 @@ namespace NsisoLauncher.ViewModels
             OpenDownloadingCmd = new DelegateCommand((obj) =>
             {
                 new DownloadWindow().ShowDialog();
+            });
+            OpenSettingCmd = new DelegateCommand((obj) =>
+            {
+                new SettingWindow().ShowDialog();
             });
             #endregion
 
@@ -150,7 +159,7 @@ namespace NsisoLauncher.ViewModels
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
-                if (!AuthNodes.ContainsKey(LaunchAuthNodeKey))
+                if (LaunchAuthNodePair == null)
                 {
                     await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.EmptyAuthType"),
                         App.GetResourceString("String.Message.EmptyAuthType2"));
@@ -171,10 +180,10 @@ namespace NsisoLauncher.ViewModels
                 #region 用户处理
                 bool isNewUser = false;
                 UserNode LaunchUser = null;
-                if ((!string.IsNullOrEmpty(LaunchUserKey)) && (Users.ContainsKey(LaunchUserKey)))
+                if (LaunchUserPair!= null)
                 {
                     isNewUser = false;
-                    LaunchUser = Users[LaunchUserKey];
+                    LaunchUser = LaunchUserPair?.Value;
                 }
                 else
                 {
@@ -193,7 +202,7 @@ namespace NsisoLauncher.ViewModels
                 IsLaunching = true;
 
                 #region 验证
-                AuthenticationNode LaunchAuthNode = AuthNodes[LaunchAuthNodeKey];
+                AuthenticationNode LaunchAuthNode = LaunchAuthNodePair?.Value;
 
                 #region 设置ClientToken
                 if (string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
@@ -613,7 +622,7 @@ namespace NsisoLauncher.ViewModels
                 {
                     if (!App.Downloader.IsBusy)
                     {
-                        App.Downloader.SetDownloadTasks(losts);
+                        App.Downloader.AddDownloadTask(losts);
                         App.Downloader.StartDownload();
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
@@ -873,13 +882,13 @@ namespace NsisoLauncher.ViewModels
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.Downloader.SetDownloadTasks(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
                             App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.Downloader.SetDownloadTasks(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
                             App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");

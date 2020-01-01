@@ -44,7 +44,7 @@ namespace NsisoLauncher
 
 
         #region MainWindow event
-        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void mainWindow_Closing(object sender, CancelEventArgs e)
         {
             if (App.Downloader.IsBusy)
             {
@@ -57,7 +57,7 @@ namespace NsisoLauncher
                 });
                 if (choose == MessageDialogResult.Affirmative)
                 {
-                    App.Downloader.RequestStop();
+                    App.Downloader.RequestCancel();
                 }
                 else
                 {
