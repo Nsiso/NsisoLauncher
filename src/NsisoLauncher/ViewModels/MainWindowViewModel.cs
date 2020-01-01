@@ -125,11 +125,25 @@ namespace NsisoLauncher.ViewModels
                 Versions = App.VersionList;
 
                 App.Handler.GameExit += Handler_GameExit;
+                App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+                App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
+
                 _ = CustomizeRefresh();
                 //检查环境
                 _ = CheckEnvironment();
             }
         }
+
+        #region 下载事件处理
+        private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
+        {
+            DownloadTaskCount = e.LeftTasksCount;
+        }
+        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
+        {
+            DownloadTaskCount = 0;
+        }
+        #endregion
 
         private void Handler_GameExit(object sender, NsisoLauncherCore.GameExitArg arg)
         {
@@ -180,7 +194,7 @@ namespace NsisoLauncher.ViewModels
                 #region 用户处理
                 bool isNewUser = false;
                 UserNode LaunchUser = null;
-                if (LaunchUserPair!= null)
+                if (LaunchUserPair != null)
                 {
                     isNewUser = false;
                     LaunchUser = LaunchUserPair?.Value;

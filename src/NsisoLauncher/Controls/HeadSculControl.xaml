@@ -8,8 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">
     <Grid>
-        <Image x:Name="iconImage" Source="/NsisoLauncher;component/Resource/Steve.jpg" Height="60" Width="60"/>
-        <Ellipse  Height="100" Stroke="White" Width="100"/>
+        <Ellipse  Height="100" Fill="{DynamicResource GrayBrush7}" Width="100"/>
+        <Image x:Name="iconImage" Source="/NsisoLauncher;component/Resource/Steve.jpg" Height="50" Width="50"/>
         <controls:ProgressRing x:Name="progressRing" IsActive="False"/>
     </Grid>
 </UserControl>

@@ -260,7 +260,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\bg.png" />
     <Resource Include="Resource\defaultIcon.png" />
     <Resource Include="Resource\icon.ico" />
   </ItemGroup>
@@ -318,6 +317,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\bg.jpg" />
   </ItemGroup>
   <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

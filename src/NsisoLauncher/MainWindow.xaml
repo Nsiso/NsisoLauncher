@@ -19,7 +19,7 @@
         WindowState="{Binding WindowState}" 
         Closing="mainWindow_Closing">
     <controls:MetroWindow.Resources>
-        <vm:MainWindowViewModel x:Key="MainWindowVm"
+        <vm:MainWindowViewModel x:Key="MainWindowVm" BackgroundImageSource="Resource/bg.jpg"
                                 Instance="{x:Static Dialog:DialogCoordinator.Instance}"
                                 WindowTitle="Nsiso Launcher"/>
     </controls:MetroWindow.Resources>
@@ -27,23 +27,17 @@
         <Binding Source="{StaticResource MainWindowVm}"/>
     </controls:MetroWindow.DataContext>
     <controls:MetroWindow.Background>
-        <ImageBrush ImageSource="{Binding BackgroundImageSource}" TileMode="FlipXY" AlignmentX="Right" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
     </controls:MetroWindow.Background>
     <Grid>
         <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
                                    IsPlaying="{Binding IsPlaying}" d:DataContext=""/>
 
-        <Grid HorizontalAlignment="Right" MinWidth="250" MaxWidth="500">
-            <!--#region 高斯模糊效果(最底层) -->
-            <Rectangle VerticalAlignment="Bottom" Height="{Binding ActualHeight, ElementName=mainWindow}"
-                       Fill="{Binding Background, ElementName=mainWindow}">
-                <Rectangle.Effect>
-                    <BlurEffect Radius="20"/>
-                </Rectangle.Effect>
-            </Rectangle>
-            <Rectangle Fill="White" Opacity="0.2" Grid.ColumnSpan="2"/>
+        <Grid  MinWidth="250" MaxWidth="500" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.9" RadiusX="10" RadiusY="10"/>
             <!--#endregion-->
-            <userControl:MainPanelControl AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
+            <userControl:MainPanelControl Margin="20"
+                                          AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
                                           VersionsSource="{Binding Versions, Mode=OneWay}"
                                           UsersSource="{Binding Users, Mode=OneWay}"
                                           SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}" SelectedUserNode="{Binding LaunchUserPair, Mode=TwoWay}"
@@ -64,7 +58,8 @@
 
         <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-        <Grid x:Name="loadingGrid" Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}" Grid.ColumnSpan="3">
+        <Grid x:Name="loadingGrid"
+              Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}">
             <Rectangle VerticalAlignment="Bottom" Height="{Binding ActualHeight, ElementName=mainWindow}" 
                        Fill="{Binding Background, ElementName=mainWindow}" >
                 <Rectangle.Effect>

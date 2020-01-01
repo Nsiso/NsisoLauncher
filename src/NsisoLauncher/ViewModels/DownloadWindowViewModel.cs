@@ -40,6 +40,10 @@ namespace NsisoLauncher.ViewModels
         public DownloadWindowViewModel()
         {
             InitChart();
+            SpeedStr = "0Kb/s";
+            ProgressMaximum = 1;
+            ProgressValue = 0;
+            Percentage = 0;
             if (App.Downloader != null)
             {
                 Tasks = App.Downloader.ViewDownloadTasks;
@@ -92,7 +96,7 @@ namespace NsisoLauncher.ViewModels
         private async void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
             SpeedStr = "0Kb/s";
-            ProgressMaximum = 0;
+            ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
             ClearSpeedValues();
