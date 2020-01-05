@@ -2,6 +2,7 @@
 using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
@@ -48,7 +49,7 @@ namespace NsisoLauncher
             AggregateExceptionCatched += (a, b) => LogHandler.AppendFatal(b.AggregateException);
             if (e.Args.Contains("-debug"))
             {
-                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                DebugWindow debugWindow = new DebugWindow();
                 debugWindow.Show();
                 LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
@@ -59,7 +60,7 @@ namespace NsisoLauncher
             #region DEBUG初始化（基于配置文件）
             if (Config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
             {
-                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                DebugWindow debugWindow = new DebugWindow();
                 debugWindow.Show();
                 LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }

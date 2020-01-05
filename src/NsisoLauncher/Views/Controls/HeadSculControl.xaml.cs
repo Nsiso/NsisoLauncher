@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace NsisoLauncher.Controls
+namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
     /// HeadSculControl.xaml 的交互逻辑

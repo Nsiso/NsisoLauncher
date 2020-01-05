@@ -100,16 +100,16 @@
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
-    <Compile Include="Controls\AuthModuleControl.xaml.cs">
+    <Compile Include="Views\Controls\AuthModuleControl.xaml.cs">
       <DependentUpon>AuthModuleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HeadSculControl.xaml.cs">
+    <Compile Include="Views\Controls\HeadSculControl.xaml.cs">
       <DependentUpon>HeadSculControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MainPanelControl.xaml.cs">
+    <Compile Include="Views\Controls\MainPanelControl.xaml.cs">
       <DependentUpon>MainPanelControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ServerInfoControl.xaml.cs">
+    <Compile Include="Views\Controls\ServerInfoControl.xaml.cs">
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\DelegateCommand.cs" />
@@ -120,41 +120,41 @@
     <Compile Include="Utils\ObservableDictionary.cs" />
     <Compile Include="ViewModels\DownloadWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Windows\DebugWindow.xaml.cs">
+    <Compile Include="Views\Windows\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\DownloadWindow.xaml.cs">
+    <Compile Include="Views\Windows\DownloadWindow.xaml.cs">
       <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ErrorWindow.xaml.cs">
+    <Compile Include="Views\Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\NewDownloadTaskWindow.xaml.cs">
+    <Compile Include="Views\Windows\NewDownloadTaskWindow.xaml.cs">
       <DependentUpon>NewDownloadTaskWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\SettingWindow.xaml.cs">
+    <Compile Include="Views\Windows\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UpdateWindow.xaml.cs">
+    <Compile Include="Views\Windows\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\AuthModuleControl.xaml">
+    <Page Include="Views\Controls\AuthModuleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\HeadSculControl.xaml">
+    <Page Include="Views\Controls\HeadSculControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MainPanelControl.xaml">
+    <Page Include="Views\Controls\MainPanelControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ServerInfoControl.xaml">
+    <Page Include="Views\Controls\ServerInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -162,7 +162,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -206,27 +206,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\DebugWindow.xaml">
+    <Page Include="Views\Windows\DebugWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\DownloadWindow.xaml">
+    <Page Include="Views\Windows\DownloadWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\ErrorWindow.xaml">
+    <Page Include="Views\Windows\ErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\NewDownloadTaskWindow.xaml">
+    <Page Include="Views\Windows\NewDownloadTaskWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\SettingWindow.xaml">
+    <Page Include="Views\Windows\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\UpdateWindow.xaml">
+    <Page Include="Views\Windows\UpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -316,10 +316,11 @@
     <Resource Include="Resource\Steve.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="bg.png" />
+    <Resource Include="Resource\bg.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\bg.jpg" />
+    <Folder Include="Views\Dialogs\" />
+    <Folder Include="Views\Pages\" />
   </ItemGroup>
   <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

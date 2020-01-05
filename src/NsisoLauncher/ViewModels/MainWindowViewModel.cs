@@ -18,7 +18,7 @@ using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System.IO;
-using NsisoLauncher.Windows;
+using NsisoLauncher.Views.Windows;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows.Controls;

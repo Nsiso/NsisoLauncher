@@ -3,7 +3,7 @@ using NsisoLauncherCore.Net.PhalAPI;
 using System.Diagnostics;
 using System.Windows;
 
-namespace NsisoLauncher.Windows
+namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
     /// UpdateWindow.xaml 的交互逻辑

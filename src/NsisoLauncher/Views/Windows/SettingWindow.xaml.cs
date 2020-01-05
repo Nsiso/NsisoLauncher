@@ -18,7 +18,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace NsisoLauncher.Windows
+namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
     /// SettingWindow.xaml 的交互逻辑

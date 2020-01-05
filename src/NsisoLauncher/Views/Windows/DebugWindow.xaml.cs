@@ -3,7 +3,7 @@ using NsisoLauncherCore.Modules;
 using System;
 using System.Windows;
 
-namespace NsisoLauncher.Windows
+namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
     /// DebugWindow.xaml 的交互逻辑

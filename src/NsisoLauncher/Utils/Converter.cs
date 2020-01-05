@@ -134,4 +134,27 @@ namespace NsisoLauncher.Utils
         }
         #endregion
     }
+
+    public class VisualBrushTargetConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var parentControl = values[0] as FrameworkElement;
+            var targetControl = values[1] as FrameworkElement;
+
+            var transformedPos = targetControl.TransformToVisual(parentControl).Transform(new Point());
+            var transformedSize = targetControl.TransformToVisual(parentControl).Transform(new Point(targetControl.RenderSize.Width, targetControl.RenderSize.Height));
+
+            transformedSize = new Point(transformedSize.X - transformedPos.X, transformedSize.Y - transformedPos.Y);
+            return new Rect(transformedPos.X,
+                            transformedPos.Y,
+                            transformedSize.X,
+                            transformedSize.Y);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
 }

@@ -16,7 +16,7 @@ using System.Windows.Data;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 using Version = NsisoLauncherCore.Modules.Version;
 
-namespace NsisoLauncher.Windows
+namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
     /// NewDownloadTaskWindow.xaml 的交互逻辑

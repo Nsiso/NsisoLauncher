@@ -1,13 +1,13 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
-using NsisoLauncher.Windows;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Modules;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace NsisoLauncher.Controls
+namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
     /// AuthModuleControl.xaml 的交互逻辑

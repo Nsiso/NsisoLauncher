@@ -1,42 +1,60 @@
-﻿<controls:MetroWindow x:Name="mainWindow" x:Class="NsisoLauncher.MainWindow"
+﻿<controls:MetroWindow x:Name="mainWindow" x:Class="NsisoLauncher.Views.Windows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:NsisoLauncher.ViewModels"
         xmlns:local="clr-namespace:NsisoLauncher"
-        xmlns:userControl="clr-namespace:NsisoLauncher.Controls"
+        xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:converters="clr-namespace:NsisoLauncher.Utils"
         mc:Ignorable="d"
         BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
         Dialog:DialogParticipation.Register="{Binding}"
         Title="{Binding WindowTitle}" MinHeight="445" MinWidth="750" ShowMaxRestoreButton="False" ShowMinButton="True"
-        WindowState="{Binding WindowState}" 
+        WindowState="{Binding WindowState}"  WindowTransitionsEnabled="False"
         Closing="mainWindow_Closing">
     <controls:MetroWindow.Resources>
-        <vm:MainWindowViewModel x:Key="MainWindowVm" BackgroundImageSource="Resource/bg.jpg"
+        <vm:MainWindowViewModel x:Key="MainWindowVm" BackgroundImageSource="../../Resource/bg.jpg"
                                 Instance="{x:Static Dialog:DialogCoordinator.Instance}"
                                 WindowTitle="Nsiso Launcher"/>
+        <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
     </controls:MetroWindow.Resources>
     <controls:MetroWindow.DataContext>
         <Binding Source="{StaticResource MainWindowVm}"/>
     </controls:MetroWindow.DataContext>
-    <controls:MetroWindow.Background>
-        <ImageBrush ImageSource="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
-    </controls:MetroWindow.Background>
     <Grid>
-        <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
-                                   IsPlaying="{Binding IsPlaying}" d:DataContext=""/>
-
-        <Grid  MinWidth="250" MaxWidth="500" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.9" RadiusX="10" RadiusY="10"/>
+        <Grid x:Name="bgGrid">
+            <Image Source="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
+            <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
+                                   IsPlaying="{Binding IsPlaying}" d:DataContext="{x:Null}"/>
+        </Grid>
+        <Grid HorizontalAlignment="Right" Width="280">
+            <Rectangle x:Name="blurBackgroundRect">
+                <Rectangle.Effect>
+                    <BlurEffect Radius="20"/>
+                </Rectangle.Effect>
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
+                        <VisualBrush.Viewbox>
+                            <MultiBinding Converter="{StaticResource visualBrushTargetConverter}">
+                                <Binding ElementName="bgGrid"/>
+                                <Binding ElementName="blurBackgroundRect"/>
+                                <Binding ElementName="bgGrid" Path="ActualWidth"/>
+                                <Binding ElementName="bgGrid" Path="ActualHeight"/>
+                            </MultiBinding>
+                        </VisualBrush.Viewbox>
+                    </VisualBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6"/>
             <!--#endregion-->
-            <userControl:MainPanelControl Margin="20"
+            <userControl:MainPanelControl Margin="10"
                                           AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
                                           VersionsSource="{Binding Versions, Mode=OneWay}"
                                           UsersSource="{Binding Users, Mode=OneWay}"
@@ -60,8 +78,10 @@
 
         <Grid x:Name="loadingGrid"
               Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}">
-            <Rectangle VerticalAlignment="Bottom" Height="{Binding ActualHeight, ElementName=mainWindow}" 
-                       Fill="{Binding Background, ElementName=mainWindow}" >
+            <Rectangle>
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
+                </Rectangle.Fill>
                 <Rectangle.Effect>
                     <BlurEffect Radius="20"/>
                 </Rectangle.Effect>

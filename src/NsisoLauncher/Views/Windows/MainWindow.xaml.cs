@@ -1,7 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
-using NsisoLauncher.Windows;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
@@ -22,7 +22,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace NsisoLauncher
+namespace NsisoLauncher.Views.Windows
 {
     //public class AuthTypeItem
     //{

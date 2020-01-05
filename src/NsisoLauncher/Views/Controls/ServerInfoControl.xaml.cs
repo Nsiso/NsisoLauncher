@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace NsisoLauncher.Controls
+namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
     /// ServerInfoControl.xaml 的交互逻辑

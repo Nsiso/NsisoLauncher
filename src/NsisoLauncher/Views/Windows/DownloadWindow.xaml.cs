@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace NsisoLauncher.Windows
+namespace NsisoLauncher.Views.Windows
 {
 
     /// <summary>

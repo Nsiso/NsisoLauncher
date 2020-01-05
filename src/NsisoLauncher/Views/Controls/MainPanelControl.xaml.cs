@@ -1,5 +1,5 @@
 ﻿using NsisoLauncher.Config;
-using NsisoLauncher.Windows;
+using NsisoLauncher.Views.Windows;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Windows.Input;
 using NsisoLauncherCore.Modules;
 using Version = NsisoLauncherCore.Modules.Version;
 
-namespace NsisoLauncher.Controls
+namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
     /// MainPanelControl.xaml 的交互逻辑
