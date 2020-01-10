@@ -130,8 +130,8 @@ namespace NsisoLauncherCore.Net
         public bool IsBusy
         {
             get { return _isBusy; }
-            private set 
-            { 
+            private set
+            {
                 _isBusy = value;
                 OnPropertyChanged("IsBusy");
             }
@@ -168,13 +168,13 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         public void ClearAllTasks()
         {
-                sc.Send(new SendOrPostCallback((a) =>
+            sc.Send(new SendOrPostCallback((a) =>
+            {
+                lock (_viewDownloadLocker)
                 {
-                    lock (_viewDownloadLocker)
-                    {
-                        ViewDownloadTasks.Clear();
-                    }
-                }), null);
+                    ViewDownloadTasks.Clear();
+                }
+            }), null);
             _errorList.Clear();
             while (!_downloadTasks.IsEmpty)
             {
@@ -248,8 +248,8 @@ namespace NsisoLauncherCore.Net
             }), null);
             LeftTaskCount -= 1;
             DoneTaskCount += 1;
-            DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg() 
-            { LeftTasksCount = this.LeftTaskCount, DoneTaskCount = this.DoneTaskCount , DoneTask = task });
+            DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg()
+            { LeftTasksCount = this.LeftTaskCount, DoneTaskCount = this.DoneTaskCount, DoneTask = task });
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace NsisoLauncherCore.Net
                         ApendDebugLog("下载完成:" + item.From);
 
                         #region 校验
-                        if (CheckFileHash && item.Checker != null)
+                        if (CheckFileHash && item.Checker != null && File.Exists(item.To))
                         {
                             item.SetState("校验中");
                             if (!item.Checker.CheckFilePass())
@@ -394,6 +394,12 @@ namespace NsisoLauncherCore.Net
 
         }
 
+
+        /// <summary>
+        /// http下载主函数
+        /// </summary>
+        /// <param name="task">下载任务</param>
+        /// <param name="cancelToken">取消的token</param>
         private void HTTPDownload(DownloadTask task, CancellationToken cancelToken)
         {
             string realFilename = task.To;

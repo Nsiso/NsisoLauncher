@@ -414,11 +414,6 @@ namespace NsisoLauncher.Config
         public string UserName { get; set; }
 
         /// <summary>
-        /// 用户唯一UUID
-        /// </summary>
-        public string UserUUID { get; set; }
-
-        /// <summary>
         /// 验证令牌
         /// </summary>
         public string AccessToken { get; set; }

@@ -25,8 +25,6 @@ namespace NsisoLauncher.Views.Windows
     /// </summary>
     public partial class SettingWindow : MetroWindow
     {
-        private MainConfig config;
-
         private bool _isGameSettingChanged = false;
 
         public SettingWindow()
@@ -40,29 +38,18 @@ namespace NsisoLauncher.Views.Windows
         {
             AccentColorComboBox.ItemsSource = ThemeManager.Accents;
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
-            authModuleCombobox.ItemsSource = authModules;
+            authModuleCombobox.ItemsSource = App.Config.MainConfig.User.AuthenticationDic;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private async void Refresh()
         {
-            //深度克隆设置
-            config = DeepCloneObject(App.Config.MainConfig);
-
             //绑定content设置
-            this.DataContext = config;
+            this.DataContext = App.Config.MainConfig;
 
             #region 元素初始化
             javaPathComboBox.ItemsSource = App.JavaList;
             memorySlider.Maximum = SystemTools.GetTotalMemory();
-
-            #region 自定义验证模型
-            authModules.Clear();
-            foreach (var item in config.User.AuthenticationDic)
-            {
-                authModules.Add(new KeyValuePair<string, AuthenticationNode>(item.Key, item.Value));
-            }
-            #endregion
 
             VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
 
@@ -126,18 +113,18 @@ namespace NsisoLauncher.Views.Windows
             else
             {
                 gamedirPathTextBox.Text = dialog.SelectedPath.Trim();
-                config.Environment.GamePath = dialog.SelectedPath.Trim();
+                App.Config.MainConfig.Environment.GamePath = dialog.SelectedPath.Trim();
             }
         }
         #region 全局设置部分
         private void memorySlider_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            config.Environment.MaxMemory = Convert.ToInt32(((RangeSlider)sender).UpperValue);
+            App.Config.MainConfig.Environment.MaxMemory = Convert.ToInt32(((RangeSlider)sender).UpperValue);
         }
 
         private void memorySlider_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
         {
-            config.Environment.MinMemory = Convert.ToInt32(((RangeSlider)sender).LowerValue);
+            App.Config.MainConfig.Environment.MinMemory = Convert.ToInt32(((RangeSlider)sender).LowerValue);
         }
         #endregion
 
@@ -151,7 +138,7 @@ namespace NsisoLauncher.Views.Windows
         private async void saveButton_Click(object sender, RoutedEventArgs e)
         {
             #region 实时修改
-            switch (config.Environment.GamePathType)
+            switch (App.Config.MainConfig.Environment.GamePathType)
             {
                 case GameDirEnum.ROOT:
                     App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
@@ -163,16 +150,14 @@ namespace NsisoLauncher.Views.Windows
                     App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
                     break;
                 case GameDirEnum.CUSTOM:
-                    App.Handler.GameRootPath = config.Environment.GamePath + "\\.minecraft";
+                    App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
                     break;
                 default:
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
-            App.Handler.VersionIsolation = config.Environment.VersionIsolation;
-            App.Downloader.CheckFileHash = config.Download.CheckDownloadFileHash;
+            App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
+            App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
             #endregion
-
-            App.Config.MainConfig = config;
 
             if (_isGameSettingChanged)
             {
@@ -243,29 +228,6 @@ namespace NsisoLauncher.Views.Windows
             }
         }
 
-        #region Tools
-        private static T DeepCloneObject<T>(T t) where T : class
-        {
-            T model = Activator.CreateInstance<T>();                     //实例化一个T类型对象
-            PropertyInfo[] propertyInfos = model.GetType().GetProperties();     //获取T对象的所有公共属性
-            foreach (PropertyInfo propertyInfo in propertyInfos)
-            {
-                //判断值是否为空，如果空赋值为null见else
-                if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-                {
-                    //如果convertsionType为nullable类，声明一个NullableConverter类，该类提供从Nullable类到基础基元类型的转换
-                    NullableConverter nullableConverter = new NullableConverter(propertyInfo.PropertyType);
-                    //将convertsionType转换为nullable对的基础基元类型
-                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t, null), nullableConverter.UnderlyingType), null);
-                }
-                else
-                {
-                    propertyInfo.SetValue(model, Convert.ChangeType(propertyInfo.GetValue(t, null), propertyInfo.PropertyType), null);
-                }
-            }
-            return model;
-        }
-        #endregion
         private void javaPathComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Java java = (Java)(((System.Windows.Controls.ComboBox)sender).SelectedItem);
@@ -320,7 +282,7 @@ namespace NsisoLauncher.Views.Windows
             }
 
             string key = (string)userComboBox.SelectedValue;
-            config.User.UserDatabase.Remove(key);
+            App.Config.MainConfig.User.UserDatabase.Remove(key);
             this.ShowMessageAsync("删除用户成功", "请保存以生效");
         }
 
@@ -331,7 +293,6 @@ namespace NsisoLauncher.Views.Windows
             Process.Start(new ProcessStartInfo(link.NavigateUri.AbsoluteUri));
         }
         #region 自定义验证模型
-        ObservableCollection<KeyValuePair<string, AuthenticationNode>> authModules = new ObservableCollection<KeyValuePair<string, AuthenticationNode>>();
 
         private void AuthModuleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -348,14 +309,13 @@ namespace NsisoLauncher.Views.Windows
 
         public async void AddAuthModule(string name, AuthenticationNode authmodule)
         {
-            if (authModules.Any(x => x.Key == name))
+            if (App.Config.MainConfig.User.AuthenticationDic.Any(x => x.Key == name))
             {
                 await this.ShowMessageAsync("添加的验证模型名称已存在", "您可以尝试更换可用的验证模型名称");
                 return;
             }
             var item = new KeyValuePair<string, AuthenticationNode>(name, authmodule);
-            authModules.Add(item);
-            config.User.AuthenticationDic.Add(name, authmodule);
+            App.Config.MainConfig.User.AuthenticationDic.Add(name, authmodule);
             await this.ShowMessageAsync("添加成功", "记得点击应用按钮保存噢");
             authModuleCombobox.SelectedItem = item;
         }
@@ -367,8 +327,7 @@ namespace NsisoLauncher.Views.Windows
 
         public async void DeleteAuthModule(KeyValuePair<string, AuthenticationNode> node)
         {
-            authModules.Remove(node);
-            config.User.AuthenticationDic.Remove(node.Key);
+            App.Config.MainConfig.User.AuthenticationDic.Remove(node.Key);
             await this.ShowMessageAsync("删除成功", "记得点击应用按钮保存噢");
         }
 

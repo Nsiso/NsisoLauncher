@@ -124,6 +124,27 @@ namespace NsisoLauncher.ViewModels
                 Users = App.Config.MainConfig.User.UserDatabase;
                 Versions = App.VersionList;
 
+                #region 记忆
+                if (!string.IsNullOrEmpty(App.Config.MainConfig.History.SelectedUserNodeID) &&
+                    App.Config.MainConfig.User.UserDatabase.ContainsKey(App.Config.MainConfig.History.SelectedUserNodeID))
+                {
+                    KeyValuePair<string, UserNode> userPair = new KeyValuePair<string, UserNode>(App.Config.MainConfig.History.SelectedUserNodeID,
+                        App.Config.MainConfig.User.UserDatabase[App.Config.MainConfig.History.SelectedUserNodeID]);
+                    LaunchUserPair = userPair;
+                    if (!string.IsNullOrEmpty(userPair.Value.AuthModule) &&
+                        App.Config.MainConfig.User.AuthenticationDic.ContainsKey(userPair.Value.AuthModule))
+                    {
+                        LaunchAuthNodePair = new KeyValuePair<string, AuthenticationNode>(userPair.Value.AuthModule,
+                            App.Config.MainConfig.User.AuthenticationDic[userPair.Value.AuthModule]);
+                    }
+                }
+                if (!string.IsNullOrEmpty(App.Config.MainConfig.History.LastLaunchVersion))
+                {
+                    LaunchVersion = App.VersionList.FirstOrDefault((x) => x.ID == App.Config.MainConfig.History.LastLaunchVersion);
+                }
+                #endregion
+
+
                 App.Handler.GameExit += Handler_GameExit;
                 App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
                 App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
@@ -193,16 +214,16 @@ namespace NsisoLauncher.ViewModels
 
                 #region 用户处理
                 bool isNewUser = false;
-                UserNode LaunchUser = null;
+                UserNode launchUser = null;
                 if (LaunchUserPair != null)
                 {
                     isNewUser = false;
-                    LaunchUser = LaunchUserPair?.Value;
+                    launchUser = LaunchUserPair?.Value;
                 }
                 else
                 {
                     isNewUser = true;
-                    LaunchUser = new UserNode() { UserName = LaunchUserNameText };
+                    launchUser = new UserNode() { UserName = LaunchUserNameText };
                     //undo: to add new user support
                 }
                 #endregion
@@ -236,7 +257,7 @@ namespace NsisoLauncher.ViewModels
                     AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
                     RememberCheckBoxText = App.GetResourceString("String.Base.ShouldRememberLogin"),
                     UsernameWatermark = App.GetResourceString("String.Base.Username"),
-                    InitialUsername = LaunchUser.UserName,
+                    InitialUsername = launchUser.UserName,
                     RememberCheckBoxVisibility = Visibility.Visible,
                     EnablePasswordPreview = true,
                     PasswordWatermark = App.GetResourceString("String.Base.Password"),
@@ -249,7 +270,7 @@ namespace NsisoLauncher.ViewModels
                 bool shouldRemember = false;
 
                 //bool isSameAuthType = (authNode.AuthenticationType == auth);
-                bool isRemember = (!string.IsNullOrWhiteSpace(LaunchUser.AccessToken)) && ((LaunchUser.SelectProfileUUID != null));
+                bool isRemember = (!string.IsNullOrWhiteSpace(launchUser.AccessToken)) && ((launchUser.SelectProfileUUID != null));
                 //bool isSameName = userName == App.config.MainConfig.User.UserName;
 
                 switch (LaunchAuthNode.AuthType)
@@ -258,11 +279,11 @@ namespace NsisoLauncher.ViewModels
                     case AuthenticationType.OFFLINE:
                         if (isNewUser)
                         {
-                            authenticator = new OfflineAuthenticator(LaunchUser.UserName);
+                            authenticator = new OfflineAuthenticator(launchUser.UserName);
                         }
                         else
                         {
-                            authenticator = new OfflineAuthenticator(LaunchUser.UserName, LaunchUser.UserData, LaunchUser.SelectProfileUUID);
+                            authenticator = new OfflineAuthenticator(launchUser.UserName, launchUser.UserData, launchUser.SelectProfileUUID);
                         }
                         break;
                     #endregion
@@ -271,8 +292,8 @@ namespace NsisoLauncher.ViewModels
                     case AuthenticationType.MOJANG:
                         if (isRemember)
                         {
-                            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(LaunchUser.AccessToken,
-                                LaunchUser.GetSelectProfileUUID(), LaunchUser.UserData);
+                            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(launchUser.AccessToken,
+                                launchUser.GetSelectProfileUUID(), launchUser.UserData);
                             mYggTokenAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
                             authenticator = mYggTokenAuthenticator;
                         }
@@ -332,9 +353,9 @@ namespace NsisoLauncher.ViewModels
                             case MessageDialogResult.Affirmative:
                                 if (isRemember)
                                 {
-                                    var nYggTokenCator = new Nide8TokenAuthenticator(nide8ID, LaunchUser.AccessToken,
-                                        LaunchUser.GetSelectProfileUUID(),
-                                        LaunchUser.UserData);
+                                    var nYggTokenCator = new Nide8TokenAuthenticator(nide8ID, launchUser.AccessToken,
+                                        launchUser.GetSelectProfileUUID(),
+                                        launchUser.UserData);
                                     authenticator = nYggTokenCator;
                                 }
                                 else
@@ -381,9 +402,9 @@ namespace NsisoLauncher.ViewModels
                             if (isRemember)
                             {
                                 var cYggTokenCator = new AuthlibInjectorTokenAuthenticator(aiRootAddr,
-                                    LaunchUser.AccessToken,
-                                    LaunchUser.GetSelectProfileUUID(),
-                                    LaunchUser.UserData);
+                                    launchUser.AccessToken,
+                                    launchUser.GetSelectProfileUUID(),
+                                    launchUser.UserData);
                                 authenticator = cYggTokenCator;
                             }
                             else
@@ -426,9 +447,9 @@ namespace NsisoLauncher.ViewModels
                         {
                             if (isRemember)
                             {
-                                var cYggTokenCator = new YggdrasilTokenAuthenticator(LaunchUser.AccessToken,
-                                LaunchUser.GetSelectProfileUUID(),
-                                LaunchUser.UserData);
+                                var cYggTokenCator = new YggdrasilTokenAuthenticator(launchUser.AccessToken,
+                                launchUser.GetSelectProfileUUID(),
+                                launchUser.UserData);
                                 cYggTokenCator.ProxyAuthServerAddress = customAuthServer;
                             }
                             else
@@ -461,13 +482,13 @@ namespace NsisoLauncher.ViewModels
                     default:
                         if (isNewUser)
                         {
-                            authenticator = new OfflineAuthenticator(LaunchUser.UserName);
+                            authenticator = new OfflineAuthenticator(launchUser.UserName);
                         }
                         else
                         {
-                            authenticator = new OfflineAuthenticator(LaunchUser.UserName,
-                                LaunchUser.UserData,
-                                LaunchUser.SelectProfileUUID);
+                            authenticator = new OfflineAuthenticator(launchUser.UserName,
+                                launchUser.UserData,
+                                launchUser.SelectProfileUUID);
                         }
                         break;
                         #endregion
@@ -484,24 +505,32 @@ namespace NsisoLauncher.ViewModels
                     var authResult = await authenticator.DoAuthenticateAsync();
                     await loader.CloseAsync();
 
+                    #region 错误处日志
+                    if (authResult.State != AuthState.SUCCESS)
+                    {
+                        App.LogHandler.AppendInfo(string.Format("验证失败：{0}", authResult.State));
+                    }
+                    #endregion
+
                     switch (authResult.State)
                     {
                         case AuthState.SUCCESS:
-                            LaunchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
-                            LaunchUser.UserData = authResult.UserData;
+                            launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
+                            launchUser.UserData = authResult.UserData;
                             if (authResult.Profiles != null)
                             {
-                                LaunchUser.Profiles.Clear();
-                                authResult.Profiles.ForEach(x => LaunchUser.Profiles.Add(x.Value, x));
+                                launchUser.Profiles.Clear();
+                                authResult.Profiles.ForEach(x => launchUser.Profiles.Add(x.Value, x));
                             }
                             if (shouldRemember)
                             {
-                                LaunchUser.AccessToken = authResult.AccessToken;
+                                launchUser.AccessToken = authResult.AccessToken;
                             }
                             launchSetting.AuthenticateResult = authResult;
                             break;
                         case AuthState.REQ_LOGIN:
-                            LaunchUser.ClearAuthCache();
+                            //todo 添加更好的注销服务
+                            launchUser.ClearAuthCache();
                             await Instance.ShowMessageAsync(this, "验证失败：您的登录信息已过期",
                                 string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
@@ -527,8 +556,16 @@ namespace NsisoLauncher.ViewModels
                                 string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_INSIDE:
-                            await Instance.ShowMessageAsync(this, "验证失败：启动器内部错误",
-                                string.Format("建议您联系启动器开发者进行解决。具体信息：{0}", authResult.Error.ErrorMessage));
+                            if (authResult.Error.Exception != null)
+                            {
+                                App.LogHandler.AppendFatal(authResult.Error.Exception);
+                            }
+                            else
+                            {
+                                await Instance.ShowMessageAsync(this, "验证失败：启动器内部错误(无exception对象)",
+                                    string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
+                                    authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
+                            }
                             return;
                         default:
                             await Instance.ShowMessageAsync(this, "验证失败：未知错误",
@@ -540,14 +577,18 @@ namespace NsisoLauncher.ViewModels
                 {
                     var authResult = await authenticator.DoAuthenticateAsync();
                     launchSetting.AuthenticateResult = authResult;
-                    LaunchUser.UserData = authResult.UserData;
-                    LaunchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
+                    launchUser.UserData = authResult.UserData;
+                    launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                 }
+                #endregion
 
-                App.Config.MainConfig.History.SelectedUserNodeID = LaunchUser.UserData.Uuid;
-                if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(LaunchUser.UserData.Uuid))
+                #region 验证后用户处理
+                App.Config.MainConfig.History.SelectedUserNodeID = launchUser.UserData.Uuid;
+                if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(launchUser.UserData.Uuid))
                 {
-                    App.Config.MainConfig.User.UserDatabase.Add(LaunchUser.UserData.Uuid, LaunchUser);
+                    launchUser.AuthModule = LaunchAuthNodePair?.Key;
+                    App.Config.MainConfig.User.UserDatabase.Add(launchUser.UserData.Uuid, launchUser);
+                    LaunchUserPair = new KeyValuePair<string, UserNode>(launchUser.UserData.Uuid, launchUser);
                 }
                 #endregion
 

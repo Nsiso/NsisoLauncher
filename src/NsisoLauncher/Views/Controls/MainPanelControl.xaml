@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"  MinHeight="350" MinWidth="200"
-             d:DesignHeight="350" d:DesignWidth="400">
+             d:DesignHeight="400" d:DesignWidth="270">
     <DockPanel>
         <StackPanel Grid.ColumnSpan="2" DockPanel.Dock="Top">
             <userControl:HeadSculControl VerticalAlignment="Top" Margin="0,10"/>
@@ -23,15 +23,15 @@
             <DockPanel Margin="10,5">
                 <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" Foreground="{DynamicResource GrayBrush2}"/>
                 <ComboBox x:Name="userComboBox" Margin="5,0,10,0"
-                 IsEditable="True"
-                 Height="23" Grid.ColumnSpan="2"
-                 controls:TextBoxHelper.ClearTextButton="True"
-                 DisplayMemberPath="Value.UserName"
-                 controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
-                 ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
-                 SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUserNode}"
-                 Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
-                  />
+                          IsEditable="True" Grid.ColumnSpan="2"
+                          controls:TextBoxHelper.ClearTextButton="True"
+                          DisplayMemberPath="Value.UserName"
+                          SelectedValuePath="Key"
+                          controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
+                          ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
+                          Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
+                          SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUserNode}"
+                          />
             </DockPanel>
             <Grid Margin="10,5">
                 <Grid.ColumnDefinitions>
@@ -45,9 +45,9 @@
                   SelectedValuePath="Key"
                   controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=AuthNodesSource}"
-                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
                   SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"
-                  />
+                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
+                              />
 
                 </DockPanel>
                 <Button ToolTip="{DynamicResource String.Mainwindow.Auth.Add}" Grid.Column="1" Margin="0,0,10,0"
