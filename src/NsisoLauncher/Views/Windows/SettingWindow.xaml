@@ -7,26 +7,27 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
         xmlns:util="clr-namespace:NsisoLauncher.Utils"
+        xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
+        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+        xmlns:net="clr-namespace:NsisoLauncherCore.Net"
+        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
         mc:Ignorable="d"
         Title="{DynamicResource String.Settingwindow.Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.Resources>
+        <vm:SettingWindowViewModel x:Key="SettingWindowVM"/>
         <!--#region 值转换器-->
         <util:BoolToOppositeBoolConverter x:Key="BoolToOppositeBoolConverter"/>
-        <util:SettingDirRadioButtonConverter x:Key="SettingDirRadioButtonConverter" />
-        <util:SettingDownloadRadioButtonConverter x:Key="SettingDownloadRadioButtonConverter" />
-        <util:SettingLoginTypeRadioButtonConverter x:Key="SettingLoginTypeRadioButtonConverter"/>
-        <util:SettingCGRadioButtonConverter x:Key="SettingCGRadioButtonConverter"/>
+        <util:ComparisonConverter x:Key="comparisonConverter"/>
         <util:StringToIntConverter x:Key="StringToIntConverter" />
-        <!--<util:AccentResourcesToAccentColorConverter x:Key="AccentResourcesToAccentColorConverter"/>-->
-        <!--#endregion-->   
+        <!--#endregion-->
     </Controls:MetroWindow.Resources>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
         </Grid.Resources>
         <TabControl x:Name="tabControl" Margin="0,0,0,50">
-            
+
             <!--#region 全局设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Env}">
                 <ScrollViewer>
@@ -67,19 +68,19 @@
                                 <Label Content="{DynamicResource String.Settingwindow.Env.Root.TypeTitle}" Margin="0,10,0,0"/>
                                 <RadioButton Margin="0,0,0,5"
                                              Content="{DynamicResource String.Settingwindow.Env.Root.Root}" IsChecked="{Binding Path=Environment.GamePathType,
-                                    Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=0}"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.ROOT}}"/>
                                 <RadioButton Margin="0,0,0,5"
                                              Content="{DynamicResource String.Settingwindow.Env.Root.AppData}" 
                                              IsChecked="{Binding Path=Environment.GamePathType,
-                                    Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=1}"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.APPDATA}}"/>
                                 <RadioButton Margin="0,0,0,5" 
                                              Content="{DynamicResource String.Settingwindow.Env.Root.Programe}"
                                              IsChecked="{Binding Path=Environment.GamePathType,
-                                    Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=2}"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.PROGRAMFILES}}"/>
                                 <RadioButton x:Name="dir_customRadio" Margin="0,0,0,5" 
                                              Content="{DynamicResource String.Settingwindow.Env.Root.Custom}"
                                              IsChecked="{Binding Path=Environment.GamePathType,
-                                    Converter={StaticResource SettingDirRadioButtonConverter},ConverterParameter=3}"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.CUSTOM}}"/>
                                 <TextBox x:Name="gamedirPathTextBox"  Margin="0,0,0,5"
                                          IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Text="{Binding Path=Environment.GamePath}"/>
                                 <Button x:Name="gamedirChooseButton"
@@ -145,16 +146,20 @@
                                 <Label Content="{DynamicResource String.Settingwindow.Env.Pro.GC}" Margin="0,5,0,0"/>
                                 <RadioButton
                                              Content="{DynamicResource String.Settingwindow.Env.Pro.GC.G1}"
-                                    IsChecked="{Binding Environment.GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=0}"/>
+                                    IsChecked="{Binding Environment.GCType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.G1GC}}"/>
                                 <RadioButton Margin="0,5,0,0"
                                              Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Serial}"
-                                             IsChecked="{Binding Environment.GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=1}"/>
+                                             IsChecked="{Binding Environment.GCType, 
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.SerialGC}}"/>
                                 <RadioButton Margin="0,5,0,0" 
                                              Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Paralle}"
-                                             IsChecked="{Binding Environment.GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=2}"/>
+                                             IsChecked="{Binding Environment.GCType, 
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.ParallelGC}}"/>
                                 <RadioButton Margin="0,5,0,0" 
                                              Content="{DynamicResource String.Settingwindow.Env.Pro.GC.CMS}"
-                                             IsChecked="{Binding Environment.GCType, Converter={StaticResource SettingCGRadioButtonConverter},ConverterParameter=3}"/>
+                                             IsChecked="{Binding Environment.GCType, 
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.CMSGC}}"/>
                                 <Label Content="{DynamicResource String.Settingwindow.Env.Pro.GC.Arg}" Margin="0,5,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Environment.GCArgument}"/>
                                 <Label Content="{DynamicResource String.Settingwindow.Env.Pro.JVMArg}" Margin="0,5,0,0"/>
@@ -189,7 +194,7 @@
                 </ScrollViewer>
             </TabItem>
             <!--#endregion-->
-            
+
             <!--#region 下载设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Download}">
                 <ScrollViewer>
@@ -198,10 +203,10 @@
                             <StackPanel>
                                 <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.Mojang}"
                                              IsChecked="{Binding Download.DownloadSource,
-                                    Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=0}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Mojang}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{DynamicResource String.Settingwindow.Download.Source.BMCLAPI}"
                                              IsChecked="{Binding Download.DownloadSource,
-                                    Converter={StaticResource SettingDownloadRadioButtonConverter},ConverterParameter=1}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.BMCLAPI}}" Margin="0,0,0,5"/>
                                 <Label Content="{DynamicResource String.Settingwindow.Download.Source.Note}"/>
                             </StackPanel>
                         </Expander>
@@ -239,7 +244,7 @@
                 </ScrollViewer>
             </TabItem>
             <!--#endregion-->
-            
+
             <!--#region 版本设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.Version}">
                 <Grid>
@@ -267,7 +272,7 @@
                 </Grid>
             </TabItem>
             <!--#endregion-->
-            
+
             <!--#region 用户验证设置-->
             <TabItem Header="{DynamicResource String.Settingwindow.User}">
                 <ScrollViewer>
@@ -348,7 +353,7 @@
                 </ScrollViewer>
             </TabItem>
             <!--#endregion-->
-            
+
             <!--#region 自定义设置-->
             <TabItem Header="自定义">
                 <ScrollViewer>
@@ -404,7 +409,7 @@
                 </ScrollViewer>
             </TabItem>
             <!--#endregion-->
-            
+
             <!--#region 关于-->
             <TabItem Header="关于">
                 <StackPanel>

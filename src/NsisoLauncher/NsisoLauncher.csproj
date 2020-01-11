@@ -100,6 +100,7 @@
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
+    <Compile Include="ViewModels\SettingWindowViewModel.cs" />
     <Compile Include="Views\Controls\AuthModuleControl.xaml.cs">
       <DependentUpon>AuthModuleControl.xaml</DependentUpon>
     </Compile>

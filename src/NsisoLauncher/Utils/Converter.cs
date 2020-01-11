@@ -28,89 +28,89 @@ namespace NsisoLauncher.Utils
         #endregion
     }
 
-    public class SettingDirRadioButtonConverter : IValueConverter
-    {
-        #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            GameDirEnum s = (GameDirEnum)value;
-            return s == (GameDirEnum)int.Parse(parameter.ToString());
-        }
+    //public class SettingDirRadioButtonConverter : IValueConverter
+    //{
+    //    #region IValueConverter Members
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        GameDirEnum s = (GameDirEnum)value;
+    //        return s == (GameDirEnum)int.Parse(parameter.ToString());
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isChecked = (bool)value;
-            if (!isChecked)
-            {
-                return null;
-            }
-            return (GameDirEnum)int.Parse(parameter.ToString());
-        }
-        #endregion
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        bool isChecked = (bool)value;
+    //        if (!isChecked)
+    //        {
+    //            return null;
+    //        }
+    //        return (GameDirEnum)int.Parse(parameter.ToString());
+    //    }
+    //    #endregion
+    //}
 
-    public class SettingCGRadioButtonConverter : IValueConverter
-    {
-        #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            GCType s = (GCType)value;
-            return s == (GCType)int.Parse(parameter.ToString());
-        }
+    //public class SettingCGRadioButtonConverter : IValueConverter
+    //{
+    //    #region IValueConverter Members
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        GCType s = (GCType)value;
+    //        return s == (GCType)int.Parse(parameter.ToString());
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isChecked = (bool)value;
-            if (!isChecked)
-            {
-                return null;
-            }
-            return (GCType)int.Parse(parameter.ToString());
-        }
-        #endregion
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        bool isChecked = (bool)value;
+    //        if (!isChecked)
+    //        {
+    //            return null;
+    //        }
+    //        return (GCType)int.Parse(parameter.ToString());
+    //    }
+    //    #endregion
+    //}
 
-    public class SettingDownloadRadioButtonConverter : IValueConverter
-    {
-        #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            DownloadSource s = (DownloadSource)value;
-            return s == (DownloadSource)int.Parse(parameter.ToString());
-        }
+    //public class SettingDownloadRadioButtonConverter : IValueConverter
+    //{
+    //    #region IValueConverter Members
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        DownloadSource s = (DownloadSource)value;
+    //        return s == (DownloadSource)int.Parse(parameter.ToString());
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isChecked = (bool)value;
-            if (!isChecked)
-            {
-                return null;
-            }
-            return (DownloadSource)int.Parse(parameter.ToString());
-        }
-        #endregion
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        bool isChecked = (bool)value;
+    //        if (!isChecked)
+    //        {
+    //            return null;
+    //        }
+    //        return (DownloadSource)int.Parse(parameter.ToString());
+    //    }
+    //    #endregion
+    //}
 
-    public class SettingLoginTypeRadioButtonConverter : IValueConverter
-    {
-        #region IValueConverter Members
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            AuthenticationType s = (AuthenticationType)value;
-            return s == (AuthenticationType)int.Parse(parameter.ToString());
-        }
+    //public class SettingLoginTypeRadioButtonConverter : IValueConverter
+    //{
+    //    #region IValueConverter Members
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        AuthenticationType s = (AuthenticationType)value;
+    //        return s == (AuthenticationType)int.Parse(parameter.ToString());
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isChecked = (bool)value;
-            if (!isChecked)
-            {
-                return null;
-            }
-            return (AuthenticationType)int.Parse(parameter.ToString());
-        }
-        #endregion
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        bool isChecked = (bool)value;
+    //        if (!isChecked)
+    //        {
+    //            return null;
+    //        }
+    //        return (AuthenticationType)int.Parse(parameter.ToString());
+    //    }
+    //    #endregion
+    //}
 
     public class StringToIntConverter : IValueConverter
     {
@@ -155,6 +155,19 @@ namespace NsisoLauncher.Utils
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             return null;
+        }
+    }
+
+    public class ComparisonConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value?.Equals(parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value?.Equals(true) == true ? parameter : Binding.DoNothing;
         }
     }
 }
