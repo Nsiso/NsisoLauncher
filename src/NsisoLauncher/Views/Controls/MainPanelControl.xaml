@@ -78,7 +78,7 @@
                 </controls:Badged>
             </Grid>
             <Button Content="{DynamicResource String.Base.Launch}" MinHeight="50" Margin="5"
-                FontSize="14" Background="{DynamicResource AccentColorBrush}" Foreground="White"
+                FontSize="14" Background="{DynamicResource AccentColorBrush}" Foreground="White" IsDefault="True"
                 Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"/>
         </StackPanel>
     </DockPanel>

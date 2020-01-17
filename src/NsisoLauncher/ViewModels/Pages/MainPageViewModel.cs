@@ -24,9 +24,9 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using NsisoLauncherCore;
 
-namespace NsisoLauncher.ViewModels
+namespace NsisoLauncher.ViewModels.Pages
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainPageViewModel : INotifyPropertyChanged
     {
         public ObservableDictionary<string, AuthenticationNode> AuthNodes { get; }
         public ObservableCollection<Version> Versions { get; }
@@ -62,7 +62,6 @@ namespace NsisoLauncher.ViewModels
         #endregion
 
         #region ElementsState
-        public WindowState WindowState { get; set; }
 
         public double Volume { get; set; } = 0.5;
 
@@ -70,15 +69,10 @@ namespace NsisoLauncher.ViewModels
 
         public bool IsPlaying { get; set; }
 
-        public string WindowTitle { get; set; }
-
-        public string BackgroundImageSource { get; set; }
+        public string BackgroundImageSource { get; set; } = "../../Resource/bg.jpg";
         #endregion
 
-        /// <summary>
-        /// 窗口对话
-        /// </summary>
-        public IDialogCoordinator Instance { get; set; }
+        public ViewModels.Windows.MainWindowViewModel MainWindowVM { get; set; }
 
         /// <summary>
         /// 是否在启动
@@ -95,8 +89,10 @@ namespace NsisoLauncher.ViewModels
         /// </summary>
         public int DownloadTaskCount { get; set; }
 
-        public MainWindowViewModel()
+        public MainPageViewModel(ViewModels.Windows.MainWindowViewModel mainWindowVM)
         {
+            this.MainWindowVM = mainWindowVM;
+
             #region 命令初始化
             LaunchCmd = new DelegateCommand(
                //launch
@@ -131,6 +127,7 @@ namespace NsisoLauncher.ViewModels
                     KeyValuePair<string, UserNode> userPair = new KeyValuePair<string, UserNode>(App.Config.MainConfig.History.SelectedUserNodeID,
                         App.Config.MainConfig.User.UserDatabase[App.Config.MainConfig.History.SelectedUserNodeID]);
                     LaunchUserPair = userPair;
+                    //LaunchUserNameText = userPair.Value.UserName;
                     if (!string.IsNullOrEmpty(userPair.Value.AuthModule) &&
                         App.Config.MainConfig.User.AuthenticationDic.ContainsKey(userPair.Value.AuthModule))
                     {
@@ -166,12 +163,12 @@ namespace NsisoLauncher.ViewModels
         }
         #endregion
 
-        private void Handler_GameExit(object sender, NsisoLauncherCore.GameExitArg arg)
+        private async void Handler_GameExit(object sender, NsisoLauncherCore.GameExitArg arg)
         {
-            WindowState = WindowState.Normal;
+            MainWindowVM.WindowState = WindowState.Normal;
             if (!arg.IsNormalExit())
             {
-                Instance.ShowMessageAsync(this, "游戏非正常退出",
+                await MainWindowVM.ShowMessageAsync("游戏非正常退出",
                     string.Format("这很有可能是因为游戏崩溃导致的，退出代码:{0}，游戏持续时间:{1}",
                     arg.ExitCode, arg.Duration));
             }
@@ -184,25 +181,25 @@ namespace NsisoLauncher.ViewModels
                 #region 检查有效数据
                 if (LaunchVersion == null)
                 {
-                    await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.EmptyLaunchVersion"),
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
                         App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
                 if (string.IsNullOrWhiteSpace(LaunchUserNameText))
                 {
-                    await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.EmptyUsername"),
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
                 if (LaunchAuthNodePair == null)
                 {
-                    await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.EmptyAuthType"),
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyAuthType"),
                         App.GetResourceString("String.Message.EmptyAuthType2"));
                     return;
                 }
                 if (App.Handler.Java == null)
                 {
-                    await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
                     return;
                 }
                 #endregion
@@ -299,7 +296,7 @@ namespace NsisoLauncher.ViewModels
                         }
                         else
                         {
-                            var mojangLoginDResult = await Instance.ShowLoginAsync(this, App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
+                            var mojangLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
                                 App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
                                 loginDialogSettings);
                             if (IsValidateLoginData(mojangLoginDResult))
@@ -315,7 +312,7 @@ namespace NsisoLauncher.ViewModels
                             }
                             else
                             {
-                                await Instance.ShowMessageAsync(this, "您输入的账号或密码为空", "请检查您是否正确填写登录信息");
+                                await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                 return;
                             }
                         }
@@ -327,11 +324,11 @@ namespace NsisoLauncher.ViewModels
                         string nide8ID = LaunchAuthNode.Property["nide8ID"];
                         if (string.IsNullOrWhiteSpace(nide8ID))
                         {
-                            await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
+                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
                                 App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
                             return;
                         }
-                        var nide8ChooseResult = await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
+                        var nide8ChooseResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
                             App.GetResourceString("String.Base.Choose"),
                             MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
                             new MetroDialogSettings()
@@ -360,7 +357,7 @@ namespace NsisoLauncher.ViewModels
                                 }
                                 else
                                 {
-                                    var nide8LoginDResult = await Instance.ShowLoginAsync(this, App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
+                                    var nide8LoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
                                         App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
                                         loginDialogSettings);
                                     if (IsValidateLoginData(nide8LoginDResult))
@@ -377,7 +374,7 @@ namespace NsisoLauncher.ViewModels
                                     }
                                     else
                                     {
-                                        await Instance.ShowMessageAsync(this, "您输入的账号或密码为空", "请检查您是否正确填写登录信息");
+                                        await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                         return;
                                     }
                                 }
@@ -393,7 +390,7 @@ namespace NsisoLauncher.ViewModels
                         string aiRootAddr = LaunchAuthNode.Property["authserver"];
                         if (string.IsNullOrWhiteSpace(aiRootAddr))
                         {
-                            await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
+                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
                                 App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
                             return;
                         }
@@ -409,7 +406,7 @@ namespace NsisoLauncher.ViewModels
                             }
                             else
                             {
-                                var customLoginDResult = await Instance.ShowLoginAsync(this, App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
+                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
                                App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
                                loginDialogSettings);
                                 if (IsValidateLoginData(customLoginDResult))
@@ -426,7 +423,7 @@ namespace NsisoLauncher.ViewModels
                                 }
                                 else
                                 {
-                                    await Instance.ShowMessageAsync(this, "您输入的账号或密码为空", "请检查您是否正确填写登录信息");
+                                    await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                     return;
                                 }
                             }
@@ -439,7 +436,7 @@ namespace NsisoLauncher.ViewModels
                         string customAuthServer = LaunchAuthNode.Property["authserver"];
                         if (string.IsNullOrWhiteSpace(customAuthServer))
                         {
-                            await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
+                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
                                 App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
                             return;
                         }
@@ -454,7 +451,7 @@ namespace NsisoLauncher.ViewModels
                             }
                             else
                             {
-                                var customLoginDResult = await Instance.ShowLoginAsync(this, App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
+                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
                                App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
                                loginDialogSettings);
                                 if (IsValidateLoginData(customLoginDResult))
@@ -470,7 +467,7 @@ namespace NsisoLauncher.ViewModels
                                 }
                                 else
                                 {
-                                    await Instance.ShowMessageAsync(this, "您输入的账号或密码为空", "请检查您是否正确填写登录信息");
+                                    await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                                     return;
                                 }
                             }
@@ -497,9 +494,10 @@ namespace NsisoLauncher.ViewModels
                 //如果验证方式不是离线验证
                 if (LaunchAuthNode.AuthType != AuthenticationType.OFFLINE)
                 {
+
                     string currentLoginType = string.Format("正在进行{0}中...", LaunchAuthNode.Name);
                     string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                    var loader = await Instance.ShowProgressAsync(this, currentLoginType, loginMsg, true);
+                    var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true);
 
                     loader.SetIndeterminate();
                     var authResult = await authenticator.DoAuthenticateAsync();
@@ -531,28 +529,28 @@ namespace NsisoLauncher.ViewModels
                         case AuthState.REQ_LOGIN:
                             //todo 添加更好的注销服务
                             launchUser.ClearAuthCache();
-                            await Instance.ShowMessageAsync(this, "验证失败：您的登录信息已过期",
+                            await MainWindowVM.ShowMessageAsync("验证失败：您的登录信息已过期",
                                 string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_INVALID_CRDL:
-                            await Instance.ShowMessageAsync(this, "验证失败：您的登录账号或密码错误",
+                            await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
                                 string.Format("请您确认您输入的账号密码正确。具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_NOTFOUND:
                             if (LaunchAuthNode.AuthType == AuthenticationType.CUSTOM_SERVER || LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                             {
-                                await Instance.ShowMessageAsync(this, "验证失败：代理验证服务器地址有误或账号未找到",
+                                await MainWindowVM.ShowMessageAsync("验证失败：代理验证服务器地址有误或账号未找到",
                                 string.Format("请确认您的Authlib-Injector验证服务器（Authlib-Injector验证）或自定义验证服务器（自定义验证）地址正确或确认账号和游戏角色存在。具体信息：{0}",
                                 authResult.Error.ErrorMessage));
                             }
                             else
                             {
-                                await Instance.ShowMessageAsync(this, "验证失败：您的账号未找到",
+                                await MainWindowVM.ShowMessageAsync("验证失败：您的账号未找到",
                                 string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
                             }
                             return;
                         case AuthState.ERR_OTHER:
-                            await Instance.ShowMessageAsync(this, "验证失败：其他错误",
+                            await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
                                 string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
                             return;
                         case AuthState.ERR_INSIDE:
@@ -562,13 +560,13 @@ namespace NsisoLauncher.ViewModels
                             }
                             else
                             {
-                                await Instance.ShowMessageAsync(this, "验证失败：启动器内部错误(无exception对象)",
+                                await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
                                     string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
                                     authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
                             }
                             return;
                         default:
-                            await Instance.ShowMessageAsync(this, "验证失败：未知错误",
+                            await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
                                 "建议您联系启动器开发者进行解决。");
                             return;
                     }
@@ -620,7 +618,7 @@ namespace NsisoLauncher.ViewModels
 
                 if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
-                    MessageDialogResult downDependResult = await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
+                    MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadDepend2"),
                         MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
                         {
@@ -647,7 +645,7 @@ namespace NsisoLauncher.ViewModels
                 if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Config.MainConfig.Download.DownloadSource,
                     App.Handler, launchSetting.Version)))
                 {
-                    MessageDialogResult downDependResult = await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
+                    MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
                         MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
                         {
@@ -682,13 +680,13 @@ namespace NsisoLauncher.ViewModels
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
                         {
-                            await Instance.ShowMessageAsync(this, string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
+                            await MainWindowVM.ShowMessageAsync(string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
                                 "这可能是因为本地网络问题或下载源问题，您可以尝试检查网络环境或在设置中切换首选下载源，启动器将继续尝试启动");
                         }
                     }
                     else
                     {
-                        await Instance.ShowMessageAsync(this, "无法下载补全：当前有正在下载中的任务", "请等待其下载完毕或取消下载，启动器将尝试继续启动");
+                        await MainWindowVM.ShowMessageAsync("无法下载补全：当前有正在下载中的任务", "请等待其下载完毕或取消下载，启动器将尝试继续启动");
                     }
                 }
 
@@ -767,7 +765,7 @@ namespace NsisoLauncher.ViewModels
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
-                    await Instance.ShowMessageAsync(this, App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
                     App.LogHandler.AppendError(result.LaunchException);
                 }
                 else
@@ -784,7 +782,7 @@ namespace NsisoLauncher.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        await Instance.ShowMessageAsync(this, "启动后等待游戏窗口响应异常",
+                        await MainWindowVM.ShowMessageAsync("启动后等待游戏窗口响应异常",
                             "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
                         return;
                     }
@@ -802,7 +800,7 @@ namespace NsisoLauncher.ViewModels
                     {
                         Application.Current.Shutdown();
                     }
-                    this.WindowState = WindowState.Minimized;
+                    MainWindowVM.WindowState = WindowState.Minimized;
 
                     //自定义处理
                     if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
@@ -839,7 +837,7 @@ namespace NsisoLauncher.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.LauncherTitle))
             {
-                WindowTitle = App.Config.MainConfig.Customize.LauncherTitle;
+                MainWindowVM.WindowTitle = App.Config.MainConfig.Customize.LauncherTitle;
             }
             if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
             {
@@ -922,7 +920,7 @@ namespace NsisoLauncher.ViewModels
             #region 无JAVA提示
             if (App.Handler.Java == null)
             {
-                var result = await Instance.ShowMessageAsync(this, App.GetResourceString("String.Message.NoJava"),
+                var result = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
                     App.GetResourceString("String.Message.NoJava2"),
                     MessageDialogStyle.AffirmativeAndNegative,
                     new MetroDialogSettings()
@@ -1008,5 +1006,15 @@ namespace NsisoLauncher.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+    }
+
+    public class MainPageDesignViewModel
+    {
+        /// <summary>
+        /// 是否在启动
+        /// </summary>
+        public bool IsLaunching { get; set; } = false;
+
+        public string BackgroundImageSource { get; set; } = "../../Resource/bg.jpg";
     }
 }

@@ -40,6 +40,44 @@ namespace NsisoLauncher.Views.Windows
             appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
             authModuleCombobox.ItemsSource = App.Config.MainConfig.User.AuthenticationDic;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            App.Config.MainConfig.Environment.PropertyChanged += Environment_PropertyChanged;
+            App.Config.MainConfig.Download.PropertyChanged += Download_PropertyChanged;
+        }
+
+        private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CheckDownloadFileHash")
+            {
+                App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+            }
+        }
+
+        private void Environment_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "GamePathType")
+            {
+                switch (App.Config.MainConfig.Environment.GamePathType)
+                {
+                    case GameDirEnum.ROOT:
+                        App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
+                        break;
+                    case GameDirEnum.APPDATA:
+                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
+                        break;
+                    case GameDirEnum.PROGRAMFILES:
+                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
+                        break;
+                    case GameDirEnum.CUSTOM:
+                        App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
+                        break;
+                    default:
+                        throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
+                }
+            }
+            if (e.PropertyName == "VersionIsolation")
+            {
+                App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
+            }
         }
 
         private async void Refresh()
@@ -134,6 +172,8 @@ namespace NsisoLauncher.Views.Windows
             e.Handled = re.IsMatch(e.Text);
         }
 
+
+
         //保存按钮点击后
         private async void saveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -179,12 +219,6 @@ namespace NsisoLauncher.Views.Windows
 
             App.Config.Save();
             await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
-        }
-
-        //取消按钮点击后
-        private void cancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private async void VersionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

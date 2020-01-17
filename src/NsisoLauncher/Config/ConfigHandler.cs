@@ -190,16 +190,14 @@ namespace NsisoLauncher.Config
                     UserDatabase = new ObservableDictionary<string, UserNode>(),
                     AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
                     {
-                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} }
+                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} },
+                        {"online", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.MOJANG, Name="正版验证"} }
                     }
                 },
-                History = new History()
-                {
-
-                },
+                History = new History(),
                 Environment = new Environment()
                 {
-                    VersionIsolation = false,
+                    VersionIsolation = true,
                     AutoMemory = true,
                     GamePathType = GameDirEnum.ROOT,
                     DownloadLostAssets = true,

@@ -1,4 +1,4 @@
-﻿ 
+﻿
 using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
@@ -30,7 +30,7 @@ namespace NsisoLauncher
         public static MultiThreadDownloader Downloader { get; private set; }
         public static LogHandler LogHandler { get; private set; }
         public static List<Java> JavaList { get; private set; }
-        public  static ObservableCollection<Version> VersionList { get; private set; }
+        public static ObservableCollection<Version> VersionList { get; private set; }
         public static NsisoLauncherCore.Net.PhalAPI.APIHandler NsisoAPIHandler { get; private set; }
 
 
@@ -42,6 +42,11 @@ namespace NsisoLauncher
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            InitializeApplication(e);
+        }
+
+        private void InitializeApplication(StartupEventArgs e)
         {
             #region DEBUG初始化
             //debug
@@ -167,12 +172,7 @@ namespace NsisoLauncher
                 LogHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
                 ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
             }
-            #endregion
-
-            #region 读取版本
-            VersionList = new ObservableCollection<Version>();
-            RefreshVersionList();
-            #endregion
+            #endregion    
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -219,6 +219,10 @@ namespace NsisoLauncher
 
         public async static Task RefreshVersionListAsync()
         {
+            if (VersionList == null)
+            {
+                VersionList = new ObservableCollection<Version>();
+            }
             var list = await Handler.GetVersionsAsync();
             VersionList.Clear();
             foreach (var item in list)
@@ -229,6 +233,10 @@ namespace NsisoLauncher
 
         public static void RefreshVersionList()
         {
+            if (VersionList == null)
+            {
+                VersionList = new ObservableCollection<Version>();
+            }
             var list = Handler.GetVersions();
             VersionList.Clear();
             foreach (var item in list)

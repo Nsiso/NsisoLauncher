@@ -434,13 +434,7 @@
                 </StackPanel>
             </TabItem>
             <!--#endregion-->
-
         </TabControl>
-        <Button x:Name="saveButton" Content="{DynamicResource String.Base.Apply}"
-                Margin="0,0,10,10" Style="{StaticResource AccentedSquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="saveButton_Click"/>
-        <Button x:Name="cancelButton" Content="{DynamicResource String.Base.Cancel}" 
-                Margin="0,0,135,10" Style="{DynamicResource SquareButtonStyle}" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="120" Click="cancelButton_Click"/>
-
         <StackPanel Orientation="Horizontal" Margin="10,0,0,10" VerticalAlignment="Bottom">
             <TextBlock Opacity="0.5" TextWrapping="Wrap" Text="NsisoLauncher" Height="15" Margin="0,0,10,0"/>
             <TextBlock x:Name="versionTextBlock" Opacity="0.5" TextWrapping="Wrap" Text="0.0.0.0" Height="15"/>

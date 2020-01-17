@@ -24,21 +24,25 @@ using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Views.Windows
 {
-    //public class AuthTypeItem
-    //{
-    //    public Config.AuthenticationType Type { get; set; }
-    //    public string Name { get; set; }
-    //}
-
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-
         public MainWindow()
         {
+
+            //THIS IS NOT MVVM
+            ViewModels.Windows.MainWindowViewModel vm = new ViewModels.Windows.MainWindowViewModel(DialogCoordinator.Instance)
+            {
+                CloseWindow = new Action(() => this.Close())
+            };
             InitializeComponent();
+            this.DataContext = vm;
+
+            //THIS IS NOT MVVM
+            vm.NavigationService = frame.NavigationService;
+            vm.InitializeMainPage();
             App.LogHandler.AppendDebug("启动器主窗体已载入");
         }
 
