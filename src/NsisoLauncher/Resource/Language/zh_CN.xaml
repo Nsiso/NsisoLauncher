@@ -33,7 +33,7 @@
     <sys:String x:Key="String.MainWindow.ChooseLaunchVersion">启动版本</sys:String>
     <sys:String x:Key="String.MainWindow.ChooseAuthType">验证类型</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">用户名</sys:String>
-    <sys:String x:Key="String.Mainwindow.Launching">启动中...</sys:String>
+    <sys:String x:Key="String.Mainwindow.Launching">正在启动中</sys:String>
      
     <!--#region 登录-->
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying">在线正版验证中...</sys:String>

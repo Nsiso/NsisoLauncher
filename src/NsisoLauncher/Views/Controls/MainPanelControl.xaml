@@ -18,7 +18,7 @@
                   DisplayMemberPath="ID"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=VersionsSource}"
                   SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedVersion}"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseLaunchVersion}"/>
+                  controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseLaunchVersion}"/>
             </DockPanel>
             <DockPanel Margin="10,5">
                 <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" Foreground="{DynamicResource GrayBrush2}"/>
@@ -27,7 +27,7 @@
                           controls:TextBoxHelper.ClearTextButton="True"
                           DisplayMemberPath="Value.UserName"
                           SelectedValuePath="Key"
-                          controls:TextBoxHelper.Watermark="{DynamicResource String.Mainwindow.InputPlayerName}"
+                          controls:TextBoxHelper.Watermark="{StaticResource String.Mainwindow.InputPlayerName}"
                           ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
                           Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
                           SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUserNode}"
@@ -43,7 +43,7 @@
                     <ComboBox x:Name="authTypeCombobox" Margin="5,0,5,0"
                   DisplayMemberPath="Value.Name"
                   SelectedValuePath="Key"
-                  controls:TextBoxHelper.Watermark="{DynamicResource String.MainWindow.ChooseAuthType}"
+                  controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseAuthType}"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=AuthNodesSource}"
                   SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"
                   SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
@@ -77,7 +77,7 @@
                     </Button>
                 </controls:Badged>
             </Grid>
-            <Button Content="{DynamicResource String.Base.Launch}" MinHeight="50" Margin="5"
+            <Button Content="{StaticResource String.Base.Launch}" MinHeight="50" Margin="5"
                 FontSize="14" Background="{DynamicResource AccentColorBrush}" Foreground="White" IsDefault="True"
                 Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"/>
         </StackPanel>

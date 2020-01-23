@@ -68,7 +68,7 @@
         
         <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-        <Grid x:Name="loadingGrid"
+        <!--<Grid x:Name="loadingGrid"
               Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}">
             <Rectangle>
                 <Rectangle.Fill>
@@ -80,10 +80,10 @@
             </Rectangle>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="{Binding IsLaunching}"/>
-                <TextBlock Text="{DynamicResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
+                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
                 <Button x:Name="cancelLaunchButton" Content="取消启动" Command="{Binding CancelLaunchingCmd}" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
             </StackPanel>
             <TextBlock x:Name="launchInfoBlock" Text="{Binding LogLine}" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
-        </Grid>
+        </Grid>-->
     </Grid>
 </Page>

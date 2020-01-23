@@ -100,6 +100,7 @@
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
+    <Compile Include="ViewModels\Dialogs\LaunchingDialogViewModel.cs" />
     <Compile Include="ViewModels\Pages\MainPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\SettingWindowViewModel.cs" />
@@ -123,6 +124,9 @@
     <Compile Include="Utils\DataChecker.cs" />
     <Compile Include="Utils\ObservableDictionary.cs" />
     <Compile Include="ViewModels\DownloadWindowViewModel.cs" />
+    <Compile Include="Views\Dialogs\LaunchingDialog.xaml.cs">
+      <DependentUpon>LaunchingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -160,6 +164,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\ServerInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\LaunchingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -335,9 +343,7 @@
   <ItemGroup>
     <Resource Include="Resource\bg.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Dialogs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

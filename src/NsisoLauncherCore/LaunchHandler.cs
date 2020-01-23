@@ -344,7 +344,18 @@ namespace NsisoLauncherCore
 
         public bool IsNormalExit()
         {
-            return ExitCode == 0;
+            if (ExitCode == 0)
+            {
+                return true;
+            }
+            else if (ExitCode == -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
