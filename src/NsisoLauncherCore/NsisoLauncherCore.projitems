@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NativeNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NullJavaExceptioncs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />

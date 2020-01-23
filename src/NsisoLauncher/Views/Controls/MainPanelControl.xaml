@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="NsisoLauncher.Views.Controls.MainPanelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NsisoLauncher.Views.Controls"
+             xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d"  MinHeight="350" MinWidth="200"
+             d:DesignHeight="400" d:DesignWidth="270">
+    <DockPanel>
+        <StackPanel Grid.ColumnSpan="2" DockPanel.Dock="Top">
+            <userControl:HeadSculControl VerticalAlignment="Top" Margin="0,10"/>
+            <DockPanel Margin="10,5">
+                <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                <ComboBox x:Name="launchVersionCombobox" Margin="5,0,10,0"
+                  DisplayMemberPath="ID"
+                  ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=VersionsSource}"
+                  SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedVersion}"
+                  controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseLaunchVersion}"/>
+            </DockPanel>
+            <DockPanel Margin="10,5">
+                <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                <ComboBox x:Name="userComboBox" Margin="5,0,10,0"
+                          IsEditable="True" Grid.ColumnSpan="2"
+                          controls:TextBoxHelper.ClearTextButton="True"
+                          DisplayMemberPath="Value.UserName"
+                          SelectedValuePath="Key"
+                          controls:TextBoxHelper.Watermark="{StaticResource String.Mainwindow.InputPlayerName}"
+                          ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UsersSource}"
+                          Text="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=UserNameText}"
+                          SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedUserNode}"
+                          />
+            </DockPanel>
+            <Grid Margin="10,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0">
+                    <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                    <ComboBox x:Name="authTypeCombobox" Margin="5,0,5,0"
+                  DisplayMemberPath="Value.Name"
+                  SelectedValuePath="Key"
+                  controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseAuthType}"
+                  ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=AuthNodesSource}"
+                  SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedAuthNode}"
+                  SelectedValue="{Binding ElementName=userComboBox, Path=SelectedItem.Value.AuthModule}"
+                              />
+
+                </DockPanel>
+                <Button ToolTip="{DynamicResource String.Mainwindow.Auth.Add}" Grid.Column="1" Margin="0,0,10,0"
+                 Foreground="{DynamicResource GrayBrush2}">
+                    <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="configButton" Grid.Column="0" Margin="5"
+                    Foreground="{DynamicResource GrayBrush2}"
+                Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenSettingCommand}">
+                    <iconPacks:FontAwesome Kind="CogSolid"/>
+                </Button>
+
+                <controls:Badged Grid.Column="1" Margin="5"
+                Badge="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=DownloadTaskCount}">
+                    <Button x:Name="downloadButton"
+                    Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenDownloadingCommand}"
+                    Foreground="{DynamicResource GrayBrush2}">
+                        <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
+                    </Button>
+                </controls:Badged>
+            </Grid>
+            <Button Content="{StaticResource String.Base.Launch}" MinHeight="50" Margin="5"
+                FontSize="14" Background="{DynamicResource AccentColorBrush}" Foreground="White" IsDefault="True"
+                Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"/>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

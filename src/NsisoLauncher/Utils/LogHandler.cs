@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore.Modules;
 using System;
 using System.IO;
 using System.Threading;
@@ -85,7 +86,7 @@ namespace NsisoLauncher.Core.Util
         public void AppendFatal(Exception e)
         {
             AppendLog(this, new Log() { LogLevel = LogLevel.FATAL, Message = e.ToString() });
-            new Windows.ErrorWindow(e).Show();
+            new ErrorWindow(e).Show();
         }
     }
 }

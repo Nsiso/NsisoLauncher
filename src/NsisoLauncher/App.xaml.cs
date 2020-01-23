@@ -1,17 +1,21 @@
-﻿ 
+﻿
 using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher
 {
@@ -26,13 +30,11 @@ namespace NsisoLauncher
         public static MultiThreadDownloader Downloader { get; private set; }
         public static LogHandler LogHandler { get; private set; }
         public static List<Java> JavaList { get; private set; }
+        public static ObservableCollection<Version> VersionList { get; private set; }
+        public static NsisoLauncherCore.Net.PhalAPI.APIHandler NsisoAPIHandler { get; private set; }
 
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
-
-        #region API静态变量
-        public static NsisoLauncherCore.Net.PhalAPI.APIHandler nsisoAPIHandler;
-        #endregion
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
@@ -41,13 +43,18 @@ namespace NsisoLauncher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            InitializeApplication(e);
+        }
+
+        private void InitializeApplication(StartupEventArgs e)
+        {
             #region DEBUG初始化
             //debug
             LogHandler = new LogHandler(true);
             AggregateExceptionCatched += (a, b) => LogHandler.AppendFatal(b.AggregateException);
             if (e.Args.Contains("-debug"))
             {
-                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                DebugWindow debugWindow = new DebugWindow();
                 debugWindow.Show();
                 LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
@@ -58,7 +65,7 @@ namespace NsisoLauncher
             #region DEBUG初始化（基于配置文件）
             if (Config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
             {
-                Windows.DebugWindow debugWindow = new Windows.DebugWindow();
+                DebugWindow debugWindow = new DebugWindow();
                 debugWindow.Show();
                 LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
@@ -67,9 +74,9 @@ namespace NsisoLauncher
             #region Nsiso反馈API初始化
 
 #if DEBUG
-            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
+            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
 #else
-            nsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
+            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
 #endif
 
             #endregion
@@ -165,7 +172,7 @@ namespace NsisoLauncher
                 LogHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
                 ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
             }
-            #endregion
+            #endregion    
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -198,6 +205,44 @@ namespace NsisoLauncher
             info.Arguments += "-reboot";
             System.Diagnostics.Process.Start(info);
             App.Current.Shutdown();
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            try
+            {
+                Config.Save();
+            }
+            catch (Exception)
+            { }
+        }
+
+        public async static Task RefreshVersionListAsync()
+        {
+            if (VersionList == null)
+            {
+                VersionList = new ObservableCollection<Version>();
+            }
+            var list = await Handler.GetVersionsAsync();
+            VersionList.Clear();
+            foreach (var item in list)
+            {
+                VersionList.Add(item);
+            }
+        }
+
+        public static void RefreshVersionList()
+        {
+            if (VersionList == null)
+            {
+                VersionList = new ObservableCollection<Version>();
+            }
+            var list = Handler.GetVersions();
+            VersionList.Clear();
+            foreach (var item in list)
+            {
+                VersionList.Add(item);
+            }
         }
     }
 

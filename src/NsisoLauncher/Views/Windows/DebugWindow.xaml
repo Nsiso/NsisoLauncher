@@ -1,0 +1,16 @@
+﻿<controls:MetroWindow x:Class="NsisoLauncher.Views.Windows.DebugWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="DebugWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBox x:Name="textBox" Margin="10,10,10,41" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
+        <TextBox x:Name="keyWordTextBox" VerticalAlignment="Bottom" Margin="10,0,0,10" HorizontalAlignment="Left" Width="180"/>
+        <Button x:Name="findKeyWord" VerticalAlignment="Bottom" Margin="195,0,0,10" Height="26" HorizontalAlignment="Left" Width="60" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=12}" Click="findKeyWord_Click"/>
+    </Grid>
+</controls:MetroWindow>

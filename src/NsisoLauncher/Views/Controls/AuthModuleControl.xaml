@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="NsisoLauncher.Views.Controls.AuthModuleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NsisoLauncher.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <GroupBox Header="模型设置" Margin="0,5,0,0">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="验证模型："/>
+                <RadioButton x:Name="nide8Radio" Content="统一通行证" Margin="0,0,10,0" Checked="Nide8_Checked"/>
+                <RadioButton x:Name="aiRadio" Content="authlib-injector" Margin="0,0,10,0" Checked="AI_Checked"/>
+                <RadioButton x:Name="customRadio" Content="其它Yggdrasil验证器代理" Margin="0,0,10,0" Checked="Custom_Checked"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="验证模型名称："/>
+                <TextBox x:Name="authmoduleNameTextbox" Width="200" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label x:Name="authmoduleLable" Content="数据："/>
+                <TextBox x:Name="authDataTextbox" Width="500" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,5">
+                <Button x:Name="addButton" Width="50" Margin="0,0,5,0" Content="添加" Click="AddButton_Click"/>
+                <Button x:Name="saveButton" Width="50" Margin="0,0,5,0" Content="保存" Click="SaveButton_Click"/>
+                <Button x:Name="delButton" Width="50" Content="删除" Click="DelButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

@@ -1,0 +1,89 @@
+﻿<Page x:Class="NsisoLauncher.Views.Pages.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+        xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:converters="clr-namespace:NsisoLauncher.Utils"
+      mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainPageDesignViewModel, IsDesignTimeCreatable=True}"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MainPage">
+    <Page.Resources>
+        <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
+    </Page.Resources>
+    <Grid>
+        <Grid x:Name="bgGrid">
+            <Image Source="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
+            <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
+                                   IsPlaying="{Binding IsPlaying}" d:DataContext="{x:Null}"/>
+        </Grid>
+        <Grid HorizontalAlignment="Right" Width="280">
+            <Rectangle x:Name="blurBackgroundRect">
+                <Rectangle.Effect>
+                    <BlurEffect Radius="20"/>
+                </Rectangle.Effect>
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
+                        <VisualBrush.Viewbox>
+                            <MultiBinding Converter="{StaticResource visualBrushTargetConverter}">
+                                <Binding ElementName="bgGrid"/>
+                                <Binding ElementName="blurBackgroundRect"/>
+                                <Binding ElementName="bgGrid" Path="ActualWidth"/>
+                                <Binding ElementName="bgGrid" Path="ActualHeight"/>
+                            </MultiBinding>
+                        </VisualBrush.Viewbox>
+                    </VisualBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6"/>
+            <!--#endregion-->
+            <userControl:MainPanelControl Margin="10"
+                                          AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
+                                          VersionsSource="{Binding Versions, Mode=OneWay}"
+                                          UsersSource="{Binding Users, Mode=OneWay}"
+                                          SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}"
+                                          SelectedAuthNode="{Binding LaunchAuthNodePair, Mode=TwoWay}"
+                                          UserNameText="{Binding LaunchUserNameText, Mode=TwoWay}"
+                                          SelectedUserNode="{Binding LaunchUserPair, Mode=TwoWay}"
+                                          LaunchCommand="{Binding LaunchCmd}"
+                                          OpenDownloadingCommand="{Binding OpenDownloadingCmd}"
+                                          OpenSettingCommand="{Binding OpenSettingCmd}"
+                                          DownloadTaskCount="{Binding DownloadTaskCount}"
+                                          />
+        </Grid>
+        <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"
+                      Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                      IsChecked="{Binding IsPlaying}"
+                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource bool2VisibilityConverter}}"
+                >
+            <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
+        </ToggleButton>
+        
+        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+
+        <!--<Grid x:Name="loadingGrid"
+              Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}">
+            <Rectangle>
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
+                </Rectangle.Fill>
+                <Rectangle.Effect>
+                    <BlurEffect Radius="20"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="{Binding IsLaunching}"/>
+                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
+                <Button x:Name="cancelLaunchButton" Content="取消启动" Command="{Binding CancelLaunchingCmd}" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
+            </StackPanel>
+            <TextBlock x:Name="launchInfoBlock" Text="{Binding LogLine}" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
+        </Grid>-->
+    </Grid>
+</Page>

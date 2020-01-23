@@ -1,0 +1,68 @@
+﻿<controls:MetroWindow x:Class="NsisoLauncher.Views.Windows.DownloadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels"
+        mc:Ignorable="d"
+        Dialog:DialogParticipation.Register="{Binding}"
+        Title="DownloadWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
+                      Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
+    <controls:MetroWindow.Resources>
+        <vm:DownloadWindowViewModel x:Key="downloadWindowVM" Instance="{x:Static Dialog:DialogCoordinator.Instance}"/>
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.DataContext>
+        <Binding Source="{StaticResource downloadWindowVM}"/>
+    </controls:MetroWindow.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}" Grid.Row="0"
+                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click" Height="28"/>
+        <Button Content="{DynamicResource String.Downloadwindow.NewTask}" Grid.Row="0"
+                Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1" Height="28"/>
+        <DataGrid x:Name="downloadList" Margin="10,43,10,2" Grid.Row="0" VirtualizingPanel.IsVirtualizing="True" ItemsSource="{Binding Tasks}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskName}" Binding="{Binding Path=TaskName}"/>
+                <DataGridTextColumn Header="任务状态" Binding="{Binding Path=State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTemplateColumn Header="{DynamicResource String.Downloadwindow.TaskProgress}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <controls:MetroProgressBar
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource AccentColorBrush}"
+                                Maximum="{Binding TotalSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Value="{Binding DownloadSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Background="LightGray"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskFrom}" Binding="{Binding Path=From}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskTo}" Binding="{Binding Path=To}" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <lvc:CartesianChart x:Name="plotter" LegendLocation="Right" Series="{Binding ChartSeries}" DisableAnimations="True"
+                            Hoverable="False" DataTooltip="{x:Null}" Grid.Row="1" Margin="10,10,10,44">
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis x:Name="YAxis" MinValue="0" LabelFormatter="{Binding YFormatter}"/>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis ShowLabels="False"/>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
+        <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" Grid.Row="1"
+                     Maximum="{Binding ProgressMaximum}" Value="{Binding ProgressValue}"/>
+        <TextBlock x:Name="progressPerTextBlock"
+                   HorizontalAlignment="Left" Margin="10,0,0,24" TextWrapping="Wrap" 
+                   Text="{Binding Percentage, StringFormat={}{0:P}}" VerticalAlignment="Bottom" Grid.Row="1"/>
+        <TextBlock x:Name="speedTextBlock"
+                   Margin="0,0,10,24" TextWrapping="Wrap" TextAlignment="Right" Text="{Binding SpeedStr}"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1"/>
+    </Grid>
+</controls:MetroWindow>

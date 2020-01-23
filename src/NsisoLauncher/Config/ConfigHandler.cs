@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncher.Utils;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 
 namespace NsisoLauncher.Config
@@ -12,14 +15,9 @@ namespace NsisoLauncher.Config
     public class ConfigHandler
     {
         /// <summary>
-        /// 配置文件存放文件夹
-        /// </summary>
-        public DirectoryInfo Directory { get; set; }
-
-        /// <summary>
         /// 首要配置文件路径
         /// </summary>
-        public string MainConfigPath { get => Directory.FullName + @"\MainConfig.json"; }
+        public string MainConfigPath { get => PathManager.BaseStorageDirectory + @"\Config\MainConfig.json"; }
 
         /// <summary>
         /// 官方用户配置文件路径
@@ -36,36 +34,32 @@ namespace NsisoLauncher.Config
         /// </summary>
         public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
 
-        private object mainconfigLocker = new object();
-        private object launcherProfilesLocker = new object();
+        private ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
 
         public ConfigHandler()
         {
-            Directory = new DirectoryInfo("Config");
-
-            if (!Directory.Exists)
+            try
             {
-                Directory.Create();
-            }
+                if (!File.Exists(MainConfigPath))
+                { NewConfig(); }
+                else
+                { Read(); }
 
-            if (!File.Exists(MainConfigPath))
-            { NewConfig(); }
-            else
-            { Read(); }
 
-            string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
-            if (!System.IO.Directory.Exists(profilesConfigDir))
-            {
-                System.IO.Directory.CreateDirectory(profilesConfigDir);
+                if (!File.Exists(LauncherProfilesConfigPath))
+                {
+                    NewProfilesConfig();
+                }
             }
-            if (!File.Exists(LauncherProfilesConfigPath))
+            catch (UnauthorizedAccessException e)
             {
-                NewProfilesConfig();
+                NoAccessWarning(e);
             }
-            //else
-            //{
-            //    ReadProfilesConfig();
-            //}
+            catch (System.Security.SecurityException e)
+            {
+                NoAccessWarning(e);
+            }
 
         }
 
@@ -74,24 +68,27 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void Save()
         {
-            lock (mainconfigLocker)
+            mainconfigLock.EnterWriteLock();
+            try
             {
-                try
+                string dir = Path.GetDirectoryName(MainConfigPath);
+                if (!Directory.Exists(dir))
                 {
-                    File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented));
+                    Directory.CreateDirectory(dir);
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
-                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
-                        "而导致系统自我保护机制权限禁止写入文件。\n" +
-                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        App.Reboot(true);
-                    }
-                }
+                File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented));
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                NoAccessWarning(e);
+            }
+            catch (System.Security.SecurityException e)
+            {
+                NoAccessWarning(e);
+            }
+            finally
+            {
+                mainconfigLock.ExitWriteLock();
             }
 
         }
@@ -101,11 +98,10 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void Read()
         {
-            lock (mainconfigLocker)
+            mainconfigLock.EnterReadLock();
+            try
             {
-                try
-                {
-                    MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
+                MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
 #if !DEBUG
                     if (string.IsNullOrWhiteSpace(MainConfig.ConfigVersion) || 
                         (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
@@ -115,19 +111,18 @@ namespace NsisoLauncher.Config
                             "启动器配置文件版本不符", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
 #endif
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    var result = MessageBox.Show("启动器无法正常读取配置文件。\n" +
-                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
-                        "而导致系统自我保护机制权限禁止写入文件。\n" +
-                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        App.Reboot(true);
-                    }
-                }
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                NoAccessWarning(e);
+            }
+            catch (System.Security.SecurityException e)
+            {
+                NoAccessWarning(e);
+            }
+            finally
+            {
+                mainconfigLock.ExitReadLock();
             }
         }
 
@@ -136,24 +131,27 @@ namespace NsisoLauncher.Config
         /// </summary>
         public void SaveProfilesConfig()
         {
-            lock (launcherProfilesLocker)
+            launcherProfilesLock.EnterWriteLock();
+            try
             {
-                try
+                string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
+                if (!Directory.Exists(profilesConfigDir))
                 {
-                    File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+                    Directory.CreateDirectory(profilesConfigDir);
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    var result = MessageBox.Show("启动器无法正常写入配置文件。\n" +
-                        "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
-                        "而导致系统自我保护机制权限禁止写入文件。\n" +
-                        "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行",
-                        "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        App.Reboot(true);
-                    }
-                }
+                File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                NoAccessWarning(e);
+            }
+            catch (System.Security.SecurityException e)
+            {
+                NoAccessWarning(e);
+            }
+            finally
+            {
+                launcherProfilesLock.ExitWriteLock();
             }
         }
 
@@ -189,16 +187,17 @@ namespace NsisoLauncher.Config
                 User = new User()
                 {
                     ClientToken = Guid.NewGuid().ToString("N"),
-                    UserDatabase = new Dictionary<string, UserNode>(),
-                    AuthenticationDic = new Dictionary<string, AuthenticationNode>()
+                    UserDatabase = new ObservableDictionary<string, UserNode>(),
+                    AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
+                    {
+                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} },
+                        {"online", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.MOJANG, Name="正版验证"} }
+                    }
                 },
-                History = new History()
-                {
-
-                },
+                History = new History(),
                 Environment = new Environment()
                 {
-                    VersionIsolation = false,
+                    VersionIsolation = true,
                     AutoMemory = true,
                     GamePathType = GameDirEnum.ROOT,
                     DownloadLostAssets = true,
@@ -237,6 +236,21 @@ namespace NsisoLauncher.Config
                 ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };
             Save();
+        }
+
+        private void NoAccessWarning(Exception e)
+        {
+            var result = MessageBox.Show("启动器无法正常读/写配置文件。\n" +
+                    "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                    "或您没有足够的系统操作权限而导致系统自我保护机制，禁止启动器读写文件。\n" +
+                    "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行。\n" +
+                    "详细信息:\n" +
+                    e.ToString(),
+                    "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
+            if (result == MessageBoxResult.Yes)
+            {
+                App.Reboot(true);
+            }
         }
     }
 }

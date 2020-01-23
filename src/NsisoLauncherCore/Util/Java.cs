@@ -193,7 +193,7 @@ namespace NsisoLauncherCore.Util
                     if (verStr.Length > 3)
                     {
                         string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
-                        if (File.Exists(path))
+                        if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
                         }
@@ -209,7 +209,7 @@ namespace NsisoLauncherCore.Util
                     if (verStr.Length > 3)
                     {
                         string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
-                        if (File.Exists(path))
+                        if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
                         }
@@ -225,7 +225,7 @@ namespace NsisoLauncherCore.Util
                     if (verStr.Length > 3)
                     {
                         string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\jre\bin\javaw.exe";
-                        if (File.Exists(path))
+                        if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
                         }
