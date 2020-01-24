@@ -5,18 +5,17 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
-        xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
-        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:converters="clr-namespace:NsisoLauncher.Utils"
+      xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
+      xmlns:converters="clr-namespace:NsisoLauncher.Utils"
       mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainPageDesignViewModel, IsDesignTimeCreatable=True}"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
     <Page.Resources>
         <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
+        <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
     </Page.Resources>
     <Grid>
         <Grid x:Name="bgGrid">
@@ -24,7 +23,7 @@
             <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
                                    IsPlaying="{Binding IsPlaying}" d:DataContext="{x:Null}"/>
         </Grid>
-        <Grid HorizontalAlignment="Right" Width="280">
+        <Grid HorizontalAlignment="Right" Width="280" Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
             <Rectangle x:Name="blurBackgroundRect">
                 <Rectangle.Effect>
                     <BlurEffect Radius="20"/>
@@ -61,15 +60,14 @@
         <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"
                       Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
                       IsChecked="{Binding IsPlaying}"
-                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource bool2VisibilityConverter}}"
+                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource BooleanToVisibilityConverter}}"
                 >
             <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
         </ToggleButton>
-        
+
         <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-        <!--<Grid x:Name="loadingGrid"
-              Visibility="{Binding IsLaunching, Converter={StaticResource bool2VisibilityConverter}}">
+        <Grid Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Rectangle>
                 <Rectangle.Fill>
                     <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
@@ -79,11 +77,13 @@
                 </Rectangle.Effect>
             </Rectangle>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <controls:ProgressRing x:Name="loadingRing" Width="70" Height="70" IsActive="{Binding IsLaunching}"/>
-                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center" Foreground="Gray"/>
-                <Button x:Name="cancelLaunchButton" Content="取消启动" Command="{Binding CancelLaunchingCmd}" Height="30" Width="70" Margin="0,10,0,0" Opacity="0.6"/>
+                <controls:ProgressRing Foreground="{DynamicResource AccentBaseColorBrush}" IsActive="{Binding IsLaunching}"/>
+                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center"
+                           Foreground="{DynamicResource WhiteBrush}" Margin="0,10,0,20"/>
+                <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}"/>
             </StackPanel>
-            <TextBlock x:Name="launchInfoBlock" Text="{Binding LogLine}" TextAlignment="Right" Foreground="Gray" VerticalAlignment="Bottom" Margin="10,0"/>
-        </Grid>-->
+            <TextBlock Text="{Binding LogLine}" TextAlignment="Right" Foreground="{DynamicResource WhiteBrush}"
+                       VerticalAlignment="Bottom" Padding="10,0" Background="{DynamicResource AccentColorBrush}"/>
+        </Grid>
     </Grid>
 </Page>

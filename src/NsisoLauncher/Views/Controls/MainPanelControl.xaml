@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+             xmlns:utils="clr-namespace:NsisoLauncher.Utils"
              xmlns:local="clr-namespace:NsisoLauncher.Views.Controls"
              xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
@@ -79,7 +81,19 @@
             </Grid>
             <Button Content="{StaticResource String.Base.Launch}" MinHeight="50" Margin="5"
                 FontSize="14" Background="{DynamicResource AccentColorBrush}" Foreground="White" IsDefault="True"
-                Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"/>
+                Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"
+                CommandParameter="{x:Static modules:LaunchType.NORMAL}">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="安全模式启动" Icon="{iconPacks:FontAwesome Kind=ShieldAltSolid}"
+                                  CommandParameter="{x:Static modules:LaunchType.SAFE}"/>
+                        <MenuItem Header="DEBUG模式启动"  Icon="{iconPacks:FontAwesome Kind=EyeRegular}"
+                                  CommandParameter="{x:Static modules:LaunchType.DEBUG}"/>
+                        <MenuItem Header="创建启动静态快捷方式" Icon="{iconPacks:FontAwesome Kind=PlusSolid}"
+                                  CommandParameter="{x:Static modules:LaunchType.CREATE_SHORT}"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
         </StackPanel>
     </DockPanel>
 </UserControl>
