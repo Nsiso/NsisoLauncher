@@ -261,6 +261,7 @@ namespace NsisoLauncher.Views.Windows
                     }
 
                     File.WriteAllText(jsonPath, json);
+                    App.VersionList.Add(ver);
 
                     List<DownloadTask> tasks = new List<DownloadTask>();
 

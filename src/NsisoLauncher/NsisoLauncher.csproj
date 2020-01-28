@@ -103,7 +103,6 @@
     <Compile Include="ViewModels\Dialogs\LaunchingDialogViewModel.cs" />
     <Compile Include="ViewModels\Pages\MainPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\WelcomePageViewModel.cs" />
-    <Compile Include="ViewModels\SettingWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\Controls\AuthModuleControl.xaml.cs">
       <DependentUpon>AuthModuleControl.xaml</DependentUpon>
@@ -123,7 +122,7 @@
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
     <Compile Include="Utils\ObservableDictionary.cs" />
-    <Compile Include="ViewModels\DownloadWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\DownloadWindowViewModel.cs" />
     <Compile Include="Views\Dialogs\LaunchingDialog.xaml.cs">
       <DependentUpon>LaunchingDialog.xaml</DependentUpon>
     </Compile>

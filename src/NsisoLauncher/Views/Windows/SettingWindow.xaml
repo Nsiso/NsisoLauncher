@@ -10,12 +10,11 @@
         xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
         xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
         xmlns:net="clr-namespace:NsisoLauncherCore.Net"
-        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels"
+        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Windows"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
         mc:Ignorable="d"
         Title="{StaticResource String.Settingwindow.Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.Resources>
-        <vm:SettingWindowViewModel x:Key="SettingWindowVM"/>
         <!--#region 值转换器-->
         <util:BoolToOppositeBoolConverter x:Key="BoolToOppositeBoolConverter"/>
         <util:ComparisonConverter x:Key="comparisonConverter"/>

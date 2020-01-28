@@ -64,6 +64,28 @@ namespace NsisoLauncher.Utils
         }
     }
 
+    [ValueConversion(typeof(string), typeof(Visibility))]
+    public class StringNotEmptyToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
     public class VisualBrushTargetConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NsisoLauncher.ViewModels
+namespace NsisoLauncher.ViewModels.Windows
 {
     public class DownloadWindowViewModel : INotifyPropertyChanged
     {
