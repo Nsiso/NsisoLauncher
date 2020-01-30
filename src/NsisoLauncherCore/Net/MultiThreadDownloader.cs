@@ -7,9 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace NsisoLauncherCore.Net
@@ -40,7 +38,6 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         public MultiThreadDownloader()
         {
-            _client = new HttpClient(_clientHandler);
             _timer.Elapsed += _timer_Elapsed;
             sc = SynchronizationContext.Current;
         }
@@ -87,17 +84,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 网络代理
         /// </summary>
-        public IWebProxy Proxy
-        {
-            get
-            {
-                return _clientHandler.Proxy;
-            }
-            set
-            {
-                _clientHandler.Proxy = value;
-            }
-        }
+        public WebProxy Proxy { get; set; }
 
         /// <summary>
         /// 是否检查文件HASH（如果可用）
@@ -154,6 +141,8 @@ namespace NsisoLauncherCore.Net
         /// 可观测的绑定用下载列表
         /// </summary>
         public ObservableCollection<DownloadTask> ViewDownloadTasks { get; private set; } = new ObservableCollection<DownloadTask>();
+
+
         #endregion
 
         #region 事件
@@ -164,11 +153,9 @@ namespace NsisoLauncherCore.Net
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-        private HttpClientHandler _clientHandler = new HttpClientHandler();
-        private HttpClient _client;
         private System.Timers.Timer _timer = new System.Timers.Timer(1000);
         private ConcurrentQueue<DownloadTask> _downloadTasks = new ConcurrentQueue<DownloadTask>();
-        private Task[] _workers;
+        private Thread[] _threads;
         private int _downloadSizePerSec;
         private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -184,7 +171,6 @@ namespace NsisoLauncherCore.Net
             {
                 ViewDownloadTasks.Clear();
             }), null);
-            _errorList.Clear();
             while (!_downloadTasks.IsEmpty)
             {
                 _downloadTasks.TryDequeue(out _);
@@ -275,33 +261,45 @@ namespace NsisoLauncherCore.Net
 
                     IsBusy = true;
                     cancellationTokenSource = new CancellationTokenSource();
-
                     _errorList.Clear();
                     DoneTaskCount = 0;
-                    _workers = new Task[ProcessorSize];
 
+                    _threads = new Thread[ProcessorSize];
                     _timer.Start();
 
                     #region 新建工作线程
                     for (int i = 0; i < ProcessorSize; i++)
                     {
-                        _workers[i] = ThreadDownloadWork(cancellationTokenSource.Token);
+                        _threads[i] = new Thread(() =>
+                        {
+                            ThreadDownloadWork(cancellationTokenSource.Token);
+                        });
+                        _threads[i].Name = string.Format("下载线程{0}号", i);
+                        _threads[i].Start();
                     }
                     #endregion
 
                     #region 监视线程
-                    var checkThread = new Task(() =>
+                    var checkThread = new Thread(() =>
                     {
                         try
                         {
-                            Task.WaitAll(_workers);
-                            CompleteDownload();
+                            while (true)
+                            {
+                                Thread.Sleep(500);
+                                if (GetAvailableThreadsCount() == 0)
+                                {
+                                    CompleteDownload();
+                                    return;
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
                             SendFatalLog(ex, "下载监视线程发生异常");
                         }
                     });
+                    checkThread.Name = "下载监视线程";
                     checkThread.Start();
                     #endregion
                 }
@@ -312,17 +310,17 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        private async Task ThreadDownloadWork(CancellationToken cancelToken)
+        private void ThreadDownloadWork(CancellationToken cancelToken)
         {
             try
             {
-                while ((!cancelToken.IsCancellationRequested) && (!_downloadTasks.IsEmpty))
+                while (!_downloadTasks.IsEmpty)
                 {
                     if (_downloadTasks.TryDequeue(out DownloadTask item))
                     {
                         item.SetState("下载中");
 
-                        await HTTPDownload(item, cancelToken);
+                        HTTPDownload(item, cancelToken);
 
                         #region 校验
                         if (CheckFileHash && item.Checker != null && File.Exists(item.To))
@@ -348,27 +346,17 @@ namespace NsisoLauncherCore.Net
                         #region 执行下载后函数
                         if (item.Todo != null)
                         {
-                            if (!cancelToken.IsCancellationRequested)
+                            if (cancelToken.IsCancellationRequested)
                             {
-                                try
+                                ApendDebugLog(string.Format("开始执行{0}下载后的安装过程", item.TaskName));
+                                item.SetState("安装中");
+                                var exc = item.Todo();
+                                if (exc != null)
                                 {
-                                    item.SetState("安装中");
-                                    var exc = item.Todo();
-                                    if (exc != null)
-                                    {
-                                        SendDownloadErrLog(item, exc);
-                                        if (!_errorList.ContainsKey(item))
-                                        {
-                                            _errorList.Add(item, exc);
-                                        }
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    SendDownloadErrLog(item, e);
+                                    SendDownloadErrLog(item, exc);
                                     if (!_errorList.ContainsKey(item))
                                     {
-                                        _errorList.Add(item, e);
+                                        _errorList.Add(item, exc);
                                     }
                                 }
                             }
@@ -397,13 +385,12 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         /// <param name="task">下载任务</param>
         /// <param name="cancelToken">取消的token</param>
-        private async Task HTTPDownload(DownloadTask task, CancellationToken cancelToken)
+        private void HTTPDownload(DownloadTask task, CancellationToken cancelToken)
         {
             string realFilename = task.To;
             string buffFilename = realFilename + ".downloadtask";
             try
             {
-                #region 下载前准备
                 if (Path.IsPathRooted(realFilename))
                 {
                     string dirName = Path.GetDirectoryName(realFilename);
@@ -420,33 +407,38 @@ namespace NsisoLauncherCore.Net
                 {
                     File.Delete(buffFilename);
                 }
-                #endregion
 
-                var response = await _client.GetAsync(task.From, cancelToken);
-
-                task.SetTotalSize(response.Content.Headers.ContentLength.GetValueOrDefault());
-
-                using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                HttpWebRequest request = WebRequest.Create(task.From) as HttpWebRequest;
+                cancelToken.Register(() => { request.Abort(); });
+                request.Timeout = 5000;
+                if (Proxy != null)
                 {
-                    using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
-                    {
-                        byte[] bArr = new byte[1024];
-                        int size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length);
+                    request.Proxy = Proxy;
+                }
 
-                        while (size > 0)
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    task.SetTotalSize(response.ContentLength);
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        responseStream.ReadTimeout = 5000;
+                        using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
                         {
-                            if (cancelToken.IsCancellationRequested)
+                            byte[] bArr = new byte[1024];
+                            int size = responseStream.Read(bArr, 0, (int)bArr.Length);
+
+                            while (size > 0)
                             {
-                                ApendDebugLog("放弃下载:" + task.TaskName);
-                                ClearAllTasks();
-                                return;
-                            }
-                            _resetEvent.WaitOne();
-                            await fs.WriteAsync(bArr, 0, size);
-                            size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length);
-                            _downloadSizePerSec += size;
-                            if (!(task.TotalSize < 32768))
-                            {
+                                if (cancelToken.IsCancellationRequested)
+                                {
+                                    ApendDebugLog("放弃下载:" + task.TaskName);
+                                    ClearAllTasks();
+                                    return;
+                                }
+                                _resetEvent.WaitOne();
+                                fs.Write(bArr, 0, size);
+                                size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                                _downloadSizePerSec += size;
                                 task.IncreaseDownloadSize(size);
                             }
                         }
@@ -479,6 +471,19 @@ namespace NsisoLauncherCore.Net
             this.DownloadLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
         }
 
+        private int GetAvailableThreadsCount()
+        {
+            int num = 0; ;
+            foreach (var item in _threads)
+            {
+                if (item != null && item.IsAlive)
+                {
+                    num += 1;
+                }
+            }
+            return num;
+        }
+
         private void SendLog(Log e)
         {
             DownloadLog?.Invoke(this, e);
@@ -491,7 +496,7 @@ namespace NsisoLauncherCore.Net
 
         private void SendDownloadErrLog(DownloadTask task, Exception ex)
         {
-            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.ERROR, Message = string.Format("任务{0}下载失败,原因:{1}", task.TaskName, ex.Message) });
+            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.ERROR, Message = string.Format("任务{0}下载失败,源地址:{1}原因:{2}", task.TaskName, task.From, ex.Message) });
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

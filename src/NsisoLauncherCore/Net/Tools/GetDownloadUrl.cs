@@ -12,16 +12,38 @@ namespace NsisoLauncherCore.Net.Tools
         private const string BMCLUrl = "https://bmclapi2.bangbang93.com/";
         private const string BMCLLibrariesURL = BMCLUrl + "libraries/";
         private const string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
+        private const string BMCLAssetsURL = BMCLUrl + "objects/";
 
         private const string MCBBSUrl = "https://download.mcbbs.net/";
         private const string MCBBSLibrariesURL = MCBBSUrl + "libraries/";
         private const string MCBBSVersionURL = MCBBSUrl + "mc/game/version_manifest.json";
+        private const string MCBBSAssetsURL = MCBBSUrl + "objects/";
 
         private const string MojangMainUrl = "https://launcher.mojang.com/";
-        private const string MojangJsonBaseUrl = "https://launchermeta.mojang.com/";
-        private const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
-        private const string MojangVersionUrl = MojangJsonBaseUrl + "mc/game/version_manifest.json";
+        private const string MojangMetaUrl = "https://launchermeta.mojang.com/";
+        private const string MojangVersionUrl = MojangMetaUrl + "mc/game/version_manifest.json";
         private const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
+        private const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
+
+        static Dictionary<string, string> bmclapiDic = new Dictionary<string, string>()
+        {
+            {MojangVersionUrl, BMCLVersionURL },
+            {MojangMainUrl, BMCLUrl },
+            {MojangMetaUrl, BMCLUrl },
+            {MojanglibrariesUrl, BMCLLibrariesURL },
+            {MojangAssetsBaseUrl, BMCLAssetsURL },
+            {@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL }
+        };
+
+        static Dictionary<string, string> mcbbsDic = new Dictionary<string, string>()
+        {
+            {MojangVersionUrl, MCBBSVersionURL },
+            {MojangMainUrl, MCBBSUrl },
+            {MojangMetaUrl, MCBBSUrl },
+            {MojanglibrariesUrl, MCBBSLibrariesURL },
+            {MojangAssetsBaseUrl, MCBBSAssetsURL },
+            {@"http://files.minecraftforge.net/maven/", MCBBSLibrariesURL }
+        };
 
         public static string DoURLReplace(DownloadSource source, string url)
         {
@@ -31,23 +53,13 @@ namespace NsisoLauncherCore.Net.Tools
                     return url;
 
                 case DownloadSource.BMCLAPI:
-                    Dictionary<string, string> bmclapiDic = new Dictionary<string, string>();
-                    bmclapiDic.Add(@"https://launcher.mojang.com/", BMCLUrl);
-                    bmclapiDic.Add(@"https://launchermeta.mojang.com/", BMCLUrl);
-                    bmclapiDic.Add(@"https://libraries.minecraft.net/", BMCLLibrariesURL);
-                    bmclapiDic.Add(@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL);
                     return ReplaceURLByDic(url, bmclapiDic);
 
                 case DownloadSource.MCBBS:
-                    Dictionary<string, string> mcbbsDic = new Dictionary<string, string>();
-                    mcbbsDic.Add(@"https://launcher.mojang.com/", MCBBSUrl);
-                    mcbbsDic.Add(@"https://launchermeta.mojang.com/", MCBBSUrl);
-                    mcbbsDic.Add(@"https://libraries.minecraft.net/", MCBBSLibrariesURL);
-                    mcbbsDic.Add(@"http://files.minecraftforge.net/maven/", MCBBSLibrariesURL);
                     return ReplaceURLByDic(url, mcbbsDic);
 
                 default:
-                    return null;
+                    return url;
             }
         }
 
@@ -106,15 +118,7 @@ namespace NsisoLauncherCore.Net.Tools
         {
             if (ver.Downloads?.Client != null)
             {
-                switch (source)
-                {
-                    case DownloadSource.Mojang:
-                        return ver.Downloads.Client.URL;
-                    case DownloadSource.BMCLAPI:
-                        return ver.Downloads.Client.URL.Replace(MojangMainUrl, BMCLUrl);
-                    default:
-                        return ver.Downloads.Client.URL;
-                }
+                return DoURLReplace(source, ver.Downloads.Client.URL);
 
             }
             else
@@ -163,6 +167,9 @@ namespace NsisoLauncherCore.Net.Tools
 
                         case DownloadSource.BMCLAPI:
                             return BMCLLibrariesURL + libUrlPath;
+
+                        case DownloadSource.MCBBS:
+                            return MCBBSLibrariesURL + libUrlPath;
 
                         default:
                             throw new ArgumentNullException("source");
@@ -213,6 +220,8 @@ namespace NsisoLauncherCore.Net.Tools
                     case DownloadSource.BMCLAPI:
                         return (BMCLLibrariesURL + GetNativeBasePath(native)).Replace('\\', '/');
 
+                    case DownloadSource.MCBBS:
+                        return (MCBBSLibrariesURL + GetNativeBasePath(native)).Replace('\\', '/');
                     default:
                         throw new ArgumentNullException("source");
 
@@ -255,6 +264,8 @@ namespace NsisoLauncherCore.Net.Tools
                 case DownloadSource.BMCLAPI:
                     return (BMCLUrl + "objects\\" + GetAssetsBasePath(assets)).Replace('\\', '/');
 
+                case DownloadSource.MCBBS:
+                    return (MCBBSUrl + "objects\\" + GetAssetsBasePath(assets)).Replace('\\', '/');
                 default:
                     throw new ArgumentNullException("source");
 
