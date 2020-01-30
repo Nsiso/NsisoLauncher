@@ -50,7 +50,7 @@ namespace NsisoLauncher
         {
             #region DEBUG初始化
             //debug
-            LogHandler = new LogHandler(true);
+            LogHandler = new LogHandler();
             AggregateExceptionCatched += (a, b) => LogHandler.AppendFatal(b.AggregateException);
             if (e.Args.Contains("-debug"))
             {
@@ -69,6 +69,7 @@ namespace NsisoLauncher
                 debugWindow.Show();
                 LogHandler.OnLog += (s, log) => debugWindow?.AppendLog(s, log);
             }
+            LogHandler.WriteToFile = Config.MainConfig.Launcher.WriteLog;
             #endregion
 
             #region Nsiso反馈API初始化

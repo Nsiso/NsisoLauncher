@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Api;
+using System;
 using System.Collections.Generic;
+using static NsisoLauncherCore.Util.JsonTools;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
 {
@@ -49,7 +51,49 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
             /// User UUID
             /// </summary>
             [JsonProperty("id")]
-            public string Uuid { get; internal set; }
+            public string ID { get; internal set; }
+
+            [JsonProperty("email")]
+            public string Email { get; set; }
+
+            [JsonProperty("username")]
+            public string Username { get; set; }
+
+            [JsonProperty("registerIp")]
+            public string RegisterIp { get; set; }
+
+            [JsonProperty("registeredAt")]
+            [JsonConverter(typeof(MicrosecondEpochConverter))]
+            public DateTime RegisteredAt { get; set; }
+
+            [JsonProperty("passwordChangedAt")]
+            [JsonConverter(typeof(MicrosecondEpochConverter))]
+            public DateTime PasswordChangedAt { get; set; }
+
+            [JsonProperty("dateOfBirth")]
+            [JsonConverter(typeof(MicrosecondEpochConverter))]
+            public DateTime DateOfBirth { get; set; }
+
+            [JsonProperty("suspended")]
+            public bool? Suspended { get; set; }
+
+            [JsonProperty("blocked")]
+            public bool? Blocked { get; set; }
+
+            [JsonProperty("secured")]
+            public bool? Secured { get; set; }
+
+            [JsonProperty("migrated")]
+            public bool? Migrated { get; set; }
+
+            [JsonProperty("emailVerified")]
+            public bool? EmailVerified { get; set; }
+
+            [JsonProperty("legacyUser")]
+            public bool? LegacyUser { get; set; }
+
+            [JsonProperty("verifiedByParent")]
+            public bool? VerifiedByParent { get; set; }
 
             /// <summary>
             /// 此用户的属性

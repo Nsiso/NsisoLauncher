@@ -13,6 +13,10 @@ namespace NsisoLauncherCore.Net.Tools
         private const string BMCLLibrariesURL = BMCLUrl + "libraries/";
         private const string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
 
+        private const string MCBBSUrl = "https://download.mcbbs.net/";
+        private const string MCBBSLibrariesURL = MCBBSUrl + "libraries/";
+        private const string MCBBSVersionURL = MCBBSUrl + "mc/game/version_manifest.json";
+
         private const string MojangMainUrl = "https://launcher.mojang.com/";
         private const string MojangJsonBaseUrl = "https://launchermeta.mojang.com/";
         private const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
@@ -27,11 +31,20 @@ namespace NsisoLauncherCore.Net.Tools
                     return url;
 
                 case DownloadSource.BMCLAPI:
-                    Dictionary<string, string> dic = new Dictionary<string, string>();
-                    dic.Add(@"https://launcher.mojang.com/", BMCLUrl);
-                    dic.Add(@"https://launchermeta.mojang.com/", BMCLUrl);
-                    dic.Add(@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL);
-                    return ReplaceURLByDic(url, dic);
+                    Dictionary<string, string> bmclapiDic = new Dictionary<string, string>();
+                    bmclapiDic.Add(@"https://launcher.mojang.com/", BMCLUrl);
+                    bmclapiDic.Add(@"https://launchermeta.mojang.com/", BMCLUrl);
+                    bmclapiDic.Add(@"https://libraries.minecraft.net/", BMCLLibrariesURL);
+                    bmclapiDic.Add(@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL);
+                    return ReplaceURLByDic(url, bmclapiDic);
+
+                case DownloadSource.MCBBS:
+                    Dictionary<string, string> mcbbsDic = new Dictionary<string, string>();
+                    mcbbsDic.Add(@"https://launcher.mojang.com/", MCBBSUrl);
+                    mcbbsDic.Add(@"https://launchermeta.mojang.com/", MCBBSUrl);
+                    mcbbsDic.Add(@"https://libraries.minecraft.net/", MCBBSLibrariesURL);
+                    mcbbsDic.Add(@"http://files.minecraftforge.net/maven/", MCBBSLibrariesURL);
+                    return ReplaceURLByDic(url, mcbbsDic);
 
                 default:
                     return null;

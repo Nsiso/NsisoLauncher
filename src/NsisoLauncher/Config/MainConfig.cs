@@ -248,6 +248,11 @@ namespace NsisoLauncher.Config
         /// </summary>
         public bool CheckUpdate { get; set; }
 
+        /// <summary>
+        /// 是否记录日志到本地
+        /// </summary>
+        public bool WriteLog { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 

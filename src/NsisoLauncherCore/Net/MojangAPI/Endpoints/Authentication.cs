@@ -63,8 +63,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 if (this.Response.IsSuccess)
                 {
                     JObject user = JObject.Parse(this.Response.RawMessage);
-                    List<Uuid> availableProfiles = new List<Uuid>();
 
+                    List<Uuid> availableProfiles = new List<Uuid>();
+                    #region 处理可用Profiles
                     foreach (JObject profile in user["availableProfiles"])
                     {
                         var playerName = profile["name"].ToObject<string>();
@@ -78,22 +79,32 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                             Demo = null
                         });
                     }
+                    #endregion
 
-
-                    return new AuthenticateResponse(this.Response)
+                    Uuid selectedProfile = null;
+                    #region 处理选中Profrile
+                    if (user["selectedProfile"] != null)
                     {
-                        AccessToken = user["accessToken"].ToObject<string>(),
-                        ClientToken = user["clientToken"].ToObject<string>(),
-                        AvailableProfiles = availableProfiles,
-                        SelectedProfile = new Uuid()
+                        selectedProfile = new Uuid()
                         {
-                            PlayerName = user["selectedProfile"]["name"].ToObject<string>(),
-                            Value = user["selectedProfile"]["id"].ToObject<string>(),
+                            PlayerName = user["selectedProfile"]["name"]?.ToObject<string>(),
+                            Value = user["selectedProfile"]["id"]?.ToObject<string>(),
                             Legacy = (user["selectedProfile"].ToString().Contains("legacyProfile") ? user["selectedProfile"]["legacyProfile"].ToObject<bool>() : false),
                             Demo = null
-                        },
-                        User = user["user"].ToObject<UserData>()
+                        };
+                    }
+                    #endregion
+
+                    AuthenticateResponse response = new AuthenticateResponse(this.Response)
+                    {
+                        AccessToken = user["accessToken"]?.ToObject<string>(),
+                        ClientToken = user["clientToken"]?.ToObject<string>(),
+                        AvailableProfiles = availableProfiles,
+                        SelectedProfile = selectedProfile,
+                        User = user["user"]?.ToObject<UserData>()
                     };
+
+                    return response; 
                 }
                 else
                 {

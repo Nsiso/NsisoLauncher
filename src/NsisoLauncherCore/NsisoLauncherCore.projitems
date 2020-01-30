@@ -148,6 +148,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstallOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Java.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\JsonTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\SystemTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Unzip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VersionReader.cs" />

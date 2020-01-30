@@ -513,6 +513,21 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (authResult.State)
                     {
                         case AuthState.SUCCESS:
+                            #region 检验
+                            if (authResult.Profiles.Count == 0)
+                            {
+                                await MainWindowVM.ShowMessageAsync("验证失败：您没有可用的游戏角色（Profile）",
+                                "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置可用角色");
+                                return;
+                            }
+                            if (authResult.SelectedProfileUUID == null)
+                            {
+                                await MainWindowVM.ShowMessageAsync("验证失败：您没有选中任何游戏角色（Profile）",
+                                "请选中您要进行游戏的角色");
+                                return;
+                            }
+                            #endregion
+
                             launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                             launchUser.UserData = authResult.UserData;
                             if (authResult.Profiles != null)
@@ -581,12 +596,12 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 验证后用户处理
-                App.Config.MainConfig.History.SelectedUserNodeID = launchUser.UserData.Uuid;
-                if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(launchUser.UserData.Uuid))
+                App.Config.MainConfig.History.SelectedUserNodeID = launchUser.UserData.ID;
+                if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(launchUser.UserData.ID))
                 {
                     launchUser.AuthModule = LaunchAuthNodePair?.Key;
-                    App.Config.MainConfig.User.UserDatabase.Add(launchUser.UserData.Uuid, launchUser);
-                    LaunchUserPair = new KeyValuePair<string, UserNode>(launchUser.UserData.Uuid, launchUser);
+                    App.Config.MainConfig.User.UserDatabase.Add(launchUser.UserData.ID, launchUser);
+                    LaunchUserPair = new KeyValuePair<string, UserNode>(launchUser.UserData.ID, launchUser);
                 }
                 #endregion
 

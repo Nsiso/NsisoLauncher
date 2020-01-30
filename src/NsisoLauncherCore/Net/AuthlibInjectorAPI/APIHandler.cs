@@ -7,7 +7,7 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
     {
         public async Task<DownloadTask> GetLatestAICoreDownloadTask(DownloadSource source, string downloadTo)
         {
-            string apiBase = string.Empty;
+            string apiBase;
             switch (source)
             {
                 case DownloadSource.Mojang:
@@ -23,14 +23,13 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
             var jobj = JObject.Parse(await APIRequester.HttpGetStringAsync(apiBase));
             string downloadURL = jobj.Value<string>("download_url");
             string sha256 = jobj["checksums"].Value<string>("sha256");
-            return new DownloadTask("AuthlibInjector核心", downloadURL, downloadTo)
+            DownloadTask downloadTask = new DownloadTask("AuthlibInjector核心", downloadURL, downloadTo);
+            downloadTask.Checker = new Util.Checker.SHA256Checker()
             {
-                Checker = new Util.Checker.SHA256Checker()
-                {
-                    CheckSum = sha256,
-                    FilePath = downloadTo
-                }
+                CheckSum = sha256,
+                FilePath = downloadTo
             };
+            return downloadTask;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace NsisoLauncherCore.Auth
             };
             this.UserData = new UserData()
             {
-                Uuid = Guid.NewGuid().ToString("N")
+                ID = Guid.NewGuid().ToString("N")
             };
         }
 
