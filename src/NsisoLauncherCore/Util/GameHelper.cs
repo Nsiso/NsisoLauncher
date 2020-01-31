@@ -29,7 +29,7 @@ namespace NsisoLauncherCore.Util
         /// <returns>一条设置Line</returns>
         public override string ToString()
         {
-            return Key.Trim() + ':' + Value.Trim();
+            return string.Format("{0}:{1}", Key.Trim(), Value.Trim());
         }
     }
 
@@ -53,10 +53,6 @@ namespace NsisoLauncherCore.Util
                         foreach (var item in lines)
                         {
                             string[] kv = item.Split(':');
-                            if (kv.Length != 2)
-                            {
-                                return null;
-                            }
                             options.Add(new VersionOption() { Key = kv[0], Value = kv[1] });
                         }
                         return options;

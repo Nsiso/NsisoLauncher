@@ -149,6 +149,7 @@
     <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Serial">SerialGC (串行垃圾回收器)</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Paralle">ParallelGC (并行垃圾回收器)</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Pro.GC.CMS">CMSGC (并发标记扫描垃圾回收器)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Env.Pro.GC.NULL">自定义或缺省 (自定义请自行写入GC参数中)</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Pro.GC.Arg">GC(垃圾回收器)参数:</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Pro.JVMArg">附加JVM启动参数:</sys:String>
     <sys:String x:Key="String.Settingwindow.Env.Pro.GameArg">附加游戏启动参数:</sys:String>
@@ -165,7 +166,8 @@
     <sys:String x:Key="String.Settingwindow.Download.Source">首选下载源</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.Mojang">Mojang官方</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.BMCLAPI">BMCLAPI (bangbang93's minecraft launcher api)</sys:String>
-    <sys:String x:Key="String.Settingwindow.Download.Source.Note">*选择的是首选下载源，部分功能仍依赖于独立下载源。在此感谢BMCLAPI提供大量功能</sys:String>
+    <sys:String x:Key="String.Settingwindow.Download.Source.MCBBS">BMCLAPI (MCBBS镜像源)</sys:String>
+    <sys:String x:Key="String.Settingwindow.Download.Source.Note">*选择的是首选下载源，部分功能仍依赖于独立下载源。在此感谢BMCLAPI与MCBBS提供大量功能</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Thread">下载线程设置</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Thread.Num">下载线程数量(最大10):</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Proxy">下载代理</sys:String>

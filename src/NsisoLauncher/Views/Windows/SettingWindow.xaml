@@ -159,6 +159,10 @@
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.CMS}"
                                              IsChecked="{Binding Environment.GCType, 
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.CMSGC}}"/>
+                                <RadioButton Margin="0,5,0,0" 
+                                             Content="{StaticResource String.Settingwindow.Env.Pro.GC.NULL}"
+                                             IsChecked="{Binding Environment.GCType, 
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.NULL}}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.GC.Arg}" Margin="0,5,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding Environment.GCArgument}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.JVMArg}" Margin="0,5,0,0"/>
@@ -206,6 +210,9 @@
                                 <RadioButton Content="{StaticResource String.Settingwindow.Download.Source.BMCLAPI}"
                                              IsChecked="{Binding Download.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.BMCLAPI}}" Margin="0,0,0,5"/>
+                                <RadioButton Content="{StaticResource String.Settingwindow.Download.Source.MCBBS}"
+                                             IsChecked="{Binding Download.DownloadSource,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.MCBBS}}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Download.Source.Note}"/>
                             </StackPanel>
                         </Expander>
@@ -251,7 +258,8 @@
                     <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="ID" SelectionChanged="VersionsComboBox_SelectionChanged"/>
                     <GroupBox x:Name="groupBox7" Header="{StaticResource String.Settingwindow.Version.Options}" Margin="10,31,10,0">
                         <Grid>
-                            <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,0,0,20" CellEditEnding="VersionOptionsGrid_CellEditEnding">
+                            <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      Margin="0,0,0,20" CellEditEnding="VersionOptionsGrid_CellEditEnding">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{StaticResource String.Settingwindow.Version.Options.T}" Binding="{Binding Key}" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{StaticResource String.Settingwindow.Version.Options.V}" Binding="{Binding Value}"/>

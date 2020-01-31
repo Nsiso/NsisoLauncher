@@ -42,17 +42,19 @@ namespace NsisoLauncherCore
             {
                 switch (setting.GCType)
                 {
-                    case Modules.GCType.G1GC:
+                    case GCType.G1GC:
                         jvmHead.Append("-XX:+UseG1GC");
                         break;
-                    case Modules.GCType.SerialGC:
+                    case GCType.SerialGC:
                         jvmHead.Append("-XX:+UseSerialGC");
                         break;
-                    case Modules.GCType.ParallelGC:
+                    case GCType.ParallelGC:
                         jvmHead.Append("-XX:+UseParallelGC");
                         break;
-                    case Modules.GCType.CMSGC:
+                    case GCType.CMSGC:
                         jvmHead.Append("-XX:+UseConcMarkSweepGC");
+                        break;
+                    case GCType.NULL:
                         break;
                     default:
                         break;
