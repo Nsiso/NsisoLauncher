@@ -391,6 +391,7 @@ namespace NsisoLauncherCore.Net
             string buffFilename = realFilename + ".downloadtask";
             try
             {
+                #region 下载前准备
                 if (Path.IsPathRooted(realFilename))
                 {
                     string dirName = Path.GetDirectoryName(realFilename);
@@ -407,6 +408,7 @@ namespace NsisoLauncherCore.Net
                 {
                     File.Delete(buffFilename);
                 }
+                #endregion
 
                 HttpWebRequest request = WebRequest.Create(task.From) as HttpWebRequest;
                 cancelToken.Register(() => { request.Abort(); });
