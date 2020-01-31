@@ -9,21 +9,21 @@ namespace NsisoLauncherCore.Net.Tools
 {
     public static class GetDownloadUrl
     {
-        private const string BMCLUrl = "https://bmclapi2.bangbang93.com/";
-        private const string BMCLLibrariesURL = BMCLUrl + "libraries/";
-        private const string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
-        private const string BMCLAssetsURL = BMCLUrl + "objects/";
+        public const string BMCLUrl = "https://bmclapi2.bangbang93.com/";
+        public const string BMCLLibrariesURL = BMCLUrl + "libraries/";
+        public const string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
+        public const string BMCLAssetsURL = BMCLUrl + "objects/";
 
-        private const string MCBBSUrl = "https://download.mcbbs.net/";
-        private const string MCBBSLibrariesURL = MCBBSUrl + "libraries/";
-        private const string MCBBSVersionURL = MCBBSUrl + "mc/game/version_manifest.json";
-        private const string MCBBSAssetsURL = MCBBSUrl + "objects/";
+        public const string MCBBSUrl = "https://download.mcbbs.net/";
+        public const string MCBBSLibrariesURL = MCBBSUrl + "libraries/";
+        public const string MCBBSVersionURL = MCBBSUrl + "mc/game/version_manifest.json";
+        public const string MCBBSAssetsURL = MCBBSUrl + "objects/";
 
-        private const string MojangMainUrl = "https://launcher.mojang.com/";
-        private const string MojangMetaUrl = "https://launchermeta.mojang.com/";
-        private const string MojangVersionUrl = MojangMetaUrl + "mc/game/version_manifest.json";
-        private const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
-        private const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
+        public const string MojangMainUrl = "https://launcher.mojang.com/";
+        public const string MojangMetaUrl = "https://launchermeta.mojang.com/";
+        public const string MojangVersionUrl = MojangMetaUrl + "mc/game/version_manifest.json";
+        public const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
+        public const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
 
         static Dictionary<string, string> bmclapiDic = new Dictionary<string, string>()
         {
