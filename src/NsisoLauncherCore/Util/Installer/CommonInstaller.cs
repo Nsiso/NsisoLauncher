@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Util.Installer
@@ -27,15 +29,23 @@ namespace NsisoLauncherCore.Util.Installer
         }
     }
 
-    public class CommonInstallOptions : IInstallOptions
+    public class CommonInstallOptions
     {
         public string GameRootPath { get; set; }
+
+        public bool IsClient { get; set; }
+
+        public Modules.Version VersionToInstall { get; set; }
+
+        public DownloadSource DownloadSource { get; set; }
+
+        public Java Java { get; set; }
     }
 
     public class CommonInstaller : IInstaller
     {
         public string InstallerPath { get; set; }
-        public IInstallOptions Options { get; set; }
+        public CommonInstallOptions Options { get; set; }
 
         public CommonInstaller(string installerPath, CommonInstallOptions options)
         {
@@ -44,16 +54,11 @@ namespace NsisoLauncherCore.Util.Installer
                 throw new ArgumentException("Installer path can not be null or whitespace.");
             }
             this.InstallerPath = installerPath;
-            if (string.IsNullOrWhiteSpace(options.GameRootPath))
-            {
-                throw new ArgumentException("Game root path in options can not be null or whitespace.");
-            }
-            this.Options = options;
+            this.Options = options ?? throw new ArgumentNullException("Install options is null");
         }
 
-        public void BeginInstall()
+        public void BeginInstall(ProgressCallback callback, CancellationToken cancellationToken)
         {
-            string gameRootPath = ((CommonInstallOptions)Options).GameRootPath;
             string tempPath = PathManager.TempDirectory + "\\CommonInstallerTemp";
             if (Directory.Exists(tempPath))
             {
@@ -62,14 +67,23 @@ namespace NsisoLauncherCore.Util.Installer
             Directory.CreateDirectory(tempPath);
             Unzip.UnZipFile(InstallerPath, tempPath);
             string mainJson = File.ReadAllText(tempPath + "\\install_profile.json");
-            var jsonObj = JsonConvert.DeserializeObject<CommonJsonObj>(mainJson);
+            JObject jObject = JObject.Parse(mainJson);
 
+            BeginInstallFromJObject(callback, cancellationToken, jObject, tempPath);
+
+            Directory.Delete(tempPath, true);
+            File.Delete(InstallerPath);
+        }
+
+        public void BeginInstallFromJObject(ProgressCallback callback, CancellationToken cancellationToken, JObject jObj, string tempPath)
+        {
+            var jsonObj = jObj.ToObject<CommonJsonObj>();
             var t = jsonObj.Install.Path.Split(':');
             var libPackage = t[0];
             var libName = t[1];
             var libVersion = t[2];
             string libPath = string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.jar",
-                gameRootPath, libPackage.Replace(".", @"\"), libName, libVersion);
+                Options.GameRootPath, libPackage.Replace(".", @"\"), libName, libVersion);
 
             string libDir = Path.GetDirectoryName(libPath);
             if (!Directory.Exists(libDir))
@@ -79,9 +93,9 @@ namespace NsisoLauncherCore.Util.Installer
             File.Copy(tempPath + '\\' + jsonObj.Install.FilePath, libPath, true);
 
 
-            string newPath = PathManager.GetJsonPath(gameRootPath, jsonObj.Install.Target);
+            string newPath = PathManager.GetJsonPath(Options.GameRootPath, jsonObj.Install.Target);
             string newDir = Path.GetDirectoryName(newPath);
-            string jarPath = PathManager.GetJarPath(gameRootPath, jsonObj.Install.Target);
+            string jarPath = PathManager.GetJarPath(Options.GameRootPath, jsonObj.Install.Target);
 
             if (!Directory.Exists(newDir))
             {
@@ -89,16 +103,13 @@ namespace NsisoLauncherCore.Util.Installer
             }
             File.WriteAllText(newPath, jsonObj.VersionInfo.ToString());
             File.Copy(tempPath + '\\' + jsonObj.Install.FilePath, jarPath, true);
-
-            Directory.Delete(tempPath, true);
-            File.Delete(InstallerPath);
         }
 
-        public async Task BeginInstallAsync()
+        public async Task BeginInstallAsync(ProgressCallback callback, CancellationToken cancellationToken)
         {
             await Task.Factory.StartNew(() =>
             {
-                BeginInstall();
+                BeginInstall(callback, cancellationToken);
             });
         }
     }

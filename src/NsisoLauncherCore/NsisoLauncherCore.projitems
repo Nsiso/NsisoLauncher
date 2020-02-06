@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\APIRequester.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\NetRequester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\AuthlibInjectorAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\CrafatarAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Header.cs" />
@@ -134,6 +134,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ForgeInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ProtocolHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ServerInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\DownloadUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\AssetsReader.cs" />
@@ -145,8 +146,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\FileHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\GameHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\CommonInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\Actions\PostProcessors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\ForgeInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\Json\Install.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstaller.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstallOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Java.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\JsonTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\SystemTools.cs" />

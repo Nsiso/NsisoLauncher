@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncher.Core.Util
 {
-    public class LogHandler
+    public class LogHandler : IDisposable
     {
         public bool WriteToFile { get; set; } = false;
         public event EventHandler<Log> OnLog;
@@ -87,6 +87,11 @@ namespace NsisoLauncher.Core.Util
         {
             AppendLog(this, new Log() { LogLevel = LogLevel.FATAL, Message = e.ToString() });
             new ErrorWindow(e).Show();
+        }
+
+        public void Dispose()
+        {
+            LogLock.Dispose();
         }
     }
 }

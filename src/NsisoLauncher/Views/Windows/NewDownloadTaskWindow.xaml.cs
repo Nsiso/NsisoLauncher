@@ -3,6 +3,7 @@ using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.FunctionAPI;
 using NsisoLauncherCore.Util.Installer;
+using NsisoLauncherCore.Util.Installer.Forge;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -250,7 +252,7 @@ namespace NsisoLauncher.Views.Windows
             {
                 foreach (JWVersion item in list)
                 {
-                    string json = await APIRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
+                    string json = await NetRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
                     NsisoLauncherCore.Modules.Version ver = App.Handler.JsonToVersion(json);
                     string jsonPath = App.Handler.GetJsonPath(ver.ID);
 
@@ -297,12 +299,19 @@ namespace NsisoLauncher.Views.Windows
             DownloadTask dt = new DownloadTask("forge核心",
                 string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build),
                 forgePath);
-            dt.Todo = new Func<Exception>(() =>
+            dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
                 try
                 {
-                    CommonInstaller installer = new CommonInstaller(forgePath, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
-                    installer.BeginInstall();
+                    IInstaller installer = new ForgeInstaller(forgePath, new CommonInstallOptions()
+                    {
+                        GameRootPath = App.Handler.GameRootPath,
+                        IsClient = true,
+                        VersionToInstall = ver,
+                        DownloadSource = App.Config.MainConfig.Download.DownloadSource,
+                        Java = App.Handler.Java
+                    });
+                    installer.BeginInstall(callback, cancelToken);
                     return null;
                 }
                 catch (Exception ex)
@@ -319,12 +328,12 @@ namespace NsisoLauncher.Views.Windows
             DownloadTask dt = new DownloadTask("liteloader核心",
                 string.Format("https://bmclapi2.bangbang93.com/liteloader/download?version={0}", liteloader.Version),
                 liteloaderPath);
-            dt.Todo = new Func<Exception>(() =>
+            dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
                 try
                 {
                     CommonInstaller installer = new CommonInstaller(liteloaderPath, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
-                    installer.BeginInstall();
+                    installer.BeginInstall(callback, cancelToken);
                     return null;
                 }
                 catch (Exception ex)
@@ -333,12 +342,6 @@ namespace NsisoLauncher.Views.Windows
             App.Downloader.AddDownloadTask(dt);
             App.Downloader.StartDownload();
 
-        }
-
-        private async Task InstallCommonExtend(string path)
-        {
-            CommonInstaller installer = new CommonInstaller(path, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
-            await installer.BeginInstallAsync();
         }
 
         private void RefreshVerButton_Click(object sender, RoutedEventArgs e)

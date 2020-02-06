@@ -54,7 +54,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>版本列表</returns>
         public async Task<List<JWVersion>> GetVersionList()
         {
-            string json = await APIRequester.HttpGetStringAsync(VersionListURL);
+            string json = await NetRequester.HttpGetStringAsync(VersionListURL);
             var e = JsonConvert.DeserializeObject<JWVersions>(json);
             return e.Versions;
         }
@@ -65,7 +65,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>JAVA列表</returns>
         public async Task<List<JWJava>> GetJavaList()
         {
-            string json = await APIRequester.HttpGetStringAsync(JavaListURL);
+            string json = await NetRequester.HttpGetStringAsync(JavaListURL);
             var e = JsonConvert.DeserializeObject<List<JWJava>>(json);
             return e;
         }
@@ -76,7 +76,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>新闻列表</returns>
         public async Task<List<JWNews>> GetNewList()
         {
-            string json = await APIRequester.HttpGetStringAsync(NewListURL);
+            string json = await NetRequester.HttpGetStringAsync(NewListURL);
             var e = JsonConvert.DeserializeObject<List<JWNews>>(json);
             return e;
         }
@@ -88,7 +88,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>Forge列表</returns>
         public async Task<List<JWForge>> GetForgeList(Version version)
         {
-            string json = await APIRequester.HttpGetStringAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
+            string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
             var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
             return e;
         }
@@ -100,7 +100,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>Liteloader列表</returns>
         public async Task<JWLiteloader> GetLiteloaderList(Version version)
         {
-            string json = await APIRequester.HttpGetStringAsync(string.Format("{0}/?mcversion={1}", LiteloaderListURL, version.ID));
+            string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/?mcversion={1}", LiteloaderListURL, version.ID));
             var e = JsonConvert.DeserializeObject<JWLiteloader>(json);
             return e;
         }

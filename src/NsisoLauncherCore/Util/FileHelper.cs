@@ -1,11 +1,13 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Util
 {
@@ -25,6 +27,40 @@ namespace NsisoLauncherCore.Util
                 sc.Append(retval[i].ToString("x2"));
             }
             return sc.ToString();
+        }
+
+        public static bool CopyDirectory(string SourcePath, string DestinationPath, bool overwriteexisting)
+        {
+            bool ret;
+            try
+            {
+                SourcePath = SourcePath.EndsWith(@"\") ? SourcePath : SourcePath + @"\";
+                DestinationPath = DestinationPath.EndsWith(@"\") ? DestinationPath : DestinationPath + @"\";
+
+                if (Directory.Exists(SourcePath))
+                {
+                    if (Directory.Exists(DestinationPath) == false)
+                        Directory.CreateDirectory(DestinationPath);
+
+                    foreach (string fls in Directory.GetFiles(SourcePath))
+                    {
+                        FileInfo flinfo = new FileInfo(fls);
+                        flinfo.CopyTo(DestinationPath + flinfo.Name, overwriteexisting);
+                    }
+                    foreach (string drs in Directory.GetDirectories(SourcePath))
+                    {
+                        DirectoryInfo drinfo = new DirectoryInfo(drs);
+                        if (CopyDirectory(drs, DestinationPath + drinfo.Name, overwriteexisting) == false)
+                            ret = false;
+                    }
+                }
+                ret = true;
+            }
+            catch (Exception)
+            {
+                ret = false;
+            }
+            return ret;
         }
         #endregion
 
@@ -170,15 +206,10 @@ namespace NsisoLauncherCore.Util
             }
             foreach (var item in assets.Objects)
             {
-
                 string path = core.GetAssetsPath(item.Value);
-                if (lostAssets.ContainsKey(path))
+                if ((!lostAssets.ContainsKey(path)) && (!File.Exists(path)))
                 {
-                    continue;
-                }
-                else if (!File.Exists(path))
-                {
-                    lostAssets.Add(item.Key, item.Value);
+                    lostAssets.Add(path, item.Value);
                 }
             }
             return lostAssets;
@@ -236,7 +267,7 @@ namespace NsisoLauncherCore.Util
                 string innerJsonStr;
                 if (!File.Exists(innerJsonPath))
                 {
-                    innerJsonStr = await APIRequester.HttpGetStringAsync(GetDownloadUrl.GetCoreJsonDownloadURL(source, version.InheritsVersion));
+                    innerJsonStr = await NetRequester.HttpGetStringAsync(GetDownloadUrl.GetCoreJsonDownloadURL(source, version.InheritsVersion));
                     string jsonFolder = Path.GetDirectoryName(innerJsonPath);
                     if (!Directory.Exists(jsonFolder))
                     {
@@ -286,7 +317,7 @@ namespace NsisoLauncherCore.Util
                 if (ver.AssetIndex != null)
                 {
                     string jsonUrl = GetDownloadUrl.DoURLReplace(source, ver.AssetIndex.URL);
-                    string assetsJson = await APIRequester.HttpGetStringAsync(jsonUrl);
+                    string assetsJson = await NetRequester.HttpGetStringAsync(jsonUrl);
                     assets = core.GetAssetsByJson(assetsJson);
                     tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
                 }
@@ -303,10 +334,7 @@ namespace NsisoLauncherCore.Util
             foreach (var item in lostAssets)
             {
                 DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(source, item.Value, core);
-                if (!tasks.Contains(task))
-                {
-                    tasks.Add(task);
-                }
+                tasks.Add(task);
             }
             return tasks;
         }

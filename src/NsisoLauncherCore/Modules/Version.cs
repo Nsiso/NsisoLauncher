@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using static NsisoLauncherCore.Util.JsonTools;
 
 namespace NsisoLauncherCore.Modules
 {
@@ -38,12 +40,6 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         [JsonProperty("inheritsFrom")]
         public string InheritsVersion { get; set; }
-
-        ///// <summary>
-        ///// 库列表
-        ///// </summary>
-        //[JsonProperty("libraries")]
-        //public List<Library> Library { get; set; }
 
         /// <summary>
         /// 库列表
@@ -141,49 +137,9 @@ namespace NsisoLauncherCore.Modules
     #endregion
 
     #region Library
-    //public class Library
-    //{
-    //    /// <summary>
-    //    /// 库名称
-    //    /// </summary>
-    //    [JsonProperty("name")]
-    //    public string Name { get; set; }
-
-    //    /// <summary>
-    //    /// Native列表
-    //    /// </summary>
-    //    [JsonProperty("natives")]
-    //    public Dictionary<string, string> Natives { get; set; }
-
-    //    /// <summary>
-    //    /// 规则
-    //    /// </summary>
-    //    [JsonProperty("rules")]
-    //    public List<Rule> Rules { get; set; }
-
-    //    /// <summary>
-    //    /// 解压声明
-    //    /// </summary>
-    //    [JsonProperty("extract")]
-    //    public Extract Extract { get; set; }
-    //}
-
     public class Library
     {
-        /// <summary>
-        /// 包名
-        /// </summary>
-        public string Package { get; set; }
-
-        /// <summary>
-        /// 名称
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 版本
-        /// </summary>
-        public string Version { get; set; }
+        public Artifact Artifact { get; set; }
 
         /// <summary>
         /// 下载URL
@@ -194,7 +150,13 @@ namespace NsisoLauncherCore.Modules
         /// 库文件下载信息
         /// </summary>
         public PathSha1SizeUrl LibDownloadInfo { get; set; }
+
+        public Library(string descriptor)
+        {
+            this.Artifact = new Artifact(descriptor);
+        }
     }
+
 
     public class Native : Library
     {
@@ -212,45 +174,76 @@ namespace NsisoLauncherCore.Modules
         /// native文件下载信息
         /// </summary>
         public PathSha1SizeUrl NativeDownloadInfo { get; set; }
+
+        public Native(string descriptor, string nativeSuffix) : base(descriptor)
+        {
+            this.NativeSuffix = nativeSuffix;
+        }
     }
 
+    [JsonConverter(typeof(ArtifactJsonConverter))]
+    public class Artifact
+    {
+        /// <summary>
+        /// 包名
+        /// </summary>
+        public string Package { get; set; }
 
-    //public class Rule
-    //{
-    //    /// <summary>
-    //    /// action
-    //    /// </summary>
-    //    [JsonProperty("action")]
-    //    public string Action { get; set; }
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; }
 
-    //    /// <summary>
-    //    /// 操作系统
-    //    /// </summary>
-    //    [JsonProperty("os")]
-    //    public OperatingSystem OS { get; set; }
-    //}
+        /// <summary>
+        /// 版本
+        /// </summary>
+        public string Version { get; set; }
 
-    //public class OperatingSystem
-    //{
-    //    /// <summary>
-    //    /// 系统名称
-    //    /// </summary>
-    //    [JsonProperty("name")]
-    //    public string Name { get; set; }
-    //}
+        /// <summary>
+        /// Classifier分类
+        /// </summary>
+        public string Classifier { get; set; }
 
-    //public class Extract
-    //{
-    //    /// <summary>
-    //    /// 排除列表
-    //    /// </summary>
-    //    [JsonProperty("exclude")]
-    //    public List<string> Exculde { get; set; }
-    //}
+        /// <summary>
+        /// 扩展名
+        /// </summary>
+        public string Extension { get; set; } = "jar";
+
+        public string Descriptor { get; set; }
+
+        public Artifact(string descriptor)
+        {
+            this.Descriptor = descriptor;
+            string[] parts = descriptor.Split(':');
+
+            this.Package = parts[0];
+            this.Name = parts[1];
+
+            int last = parts.Length - 1;
+            int idx = parts[last].IndexOf('@');
+            if (idx != -1)
+            {
+                this.Extension = parts[last].Substring(idx + 1);
+                parts[last] = parts[last].Substring(0, idx);
+            }
+
+            this.Version = parts[2];
+
+            if (parts.Length > 3)
+            {
+                this.Classifier = parts[3];
+            }
+        }
+
+        public static Artifact From(string descriptor)
+        {
+            return new Artifact(descriptor);
+        }
+    }
     #endregion
 
     /// <summary>
-    /// 基本要素类
+    /// 基本数据要素类
     /// </summary>
     public class Sha1SizeUrl
     {
@@ -274,7 +267,7 @@ namespace NsisoLauncherCore.Modules
     }
 
     /// <summary>
-    /// 基本要素类
+    /// 基本数据要素类（包括路径）
     /// </summary>
     public class PathSha1SizeUrl : Sha1SizeUrl
     {

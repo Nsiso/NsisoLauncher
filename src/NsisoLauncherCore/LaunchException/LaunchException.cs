@@ -2,6 +2,7 @@
 
 namespace NsisoLauncherCore.LaunchException
 {
+    [Serializable]
     public class LaunchException : Exception
     {
         /// <summary>

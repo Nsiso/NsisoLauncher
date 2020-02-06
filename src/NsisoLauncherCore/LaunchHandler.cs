@@ -145,7 +145,7 @@ namespace NsisoLauncherCore
                         return new LaunchResult() { IsSuccess = true, LaunchArguments = arg };
                     }
 
-                    #region 处理库文件
+                    #region 检查处理库文件
                     foreach (var item in setting.Version.Natives)
                     {
                         string nativePath = GetNativePath(item);
@@ -158,7 +158,6 @@ namespace NsisoLauncherCore
                         {
                             return new LaunchResult(new NativeNotFoundException(item, nativePath));
                         }
-
                     }
                     #endregion
 

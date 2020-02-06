@@ -12,7 +12,7 @@ using System.Windows;
 
 namespace NsisoLauncher.Config
 {
-    public class ConfigHandler
+    public class ConfigHandler : IDisposable
     {
         /// <summary>
         /// 首要配置文件路径
@@ -251,6 +251,12 @@ namespace NsisoLauncher.Config
             {
                 App.Reboot(true);
             }
+        }
+
+        public void Dispose()
+        {
+            mainconfigLock.Dispose();
+            launcherProfilesLock.Dispose();
         }
     }
 }

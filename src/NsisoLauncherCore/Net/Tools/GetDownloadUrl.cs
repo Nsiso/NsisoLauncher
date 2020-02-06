@@ -32,7 +32,8 @@ namespace NsisoLauncherCore.Net.Tools
             {MojangMetaUrl, BMCLUrl },
             {MojanglibrariesUrl, BMCLLibrariesURL },
             {MojangAssetsBaseUrl, BMCLAssetsURL },
-            {@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL }
+            {@"http://files.minecraftforge.net/maven/", BMCLLibrariesURL },
+            {@"https://files.minecraftforge.net/maven/", BMCLLibrariesURL }
         };
 
         static Dictionary<string, string> mcbbsDic = new Dictionary<string, string>()
@@ -42,7 +43,8 @@ namespace NsisoLauncherCore.Net.Tools
             {MojangMetaUrl, MCBBSUrl },
             {MojanglibrariesUrl, MCBBSLibrariesURL },
             {MojangAssetsBaseUrl, MCBBSAssetsURL },
-            {@"http://files.minecraftforge.net/maven/", MCBBSLibrariesURL }
+            {@"http://files.minecraftforge.net/maven/", MCBBSLibrariesURL },
+            {@"https://files.minecraftforge.net/maven/", MCBBSLibrariesURL }
         };
 
         public static string DoURLReplace(DownloadSource source, string url)
@@ -72,7 +74,6 @@ namespace NsisoLauncherCore.Net.Tools
             }
             return ret;
         }
-
         private static string GetLibBasePath(Library lib)
         {
             if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Path))
@@ -81,7 +82,7 @@ namespace NsisoLauncherCore.Net.Tools
             }
             else
             {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Package.Replace(".", "\\"), lib.Name, lib.Version);
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Artifact.Package.Replace(".", "\\"), lib.Artifact.Name, lib.Artifact.Version);
             }
         }
 
@@ -93,7 +94,7 @@ namespace NsisoLauncherCore.Net.Tools
             }
             else
             {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Package.Replace(".", "\\"), native.Name, native.Version, native.NativeSuffix);
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Artifact.Package.Replace(".", "\\"), native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
             }
         }
 
@@ -190,7 +191,7 @@ namespace NsisoLauncherCore.Net.Tools
         {
             string from = GetLibDownloadURL(source, lib.Value);
             string to = lib.Key;
-            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Name, from, to);
+            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, from, to);
             if (lib.Value.LibDownloadInfo != null)
             {
                 task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.SHA1, FilePath = to };
@@ -240,7 +241,7 @@ namespace NsisoLauncherCore.Net.Tools
         {
             string from = GetNativeDownloadURL(source, native.Value);
             string to = native.Key;
-            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Name, from, to);
+            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, from, to);
             if (native.Value.NativeDownloadInfo != null)
             {
                 task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.SHA1, FilePath = to };

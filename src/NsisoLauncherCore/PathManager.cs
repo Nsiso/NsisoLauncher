@@ -62,15 +62,46 @@ namespace NsisoLauncherCore
         }
 
         /// <summary>
+        /// 获取Artifact（字符串形式）路径
+        /// </summary>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <param name="artifactStr">obj</param>
+        /// <returns>路径</returns>
+        public static string GetArtifactPath(string gameRootPath, string artifactStr)
+        {
+            Artifact artifact = new Artifact(artifactStr);
+            return GetArtifactPath(gameRootPath, artifact);
+        }
+
+        /// <summary>
+        /// 获取Artifact路径
+        /// </summary>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <param name="artifact">obj</param>
+        /// <returns>路径</returns>
+        public static string GetArtifactPath(string gameRootPath, Artifact artifact)
+        {
+            if (string.IsNullOrEmpty(artifact.Classifier))
+            {
+                return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.{4}",
+                gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Extension);
+            }
+            else
+            {
+                return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.{5}",
+                gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Classifier, artifact.Extension);
+            }
+        }
+
+        /// <summary>
         /// 获取library库路径
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="lib">库</param>
-        /// <returns></returns>
-        public static string GetLibraryPath(string gameRootPath, Modules.Library lib)
+        /// <returns>路径</returns>
+        public static string GetLibraryPath(string gameRootPath, Library lib)
         {
-            return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.jar",
-                gameRootPath, lib.Package.Replace(".", @"\"), lib.Name, lib.Version);
+            return GetArtifactPath(gameRootPath, lib.Artifact);
         }
 
         /// <summary>
@@ -78,11 +109,11 @@ namespace NsisoLauncherCore
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="native">库</param>
-        /// <returns></returns>
+        /// <returns>路径</returns>
         public static string GetNativePath(string gameRootPath, Native native)
         {
             return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
-                gameRootPath, native.Package.Replace(".", @"\"), native.Name, native.Version, native.NativeSuffix);
+                gameRootPath, native.Artifact.Package.Replace(".", @"\"), native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
         }
 
         /// <summary>

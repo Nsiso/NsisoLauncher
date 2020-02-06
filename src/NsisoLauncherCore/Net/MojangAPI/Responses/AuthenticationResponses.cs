@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
@@ -59,41 +60,41 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
             [JsonProperty("username")]
             public string Username { get; set; }
 
-            [JsonProperty("registerIp")]
-            public string RegisterIp { get; set; }
+            //[JsonProperty("registerIp")]
+            //public string RegisterIp { get; set; }
 
-            [JsonProperty("registeredAt")]
-            [JsonConverter(typeof(MicrosecondEpochConverter))]
-            public DateTime RegisteredAt { get; set; }
+            //[JsonProperty("registeredAt")]
+            //[JsonConverter(typeof(UnixDateTimeConverter))]
+            //public DateTime? RegisteredAt { get; set; }
 
-            [JsonProperty("passwordChangedAt")]
-            [JsonConverter(typeof(MicrosecondEpochConverter))]
-            public DateTime PasswordChangedAt { get; set; }
+            //[JsonProperty("passwordChangedAt")]
+            //[JsonConverter(typeof(UnixDateTimeConverter))]
+            //public DateTime? PasswordChangedAt { get; set; }
 
-            [JsonProperty("dateOfBirth")]
-            [JsonConverter(typeof(MicrosecondEpochConverter))]
-            public DateTime DateOfBirth { get; set; }
+            //[JsonProperty("dateOfBirth")]
+            //[JsonConverter(typeof(UnixDateTimeConverter))]
+            //public DateTime? DateOfBirth { get; set; }
 
-            [JsonProperty("suspended")]
-            public bool? Suspended { get; set; }
+            //[JsonProperty("suspended")]
+            //public bool? Suspended { get; set; }
 
-            [JsonProperty("blocked")]
-            public bool? Blocked { get; set; }
+            //[JsonProperty("blocked")]
+            //public bool? Blocked { get; set; }
 
-            [JsonProperty("secured")]
-            public bool? Secured { get; set; }
+            //[JsonProperty("secured")]
+            //public bool? Secured { get; set; }
 
-            [JsonProperty("migrated")]
-            public bool? Migrated { get; set; }
+            //[JsonProperty("migrated")]
+            //public bool? Migrated { get; set; }
 
-            [JsonProperty("emailVerified")]
-            public bool? EmailVerified { get; set; }
+            //[JsonProperty("emailVerified")]
+            //public bool? EmailVerified { get; set; }
 
-            [JsonProperty("legacyUser")]
-            public bool? LegacyUser { get; set; }
+            //[JsonProperty("legacyUser")]
+            //public bool? LegacyUser { get; set; }
 
-            [JsonProperty("verifiedByParent")]
-            public bool? VerifiedByParent { get; set; }
+            //[JsonProperty("verifiedByParent")]
+            //public bool? VerifiedByParent { get; set; }
 
             /// <summary>
             /// 此用户的属性

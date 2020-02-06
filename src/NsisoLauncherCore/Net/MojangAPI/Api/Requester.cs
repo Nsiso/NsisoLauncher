@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static NsisoLauncherCore.Net.NetRequester;
 
 namespace NsisoLauncherCore.Net.MojangApi.Api
 {
@@ -17,12 +18,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
     /// </summary>
     public static class Requester
     {
-
-        /// <summary>
-        /// 定义http请求的超时时间.
-        /// </summary>
-        public static TimeSpan Timeout = TimeSpan.FromSeconds(5);
-
         /// <summary>
         /// 定义读取响应和写入请求的编码.
         /// </summary>
@@ -59,24 +54,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
             set { _clientToken = value; }
         }
         private static string _clientToken;
-
-        /// <summary>
-        /// 表示Web请求中使用的http客户端.
-        /// </summary>
-        internal static HttpClient Client
-        {
-            get
-            {
-                if (_client == null)
-                    _client = new HttpClient() { Timeout = Timeout };
-                return _client;
-            }
-            private set
-            {
-                _client = value;
-            }
-        }
-        private static HttpClient _client;
 
         /// <summary>
         /// 向给定endpoint发送GET请求.

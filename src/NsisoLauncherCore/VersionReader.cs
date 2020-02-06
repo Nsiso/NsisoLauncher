@@ -96,21 +96,10 @@ namespace NsisoLauncherCore
 
                 if (CheckAllowed(libObj.Rules))
                 {
-                    var parts = libObj.Name.Split(':');
-
-                    string package = parts[0];
-                    string name = parts[1];
-                    string version = parts[2];
-
                     if (libObj.Natives == null)
                     {
                         //不为native
-                        Library library = new Library()
-                        {
-                            Package = package,
-                            Name = name,
-                            Version = version
-                        };
+                        Library library = new Library(libObj.Name);
                         if (!string.IsNullOrWhiteSpace(libObj.Url))
                         {
                             library.Url = libObj.Url;
@@ -124,13 +113,7 @@ namespace NsisoLauncherCore
                     else
                     {
                         //为native
-                        var native = new Native()
-                        {
-                            Package = package,
-                            Name = name,
-                            Version = version,
-                            NativeSuffix = libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32")
-                        };
+                        Native native = new Native(libObj.Name, libObj.Natives["windows"].Replace("${arch}", SystemTools.GetSystemArch() == ArchEnum.x64 ? "64" : "32"));
                         if (libObj.Extract != null)
                         {
                             native.Exclude = libObj.Extract.Exculde;
@@ -520,3 +503,4 @@ namespace NsisoLauncherCore
         public PathSha1SizeUrl Natives { get; set; }
     }
 }
+
