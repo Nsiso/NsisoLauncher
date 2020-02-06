@@ -17,33 +17,12 @@ namespace NsisoLauncherCore.Util.Installer.Forge
      * 感谢所有对这个.NET Forge安装器有贡献的开发者
      * 如果没有这些大佬的帮助，也就不会有这个Forge安装器
      * 
+     * 特别感谢：
      * bangbang93 java方面及程序指导，以及下载服务器提供
      * []海螺螺 java方面指导
      * 33 java方面，安装思路指导
      * 喵喵喵？ 下载forge安装包和补全的时候一直用的是TA的服务器
      */
-
-    /// <summary>
-    /// 根据官方Processor写的C#类
-    /// </summary>
-    public class ForgeProcessor
-    {
-        //// The executable jar to run, The installer will run it in-process, but external tools can run it using java -jar {file}, so MANFEST Main-Class entry must be valid.
-        //public ForgeArtifact Jar { get; set; }
-
-        //// Dependency list of files needed for this jar to run. Aything listed here SHOULD be listed in {@see Install#libraries} so the installer knows to download it.
-        //public ForgeArtifact[] Classpath { get; set; }
-
-        ///*
-        // * Arguments to pass to the jar, can be in the following formats:
-        // * [Artifact] : A artifact path in the target maven style repo, where all libraries are downloaded to.
-        // * {DATA_ENTRY} : A entry in the Install#data map, extract as a file, there are a few extra specified values to allow the same processor to run on both sides:
-        // *   {MINECRAFT_JAR} - The vanilla minecraft jar we are dealing with, /versions/VERSION/VERSION.jar on the client and /minecraft_server.VERSION.jar for the server
-        // *   {SIDE} - Either the exact string "client", "server", and "extract" depending on what side we are installing.
-        // */
-        //public string[] Args { get; set; }
-    }
-
     public class DataProcessorsForgeInstaller
     {
         public string InstallerPath { get; set; }
@@ -171,9 +150,8 @@ namespace NsisoLauncherCore.Util.Installer.Forge
                 throw new JsonException("JSON has no matching format");
             }
 
-            //todo del
-            //Directory.Delete(tempPath, true);
-            //File.Delete(InstallerPath);
+            Directory.Delete(tempPath, true);
+            File.Delete(InstallerPath);
         }
 
         public async Task BeginInstallAsync(ProgressCallback monitor, CancellationToken cancellationToken)
