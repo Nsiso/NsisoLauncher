@@ -49,12 +49,12 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.Repository.LocalPath)\src\NsisoLauncher\bin\$(ReleaseBuildConfiguration)'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)\src\NsisoLauncher\bin\$(ReleaseBuildConfiguration)'
     ArtifactName: 'drop_Release'
     publishLocation: 'Container'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.Repository.LocalPath)\src\NsisoLauncher\bin\$(DebugBuildConfiguration)'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)\src\NsisoLauncher\bin\$(DebugBuildConfiguration)'
     ArtifactName: 'drop_Debug'
     publishLocation: 'Container'
