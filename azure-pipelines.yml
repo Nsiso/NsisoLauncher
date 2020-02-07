@@ -12,7 +12,8 @@ pool:
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  ReleaseBuildConfiguration: 'Release'
+  DebugBuildConfiguration: 'Debug'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -26,12 +27,24 @@ steps:
   inputs:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    configuration: '$(ReleaseBuildConfiguration)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(DebugBuildConfiguration)'
 
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    configuration: '$(ReleaseBuildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(DebugBuildConfiguration)'
+
 
 - task: PublishBuildArtifacts@1
   inputs:
