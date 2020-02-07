@@ -48,12 +48,12 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Agent.BuildDirectory)\src\NsisoLauncher\bin\Release'
+    PathtoPublish: '\bin\Release'
     ArtifactName: 'drop_Release'
     publishLocation: 'Container'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Agent.BuildDirectory)\src\NsisoLauncher\bin\Debug'
+    PathtoPublish: '\bin\Debug'
     ArtifactName: 'drop_Debug'
     publishLocation: 'Container'
