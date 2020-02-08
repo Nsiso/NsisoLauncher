@@ -59,7 +59,8 @@ namespace NsisoLauncherCore.Util.Installer
 
         public void BeginInstall(ProgressCallback callback, CancellationToken cancellationToken)
         {
-            string tempPath = PathManager.TempDirectory + "\\CommonInstallerTemp";
+            string installerName = Path.GetFileNameWithoutExtension(InstallerPath);
+            string tempPath = string.Format("{0}\\{1}Temp", PathManager.TempDirectory, installerName);
             if (Directory.Exists(tempPath))
             {
                 Directory.Delete(tempPath, true);

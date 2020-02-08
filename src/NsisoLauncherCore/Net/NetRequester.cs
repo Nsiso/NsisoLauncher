@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net
 {
     public static class NetRequester
     {
+        /// <summary>
+        /// NsisoLauncher5目前名称.
+        /// </summary>
+        public readonly static string ClientName = "NsisoLauncher";
+
+        /// <summary>
+        /// NsisoLauncher5目前版本号.
+        /// </summary>
+        public readonly static string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
         private static HttpClient _client;
         /// <summary>
         /// 表示Web请求中使用的http客户端.
@@ -18,6 +30,7 @@ namespace NsisoLauncherCore.Net
                 if (_client == null)
                 {
                     _client = new HttpClient(ClientHandler) { Timeout = NetRequester.Timeout };
+                    _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
                 }
                 return _client;
             }

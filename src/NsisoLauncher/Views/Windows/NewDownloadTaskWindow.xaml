@@ -58,25 +58,6 @@
                             Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70" Click="RefreshForgeButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Liteloader}" IsEnabled="False" Visibility="Hidden">
-                <Grid>
-                    <Label Content="要安装Liteloader的版本：" Margin="10,10,0,0" HorizontalAlignment="Left" Width="150" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="verToInstallLiteComboBox" HorizontalAlignment="Left" Margin="165,10,0,0" VerticalAlignment="Top" Width="300" DisplayMemberPath="ID" SelectionChanged="VerToInstallLiteComboBox_SelectionChanged"/>
-                    <DataGrid x:Name="liteloaderListDataGrid" Margin="10,42,10,43" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Liteloader版本" Binding="{Binding Path=Version}" IsReadOnly="True"/>
-                        </DataGrid.Columns>
-                        <DataGrid.Resources>
-                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
-                        </DataGrid.Resources>
-                    </DataGrid>
-                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}"
-                            Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Style="{StaticResource AccentedSquareButtonStyle}" Click="DownloadLiteloaderButton_Click"/>
-                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Refresh}"
-                            Margin="10,0,0,10" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70" Click="RefresLiteButton_Click"/>
-                </Grid>
-            </TabItem>
         </TabControl>
-
     </Grid>
 </controls:MetroWindow>

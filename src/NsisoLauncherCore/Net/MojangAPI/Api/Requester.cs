@@ -29,16 +29,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         public static string AuthURL = "https://authserver.mojang.com";
 
         /// <summary>
-        /// NsisoLauncher5目前名称.
-        /// </summary>
-        public readonly static string Name = "NsisoLauncher";
-
-        /// <summary>
-        /// NsisoLauncher5目前版本号.
-        /// </summary>
-        public readonly static string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-        /// <summary>
         /// 代表请求者实例的UUID.
         /// </summary>
         public static string ClientToken
@@ -76,7 +66,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                     //application/x-www-form-urlencoded
                     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                     Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                    Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version));
+                    Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
                 }
 
                 httpResponse = await Client.GetAsync(endpoint.Address);
@@ -180,7 +170,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version));
+                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.PostAsync(endpoint.Address, new FormUrlEncodedContent(toEncode));
                 rawMessage = await httpResponse.Content.ReadAsStringAsync();
@@ -251,7 +241,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version));
+                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
 
                 using (var contents = new MultipartFormDataContent())
@@ -324,7 +314,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version));
+                Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.DeleteAsync(endpoint.Address);
                 rawMessage = await httpResponse.Content.ReadAsStringAsync();

@@ -6,12 +6,6 @@ namespace NsisoLauncherCore.Net.FunctionAPI
 {
     public class APIModules
     {
-        public class JWLiteloader
-        {
-            [JsonProperty("version")]
-            public string Version { get; set; }
-        }
-
         public class JWForge
         {
             /// <summary>

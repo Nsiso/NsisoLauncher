@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
@@ -60,6 +61,10 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                                     new JProperty("requestUser", true)).ToString();
 
                 this.Response = await Requester.Post(this);
+
+                //only in debug
+                //MessageBox.Show(Response.RawMessage);
+
                 if (this.Response.IsSuccess)
                 {
                     JObject user = JObject.Parse(this.Response.RawMessage);

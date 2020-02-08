@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Util.Checker
 {
@@ -16,6 +17,11 @@ namespace NsisoLauncherCore.Util.Checker
                 throw new ArgumentException("检验器缺少校验值");
             }
             return string.Equals(CheckSum, GetFileChecksum(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public Task<bool> CheckFilePassAsync()
+        {
+            return Task.Run(() => CheckFilePass());
         }
 
         public string GetFileChecksum()

@@ -15,6 +15,8 @@ namespace NsisoLauncherCore.Net.Tools
             {
                 foreach (var item in libs)
                 {
+                    monitor.SetDoneSize(0);
+                    monitor.SetState(string.Format("补全库文件{0}", item.Name));
                     Exception exception = null;
                     for (int i = 1; i <= 3; i++)
                     {

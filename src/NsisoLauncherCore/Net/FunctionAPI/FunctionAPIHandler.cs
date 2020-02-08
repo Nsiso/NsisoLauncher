@@ -14,7 +14,6 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public string VersionListURL { get; set; } = GetDownloadUrl.MojangVersionUrl;
         public string JavaListURL { get; set; } = GetDownloadUrl.BMCLUrl + "java/list";
         public string ForgeListURL { get; set; } = GetDownloadUrl.BMCLUrl + "forge/minecraft";
-        public string LiteloaderListURL { get; set; } = GetDownloadUrl.BMCLUrl + "liteloader/list";
         public string NewListURL { get; set; } = "https://authentication.x-speed.cc/mcbbsNews/";
 
         public FunctionAPIHandler(DownloadSource lib)
@@ -30,15 +29,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
                     VersionListURL = GetDownloadUrl.BMCLVersionURL;
                     JavaListURL = GetDownloadUrl.BMCLUrl + "java/list";
                     ForgeListURL = GetDownloadUrl.BMCLUrl + "forge/minecraft";
-                    LiteloaderListURL = GetDownloadUrl.BMCLUrl + "liteloader/list";
                     break;
 
                 case DownloadSource.MCBBS:
                     VersionListURL = GetDownloadUrl.MCBBSVersionURL;
-                    VersionListURL = GetDownloadUrl.MCBBSVersionURL;
                     JavaListURL = GetDownloadUrl.MCBBSUrl + "java/list";
                     ForgeListURL = GetDownloadUrl.MCBBSUrl + "forge/minecraft";
-                    LiteloaderListURL = GetDownloadUrl.MCBBSUrl + "liteloader/list";
                     break;
             }
         }
@@ -90,18 +86,6 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         {
             string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
             var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
-            return e;
-        }
-
-        /// <summary>
-        /// 联网获取指定版本所有的Liteloader
-        /// </summary>
-        /// <param name="version">要搜索的版本</param>
-        /// <returns>Liteloader列表</returns>
-        public async Task<JWLiteloader> GetLiteloaderList(Version version)
-        {
-            string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/?mcversion={1}", LiteloaderListURL, version.ID));
-            var e = JsonConvert.DeserializeObject<JWLiteloader>(json);
             return e;
         }
     }

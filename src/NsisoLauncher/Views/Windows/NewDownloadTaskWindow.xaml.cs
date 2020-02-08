@@ -27,7 +27,6 @@ namespace NsisoLauncher.Views.Windows
     {
         ObservableCollection<JWVersion> verList = new ObservableCollection<JWVersion>();
         ObservableCollection<JWForge> forgeList = new ObservableCollection<JWForge>();
-        ObservableCollection<JWLiteloader> liteloaderList = new ObservableCollection<JWLiteloader>();
 
         private FunctionAPIHandler apiHandler;
 
@@ -37,7 +36,6 @@ namespace NsisoLauncher.Views.Windows
             InitializeComponent();
             versionListDataGrid.ItemsSource = verList;
             forgeListDataGrid.ItemsSource = forgeList;
-            liteloaderListDataGrid.ItemsSource = liteloaderList;
             ICollectionView vwV = CollectionViewSource.GetDefaultView(verList);
             vwV.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
             vwV.SortDescriptions.Add(new SortDescription("Type", ListSortDirection.Ascending));
@@ -49,7 +47,6 @@ namespace NsisoLauncher.Views.Windows
         {
             List<Version> vers = await App.Handler.GetVersionsAsync();
             verToInstallForgeComboBox.ItemsSource = vers;
-            verToInstallLiteComboBox.ItemsSource = vers;
         }
 
         private async void RefreshVersion()
@@ -136,42 +133,6 @@ namespace NsisoLauncher.Views.Windows
             }
         }
 
-        private async void RefreshLiteloader()
-        {
-            Version ver = null;
-            if (verToInstallLiteComboBox.SelectedItem != null)
-            {
-                ver = (Version)verToInstallLiteComboBox.SelectedItem;
-            }
-            else
-            {
-                await this.ShowMessageAsync("您未选择要安装Liteloader的版本", "您需要选择一个需要安装Liteloader的Minecraft本体");
-                return;
-            }
-            var loading = await this.ShowProgressAsync("获取Liteloader列表中", "请稍后");
-            loading.SetIndeterminate();
-            JWLiteloader result = new JWLiteloader();
-            liteloaderList.Clear();
-            try
-            {
-                result = await apiHandler.GetLiteloaderList(ver);
-            }
-            catch (WebException)
-            {
-                await this.ShowMessageAsync("获取Liteloader列表失败", "请检查您的网络是否正常或稍后再试");
-                return;
-            }
-            await loading.CloseAsync();
-            if (result == null)
-            {
-                await this.ShowMessageAsync("没有匹配该版本的Liteloader", "貌似没有支持这个版本的Liteloader，请尝试更换另一个版本");
-            }
-            else
-            {
-                liteloaderList.Add(result);
-            }
-        }
-
         private async void DownloadVerButton_Click(object sender, RoutedEventArgs e)
         {
             IList selectItems = versionListDataGrid.SelectedItems;
@@ -215,34 +176,6 @@ namespace NsisoLauncher.Views.Windows
             }
 
             AppendForgeDownloadTask(ver, forge);
-            this.Close();
-        }
-
-        private async void DownloadLiteloaderButton_Click(object sender, RoutedEventArgs e)
-        {
-            Version ver = null;
-            if (verToInstallLiteComboBox.SelectedItem != null)
-            {
-                ver = (Version)verToInstallLiteComboBox.SelectedItem;
-            }
-            else
-            {
-                await this.ShowMessageAsync("您未选择要安装Liteloader的Minecraft", "您需要选择一个需要安装Liteloader的Minecraft本体");
-                return;
-            }
-
-            JWLiteloader liteloader = null;
-            if (liteloaderListDataGrid.SelectedItem != null)
-            {
-                liteloader = (JWLiteloader)liteloaderListDataGrid.SelectedItem;
-            }
-            else
-            {
-                await this.ShowMessageAsync("您未选择要安装的Liteloader", "您需要选择一个要安装Liteloader");
-                return;
-            }
-
-            AppendLiteloaderDownloadTask(ver, liteloader);
             this.Close();
         }
 
@@ -312,28 +245,10 @@ namespace NsisoLauncher.Views.Windows
                         Java = App.Handler.Java
                     });
                     installer.BeginInstall(callback, cancelToken);
-                    return null;
-                }
-                catch (Exception ex)
-                { return ex; }
-            });
-            App.Downloader.AddDownloadTask(dt);
-            App.Downloader.StartDownload();
-
-        }
-
-        private void AppendLiteloaderDownloadTask(Version ver, JWLiteloader liteloader)
-        {
-            string liteloaderPath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Liteloader_{0}-Installer.jar", liteloader.Version);
-            DownloadTask dt = new DownloadTask("liteloader核心",
-                string.Format("https://bmclapi2.bangbang93.com/liteloader/download?version={0}", liteloader.Version),
-                liteloaderPath);
-            dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
-            {
-                try
-                {
-                    CommonInstaller installer = new CommonInstaller(liteloaderPath, new CommonInstallOptions() { GameRootPath = App.Handler.GameRootPath });
-                    installer.BeginInstall(callback, cancelToken);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        App.RefreshVersionList();
+                    });
                     return null;
                 }
                 catch (Exception ex)
@@ -354,19 +269,9 @@ namespace NsisoLauncher.Views.Windows
             RefreshForge();
         }
 
-        private void RefresLiteButton_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshLiteloader();
-        }
-
         private void VerToInstallForgeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             RefreshForge();
-        }
-
-        private void VerToInstallLiteComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            RefreshLiteloader();
         }
     }
 }
