@@ -152,23 +152,30 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// <returns></returns>
         public async override Task<TokenResponse> PerformRequestAsync()
         {
-            this.PostContent = new JObject(
-                                    new JProperty("accessToken", this.Arguments[0]),
-                                    new JProperty("clientToken", Requester.ClientToken)).ToString();
-
-            this.Response = await Requester.Post(this);
-
-            if (this.Response.IsSuccess)
+            try
             {
-                JObject refresh = JObject.Parse(this.Response.RawMessage);
+                this.PostContent = new JObject(
+                                   new JProperty("accessToken", this.Arguments[0]),
+                                   new JProperty("clientToken", Requester.ClientToken)).ToString();
 
-                return new TokenResponse(this.Response)
+                this.Response = await Requester.Post(this);
+
+                if (this.Response.IsSuccess)
                 {
-                    AccessToken = refresh["accessToken"].ToObject<string>()
-                };
+                    JObject refresh = JObject.Parse(this.Response.RawMessage);
+
+                    return new TokenResponse(this.Response)
+                    {
+                        AccessToken = refresh["accessToken"].ToObject<string>()
+                    };
+                }
+                else
+                    return new TokenResponse(Error.GetError(this.Response));
             }
-            else
-                return new TokenResponse(Error.GetError(this.Response));
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 
@@ -192,16 +199,23 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// </summary>
         public async override Task<Response> PerformRequestAsync()
         {
-            this.PostContent = new JObject(
+            try
+            {
+                this.PostContent = new JObject(
                                     new JProperty("accessToken", this.Arguments[0]),
                                     new JProperty("clientToken", Requester.ClientToken)).ToString();
 
-            this.Response = await Requester.Post(this);
+                this.Response = await Requester.Post(this);
 
-            if (this.Response.Code == HttpStatusCode.NoContent)
-                return new Response(this.Response) { IsSuccess = true };
-            else
-                return new Response(Error.GetError(this.Response));
+                if (this.Response.Code == HttpStatusCode.NoContent)
+                    return new Response(this.Response) { IsSuccess = true };
+                else
+                    return new Response(Error.GetError(this.Response));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 

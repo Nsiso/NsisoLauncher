@@ -513,6 +513,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (authResult.State)
                     {
                         case AuthState.SUCCESS:
+                            #region 成功登陆
                             #region 检验
                             if (authResult.SelectedProfileUUID == null)
                             {
@@ -527,7 +528,6 @@ namespace NsisoLauncher.ViewModels.Pages
                                 return;
                             }
                             #endregion
-
                             launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                             launchUser.UserData = authResult.UserData;
                             if (authResult.Profiles != null)
@@ -540,18 +540,27 @@ namespace NsisoLauncher.ViewModels.Pages
                                 launchUser.AccessToken = authResult.AccessToken;
                             }
                             launchSetting.AuthenticateResult = authResult;
+                            #endregion
                             break;
+
                         case AuthState.REQ_LOGIN:
+                            #region 要求再次登陆
                             //todo 添加更好的注销服务
                             launchUser.ClearAuthCache();
                             await MainWindowVM.ShowMessageAsync("验证失败：您的登录信息已过期",
                                 string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
+                            #endregion
                             return;
+
                         case AuthState.ERR_INVALID_CRDL:
+                            #region 错误的验证信息/禁止访问
                             await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
-                                string.Format("请您确认您输入的账号密码正确。具体信息：{0}", authResult.Error.ErrorMessage));
+                                string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
+                            #endregion
                             return;
+
                         case AuthState.ERR_NOTFOUND:
+                            #region 页面未找到
                             if (LaunchAuthNode.AuthType == AuthenticationType.CUSTOM_SERVER || LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                             {
                                 await MainWindowVM.ShowMessageAsync("验证失败：代理验证服务器地址有误或账号未找到",
@@ -563,7 +572,9 @@ namespace NsisoLauncher.ViewModels.Pages
                                 await MainWindowVM.ShowMessageAsync("验证失败：您的账号未找到",
                                 string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
                             }
+                            #endregion
                             return;
+
                         case AuthState.ERR_OTHER:
                             await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
                                 string.Format("具体信息：{0}", authResult.Error.ErrorMessage));

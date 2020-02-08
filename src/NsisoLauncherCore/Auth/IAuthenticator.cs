@@ -8,8 +8,6 @@ namespace NsisoLauncherCore.Auth
 {
     public interface IAuthenticator
     {
-        AuthenticateResult DoAuthenticate();
-
         Task<AuthenticateResult> DoAuthenticateAsync();
     }
 
@@ -39,6 +37,7 @@ namespace NsisoLauncherCore.Auth
         REQ_LOGIN,
         ERR_INVALID_CRDL,
         ERR_NOTFOUND,
+        ERR_METHOD_NOT_ALLOW,
         ERR_OTHER,
         ERR_INSIDE
     }

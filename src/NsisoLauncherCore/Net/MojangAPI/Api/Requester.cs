@@ -173,8 +173,8 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.PostAsync(endpoint.Address, new FormUrlEncodedContent(toEncode));
-                rawMessage = await httpResponse.Content.ReadAsStringAsync();
                 httpResponse.EnsureSuccessStatusCode();
+                rawMessage = await httpResponse.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {

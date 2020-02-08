@@ -445,10 +445,7 @@ namespace NsisoLauncherCore.Net
                     #region 下载流程
                     using (var getResult = await NetRequester.Client.GetAsync(task.From, cancelToken))
                     {
-                        if (!getResult.IsSuccessStatusCode)
-                        {
-                            throw new HttpRequestException(string.Format("Error:{0} When request{1}", getResult.StatusCode, task.From));
-                        }
+                        getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
                         using (Stream responseStream = await getResult.Content.ReadAsStreamAsync())
                         {
