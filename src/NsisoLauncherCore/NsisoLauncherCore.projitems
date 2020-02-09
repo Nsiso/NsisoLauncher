@@ -146,6 +146,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\FileHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\GameHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\CommonInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Fabric\FabricInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\Actions\PostProcessors.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\ForgeInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\Json\Install.cs" />

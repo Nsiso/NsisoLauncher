@@ -63,7 +63,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 定义http请求的超时时间.
         /// </summary>
-        public static TimeSpan Timeout = TimeSpan.FromSeconds(5);
+        public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
 
         public async static Task<HttpResponseMessage> HttpGetAsync(string uri)

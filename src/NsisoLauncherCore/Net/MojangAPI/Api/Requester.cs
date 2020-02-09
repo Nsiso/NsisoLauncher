@@ -55,7 +55,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
 
             HttpResponseMessage httpResponse = null;
-            Error error = null;
             string rawMessage = null;
 
             try
@@ -75,11 +74,17 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
             }
             catch (Exception ex)
             {
-                error = new Error()
+                return new Response()
                 {
-                    ErrorMessage = ex.Message,
-                    ErrorTag = ex.Message,
-                    Exception = ex
+                    Code = httpResponse.StatusCode,
+                    RawMessage = rawMessage,
+                    IsSuccess = false,
+                    Error = new Error()
+                    {
+                        ErrorMessage = ex.Message,
+                        ErrorTag = ex.Message,
+                        Exception = ex
+                    }
                 };
             }
             return new Response()
@@ -93,9 +98,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                             httpResponse.StatusCode == HttpStatusCode.Found ||
                             httpResponse.StatusCode == HttpStatusCode.OK ||
                             httpResponse.StatusCode == HttpStatusCode.PartialContent ||
-                            httpResponse.StatusCode == HttpStatusCode.NoContent) &&
-                            error == null,
-                Error = error
+                            httpResponse.StatusCode == HttpStatusCode.NoContent)
             };
 
         }
@@ -113,7 +116,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 throw new ArgumentNullException("PostContent", "PostContent should not be null.");
 
             HttpResponseMessage httpResponse = null;
-            Error error = null;
             string rawMessage = null;
 
             try
@@ -125,11 +127,17 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
             }
             catch (Exception ex)
             {
-                error = new Error()
+                return new Response()
                 {
-                    ErrorMessage = ex.Message,
-                    ErrorTag = ex.Message,
-                    Exception = ex
+                    Code = httpResponse.StatusCode,
+                    RawMessage = rawMessage,
+                    IsSuccess = false,
+                    Error = new Error()
+                    {
+                        ErrorMessage = ex.Message,
+                        ErrorTag = ex.Message,
+                        Exception = ex
+                    }
                 };
             }
 
@@ -143,9 +151,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                             httpResponse.StatusCode == HttpStatusCode.Created ||
                             httpResponse.StatusCode == HttpStatusCode.Found ||
                             httpResponse.StatusCode == HttpStatusCode.OK ||
-                            httpResponse.StatusCode == HttpStatusCode.PartialContent) &&
-                            error == null,
-                Error = error
+                            httpResponse.StatusCode == HttpStatusCode.PartialContent)
             };
         }
 
@@ -173,8 +179,8 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.PostAsync(endpoint.Address, new FormUrlEncodedContent(toEncode));
-                httpResponse.EnsureSuccessStatusCode();
                 rawMessage = await httpResponse.Content.ReadAsStringAsync();
+                httpResponse.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
