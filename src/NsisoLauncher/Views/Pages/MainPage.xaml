@@ -65,8 +65,6 @@
             <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
         </ToggleButton>
 
-        <userControl:ServerInfoControl x:Name="serverInfoControl" Height="125" Margin="10,10,118,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-
         <Grid Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Rectangle>
                 <Rectangle.Fill>

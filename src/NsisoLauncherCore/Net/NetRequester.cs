@@ -17,7 +17,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// NsisoLauncher5目前版本号.
         /// </summary>
-        public readonly static string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public readonly static string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.Major.ToString();
 
         private static HttpClient _client;
         /// <summary>
@@ -74,7 +74,7 @@ namespace NsisoLauncherCore.Net
             }
             catch (TaskCanceledException)
             {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return null;
             }
         }
 
@@ -85,7 +85,7 @@ namespace NsisoLauncherCore.Net
             {
                 return await Client.GetStringAsync(uri);
             }
-            catch (TaskCanceledException)
+            catch (Exception)
             {
                 return null;
             }
@@ -99,7 +99,7 @@ namespace NsisoLauncherCore.Net
             }
             catch (TaskCanceledException)
             {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return null;
             }
         }
 
@@ -110,7 +110,7 @@ namespace NsisoLauncherCore.Net
                 var result = await HttpPostAsync(uri, arg);
                 return await result.Content.ReadAsStringAsync();
             }
-            catch (TaskCanceledException)
+            catch (Exception)
             {
                 return null;
             }

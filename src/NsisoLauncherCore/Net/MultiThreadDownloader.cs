@@ -325,27 +325,6 @@ namespace NsisoLauncherCore.Net
 
                         await HTTPDownload(item, cancelToken);
 
-                        #region 校验
-                        if (CheckFileHash && item.Checker != null && File.Exists(item.To))
-                        {
-                            item.SetState("校验中");
-                            if (!(await item.Checker.CheckFilePassAsync()))
-                            {
-                                item.SetState("校验失败");
-                                ApendDebugLog(string.Format("{0}校验哈希值失败，目标哈希值:{1}", item.TaskName, item.Checker.CheckSum));
-                                File.Delete(item.To);
-                                if (!_errorList.ContainsKey(item))
-                                {
-                                    _errorList.Add(item, new Exception("文件校验失败"));
-                                }
-                            }
-                            else
-                            {
-                                item.SetState("校验成功");
-                            }
-                        }
-                        #endregion
-
                         #region 执行下载后函数
                         if (item.Todo != null)
                         {
@@ -434,7 +413,18 @@ namespace NsisoLauncherCore.Net
                     }
                     if (File.Exists(realFilename))
                     {
-                        return;
+                        if (CheckFileHash && task.Checker != null)
+                        {
+                            task.SetState("校验中");
+                            if (await task.Checker.CheckFilePassAsync())
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            File.Delete(realFilename);
+                        }
                     }
                     if (File.Exists(buffFilename))
                     {
@@ -469,6 +459,23 @@ namespace NsisoLauncherCore.Net
 
                     //下载完成后转正
                     File.Move(buffFilename, realFilename);
+
+                    #region 下载后校验
+                    if (CheckFileHash && task.Checker != null)
+                    {
+                        task.SetState("校验中");
+                        if (!(await task.Checker.CheckFilePassAsync()))
+                        {
+                            task.SetState("校验失败");
+                            ApendDebugLog(string.Format("{0}校验哈希值失败，目标哈希值:{1}", task.TaskName, task.Checker.CheckSum));
+                            throw new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", task.TaskName, task.Checker.CheckSum));
+                        }
+                        else
+                        {
+                            task.SetState("校验成功");
+                        }
+                    }
+                    #endregion
 
                     //无错误跳出重试循环
                     exception = null;
