@@ -15,6 +15,10 @@ namespace NsisoLauncherCore.Net.Nide8API
         public async Task<APIModules> GetInfoAsync()
         {
             string json = await NetRequester.HttpGetStringAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
             return await Task.Factory.StartNew(() =>
             {
                 return JsonConvert.DeserializeObject<APIModules>(json);

@@ -268,12 +268,15 @@ namespace NsisoLauncherCore.Util
                 if (!File.Exists(innerJsonPath))
                 {
                     innerJsonStr = await NetRequester.HttpGetStringAsync(GetDownloadUrl.GetCoreJsonDownloadURL(source, version.InheritsVersion));
-                    string jsonFolder = Path.GetDirectoryName(innerJsonPath);
-                    if (!Directory.Exists(jsonFolder))
+                    if (!string.IsNullOrWhiteSpace(innerJsonStr))
                     {
-                        Directory.CreateDirectory(jsonFolder);
+                        string jsonFolder = Path.GetDirectoryName(innerJsonPath);
+                        if (!Directory.Exists(jsonFolder))
+                        {
+                            Directory.CreateDirectory(jsonFolder);
+                        }
+                        File.WriteAllText(innerJsonPath, innerJsonStr);
                     }
-                    File.WriteAllText(innerJsonPath, innerJsonStr);
                 }
                 else
                 {
@@ -318,8 +321,11 @@ namespace NsisoLauncherCore.Util
                 {
                     string jsonUrl = GetDownloadUrl.DoURLReplace(source, ver.AssetIndex.URL);
                     string assetsJson = await NetRequester.HttpGetStringAsync(jsonUrl);
-                    assets = core.GetAssetsByJson(assetsJson);
-                    tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
+                    if (!string.IsNullOrWhiteSpace(assetsJson))
+                    {
+                        assets = core.GetAssetsByJson(assetsJson);
+                        tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
+                    }
                 }
                 else
                 {

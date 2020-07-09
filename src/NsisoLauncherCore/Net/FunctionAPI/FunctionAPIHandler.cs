@@ -51,8 +51,15 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWVersion>> GetVersionList()
         {
             string json = await NetRequester.HttpGetStringAsync(VersionListURL);
-            var e = JsonConvert.DeserializeObject<JWVersions>(json);
-            return e.Versions;
+            if (!string.IsNullOrEmpty(json))
+            {
+                var e = JsonConvert.DeserializeObject<JWVersions>(json);
+                return e.Versions;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -62,6 +69,10 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWJava>> GetJavaList()
         {
             string json = await NetRequester.HttpGetStringAsync(JavaListURL);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
             var e = JsonConvert.DeserializeObject<List<JWJava>>(json);
             return e;
         }
@@ -73,6 +84,10 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWNews>> GetNewList()
         {
             string json = await NetRequester.HttpGetStringAsync(NewListURL);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
             var e = JsonConvert.DeserializeObject<List<JWNews>>(json);
             return e;
         }
@@ -85,6 +100,10 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWForge>> GetForgeList(Version version)
         {
             string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
             var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
             return e;
         }

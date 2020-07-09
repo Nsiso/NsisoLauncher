@@ -186,6 +186,11 @@ namespace NsisoLauncher.Views.Windows
                 foreach (JWVersion item in list)
                 {
                     string json = await NetRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
+                    if (string.IsNullOrWhiteSpace(json))
+                    {
+                        await this.ShowMessageAsync("获取版本Json失败", "请检查您的网络是否正常或更改下载源");
+                        return;
+                    }
                     NsisoLauncherCore.Modules.Version ver = App.Handler.JsonToVersion(json);
                     string jsonPath = App.Handler.GetJsonPath(ver.ID);
 

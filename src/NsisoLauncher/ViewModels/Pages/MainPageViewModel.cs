@@ -638,7 +638,11 @@ namespace NsisoLauncher.ViewModels.Pages
                     string aiJarPath = App.Handler.GetAIJarPath();
                     if (!File.Exists(aiJarPath))
                     {
-                        lostDepend.Add(await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource, aiJarPath));
+                        DownloadTask aicore = await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource, aiJarPath);
+                        if (aicore != null)
+                        {
+                            lostDepend.Add(aicore);
+                        }
                     }
                 }
 
