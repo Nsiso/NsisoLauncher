@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -65,6 +66,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                     //application/x-www-form-urlencoded
                     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                     Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    Client.DefaultRequestHeaders.AcceptLanguage.Add(
+                        new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.Name)
+                    );
                     Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
                 }
 
@@ -120,6 +124,10 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
 
             try
             {
+                Client.DefaultRequestHeaders.AcceptLanguage.Add(
+                    new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.Name)
+                );
+
                 StringContent contents = new StringContent(endpoint.PostContent, Encoding, "application/json");
                 httpResponse = await Client.PostAsync(endpoint.Address, contents);
                 rawMessage = await httpResponse.Content.ReadAsStringAsync();
@@ -176,6 +184,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                Client.DefaultRequestHeaders.AcceptLanguage.Add(
+                    new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.Name)
+                );
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.PostAsync(endpoint.Address, new FormUrlEncodedContent(toEncode));
@@ -247,6 +258,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                Client.DefaultRequestHeaders.AcceptLanguage.Add(
+                    new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.Name)
+                );
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
 
@@ -320,6 +334,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
                 //application/x-www-form-urlencoded
                 Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", endpoint.Arguments[0]);
                 Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                Client.DefaultRequestHeaders.AcceptLanguage.Add(
+                    new StringWithQualityHeaderValue(CultureInfo.CurrentCulture.Name)
+                );
                 Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
 
                 httpResponse = await Client.DeleteAsync(endpoint.Address);
