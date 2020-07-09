@@ -7,7 +7,7 @@
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Dialog:DialogParticipation.Register="{Binding}"
+        Dialog:DialogParticipation.Register="{Binding}" WindowTitleBrush="{DynamicResource AccentBaseColorBrush}"
         Title="{Binding WindowTitle}" MinHeight="445" MinWidth="750" ShowMaxRestoreButton="False" ShowMinButton="True"
         WindowState="{Binding WindowState}" WindowTransitionsEnabled="False" Background="{DynamicResource AccentBaseColorBrush}"
         Closing="mainWindow_Closing">

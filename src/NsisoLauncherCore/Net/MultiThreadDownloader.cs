@@ -433,7 +433,7 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    using (var getResult = await NetRequester.Client.GetAsync(task.From, HttpCompletionOption.ResponseHeadersRead, cancelToken))
+                    using (var getResult = await NetRequester.Client.GetAsync(task.From, cancelToken))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());

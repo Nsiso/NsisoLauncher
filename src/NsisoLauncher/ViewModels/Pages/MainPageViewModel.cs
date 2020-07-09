@@ -23,6 +23,7 @@ using System.Threading;
 using System.Windows.Media;
 using System.Windows.Controls;
 using NsisoLauncherCore;
+using System.Runtime.CompilerServices;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -65,11 +66,13 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public double Volume { get; set; } = 0.5;
 
-        public Uri MediaSource { get; set; }
+        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
 
-        public bool IsPlaying { get; set; }
+        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
 
-        public string BackgroundImageSource { get; set; } = "../../Resource/bg.jpg";
+        public bool IsPlaying { get; set; } = true;
+
+        public double BlurRadius { get; set; } = 100;
         #endregion
 
         public ViewModels.Windows.MainWindowViewModel MainWindowVM { get; set; }
@@ -881,7 +884,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (files.Count() != 0)
                 {
                     Random random = new Random();
-                    BackgroundImageSource = files[random.Next(files.Count())];
+                    MediaSource = files[random.Next(files.Count())];
                     //ImageBrush brush = new ImageBrush(new BitmapImage(new Uri()))
                     //{ TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
                     //this.Background = brush;
@@ -932,7 +935,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (files.Count() != 0)
                 {
                     Random random = new Random();
-                    MediaSource = new Uri(files[random.Next(files.Count())]);
+                    MediaSource = files[random.Next(files.Count())];
                     Volume = 0;
                     await Task.Factory.StartNew(() =>
                     {
@@ -1045,13 +1048,15 @@ namespace NsisoLauncher.ViewModels.Pages
         public event PropertyChangedEventHandler PropertyChanged;
     }
 
-    public class MainPageDesignViewModel
+    public class MainPageDesignViewModel : MainPageViewModel
     {
-        /// <summary>
-        /// 是否在启动
-        /// </summary>
-        public bool IsLaunching { get; set; } = false;
+        public MainPageDesignViewModel() : base(new Windows.MainWindowViewModel(null))
+        {
+            IsLaunching = false;
+            IsPlaying = false;
+            MediaSource = null;
+        }
 
-        public string BackgroundImageSource { get; set; } = "../../Resource/bg.jpg";
+        
     }
 }

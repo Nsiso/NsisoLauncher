@@ -18,18 +18,19 @@
         <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
     </Page.Resources>
     <Grid>
+
         <Grid x:Name="bgGrid">
-            <Image Source="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
-            <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
-                                   IsPlaying="{Binding IsPlaying}" d:DataContext="{x:Null}"/>
+            <Image Source="{Binding StaticMediaSource}" Stretch="UniformToFill"/>
+            <MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"
+                                  Stretch="UniformToFill"/>
         </Grid>
         <Grid HorizontalAlignment="Right" Width="280" Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
-            <Rectangle x:Name="blurBackgroundRect">
-                <Rectangle.Effect>
-                    <BlurEffect Radius="20"/>
-                </Rectangle.Effect>
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
+            <Border x:Name="blurBackgroundRect">
+                <Border.Effect>
+                    <BlurEffect Radius="{Binding BlurRadius}"/>
+                </Border.Effect>
+                <Border.Background>
+                    <VisualBrush Stretch="Fill" Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
                         <VisualBrush.Viewbox>
                             <MultiBinding Converter="{StaticResource visualBrushTargetConverter}">
                                 <Binding ElementName="bgGrid"/>
@@ -39,8 +40,8 @@
                             </MultiBinding>
                         </VisualBrush.Viewbox>
                     </VisualBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Border.Background>
+            </Border>
             <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6"/>
             <!--#endregion-->
             <userControl:MainPanelControl Margin="10"
@@ -71,7 +72,7 @@
                     <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
                 </Rectangle.Fill>
                 <Rectangle.Effect>
-                    <BlurEffect Radius="20"/>
+                    <BlurEffect Radius="{Binding BlurRadius}"/>
                 </Rectangle.Effect>
             </Rectangle>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

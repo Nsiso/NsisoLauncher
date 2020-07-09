@@ -373,7 +373,7 @@
                                           Text="{Binding Customize.AccentColor}" HorizontalAlignment="Left" Width="200"/>
                                 <Label Content="启动器主题:"/>
                                 <ComboBox x:Name="appThmeComboBox" SelectionChanged="appThmeComboBox_SelectionChanged" DisplayMemberPath="Name"
-                                          Text="{Binding Customize.AppThme}" HorizontalAlignment="Left" Width="200"/>
+                                          Text="{Binding Customize.AppTheme}" HorizontalAlignment="Left" Width="200"/>
                             </StackPanel>
                         </Expander>
 

@@ -383,7 +383,7 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 主题Thme
         /// </summary>
-        public string AppThme { get; set; }
+        public string AppTheme { get; set; }
 
         /// <summary>
         /// 启动器标题

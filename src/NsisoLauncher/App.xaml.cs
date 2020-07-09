@@ -1,5 +1,6 @@
 ﻿
 using MahApps.Metro;
+using MahApps.Metro.Controls;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Views.Windows;
@@ -25,14 +26,41 @@ namespace NsisoLauncher
     /// </summary>
     public partial class App : Application
     {
+        #region 全局属性
+        /// <summary>
+        /// 启动主模块
+        /// </summary>
         public static LaunchHandler Handler { get; private set; }
+
+        /// <summary>
+        /// 应用配置文件
+        /// </summary>
         public static ConfigHandler Config { get; private set; }
+
+        /// <summary>
+        /// 下载核心
+        /// </summary>
         public static MultiThreadDownloader Downloader { get; private set; }
+
+        /// <summary>
+        /// 日志处理器
+        /// </summary>
         public static LogHandler LogHandler { get; private set; }
-        public static List<Java> JavaList { get; private set; }
-        public static ObservableCollection<Version> VersionList { get; private set; }
+
+        /// <summary>
+        /// 应用API
+        /// </summary>
         public static NsisoLauncherCore.Net.PhalAPI.APIHandler NsisoAPIHandler { get; private set; }
 
+        #region 全局数据属性
+
+        /// <summary>
+        /// JAVA本机列表
+        /// </summary>
+        public static List<Java> JavaList { get; private set; }
+        public static ObservableCollection<Version> VersionList { get; private set; }
+        #endregion
+        #endregion
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
 
@@ -71,6 +99,32 @@ namespace NsisoLauncher
             }
             LogHandler.WriteToFile = Config.MainConfig.Launcher.WriteLog;
             #endregion
+
+            #region 自定义主题初始化
+            //todo 恢复自定义主题初始化
+            var custom = Config.MainConfig.Customize;
+            Accent accent = null;
+            AppTheme theme = null;
+            if (!string.IsNullOrWhiteSpace(custom.AccentColor))
+            {
+                LogHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
+                accent = ThemeManager.GetAccent(custom.AccentColor);
+            }
+            if (!string.IsNullOrWhiteSpace(custom.AppTheme))
+            {
+                LogHandler.AppendInfo("自定义->更改主题:" + custom.AppTheme);
+                theme = ThemeManager.GetAppTheme(custom.AppTheme);
+            }
+            if (accent == null)
+            {
+                accent = ThemeManager.GetAccent("Blue");
+            }
+            if (theme == null)
+            {
+                theme = ThemeManager.GetAppTheme("BaseLight");
+            }
+            ThemeManager.ChangeAppStyle(this, accent, theme);
+            #endregion    
 
             #region Nsiso反馈API初始化
 
@@ -164,16 +218,6 @@ namespace NsisoLauncher
             Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
             Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
             #endregion
-
-            #region 自定义主题初始化
-            var custom = Config.MainConfig.Customize;
-            if (!string.IsNullOrWhiteSpace(custom.AccentColor) && !string.IsNullOrWhiteSpace(custom.AppThme))
-            {
-                LogHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
-                LogHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
-                ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent(custom.AccentColor), ThemeManager.GetAppTheme(custom.AppThme));
-            }
-            #endregion    
 
             MainWindow mainwindow = new MainWindow();
             this.MainWindow = mainwindow;

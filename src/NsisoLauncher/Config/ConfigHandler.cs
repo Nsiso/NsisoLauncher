@@ -231,7 +231,7 @@ namespace NsisoLauncher.Config
                     CustomBackGroundMusic = false,
                     CustomBackGroundPicture = false,
                     AccentColor = "Blue",
-                    AppThme = "BaseLight"
+                    AppTheme = "BaseLight"
                 },
                 ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };

@@ -20,7 +20,7 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
                     apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
                     break;
             }
-            string json = await NetRequester.HttpGetStringAsync(apiBase);
+            var json = await NetRequester.HttpGetStringAsync(apiBase);
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;

@@ -1,5 +1,6 @@
 ﻿using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
+using NsisoLauncher.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +23,8 @@ namespace NsisoLauncher.ViewModels.Pages
             LoadedCommand = new DelegateCommand(async (a) =>
             {
                 await App.RefreshVersionListAsync();
-                MainWindowVM.NavigationService.Navigate(new Views.Pages.MainPage(mainWindowVM));
+                MainPage mainPage = new MainPage(mainWindowVM);
+                MainWindowVM.NavigationService.Navigate(mainPage);
             });
         }
 
