@@ -26,7 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\NetRequester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\AuthlibInjectorAPI\APIHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\CrafatarAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Question.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\RecordReader.cs" />
