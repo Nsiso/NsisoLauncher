@@ -20,7 +20,12 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
                     apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
                     break;
             }
-            var json = await NetRequester.HttpGetStringAsync(apiBase);
+            var jsonRespond = await NetRequester.Client.GetAsync(apiBase);
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;
@@ -28,7 +33,7 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
             var jobj = JObject.Parse(json);
             string downloadURL = jobj.Value<string>("download_url");
             string sha256 = jobj["checksums"].Value<string>("sha256");
-            DownloadTask downloadTask = new DownloadTask("AuthlibInjector核心", downloadURL, downloadTo);
+            DownloadTask downloadTask = new DownloadTask("AuthlibInjector核心", new StringUrl(downloadURL), downloadTo);
             downloadTask.Checker = new Util.Checker.SHA256Checker()
             {
                 CheckSum = sha256,

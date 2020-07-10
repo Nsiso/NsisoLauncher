@@ -215,7 +215,7 @@ namespace NsisoLauncherCore.Util
             return lostAssets;
         }
 
-        public static async Task<bool> IsLostAssetsAsync(DownloadSource source, LaunchHandler core, Version ver)
+        public static async Task<bool> IsLostAssetsAsync(LaunchHandler core, Version ver)
         {
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
@@ -248,7 +248,7 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(DownloadSource source, LaunchHandler core, Version version)
+        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, Version version)
         {
             var lostLibs = GetLostLibs(core, version);
             var lostNatives = GetLostNatives(core, version);
@@ -257,7 +257,7 @@ namespace NsisoLauncherCore.Util
             {
                 if (version.Jar == null)
                 {
-                    tasks.Add(GetDownloadUrl.GetCoreJarDownloadTask(source, version, core));
+                    tasks.Add(GetDownloadUrl.GetCoreJarDownloadTask(version, core));
                 }
             }
 
@@ -267,16 +267,21 @@ namespace NsisoLauncherCore.Util
                 string innerJsonStr;
                 if (!File.Exists(innerJsonPath))
                 {
-                    innerJsonStr = await NetRequester.HttpGetStringAsync(GetDownloadUrl.GetCoreJsonDownloadURL(source, version.InheritsVersion));
-                    if (!string.IsNullOrWhiteSpace(innerJsonStr))
-                    {
-                        string jsonFolder = Path.GetDirectoryName(innerJsonPath);
-                        if (!Directory.Exists(jsonFolder))
-                        {
-                            Directory.CreateDirectory(jsonFolder);
-                        }
-                        File.WriteAllText(innerJsonPath, innerJsonStr);
-                    }
+                    //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(GetDownloadUrl.GetCoreJsonDownloadURL(version.InheritsVersion));
+                    //if (jsonRespond.IsSuccessStatusCode)
+                    //{
+                    //    innerJsonPath = await jsonRespond.Content.ReadAsStringAsync();
+                    //}
+                    //if (!string.IsNullOrWhiteSpace(innerJsonStr))
+                    //{
+                    //    string jsonFolder = Path.GetDirectoryName(innerJsonPath);
+                    //    if (!Directory.Exists(jsonFolder))
+                    //    {
+                    //        Directory.CreateDirectory(jsonFolder);
+                    //    }
+                    //    File.WriteAllText(innerJsonPath, innerJsonStr);
+                    //}
+                    throw new Exception("缺少inner json");
                 }
                 else
                 {
@@ -285,17 +290,17 @@ namespace NsisoLauncherCore.Util
                 Version innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(source, core, innerVer));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer));
                 }
 
             }
             foreach (var item in lostLibs)
             {
-                tasks.Add(GetDownloadUrl.GetLibDownloadTask(source, item));
+                tasks.Add(GetDownloadUrl.GetLibDownloadTask(item));
             }
             foreach (var item in lostNatives)
             {
-                tasks.Add(GetDownloadUrl.GetNativeDownloadTask(source, item));
+                tasks.Add(GetDownloadUrl.GetNativeDownloadTask(item));
             }
             return tasks;
         }
@@ -309,7 +314,7 @@ namespace NsisoLauncherCore.Util
         /// <param name="core"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostAssetsDownloadTaskAsync(DownloadSource source, LaunchHandler core, Version ver)
+        public static List<DownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
         {
             List<DownloadTask> tasks = new List<DownloadTask>();
             JAssets assets = null;
@@ -319,13 +324,19 @@ namespace NsisoLauncherCore.Util
             {
                 if (ver.AssetIndex != null)
                 {
-                    string jsonUrl = GetDownloadUrl.DoURLReplace(source, ver.AssetIndex.URL);
-                    string assetsJson = await NetRequester.HttpGetStringAsync(jsonUrl);
-                    if (!string.IsNullOrWhiteSpace(assetsJson))
-                    {
-                        assets = core.GetAssetsByJson(assetsJson);
-                        tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
-                    }
+                    string jsonUrl = ver.AssetIndex.URL;
+                    tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
+                    //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
+                    //string assetsJson = null;
+                    //if (jsonRespond.IsSuccessStatusCode)
+                    //{
+                    //    assetsJson = await jsonRespond.Content.ReadAsStringAsync();
+                    //}
+                    //if (!string.IsNullOrWhiteSpace(assetsJson))
+                    //{
+                    //    assets = core.GetAssetsByJson(assetsJson);
+                    //    tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
+                    //}
                 }
                 else
                 {
@@ -339,7 +350,7 @@ namespace NsisoLauncherCore.Util
             var lostAssets = GetLostAssets(core, assets);
             foreach (var item in lostAssets)
             {
-                DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(source, item.Value, core);
+                DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(item.Value, core);
                 tasks.Add(task);
             }
             return tasks;

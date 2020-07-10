@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
 using System;
 using System.IO;
 using System.Threading;
@@ -37,7 +38,7 @@ namespace NsisoLauncherCore.Util.Installer
 
         public Modules.Version VersionToInstall { get; set; }
 
-        public DownloadSource DownloadSource { get; set; }
+        public IMirror Mirror { get; set; }
 
         public Java Java { get; set; }
     }

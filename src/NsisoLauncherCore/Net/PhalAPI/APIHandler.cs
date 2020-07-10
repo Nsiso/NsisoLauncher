@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.PhalAPI
@@ -33,7 +34,12 @@ namespace NsisoLauncherCore.Net.PhalAPI
                 args.Add("where", "[[\"id\", \">\", \"0\"]]");
                 //仅返回一条（即ID最高的最新版本）
                 args.Add("perpage", "1");
-                string result = await NetRequester.HttpPostReadAsStringForString(APIUrl + "?s=App.Table.FreeQuery", args);
+                HttpResponseMessage resultRespond = await NetRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
+                if (!resultRespond.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+                string result = await resultRespond.Content.ReadAsStringAsync();
                 PhalApiClientResponse desObj = JsonConvert.DeserializeObject<PhalApiClientResponse>(result);
                 JObject listJobj = desObj.Data;
                 NsisoLauncherVersionListResponse list = listJobj.ToObject<NsisoLauncherVersionListResponse>();
@@ -58,7 +64,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
             args.Add("app_key", App_key);
             args.Add("super_type", level.ToString());
             args.Add("super_message", log);
-            var result = await NetRequester.HttpPostReadAsStringForString(APIUrl + "?s=App.Market_SuperLogger.Record", args);
+            var result = await NetRequester.HttpPostAsync(APIUrl + "?s=App.Market_SuperLogger.Record", args);
             Console.WriteLine(result);
         }
 

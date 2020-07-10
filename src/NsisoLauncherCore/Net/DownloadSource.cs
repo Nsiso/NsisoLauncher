@@ -2,8 +2,9 @@
 {
     public enum DownloadSource
     {
-        Mojang = 0,
-        BMCLAPI = 1,
-        MCBBS = 2
+        Auto = 0,
+        Mojang = 1,
+        BMCLAPI = 2,
+        MCBBS = 3
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -185,7 +186,12 @@ namespace NsisoLauncher.Views.Windows
             {
                 foreach (JWVersion item in list)
                 {
-                    string json = await NetRequester.HttpGetStringAsync(apiHandler.DoURLReplace(item.Url));
+                    HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(App.Downloader.Mirror.DoDownloadUrlReplace(item.Url));
+                    string json = null;
+                    if (jsonRespond.IsSuccessStatusCode)
+                    {
+                        json = await jsonRespond.Content.ReadAsStringAsync();
+                    }
                     if (string.IsNullOrWhiteSpace(json))
                     {
                         await this.ShowMessageAsync("获取版本Json失败", "请检查您的网络是否正常或更改下载源");
@@ -205,9 +211,9 @@ namespace NsisoLauncher.Views.Windows
 
                     List<DownloadTask> tasks = new List<DownloadTask>();
 
-                    tasks.Add(new DownloadTask("资源引导", apiHandler.DoURLReplace(ver.AssetIndex.URL), App.Handler.GetAssetsIndexPath(ver.Assets)));
+                    tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.URL), App.Handler.GetAssetsIndexPath(ver.Assets)));
 
-                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Config.MainConfig.Download.DownloadSource, App.Handler, ver));
+                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver));
 
                     App.Downloader.AddDownloadTask(tasks);
                     App.Downloader.StartDownload();
@@ -235,7 +241,7 @@ namespace NsisoLauncher.Views.Windows
         {
             string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
             DownloadTask dt = new DownloadTask("forge核心",
-                string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build),
+                new StringUrl(string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build)),
                 forgePath);
             dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
@@ -246,7 +252,7 @@ namespace NsisoLauncher.Views.Windows
                         GameRootPath = App.Handler.GameRootPath,
                         IsClient = true,
                         VersionToInstall = ver,
-                        DownloadSource = App.Config.MainConfig.Download.DownloadSource,
+                        Mirror = App.Downloader.Mirror,
                         Java = App.Handler.Java
                     });
                     installer.BeginInstall(callback, cancelToken);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Net.Mirrors;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -9,7 +10,7 @@ namespace NsisoLauncherCore.Net.Tools
 {
     public class DownloadUtils
     {
-        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, DownloadSource source, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
+        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
         {
             try
             {
@@ -22,7 +23,7 @@ namespace NsisoLauncherCore.Net.Tools
                     {
                         try
                         {
-                            string from = GetDownloadUrl.DoURLReplace(source, item.Downloads.Artifact.URL);
+                            string from = mirror.DoDownloadUrlReplace(item.Downloads.Artifact.URL);
                             string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
                             string buffFilename = to + ".downloadtask";
 

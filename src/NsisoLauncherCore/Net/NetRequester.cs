@@ -10,12 +10,12 @@ namespace NsisoLauncherCore.Net
     public static class NetRequester
     {
         /// <summary>
-        /// NsisoLauncher5目前名称.
+        /// NsisoLauncher目前名称.
         /// </summary>
         public readonly static string ClientName = "NsisoLauncher";
 
         /// <summary>
-        /// NsisoLauncher5目前版本号.
+        /// NsisoLauncher目前版本号.
         /// </summary>
         public readonly static string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -29,7 +29,7 @@ namespace NsisoLauncherCore.Net
             {
                 if (_client == null)
                 {
-                    _client = new HttpClient(ClientHandler) { Timeout = NetRequester.Timeout };
+                    _client = new HttpClient(ClientHandler) {/* Timeout = NetRequester.Timeout */};
                     _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
                 }
                 return _client;
@@ -60,36 +60,10 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        /// <summary>
-        /// 定义http请求的超时时间.
-        /// </summary>
-        public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
-
-
-        public async static Task<HttpResponseMessage> HttpGetAsync(string uri)
-        {
-            try
-            {
-                return await Client.GetAsync(uri);
-            }
-            catch (TaskCanceledException)
-            {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-            }
-        }
-
-        public async static Task<string> HttpGetStringAsync(string uri)
-        {
-
-            try
-            {
-                return await Client.GetStringAsync(uri);
-            }
-            catch (TaskCanceledException)
-            {
-                return null;
-            }
-        }
+        ///// <summary>
+        ///// 定义http请求的超时时间.
+        ///// </summary>
+        //public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
         public async static Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
@@ -100,19 +74,6 @@ namespace NsisoLauncherCore.Net
             catch (TaskCanceledException)
             {
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-            }
-        }
-
-        public async static Task<string> HttpPostReadAsStringForString(string uri, Dictionary<string, string> arg)
-        {
-            try
-            {
-                var result = await HttpPostAsync(uri, arg);
-                return await result.Content.ReadAsStringAsync();
-            }
-            catch (TaskCanceledException)
-            {
-                return null;
             }
         }
     }

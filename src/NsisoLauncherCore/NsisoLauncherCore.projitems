@@ -24,6 +24,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\BmclMirror.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\IMirror.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\McbbsMirror.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\NetRequester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\AuthlibInjectorAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Dns\Header.cs" />

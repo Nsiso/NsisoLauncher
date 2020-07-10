@@ -1,5 +1,6 @@
 ﻿using Heijden.DNS;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Nide8API
@@ -14,7 +15,12 @@ namespace NsisoLauncherCore.Net.Nide8API
 
         public async Task<APIModules> GetInfoAsync()
         {
-            string json = await NetRequester.HttpGetStringAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
+            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;

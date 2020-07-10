@@ -624,7 +624,6 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
-                    App.Config.MainConfig.Download.DownloadSource,
                     App.Handler,
                     launchSetting.Version);
 
@@ -633,7 +632,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     string nideJarPath = App.Handler.GetNide8JarPath();
                     if (!File.Exists(nideJarPath))
                     {
-                        lostDepend.Add(new DownloadTask("统一通行证核心", "https://login2.nide8.com:233/index/jar", nideJarPath));
+                        lostDepend.Add(new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), nideJarPath));
                     }
                 }
                 else if (LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
@@ -675,8 +674,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
 
                 App.LogHandler.AppendInfo("检查丢失的资源文件中...");
-                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Config.MainConfig.Download.DownloadSource,
-                    App.Handler, launchSetting.Version)))
+                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Handler, launchSetting.Version)))
                 {
                     MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
@@ -690,8 +688,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (downDependResult)
                     {
                         case MessageDialogResult.Affirmative:
-                            var lostAssets = await FileHelper.GetLostAssetsDownloadTaskAsync(
-                                App.Config.MainConfig.Download.DownloadSource,
+                            var lostAssets = FileHelper.GetLostAssetsDownloadTaskAsync(
                                 App.Handler, launchSetting.Version);
                             losts.AddRange(lostAssets);
                             break;
@@ -974,13 +971,13 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x86.exe", "jre_x86.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
                             App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", @"https://bmclapi.bangbang93.com/java/jre_x64.exe", "jre_x64.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
                             App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");

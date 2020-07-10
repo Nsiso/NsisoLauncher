@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,12 +50,17 @@ namespace NsisoLauncherCore.Util
         public Dictionary<string, JAssetsInfo> Objects { get; set; }
     }
 
-    public class JAssetsInfo
+    public class JAssetsInfo : IDownloadable
     {
         [JsonProperty("hash")]
         public string Hash { get; set; }
 
         [JsonProperty("size")]
         public int Size { get; set; }
+
+        public string GetDownloadSourceURL()
+        {
+            return GetDownloadUrl.GetAssetsDownloadURL(this);
+        }
     }
 }

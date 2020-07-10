@@ -204,6 +204,9 @@
                     <StackPanel x:Name="downloadGrid" Margin="10,0">
                         <Expander Header="{StaticResource String.Settingwindow.Download.Source}" Margin="0,0,0,5">
                             <StackPanel>
+                                <RadioButton Content="{StaticResource String.Settingwindow.Download.Source.Auto}"
+                                             IsChecked="{Binding Download.DownloadSource,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Auto}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Download.Source.Mojang}"
                                              IsChecked="{Binding Download.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Mojang}}" Margin="0,0,0,5"/>

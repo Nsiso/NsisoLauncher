@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 
@@ -12,8 +14,8 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public DownloadSource Source { get; private set; }
 
         public string VersionListURL { get; set; } = GetDownloadUrl.MojangVersionUrl;
-        public string JavaListURL { get; set; } = GetDownloadUrl.BMCLUrl + "java/list";
-        public string ForgeListURL { get; set; } = GetDownloadUrl.BMCLUrl + "forge/minecraft";
+        public string JavaListURL { get; set; } = BmclMirror.BMCLUrl + "java/list";
+        public string ForgeListURL { get; set; } = BmclMirror.BMCLUrl + "forge/minecraft";
         public string NewListURL { get; set; } = "https://authentication.x-speed.cc/mcbbsNews/";
 
         public FunctionAPIHandler(DownloadSource lib)
@@ -26,22 +28,17 @@ namespace NsisoLauncherCore.Net.FunctionAPI
                     break;
 
                 case DownloadSource.BMCLAPI:
-                    VersionListURL = GetDownloadUrl.BMCLVersionURL;
-                    JavaListURL = GetDownloadUrl.BMCLUrl + "java/list";
-                    ForgeListURL = GetDownloadUrl.BMCLUrl + "forge/minecraft";
+                    VersionListURL = BmclMirror.BMCLVersionURL;
+                    JavaListURL = BmclMirror.BMCLUrl + "java/list";
+                    ForgeListURL = BmclMirror.BMCLUrl + "forge/minecraft";
                     break;
 
                 case DownloadSource.MCBBS:
-                    VersionListURL = GetDownloadUrl.MCBBSVersionURL;
-                    JavaListURL = GetDownloadUrl.MCBBSUrl + "java/list";
-                    ForgeListURL = GetDownloadUrl.MCBBSUrl + "forge/minecraft";
+                    VersionListURL = McbbsMirror.MCBBSVersionURL;
+                    JavaListURL = McbbsMirror.MCBBSUrl + "java/list";
+                    ForgeListURL = McbbsMirror.MCBBSUrl + "forge/minecraft";
                     break;
             }
-        }
-
-        public string DoURLReplace(string url)
-        {
-            return GetDownloadUrl.DoURLReplace(Source, url);
         }
 
         /// <summary>
@@ -50,7 +47,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>版本列表</returns>
         public async Task<List<JWVersion>> GetVersionList()
         {
-            string json = await NetRequester.HttpGetStringAsync(VersionListURL);
+            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(VersionListURL);
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (!string.IsNullOrEmpty(json))
             {
                 var e = JsonConvert.DeserializeObject<JWVersions>(json);
@@ -68,7 +70,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>JAVA列表</returns>
         public async Task<List<JWJava>> GetJavaList()
         {
-            string json = await NetRequester.HttpGetStringAsync(JavaListURL);
+            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(JavaListURL);
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;
@@ -83,7 +90,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>新闻列表</returns>
         public async Task<List<JWNews>> GetNewList()
         {
-            string json = await NetRequester.HttpGetStringAsync(NewListURL);
+            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(NewListURL);
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;
@@ -99,7 +111,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// <returns>Forge列表</returns>
         public async Task<List<JWForge>> GetForgeList(Version version)
         {
-            string json = await NetRequester.HttpGetStringAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
+            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(string.Format("{0}/{1}", ForgeListURL, version.ID));
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
             if (string.IsNullOrWhiteSpace(json))
             {
                 return null;

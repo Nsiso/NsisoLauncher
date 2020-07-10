@@ -9,10 +9,10 @@ namespace NsisoLauncherCore.Net
 {
     public class DownloadTask : INotifyPropertyChanged
     {
-        public DownloadTask(string name, string from, string to)
+        public DownloadTask(string name, IDownloadable downloadable, string to)
         {
             this.TaskName = name;
-            this.From = from;
+            this.Downloadable = downloadable;
             this.To = to;
         }
 
@@ -22,9 +22,9 @@ namespace NsisoLauncherCore.Net
         public string TaskName { get; set; }
 
         /// <summary>
-        /// 任务下载来源URL
+        /// 任务下载来源
         /// </summary>
-        public string From { get; set; }
+        public IDownloadable Downloadable { get; set; }
 
         /// <summary>
         /// 下载到路径

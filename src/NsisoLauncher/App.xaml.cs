@@ -7,6 +7,7 @@ using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows;
 using Version = NsisoLauncherCore.Modules.Version;
@@ -213,6 +215,24 @@ namespace NsisoLauncher
                     proxy.Credentials = credential;
                 }
                 Downloader.Proxy = proxy;
+            }
+            switch (App.Config.MainConfig.Download.DownloadSource)
+            {
+                case DownloadSource.Auto:
+                    Downloader.Mirror = new McbbsMirror();
+                    break;
+                case DownloadSource.Mojang:
+                    Downloader.Mirror = null;
+                    break;
+                case DownloadSource.BMCLAPI:
+                    Downloader.Mirror = new BmclMirror();
+                    break;
+                case DownloadSource.MCBBS:
+                    Downloader.Mirror = new McbbsMirror();
+                    break;
+                default:
+                    Downloader.Mirror = null;
+                    break;
             }
             Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
             Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;

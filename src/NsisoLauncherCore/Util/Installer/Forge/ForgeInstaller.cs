@@ -85,7 +85,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
                 throw new FileNotFoundException("Minecraft jar is not exists");
             }
 
-            var exc = DownloadUtils.DownloadForgeJLibraries(monitor, Options.DownloadSource, cancellationToken, profile.Libraries, librariesDir);
+            var exc = DownloadUtils.DownloadForgeJLibraries(monitor, Options.Mirror, cancellationToken, profile.Libraries, librariesDir);
             if (exc != null)
             {
                 throw exc;

@@ -164,6 +164,7 @@
     <sys:String x:Key="String.Settingwindow.Env.Note">*请注意：本页面(全局设置)中大部分设置需要重启启动器后才能生效</sys:String>
     <sys:String x:Key="String.Settingwindow.Download">下载设置</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source">首选下载源</sys:String>
+    <sys:String x:Key="String.Settingwindow.Download.Source.Auto">自动选择最优下载源</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.Mojang">Mojang官方</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.BMCLAPI">BMCLAPI (bangbang93's minecraft launcher api)</sys:String>
     <sys:String x:Key="String.Settingwindow.Download.Source.MCBBS">BMCLAPI (MCBBS镜像源)</sys:String>

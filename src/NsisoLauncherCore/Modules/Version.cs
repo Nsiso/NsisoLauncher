@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -137,7 +139,7 @@ namespace NsisoLauncherCore.Modules
     #endregion
 
     #region Library
-    public class Library
+    public class Library : IDownloadable
     {
         public Artifact Artifact { get; set; }
 
@@ -155,10 +157,15 @@ namespace NsisoLauncherCore.Modules
         {
             this.Artifact = new Artifact(descriptor);
         }
+
+        public string GetDownloadSourceURL()
+        {
+            return GetDownloadUrl.GetLibDownloadURL(this);
+        }
     }
 
 
-    public class Native : Library
+    public class Native : Library , IDownloadable
     {
         /// <summary>
         /// windows系统修改后缀
@@ -178,6 +185,10 @@ namespace NsisoLauncherCore.Modules
         public Native(string descriptor, string nativeSuffix) : base(descriptor)
         {
             this.NativeSuffix = nativeSuffix;
+        }
+        public new string GetDownloadSourceURL()
+        {
+            return GetDownloadUrl.GetNativeDownloadURL(this);
         }
     }
 

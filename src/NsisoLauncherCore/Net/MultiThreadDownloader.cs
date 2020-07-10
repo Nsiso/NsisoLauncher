@@ -13,6 +13,7 @@ using System.Timers;
 using NsisoLauncherCore.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
+using NsisoLauncherCore.Net.Mirrors;
 
 namespace NsisoLauncherCore.Net
 {
@@ -106,6 +107,12 @@ namespace NsisoLauncherCore.Net
         /// 重新下载尝试次数
         /// </summary>
         public int RetryTimes { get; set; } = 3;
+
+        /// <summary>
+        /// 下载源
+        /// </summary>
+        public IMirror Mirror { get; set; }
+
 
         public IEnumerable<DownloadTask> DownloadTaskList { get => ViewDownloadTasks.AsEnumerable(); }
         #endregion
@@ -387,8 +394,21 @@ namespace NsisoLauncherCore.Net
         /// <param name="cancelToken">取消的token</param>
         private async Task HTTPDownload(DownloadTask task, CancellationToken cancelToken)
         {
+            string from = null;
+
+            #region 镜像站替换URL处理
+            if (Mirror != null)
+            {
+                from = Mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
+            }
+            else
+            {
+                from = task.Downloadable.GetDownloadSourceURL();
+            }
+            #endregion
+
             #region 检查是否空值
-            if (string.IsNullOrWhiteSpace(task.From) || string.IsNullOrWhiteSpace(task.To))
+            if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(task.To))
             {
                 return;
             }
@@ -433,7 +453,7 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    using (var getResult = await NetRequester.Client.GetAsync(task.From, cancelToken))
+                    using (var getResult = await NetRequester.Client.GetAsync(from, cancelToken))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
@@ -530,7 +550,8 @@ namespace NsisoLauncherCore.Net
 
         private void SendDownloadErrLog(DownloadTask task, Exception ex)
         {
-            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.ERROR, Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}", task.TaskName, task.From, ex.ToString()) });
+            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.ERROR, Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
+                task.TaskName, task.Downloadable.GetDownloadSourceURL(), ex.ToString()) });
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {
