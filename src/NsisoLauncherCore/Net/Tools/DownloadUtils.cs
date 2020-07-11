@@ -5,11 +5,13 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
 {
     public class DownloadUtils
     {
+       
         public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
         {
             try

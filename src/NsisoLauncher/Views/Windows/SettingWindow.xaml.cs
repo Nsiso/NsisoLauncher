@@ -2,6 +2,8 @@
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -49,6 +51,27 @@ namespace NsisoLauncher.Views.Windows
             if (e.PropertyName == "CheckDownloadFileHash")
             {
                 App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+            }
+            if (e.PropertyName == "DownloadSource")
+            {
+                switch (App.Config.MainConfig.Download.DownloadSource)
+                {
+                    case DownloadSource.Auto:
+                        App.Downloader.Mirror = new McbbsMirror();
+                        break;
+                    case DownloadSource.Mojang:
+                        App.Downloader.Mirror = null;
+                        break;
+                    case DownloadSource.BMCLAPI:
+                        App.Downloader.Mirror = new BmclMirror();
+                        break;
+                    case DownloadSource.MCBBS:
+                        App.Downloader.Mirror = new McbbsMirror();
+                        break;
+                    default:
+                        App.Downloader.Mirror = null;
+                        break;
+                }
             }
         }
 

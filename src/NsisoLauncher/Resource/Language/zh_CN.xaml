@@ -96,7 +96,9 @@
     <sys:String x:Key="String.Downloadwindow.TaskName">任务名称</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskProgress">下载进度</sys:String>
     <sys:String x:Key="String.Downloadwindow.TaskTo">下载到目标</sys:String>
-    <sys:String x:Key="String.Downloadwindow.TaskFrom">下载源</sys:String>
+    <sys:String x:Key="String.Downloadwindow.TaskFrom">使用下载源</sys:String>
+    <sys:String x:Key="String.Downloadwindow.TaskReplaceFrom">当前下载地址</sys:String>
+    <sys:String x:Key="String.Downloadwindow.TaskOriginFrom">原下载地址</sys:String>
     <sys:String x:Key="String.Downloadwindow.CancelDownload">取消下载</sys:String>
     <sys:String x:Key="String.Downloadwindow.DownloadComplete">下载完成</sys:String>
     <sys:String x:Key="String.Downloadwindow.DownloadComplete2">所有任务已成功下载</sys:String>

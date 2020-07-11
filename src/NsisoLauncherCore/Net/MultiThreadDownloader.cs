@@ -400,11 +400,14 @@ namespace NsisoLauncherCore.Net
             if (Mirror != null)
             {
                 from = Mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
+                task.UIFrom = Mirror.MirrorName;
             }
             else
             {
                 from = task.Downloadable.GetDownloadSourceURL();
+                task.UIFrom = "Mojang";
             }
+            task.UIReplaceFrom = from;
             #endregion
 
             #region 检查是否空值

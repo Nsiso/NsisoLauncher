@@ -68,11 +68,11 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
 
-        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
+        public string MediaSource { get; set; } = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";
 
         public bool IsPlaying { get; set; } = true;
 
-        public double BlurRadius { get; set; } = 100;
+        public double BlurRadius { get; set; } = 20;
         #endregion
 
         public ViewModels.Windows.MainWindowViewModel MainWindowVM { get; set; }

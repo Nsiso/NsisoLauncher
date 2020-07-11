@@ -12,6 +12,8 @@ namespace NsisoLauncherCore.Net.Mirrors
         public const string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
         public const string BMCLAssetsURL = BMCLUrl + "objects/";
 
+        public string MirrorName { get; set; } = "BmclAPI";
+
         public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>()
         {
             {GetDownloadUrl.MojangVersionUrl, BMCLVersionURL },

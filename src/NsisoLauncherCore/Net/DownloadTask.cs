@@ -14,6 +14,7 @@ namespace NsisoLauncherCore.Net
             this.TaskName = name;
             this.Downloadable = downloadable;
             this.To = to;
+            this.OriginFrom = downloadable.GetDownloadSourceURL();
         }
 
         /// <summary>
@@ -25,6 +26,11 @@ namespace NsisoLauncherCore.Net
         /// 任务下载来源
         /// </summary>
         public IDownloadable Downloadable { get; set; }
+
+        /// <summary>
+        /// 下载原本来源
+        /// </summary>
+        public string OriginFrom { get; set; }
 
         /// <summary>
         /// 下载到路径
@@ -84,6 +90,35 @@ namespace NsisoLauncherCore.Net
                 OnPropertyChanged("State");
             }
         }
+
+        private string _uiFrom;
+        /// <summary>
+        /// UI上显示下载源
+        /// </summary>
+        public string UIFrom
+        {
+            get { return _uiFrom; }
+            set 
+            {
+                _uiFrom = value;
+                OnPropertyChanged("UIFrom");
+            }
+        }
+
+        private string _uiReplaceFrom;
+        /// <summary>
+        /// UI上显示下载源
+        /// </summary>
+        public string UIReplaceFrom
+        {
+            get { return _uiReplaceFrom; }
+            set
+            {
+                _uiReplaceFrom = value;
+                OnPropertyChanged("UIReplaceFrom");
+            }
+        }
+
 
         #endregion
 

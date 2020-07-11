@@ -8,6 +8,8 @@ namespace NsisoLauncherCore.Net.Mirrors
     {
         Dictionary<string, string> ReplaceDictionary { get; set; }
 
+        string MirrorName { get; set; }
+
         string DoDownloadUrlReplace(string source);
     }
 }
