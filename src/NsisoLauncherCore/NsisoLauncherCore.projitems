@@ -139,6 +139,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ServerInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\DownloadUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\MirrorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\AssetsReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\IChecker.cs" />

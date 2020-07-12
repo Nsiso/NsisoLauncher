@@ -14,6 +14,8 @@ using NsisoLauncherCore.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 using NsisoLauncherCore.Net.Mirrors;
+using System.Net.NetworkInformation;
+using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncherCore.Net
 {
@@ -109,10 +111,9 @@ namespace NsisoLauncherCore.Net
         public int RetryTimes { get; set; } = 3;
 
         /// <summary>
-        /// 下载源
+        /// 下载源列表
         /// </summary>
-        public IMirror Mirror { get; set; }
-
+        public IList<IMirror> MirrorList { get; set; }
 
         public IEnumerable<DownloadTask> DownloadTaskList { get => ViewDownloadTasks.AsEnumerable(); }
         #endregion
@@ -184,6 +185,7 @@ namespace NsisoLauncherCore.Net
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private ManualResetEventSlim _pauseResetEvent = new ManualResetEventSlim(true);
         private SynchronizationContext sc;
+        private IMirror mirror = null;
 
         /// <summary>
         /// 清除全部下载任务
@@ -267,7 +269,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 开始下载
         /// </summary>
-        public void StartDownload()
+        public async Task StartDownload()
         {
             try
             {
@@ -290,6 +292,11 @@ namespace NsisoLauncherCore.Net
                     _workers = new Task[ProcessorSize];
                     _timer.Start();
 
+                    if (MirrorList?.Count != 0)
+                    {
+                        mirror = await MirrorHelper.ChooseBestMirror(MirrorList);
+                    }
+
                     #region 新建工作线程
                     for (int i = 0; i < ProcessorSize; i++)
                     {
@@ -298,19 +305,19 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 监控线程
-                    Task.Run(() =>
-                    {
-                        try
-                        {
-                            Task.WaitAll(_workers);
-                            CompleteDownload();
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            SendFatalLog(ex, "下载监视线程发生异常");
-                        }
-                    });
+                    _ = Task.Run(() =>
+                       {
+                           try
+                           {
+                               Task.WaitAll(_workers);
+                               CompleteDownload();
+                               return;
+                           }
+                           catch (Exception ex)
+                           {
+                               SendFatalLog(ex, "下载监视线程发生异常");
+                           }
+                       });
                     #endregion
                 }
             }
@@ -394,21 +401,7 @@ namespace NsisoLauncherCore.Net
         /// <param name="cancelToken">取消的token</param>
         private async Task HTTPDownload(DownloadTask task, CancellationToken cancelToken)
         {
-            string from = null;
-
-            #region 镜像站替换URL处理
-            if (Mirror != null)
-            {
-                from = Mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
-                task.UIFrom = Mirror.MirrorName;
-            }
-            else
-            {
-                from = task.Downloadable.GetDownloadSourceURL();
-                task.UIFrom = "Mojang";
-            }
-            task.UIReplaceFrom = from;
-            #endregion
+            string from = task.Downloadable.GetDownloadSourceURL();
 
             #region 检查是否空值
             if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(task.To))
@@ -420,6 +413,15 @@ namespace NsisoLauncherCore.Net
             string realFilename = task.To;
             string buffFilename = realFilename + ".downloadtask";
             Exception exception = null;
+
+            #region 镜像站替换URL处理
+            if (mirror != null)
+            {
+                from = mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
+                task.UIFrom = mirror.MirrorName;
+            }
+            task.UIReplaceFrom = from;
+            #endregion
 
             for (int i = 1; i <= RetryTimes; i++)
             {

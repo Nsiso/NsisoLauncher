@@ -216,22 +216,25 @@ namespace NsisoLauncher
                 }
                 Downloader.Proxy = proxy;
             }
+            if (Downloader.MirrorList == null)
+            {
+                Downloader.MirrorList = new List<IMirror>();
+            }
             switch (App.Config.MainConfig.Download.DownloadSource)
             {
                 case DownloadSource.Auto:
-                    Downloader.Mirror = new McbbsMirror();
+                    Downloader.MirrorList.Add(new McbbsMirror());
+                    Downloader.MirrorList.Add(new BmclMirror());
                     break;
                 case DownloadSource.Mojang:
-                    Downloader.Mirror = null;
                     break;
                 case DownloadSource.BMCLAPI:
-                    Downloader.Mirror = new BmclMirror();
+                    Downloader.MirrorList.Add(new BmclMirror());
                     break;
                 case DownloadSource.MCBBS:
-                    Downloader.Mirror = new McbbsMirror();
+                    Downloader.MirrorList.Add(new McbbsMirror());
                     break;
                 default:
-                    Downloader.Mirror = null;
                     break;
             }
             Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;

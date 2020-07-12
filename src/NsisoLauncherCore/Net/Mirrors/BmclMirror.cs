@@ -13,6 +13,7 @@ namespace NsisoLauncherCore.Net.Mirrors
         public const string BMCLAssetsURL = BMCLUrl + "objects/";
 
         public string MirrorName { get; set; } = "BmclAPI";
+        public string BaseDomain { get; set; } = "bmclapi2.bangbang93.com";
 
         public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>()
         {

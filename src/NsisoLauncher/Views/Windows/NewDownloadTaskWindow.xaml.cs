@@ -2,6 +2,8 @@
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.FunctionAPI;
+using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util.Installer;
 using NsisoLauncherCore.Util.Installer.Forge;
 using System;
@@ -176,7 +178,7 @@ namespace NsisoLauncher.Views.Windows
                 return;
             }
 
-            AppendForgeDownloadTask(ver, forge);
+            await AppendForgeDownloadTask(ver, forge);
             this.Close();
         }
 
@@ -186,7 +188,7 @@ namespace NsisoLauncher.Views.Windows
             {
                 foreach (JWVersion item in list)
                 {
-                    HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(App.Downloader.Mirror.DoDownloadUrlReplace(item.Url));
+                    HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync((await MirrorHelper.ChooseBestMirror(App.Downloader.MirrorList)).DoDownloadUrlReplace(item.Url));
                     string json = null;
                     if (jsonRespond.IsSuccessStatusCode)
                     {
@@ -216,7 +218,7 @@ namespace NsisoLauncher.Views.Windows
                     tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver));
 
                     App.Downloader.AddDownloadTask(tasks);
-                    App.Downloader.StartDownload();
+                    await App.Downloader.StartDownload();
                 }
             }
             catch (WebException ex)
@@ -237,12 +239,13 @@ namespace NsisoLauncher.Views.Windows
 
         }
 
-        private void AppendForgeDownloadTask(Version ver, JWForge forge)
+        private async Task AppendForgeDownloadTask(Version ver, JWForge forge)
         {
             string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
             DownloadTask dt = new DownloadTask("forge核心",
                 new StringUrl(string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build)),
                 forgePath);
+            IMirror mirror = await MirrorHelper.ChooseBestMirror(App.Downloader.MirrorList);
             dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
                 try
@@ -252,7 +255,7 @@ namespace NsisoLauncher.Views.Windows
                         GameRootPath = App.Handler.GameRootPath,
                         IsClient = true,
                         VersionToInstall = ver,
-                        Mirror = App.Downloader.Mirror,
+                        Mirror = mirror,
                         Java = App.Handler.Java
                     });
                     installer.BeginInstall(callback, cancelToken);
@@ -266,7 +269,7 @@ namespace NsisoLauncher.Views.Windows
                 { return ex; }
             });
             App.Downloader.AddDownloadTask(dt);
-            App.Downloader.StartDownload();
+            await App.Downloader.StartDownload();
 
         }
 

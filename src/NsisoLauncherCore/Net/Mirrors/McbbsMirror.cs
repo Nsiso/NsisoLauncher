@@ -13,6 +13,7 @@ namespace NsisoLauncherCore.Net.Mirrors
         public const string MCBBSAssetsURL = MCBBSUrl + "objects/";
 
         public string MirrorName { get; set; } = "MCBBS-BmclAPI";
+        public string BaseDomain { get; set; } = "download.mcbbs.net";
 
         public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>()
         {

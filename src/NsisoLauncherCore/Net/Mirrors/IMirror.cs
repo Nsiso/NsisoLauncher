@@ -10,6 +10,8 @@ namespace NsisoLauncherCore.Net.Mirrors
 
         string MirrorName { get; set; }
 
+        string BaseDomain { get; set; }
+
         string DoDownloadUrlReplace(string source);
     }
 }

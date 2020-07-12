@@ -68,7 +68,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
 
-        public string MediaSource { get; set; } = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";
+        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
 
         public bool IsPlaying { get; set; } = true;
 
@@ -706,7 +706,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     if (!App.Downloader.IsBusy)
                     {
                         App.Downloader.AddDownloadTask(losts);
-                        App.Downloader.StartDownload();
+                        await App.Downloader.StartDownload();
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
                         {
@@ -972,13 +972,13 @@ namespace NsisoLauncher.ViewModels.Pages
                     {
                         case ArchEnum.x32:
                             App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
-                            App.Downloader.StartDownload();
+                            await App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
                             App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
-                            App.Downloader.StartDownload();
+                            await App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
                             break;

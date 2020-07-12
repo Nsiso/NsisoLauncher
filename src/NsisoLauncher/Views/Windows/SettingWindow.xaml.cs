@@ -54,24 +54,31 @@ namespace NsisoLauncher.Views.Windows
             }
             if (e.PropertyName == "DownloadSource")
             {
+                if (App.Downloader.MirrorList == null)
+                {
+                    App.Downloader.MirrorList = new List<IMirror>();
+                }
                 switch (App.Config.MainConfig.Download.DownloadSource)
                 {
                     case DownloadSource.Auto:
-                        App.Downloader.Mirror = new McbbsMirror();
+                        App.Downloader.MirrorList.Add(new McbbsMirror());
+                        App.Downloader.MirrorList.Add(new BmclMirror());
                         break;
                     case DownloadSource.Mojang:
-                        App.Downloader.Mirror = null;
                         break;
                     case DownloadSource.BMCLAPI:
-                        App.Downloader.Mirror = new BmclMirror();
+                        App.Downloader.MirrorList.Add(new BmclMirror());
                         break;
                     case DownloadSource.MCBBS:
-                        App.Downloader.Mirror = new McbbsMirror();
+                        App.Downloader.MirrorList.Add(new McbbsMirror());
                         break;
                     default:
-                        App.Downloader.Mirror = null;
                         break;
                 }
+            }
+            if (e.PropertyName == "DownloadThreadsSize")
+            {
+                App.Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
             }
         }
 
