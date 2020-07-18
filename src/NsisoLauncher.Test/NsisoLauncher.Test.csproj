@@ -21,5 +21,7 @@
     <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
   </ItemGroup>
-  <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\NsisoLauncherCore\NsisoLauncherCore.csproj" />
+  </ItemGroup>
 </Project>

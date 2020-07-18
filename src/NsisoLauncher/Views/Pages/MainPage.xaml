@@ -10,7 +10,6 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:converters="clr-namespace:NsisoLauncher.Utils"
       mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainPageDesignViewModel, IsDesignTimeCreatable=True}"
       d:DesignHeight="450" d:DesignWidth="800"
@@ -21,16 +20,16 @@
     <Grid>
         <Grid x:Name="bgGrid">
             <Image Source="{Binding BackgroundImageSource}" Stretch="UniformToFill"/>
-            <media:MediaElementWrapper x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}" Visibility="Collapsed"
-                                   IsPlaying="{Binding IsPlaying}" d:DataContext="{x:Null}"/>
+            <MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"
+                                  Stretch="UniformToFill"/>
         </Grid>
         <Grid HorizontalAlignment="Right" Width="280">
-            <Rectangle x:Name="blurBackgroundRect">
-                <Rectangle.Effect>
-                    <BlurEffect Radius="20"/>
-                </Rectangle.Effect>
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
+            <Border x:Name="blurBackgroundRect">
+                <Border.Effect>
+                    <BlurEffect Radius="{Binding BlurRadius}"/>
+                </Border.Effect>
+                <Border.Background>
+                    <VisualBrush Stretch="Fill" Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
                         <VisualBrush.Viewbox>
                             <MultiBinding Converter="{StaticResource visualBrushTargetConverter}">
                                 <Binding ElementName="bgGrid"/>
@@ -40,8 +39,8 @@
                             </MultiBinding>
                         </VisualBrush.Viewbox>
                     </VisualBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Border.Background>
+            </Border>
             <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6"/>
             <!--#endregion-->
             <userControl:MainPanelControl Margin="10"
@@ -61,7 +60,7 @@
         <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"
                       Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
                       IsChecked="{Binding IsPlaying}"
-                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource bool2VisibilityConverter}}"
+                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource BooleanToVisibilityConverter}}"
                 >
             <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
         </ToggleButton>

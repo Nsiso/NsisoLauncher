@@ -8,8 +8,8 @@
         xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
         xmlns:util="clr-namespace:NsisoLauncher.Utils"
         xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
-        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
-        xmlns:net="clr-namespace:NsisoLauncherCore.Net"
+        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore"
+        xmlns:net="clr-namespace:NsisoLauncherCore.Net;assembly=NsisoLauncherCore"
         xmlns:vm="clr-namespace:NsisoLauncher.ViewModels"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
         mc:Ignorable="d"
@@ -24,7 +24,7 @@
     </Controls:MetroWindow.Resources>
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.TabControl.xaml" />
         </Grid.Resources>
         <TabControl x:Name="tabControl" Margin="0,0,0,50">
 
@@ -36,22 +36,22 @@
                             <StackPanel>
                                 <Controls:ToggleSwitch
                                 x:Name="isAutoJavaToggle"
-                                OnLabel="{StaticResource String.Settingwindow.Env.Java.AutoOn}"
-                                OffLabel="{StaticResource String.Settingwindow.Env.Java.AutoOff}"
-                                Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                IsChecked="{Binding Path=Environment.AutoJava}"
+                                OnContent="{StaticResource String.Settingwindow.Env.Java.AutoOn}"
+                                OffContent="{StaticResource String.Settingwindow.Env.Java.AutoOff}"
+                                Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                IsOn="{Binding Path=Environment.AutoJava}"
                                 />
                                 <Label Content="{StaticResource String.Settingwindow.Env.Java.Path}" Margin="0,10,0,0"/>
                                 <ComboBox x:Name="javaPathComboBox"
                                       IsEditable="True"
                                       IsReadOnly="True"
-                                      IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"
+                                      IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"
                                       DisplayMemberPath="Path"
                                       Text="{Binding Environment.JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
                                       />
-                                <Label x:Name="javaInfoLabel" IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"/>
+                                <Label x:Name="javaInfoLabel" IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"/>
                                 <Button x:Name="chooseJavaButton" Content="{StaticResource String.Settingwindow.Env.Java.Select}" Margin="0,5,0,0"
-                                    IsEnabled="{Binding IsChecked, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}" Click="chooseJavaButton_Click"
+                                    IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}" Click="chooseJavaButton_Click"
                                     />
                                 <TextBlock TextWrapping="Wrap" Text="*修改java后需重启启动器以生效" Margin="0,10,0,0"/>
                             </StackPanel>
@@ -59,10 +59,10 @@
                         <Expander Header="{StaticResource String.Settingwindow.Env.Root}" Margin="0,0,0,5">
                             <StackPanel>
                                 <Controls:ToggleSwitch
-                                OnLabel="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOn}"
-                                OffLabel="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOff}"
-                                Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                IsChecked="{Binding Environment.VersionIsolation}"
+                                OnContent="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOn}"
+                                OffContent="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOff}"
+                                Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                IsOn="{Binding Environment.VersionIsolation}"
                                 />
 
                                 <Label Content="{StaticResource String.Settingwindow.Env.Root.TypeTitle}" Margin="0,10,0,0"/>
@@ -90,10 +90,10 @@
                         <Expander Header="{StaticResource String.Settingwindow.Env.Memory}" Margin="0,0,0,5">
                             <Grid >
                                 <Controls:ToggleSwitch 
-                                    Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-                                    OnLabel="{StaticResource String.Settingwindow.Env.Memory.AutoOn}"
-                                    OffLabel="{StaticResource String.Settingwindow.Env.Memory.AutoOff}"
-                                    IsChecked="{Binding Path=Environment.AutoMemory}"
+                                    Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                    OnContent="{StaticResource String.Settingwindow.Env.Memory.AutoOn}"
+                                    OffContent="{StaticResource String.Settingwindow.Env.Memory.AutoOff}"
+                                    IsOn="{Binding Path=Environment.AutoMemory}"
                                     VerticalAlignment="Top" />
                                 <Controls:RangeSlider x:Name="memorySlider"
                                     IsSnapToTickEnabled="True"
@@ -360,10 +360,7 @@
                     <StackPanel x:Name="customGrid" Margin="10,0,10,0">
                         <Expander Header="启动器主题设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="启动器主题颜色:"/>
-
-                                <ComboBox x:Name="AccentColorComboBox" DisplayMemberPath="Name" SelectionChanged="AccentColorComboBox_SelectionChanged"
-                                          Text="{Binding Customize.AccentColor}" HorizontalAlignment="Left" Width="200"/>
+                                <!--新版本MahApp不区分Accent与Theme，故进行合并-->
                                 <Label Content="启动器主题:"/>
                                 <ComboBox x:Name="appThmeComboBox" SelectionChanged="appThmeComboBox_SelectionChanged" DisplayMemberPath="Name"
                                           Text="{Binding Customize.AppThme}" HorizontalAlignment="Left" Width="200"/>

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Server
 {
-    class ServerInfo
+    public class ServerInfo
     {
         /// <summary>
         /// 服务器IP地址
