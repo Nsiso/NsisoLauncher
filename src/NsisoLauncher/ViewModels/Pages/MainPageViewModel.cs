@@ -1,131 +1,63 @@
-﻿using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncher.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using NsisoLauncherCore.Modules;
-using Version = NsisoLauncherCore.Modules.Version;
-using System.Windows;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Auth;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Util;
+using System.Diagnostics;
 using System.IO;
-using NsisoLauncher.Views.Windows;
+using System.Linq;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Controls;
-using NsisoLauncherCore;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
+using NsisoLauncher.Utils;
+using NsisoLauncher.ViewModels.Windows;
+using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore.Auth;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Net.Nide8API;
+using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Util;
+using Server = NsisoLauncherCore.Modules.Server;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
-        public ObservableDictionary<string, AuthenticationNode> AuthNodes { get; }
-        public ObservableCollection<Version> Versions { get; }
-        public ObservableDictionary<string, UserNode> Users { get; }
-
-        #region Commands
-        /// <summary>
-        /// 启动命令
-        /// </summary>
-        public ICommand LaunchCmd { get; set; }
-
-        /// <summary>
-        /// 打开设置窗口命令
-        /// </summary>
-        public ICommand OpenSettingCmd { get; set; }
-
-        /// <summary>
-        /// 打开下载窗口命令
-        /// </summary>
-        public ICommand OpenDownloadingCmd { get; set; }
-
-        /// <summary>	
-        /// 取消启动命令	
-        /// </summary>	
-        public ICommand CancelLaunchingCmd { get; set; }
-        #endregion
-
-        #region Launch Data
-        public Version LaunchVersion { get; set; }
-        public KeyValuePair<string, UserNode>? LaunchUserPair { get; set; }
-        public KeyValuePair<string, AuthenticationNode>? LaunchAuthNodePair { get; set; }
-        public string LaunchUserNameText { get; set; }
-        #endregion
-
-        #region ElementsState
-
-        public double Volume { get; set; } = 0.5;
-
-        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
-
-        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
-
-        public bool IsPlaying { get; set; } = true;
-
-        public double BlurRadius { get; set; } = 20;
-        #endregion
-
-        public ViewModels.Windows.MainWindowViewModel MainWindowVM { get; set; }
-
-        /// <summary>	
-        /// 是否在启动	
-        /// </summary>	
-        public bool IsLaunching { get; set; } = false;
-
-        /// <summary>	
-        /// 日志行	
-        /// </summary>	
-        public string LogLine { get; set; }
-
-        /// <summary>
-        /// 下载数
-        /// </summary>
-        public int DownloadTaskCount { get; set; }
-
-        public MainPageViewModel(ViewModels.Windows.MainWindowViewModel mainWindowVM)
+        public MainPageViewModel(MainWindowViewModel mainWindowVM)
         {
-            this.MainWindowVM = mainWindowVM;
+            MainWindowVM = mainWindowVM;
 
             #region 命令初始化
+
             LaunchCmd = new DelegateCommand(
-               //launch
-               async (obj) =>
-               {
-                   if ((obj != null) && (obj is LaunchType))
-                   {
-                       LaunchType launchType = (LaunchType)obj;
-                       await LaunchFromVM(launchType);
-                   }
-                   else
-                   {
-                       await LaunchFromVM(LaunchType.NORMAL);
-                   }
-               },
-               (obj) =>
-               {
-                   if (App.Handler == null)
-                       return false;
-                   else
-                       return !App.Handler.IsBusyLaunching;
-               });
-            OpenDownloadingCmd = new DelegateCommand((obj) =>
-            {
-                new DownloadWindow().ShowDialog();
-            });
-            OpenSettingCmd = new DelegateCommand((obj) =>
-            {
-                new SettingWindow().ShowDialog();
-            });
+                //launch
+                async obj =>
+                {
+                    if (obj != null && obj is LaunchType)
+                    {
+                        var launchType = (LaunchType) obj;
+                        await LaunchFromVM(launchType);
+                    }
+                    else
+                    {
+                        await LaunchFromVM(LaunchType.NORMAL);
+                    }
+                },
+                obj =>
+                {
+                    if (App.Handler == null)
+                        return false;
+                    return !App.Handler.IsBusyLaunching;
+                });
+            OpenDownloadingCmd = new DelegateCommand(obj => { new DownloadWindow().ShowDialog(); });
+            OpenSettingCmd = new DelegateCommand(obj => { new SettingWindow().ShowDialog(); });
+
             #endregion
 
 
@@ -136,24 +68,25 @@ namespace NsisoLauncher.ViewModels.Pages
                 Versions = App.VersionList;
 
                 #region 记忆
+
                 if (!string.IsNullOrEmpty(App.Config.MainConfig.History.SelectedUserNodeID) &&
-                    App.Config.MainConfig.User.UserDatabase.ContainsKey(App.Config.MainConfig.History.SelectedUserNodeID))
+                    App.Config.MainConfig.User.UserDatabase.ContainsKey(
+                        App.Config.MainConfig.History.SelectedUserNodeID))
                 {
-                    KeyValuePair<string, UserNode> userPair = new KeyValuePair<string, UserNode>(App.Config.MainConfig.History.SelectedUserNodeID,
+                    var userPair = new KeyValuePair<string, UserNode>(App.Config.MainConfig.History.SelectedUserNodeID,
                         App.Config.MainConfig.User.UserDatabase[App.Config.MainConfig.History.SelectedUserNodeID]);
                     LaunchUserPair = userPair;
                     //LaunchUserNameText = userPair.Value.UserName;
                     if (!string.IsNullOrEmpty(userPair.Value.AuthModule) &&
                         App.Config.MainConfig.User.AuthenticationDic.ContainsKey(userPair.Value.AuthModule))
-                    {
                         LaunchAuthNodePair = new KeyValuePair<string, AuthenticationNode>(userPair.Value.AuthModule,
                             App.Config.MainConfig.User.AuthenticationDic[userPair.Value.AuthModule]);
-                    }
                 }
+
                 if (!string.IsNullOrEmpty(App.Config.MainConfig.History.LastLaunchVersion))
-                {
-                    LaunchVersion = App.VersionList.FirstOrDefault((x) => x.ID == App.Config.MainConfig.History.LastLaunchVersion);
-                }
+                    LaunchVersion =
+                        App.VersionList.FirstOrDefault(x => x.ID == App.Config.MainConfig.History.LastLaunchVersion);
+
                 #endregion
 
                 App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
@@ -165,54 +98,75 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        #region 下载事件处理
-        private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
-        {
-            DownloadTaskCount = e.LeftTasksCount;
-        }
-        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
-        {
-            DownloadTaskCount = 0;
-        }
-        #endregion
+        public ObservableDictionary<string, AuthenticationNode> AuthNodes { get; }
+        public ObservableCollection<Version> Versions { get; }
+        public ObservableDictionary<string, UserNode> Users { get; }
+
+        public MainWindowViewModel MainWindowVM { get; set; }
+
+        /// <summary>
+        ///     是否在启动
+        /// </summary>
+        public bool IsLaunching { get; set; }
+
+        /// <summary>
+        ///     日志行
+        /// </summary>
+        public string LogLine { get; set; }
+
+        /// <summary>
+        ///     下载数
+        /// </summary>
+        public int DownloadTaskCount { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public async Task LaunchFromVM(LaunchType launchType)
         {
             try
             {
                 #region 检查有效数据
+
                 if (LaunchVersion == null)
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyLaunchVersion"),
                         App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
+
                 if (string.IsNullOrWhiteSpace(LaunchUserNameText))
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
+
                 if (LaunchAuthNodePair == null)
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyAuthType"),
                         App.GetResourceString("String.Message.EmptyAuthType2"));
                     return;
                 }
+
                 if (App.Handler.Java == null)
                 {
-                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
+                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
+                        App.GetResourceString("String.Message.NoJava2"));
                     return;
                 }
+
                 #endregion
 
                 #region 保存启动数据
+
                 App.Config.MainConfig.History.LastLaunchVersion = LaunchVersion.ID;
                 App.Config.MainConfig.History.LastLaunchTime = DateTime.Now;
+
                 #endregion
 
                 #region 用户处理
-                bool isNewUser = false;
+
+                var isNewUser = false;
                 UserNode launchUser = null;
                 if (LaunchUserPair != null)
                 {
@@ -222,12 +176,13 @@ namespace NsisoLauncher.ViewModels.Pages
                 else
                 {
                     isNewUser = true;
-                    launchUser = new UserNode() { UserName = LaunchUserNameText };
+                    launchUser = new UserNode {UserName = LaunchUserNameText};
                     //undo: to add new user support
                 }
+
                 #endregion
 
-                LaunchSetting launchSetting = new LaunchSetting()
+                var launchSetting = new LaunchSetting
                 {
                     Version = LaunchVersion,
                     LaunchType = launchType
@@ -237,21 +192,21 @@ namespace NsisoLauncher.ViewModels.Pages
                 IsLaunching = true;
 
                 #region 验证
-                AuthenticationNode LaunchAuthNode = LaunchAuthNodePair?.Value;
+
+                var LaunchAuthNode = LaunchAuthNodePair?.Value;
 
                 #region 设置ClientToken
+
                 if (string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
-                {
                     App.Config.MainConfig.User.ClientToken = Guid.NewGuid().ToString("N");
-                }
                 else
-                {
                     Requester.ClientToken = App.Config.MainConfig.User.ClientToken;
-                }
+
                 #endregion
 
                 #region 多语言支持变量
-                LoginDialogSettings loginDialogSettings = new LoginDialogSettings()
+
+                var loginDialogSettings = new LoginDialogSettings
                 {
                     NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
                     AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
@@ -263,32 +218,34 @@ namespace NsisoLauncher.ViewModels.Pages
                     PasswordWatermark = App.GetResourceString("String.Base.Password"),
                     NegativeButtonVisibility = Visibility.Visible
                 };
+
                 #endregion
 
                 //主验证器接口
                 IAuthenticator authenticator = null;
-                bool shouldRemember = false;
+                var shouldRemember = false;
 
                 //bool isSameAuthType = (authNode.AuthenticationType == auth);
-                bool isRemember = (!string.IsNullOrWhiteSpace(launchUser.AccessToken)) && ((launchUser.SelectProfileUUID != null));
+                var isRemember = !string.IsNullOrWhiteSpace(launchUser.AccessToken) &&
+                                 launchUser.SelectProfileUUID != null;
                 //bool isSameName = userName == App.config.MainConfig.User.UserName;
 
                 switch (LaunchAuthNode.AuthType)
                 {
                     #region 离线验证
+
                     case AuthenticationType.OFFLINE:
                         if (isNewUser)
-                        {
                             authenticator = new OfflineAuthenticator(launchUser.UserName);
-                        }
                         else
-                        {
-                            authenticator = new OfflineAuthenticator(launchUser.UserName, launchUser.UserData, launchUser.SelectProfileUUID);
-                        }
+                            authenticator = new OfflineAuthenticator(launchUser.UserName, launchUser.UserData,
+                                launchUser.SelectProfileUUID);
                         break;
+
                     #endregion
 
                     #region MOJANG验证
+
                     case AuthenticationType.MOJANG:
                         if (isRemember)
                         {
@@ -299,12 +256,13 @@ namespace NsisoLauncher.ViewModels.Pages
                         }
                         else
                         {
-                            var mojangLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
+                            var mojangLoginDResult = await MainWindowVM.ShowLoginAsync(
+                                App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
                                 App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
                                 loginDialogSettings);
                             if (IsValidateLoginData(mojangLoginDResult))
                             {
-                                var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
+                                var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials
                                 {
                                     Username = mojangLoginDResult.Username,
                                     Password = mojangLoginDResult.Password
@@ -319,22 +277,28 @@ namespace NsisoLauncher.ViewModels.Pages
                                 return;
                             }
                         }
+
                         break;
+
                     #endregion
 
                     #region NIDE8验证
+
                     case AuthenticationType.NIDE8:
-                        string nide8ID = LaunchAuthNode.Property["nide8ID"];
+                        var nide8ID = LaunchAuthNode.Property["nide8ID"];
                         if (string.IsNullOrWhiteSpace(nide8ID))
                         {
-                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
+                            await MainWindowVM.ShowMessageAsync(
+                                App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
                                 App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
                             return;
                         }
-                        var nide8ChooseResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
+
+                        var nide8ChooseResult = await MainWindowVM.ShowMessageAsync(
+                            App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
                             App.GetResourceString("String.Base.Choose"),
                             MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
-                            new MetroDialogSettings()
+                            new MetroDialogSettings
                             {
                                 AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
                                 NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
@@ -348,7 +312,7 @@ namespace NsisoLauncher.ViewModels.Pages
                             case MessageDialogResult.Negative:
                                 return;
                             case MessageDialogResult.FirstAuxiliary:
-                                System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", nide8ID));
+                                Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", nide8ID));
                                 return;
                             case MessageDialogResult.Affirmative:
                                 if (isRemember)
@@ -360,14 +324,15 @@ namespace NsisoLauncher.ViewModels.Pages
                                 }
                                 else
                                 {
-                                    var nide8LoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
+                                    var nide8LoginDResult = await MainWindowVM.ShowLoginAsync(
+                                        App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
                                         App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
                                         loginDialogSettings);
                                     if (IsValidateLoginData(nide8LoginDResult))
                                     {
                                         var nYggCator = new Nide8Authenticator(
                                             nide8ID,
-                                            new Credentials()
+                                            new Credentials
                                             {
                                                 Username = nide8LoginDResult.Username,
                                                 Password = nide8LoginDResult.Password
@@ -381,19 +346,22 @@ namespace NsisoLauncher.ViewModels.Pages
                                         return;
                                     }
                                 }
-                                break;
-                            default:
+
                                 break;
                         }
+
                         break;
+
                     #endregion
 
                     #region AUTHLIB验证
+
                     case AuthenticationType.AUTHLIB_INJECTOR:
-                        string aiRootAddr = LaunchAuthNode.Property["authserver"];
+                        var aiRootAddr = LaunchAuthNode.Property["authserver"];
                         if (string.IsNullOrWhiteSpace(aiRootAddr))
                         {
-                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
+                            await MainWindowVM.ShowMessageAsync(
+                                App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
                                 App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
                             return;
                         }
@@ -409,14 +377,15 @@ namespace NsisoLauncher.ViewModels.Pages
                             }
                             else
                             {
-                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
-                               App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
-                               loginDialogSettings);
+                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(
+                                    App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
+                                    App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
+                                    loginDialogSettings);
                                 if (IsValidateLoginData(customLoginDResult))
                                 {
                                     var cYggAuthenticator = new AuthlibInjectorAuthenticator(
                                         aiRootAddr,
-                                        new Credentials()
+                                        new Credentials
                                         {
                                             Username = customLoginDResult.Username,
                                             Password = customLoginDResult.Password
@@ -431,15 +400,19 @@ namespace NsisoLauncher.ViewModels.Pages
                                 }
                             }
                         }
+
                         break;
+
                     #endregion
 
                     #region 自定义验证
+
                     case AuthenticationType.CUSTOM_SERVER:
-                        string customAuthServer = LaunchAuthNode.Property["authserver"];
+                        var customAuthServer = LaunchAuthNode.Property["authserver"];
                         if (string.IsNullOrWhiteSpace(customAuthServer))
                         {
-                            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
+                            await MainWindowVM.ShowMessageAsync(
+                                App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
                                 App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
                             return;
                         }
@@ -448,18 +421,19 @@ namespace NsisoLauncher.ViewModels.Pages
                             if (isRemember)
                             {
                                 var cYggTokenCator = new YggdrasilTokenAuthenticator(launchUser.AccessToken,
-                                launchUser.GetSelectProfileUUID(),
-                                launchUser.UserData);
+                                    launchUser.GetSelectProfileUUID(),
+                                    launchUser.UserData);
                                 cYggTokenCator.ProxyAuthServerAddress = customAuthServer;
                             }
                             else
                             {
-                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
-                               App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
-                               loginDialogSettings);
+                                var customLoginDResult = await MainWindowVM.ShowLoginAsync(
+                                    App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
+                                    App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
+                                    loginDialogSettings);
                                 if (IsValidateLoginData(customLoginDResult))
                                 {
-                                    var cYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
+                                    var cYggAuthenticator = new YggdrasilAuthenticator(new Credentials
                                     {
                                         Username = customLoginDResult.Username,
                                         Password = customLoginDResult.Password
@@ -475,31 +449,30 @@ namespace NsisoLauncher.ViewModels.Pages
                                 }
                             }
                         }
+
                         break;
+
                     #endregion
 
                     #region 意外情况
+
                     default:
                         if (isNewUser)
-                        {
                             authenticator = new OfflineAuthenticator(launchUser.UserName);
-                        }
                         else
-                        {
                             authenticator = new OfflineAuthenticator(launchUser.UserName,
                                 launchUser.UserData,
                                 launchUser.SelectProfileUUID);
-                        }
                         break;
-                        #endregion
+
+                    #endregion
                 }
 
                 //如果验证方式不是离线验证
                 if (LaunchAuthNode.AuthType != AuthenticationType.OFFLINE)
                 {
-
-                    string currentLoginType = string.Format("正在进行{0}中...", LaunchAuthNode.Name);
-                    string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
+                    var currentLoginType = string.Format("正在进行{0}中...", LaunchAuthNode.Name);
+                    var loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
                     var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true);
 
                     loader.SetIndeterminate();
@@ -507,30 +480,36 @@ namespace NsisoLauncher.ViewModels.Pages
                     await loader.CloseAsync();
 
                     #region 错误处日志
+
                     if (authResult.State != AuthState.SUCCESS)
-                    {
                         App.LogHandler.AppendInfo(string.Format("验证失败：{0}", authResult.State));
-                    }
+
                     #endregion
 
                     switch (authResult.State)
                     {
                         case AuthState.SUCCESS:
+
                             #region 成功登陆
+
                             #region 检验
+
                             if (authResult.SelectedProfileUUID == null)
                             {
                                 if (authResult.Profiles == null || authResult.Profiles.Count == 0)
                                 {
                                     await MainWindowVM.ShowMessageAsync("验证失败：您没有可用的游戏角色（Profile）",
-                                    "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置可用角色");
+                                        "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置可用角色");
                                     return;
                                 }
+
                                 await MainWindowVM.ShowMessageAsync("验证失败：您没有选中任何游戏角色（Profile）",
-                                "请选中您要进行游戏的角色");
+                                    "请选中您要进行游戏的角色");
                                 return;
                             }
+
                             #endregion
+
                             launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                             launchUser.UserData = authResult.UserData;
                             if (authResult.Profiles != null)
@@ -538,44 +517,55 @@ namespace NsisoLauncher.ViewModels.Pages
                                 launchUser.Profiles.Clear();
                                 authResult.Profiles.ForEach(x => launchUser.Profiles.Add(x.Value, x));
                             }
-                            if (shouldRemember)
-                            {
-                                launchUser.AccessToken = authResult.AccessToken;
-                            }
+
+                            if (shouldRemember) launchUser.AccessToken = authResult.AccessToken;
                             launchSetting.AuthenticateResult = authResult;
+
                             #endregion
+
                             break;
 
                         case AuthState.REQ_LOGIN:
+
                             #region 要求再次登陆
+
                             //todo 添加更好的注销服务
                             launchUser.ClearAuthCache();
                             await MainWindowVM.ShowMessageAsync("验证失败：您的登录信息已过期",
                                 string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
+
                             #endregion
+
                             return;
 
                         case AuthState.ERR_INVALID_CRDL:
+
                             #region 错误的验证信息/禁止访问
+
                             await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
-                                string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
+                                string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
+                                    authResult.Error.ErrorMessage));
+
                             #endregion
+
                             return;
 
                         case AuthState.ERR_NOTFOUND:
+
                             #region 页面未找到
-                            if (LaunchAuthNode.AuthType == AuthenticationType.CUSTOM_SERVER || LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
-                            {
+
+                            if (LaunchAuthNode.AuthType == AuthenticationType.CUSTOM_SERVER ||
+                                LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                                 await MainWindowVM.ShowMessageAsync("验证失败：代理验证服务器地址有误或账号未找到",
-                                string.Format("请确认您的Authlib-Injector验证服务器（Authlib-Injector验证）或自定义验证服务器（自定义验证）地址正确或确认账号和游戏角色存在。具体信息：{0}",
-                                authResult.Error.ErrorMessage));
-                            }
+                                    string.Format(
+                                        "请确认您的Authlib-Injector验证服务器（Authlib-Injector验证）或自定义验证服务器（自定义验证）地址正确或确认账号和游戏角色存在。具体信息：{0}",
+                                        authResult.Error.ErrorMessage));
                             else
-                            {
                                 await MainWindowVM.ShowMessageAsync("验证失败：您的账号未找到",
-                                string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
-                            }
+                                    string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
+
                             #endregion
+
                             return;
 
                         case AuthState.ERR_OTHER:
@@ -584,15 +574,11 @@ namespace NsisoLauncher.ViewModels.Pages
                             return;
                         case AuthState.ERR_INSIDE:
                             if (authResult.Error.Exception != null)
-                            {
                                 App.LogHandler.AppendFatal(authResult.Error.Exception);
-                            }
                             else
-                            {
                                 await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
                                     string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
-                                    authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
-                            }
+                                        authResult.Error.ErrorMessage, authResult.Error.Exception));
                             return;
                         default:
                             await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
@@ -607,9 +593,11 @@ namespace NsisoLauncher.ViewModels.Pages
                     launchUser.UserData = authResult.UserData;
                     launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;
                 }
+
                 #endregion
 
                 #region 验证后用户处理
+
                 App.Config.MainConfig.History.SelectedUserNodeID = launchUser.UserData.ID;
                 if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(launchUser.UserData.ID))
                 {
@@ -617,10 +605,12 @@ namespace NsisoLauncher.ViewModels.Pages
                     App.Config.MainConfig.User.UserDatabase.Add(launchUser.UserData.ID, launchUser);
                     LaunchUserPair = new KeyValuePair<string, UserNode>(launchUser.UserData.ID, launchUser);
                 }
+
                 #endregion
 
                 #region 检查游戏完整
-                List<DownloadTask> losts = new List<DownloadTask>();
+
+                var losts = new List<DownloadTask>();
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
@@ -629,30 +619,29 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 if (LaunchAuthNode.AuthType == AuthenticationType.NIDE8)
                 {
-                    string nideJarPath = App.Handler.GetNide8JarPath();
+                    var nideJarPath = App.Handler.GetNide8JarPath();
                     if (!File.Exists(nideJarPath))
-                    {
-                        lostDepend.Add(new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), nideJarPath));
-                    }
+                        lostDepend.Add(new DownloadTask("统一通行证核心",
+                            new StringUrl("https://login2.nide8.com:233/index/jar"), nideJarPath));
                 }
                 else if (LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
                 {
-                    string aiJarPath = App.Handler.GetAIJarPath();
+                    var aiJarPath = App.Handler.GetAIJarPath();
                     if (!File.Exists(aiJarPath))
                     {
-                        DownloadTask aicore = await NsisoLauncherCore.Net.Tools.GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource, aiJarPath);
-                        if (aicore != null)
-                        {
-                            lostDepend.Add(aicore);
-                        }
+                        var aicore =
+                            await GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource,
+                                aiJarPath);
+                        if (aicore != null) lostDepend.Add(aicore);
                     }
                 }
 
                 if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
                 {
-                    MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
+                    var downDependResult = await MainWindowVM.ShowMessageAsync(
+                        App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadDepend2"),
-                        MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+                        MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings
                         {
                             AffirmativeButtonText = App.GetResourceString("String.Base.Download"),
                             NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
@@ -667,18 +656,17 @@ namespace NsisoLauncher.ViewModels.Pages
                         case MessageDialogResult.FirstAuxiliary:
                             App.Config.MainConfig.Environment.DownloadLostDepend = false;
                             break;
-                        default:
-                            break;
                     }
-
                 }
 
                 App.LogHandler.AppendInfo("检查丢失的资源文件中...");
-                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Handler, launchSetting.Version)))
+                if (App.Config.MainConfig.Environment.DownloadLostAssets &&
+                    await FileHelper.IsLostAssetsAsync(App.Handler, launchSetting.Version))
                 {
-                    MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
+                    var downDependResult = await MainWindowVM.ShowMessageAsync(
+                        App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
-                        MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+                        MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings
                         {
                             AffirmativeButtonText = App.GetResourceString("String.Base.Download"),
                             NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
@@ -695,10 +683,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         case MessageDialogResult.FirstAuxiliary:
                             App.Config.MainConfig.Environment.DownloadLostAssets = false;
                             break;
-                        default:
-                            break;
                     }
-
                 }
 
                 if (losts.Count != 0)
@@ -709,10 +694,9 @@ namespace NsisoLauncher.ViewModels.Pages
                         await App.Downloader.StartDownload();
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
-                        {
-                            await MainWindowVM.ShowMessageAsync(string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
+                            await MainWindowVM.ShowMessageAsync(
+                                string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
                                 "这可能是因为本地网络问题或下载源问题，您可以尝试检查网络环境或在设置中切换首选下载源，启动器将继续尝试启动");
-                        }
                     }
                     else
                     {
@@ -723,6 +707,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 根据配置文件设置
+
                 launchSetting.AdvencedGameArguments += App.Config.MainConfig.Environment.AdvencedGameArguments;
                 launchSetting.AdvencedJvmArguments += App.Config.MainConfig.Environment.AdvencedJvmArguments;
                 launchSetting.GCArgument += App.Config.MainConfig.Environment.GCArgument;
@@ -730,25 +715,23 @@ namespace NsisoLauncher.ViewModels.Pages
                 launchSetting.GCType = App.Config.MainConfig.Environment.GCType;
                 launchSetting.JavaAgent += App.Config.MainConfig.Environment.JavaAgent;
                 if (LaunchAuthNode.AuthType == AuthenticationType.NIDE8)
-                {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(), LaunchAuthNode.Property["nide8ID"]);
-                }
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(),
+                        LaunchAuthNode.Property["nide8ID"]);
                 else if (LaunchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
-                {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetAIJarPath(), LaunchAuthNode.Property["authserver"]);
-                }
+                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetAIJarPath(),
+                        LaunchAuthNode.Property["authserver"]);
 
                 //直连服务器设置
                 var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
                 if (App.Config.MainConfig.User.Nide8ServerDependence &&
-                    (lockAuthNode != null) &&
-                        (lockAuthNode.AuthType == AuthenticationType.NIDE8))
+                    lockAuthNode != null &&
+                    lockAuthNode.AuthType == AuthenticationType.NIDE8)
                 {
-                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                    var nide8ReturnResult = await new APIHandler(lockAuthNode.Property["nide8ID"]).GetInfoAsync();
                     if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
                     {
-                        NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
-                        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                        var server = new Server();
+                        var serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
                         if (serverIp.Length == 2)
                         {
                             server.Address = serverIp[0];
@@ -759,12 +742,14 @@ namespace NsisoLauncher.ViewModels.Pages
                             server.Address = nide8ReturnResult.Meta.ServerIP;
                             server.Port = 25565;
                         }
+
                         launchSetting.LaunchToServer = server;
                     }
                 }
                 else if (App.Config.MainConfig.Server.LaunchToServer)
                 {
-                    launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
+                    launchSetting.LaunchToServer = new Server
+                        {Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port};
                 }
 
                 //自动内存设置
@@ -778,12 +763,16 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
                 }
+
                 launchSetting.VersionType = App.Config.MainConfig.Customize.VersionInfo;
                 launchSetting.WindowSize = App.Config.MainConfig.Environment.WindowSize;
+
                 #endregion
 
                 #region 配置文件处理
+
                 App.Config.Save();
+
                 #endregion
 
                 #region 启动
@@ -795,20 +784,20 @@ namespace NsisoLauncher.ViewModels.Pages
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
                 {
-                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
+                    await MainWindowVM.ShowMessageAsync(
+                        App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title,
+                        result.LaunchException.Message);
                     App.LogHandler.AppendError(result.LaunchException);
                 }
                 else
                 {
-                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
+                    CancelLaunchingCmd = new DelegateCommand(async obj => await CancelLaunching(result));
 
                     #region 等待游戏响应
+
                     try
                     {
-                        await Task.Factory.StartNew(() =>
-                        {
-                            result.Process.WaitForInputIdle();
-                        });
+                        await Task.Factory.StartNew(() => { result.Process.WaitForInputIdle(); });
                     }
                     catch (Exception ex)
                     {
@@ -816,39 +805,34 @@ namespace NsisoLauncher.ViewModels.Pages
                             "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
                         return;
                     }
+
                     #endregion
 
                     CancelLaunchingCmd = null;
 
-                    if (!result.Process.HasExited)
-                    {
-                        MainWindowVM.WindowState = WindowState.Minimized;
-                    }
+                    if (!result.Process.HasExited) MainWindowVM.WindowState = WindowState.Minimized;
 
                     #region 数据反馈
+
 #if !DEBUG
                         //API使用次数计数器+1
                         await App.NsisoAPIHandler.RefreshUsingTimesCounter();
 #endif
+
                     #endregion
 
                     App.Config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
-                    if (App.Config.MainConfig.Environment.ExitAfterLaunch)
-                    {
-                        Application.Current.Shutdown();
-                    }
+                    if (App.Config.MainConfig.Environment.ExitAfterLaunch) Application.Current.Shutdown();
 
                     //自定义处理
                     if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
-                    {
                         GameHelper.SetGameTitle(result, App.Config.MainConfig.Customize.GameWindowTitle);
-                    }
                     if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
                     {
                         Volume = 0.5;
                         await Task.Run(() =>
                         {
-                            for (int i = 0; i < 50; i++)
+                            for (var i = 0; i < 50; i++)
                             {
                                 Volume -= 0.01;
                                 Thread.Sleep(50);
@@ -857,6 +841,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         MediaSource = null;
                     }
                 }
+
                 #endregion
             }
             catch (Exception ex)
@@ -872,15 +857,13 @@ namespace NsisoLauncher.ViewModels.Pages
         private async Task CustomizeRefresh()
         {
             if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.LauncherTitle))
-            {
                 MainWindowVM.WindowTitle = App.Config.MainConfig.Customize.LauncherTitle;
-            }
             if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
             {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
+                var files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
                 if (files.Count() != 0)
                 {
-                    Random random = new Random();
+                    var random = new Random();
                     MediaSource = files[random.Next(files.Count())];
                     //ImageBrush brush = new ImageBrush(new BitmapImage(new Uri()))
                     //{ TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
@@ -928,38 +911,40 @@ namespace NsisoLauncher.ViewModels.Pages
 
             if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
             {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgmusic_?.mp3");
+                var files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgmusic_?.mp3");
                 if (files.Count() != 0)
                 {
-                    Random random = new Random();
+                    var random = new Random();
                     MediaSource = files[random.Next(files.Count())];
                     Volume = 0;
                     await Task.Factory.StartNew(() =>
                     {
                         try
                         {
-                            for (int i = 0; i < 50; i++)
+                            for (var i = 0; i < 50; i++)
                             {
                                 Volume += 0.01;
                                 Thread.Sleep(50);
                             }
                         }
-                        catch (Exception) { }
+                        catch (Exception)
+                        {
+                        }
                     });
                 }
             }
-
         }
 
         private async Task CheckEnvironment()
         {
             #region 无JAVA提示
+
             if (App.Handler.Java == null)
             {
                 var result = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
                     App.GetResourceString("String.Message.NoJava2"),
                     MessageDialogStyle.AffirmativeAndNegative,
-                    new MetroDialogSettings()
+                    new MetroDialogSettings
                     {
                         AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
                         NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
@@ -971,55 +956,43 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包",
+                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
                             await App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
-                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
+                            Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
+                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包",
+                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
                             await App.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
-                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
-                            break;
-                        default:
+                            Process.Start("Explorer.exe", "jre_x64.exe");
                             break;
                     }
                 }
             }
+
             #endregion
 
             #region 检查更新
-            if (App.Config.MainConfig.Launcher.CheckUpdate)
-            {
-                await CheckUpdate();
-            }
+
+            if (App.Config.MainConfig.Launcher.CheckUpdate) await CheckUpdate();
+
             #endregion
         }
 
         private bool IsValidateLoginData(LoginDialogData data)
         {
-            if (data == null)
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(data.Username))
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(data.Password))
-            {
-                return false;
-            }
+            if (data == null) return false;
+            if (string.IsNullOrWhiteSpace(data.Username)) return false;
+            if (string.IsNullOrWhiteSpace(data.Password)) return false;
             return true;
         }
 
         private async Task CancelLaunching(LaunchResult result)
         {
-            if (!result.Process.HasExited)
-            {
-                result.Process.Kill();
-            }
+            if (!result.Process.HasExited) result.Process.Kill();
             await MainWindowVM.ShowMessageAsync("已取消启动", "已取消启动");
         }
 
@@ -1030,30 +1003,87 @@ namespace NsisoLauncher.ViewModels.Pages
                 var ver = await App.NsisoAPIHandler.GetLatestLauncherVersion();
                 if (ver != null)
                 {
-                    System.Version currentVersion = Application.ResourceAssembly.GetName().Version;
-                    if ((ver.Version > currentVersion) &&
+                    var currentVersion = Application.ResourceAssembly.GetName().Version;
+                    if (ver.Version > currentVersion &&
                         ver.ReleaseType.Equals("release", StringComparison.OrdinalIgnoreCase))
-                    {
                         new UpdateWindow(ver).Show();
-                    }
                 }
             }
             catch (Exception e)
-            { App.LogHandler.AppendError(e); }
+            {
+                App.LogHandler.AppendError(e);
+            }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #region Commands
+
+        /// <summary>
+        ///     启动命令
+        /// </summary>
+        public ICommand LaunchCmd { get; set; }
+
+        /// <summary>
+        ///     打开设置窗口命令
+        /// </summary>
+        public ICommand OpenSettingCmd { get; set; }
+
+        /// <summary>
+        ///     打开下载窗口命令
+        /// </summary>
+        public ICommand OpenDownloadingCmd { get; set; }
+
+        /// <summary>
+        ///     取消启动命令
+        /// </summary>
+        public ICommand CancelLaunchingCmd { get; set; }
+
+        #endregion
+
+        #region Launch Data
+
+        public Version LaunchVersion { get; set; }
+        public KeyValuePair<string, UserNode>? LaunchUserPair { get; set; }
+        public KeyValuePair<string, AuthenticationNode>? LaunchAuthNodePair { get; set; }
+        public string LaunchUserNameText { get; set; }
+
+        #endregion
+
+        #region ElementsState
+
+        public double Volume { get; set; } = 0.5;
+
+        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
+
+        public string MediaSource { get; set; } /* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
+
+        public bool IsPlaying { get; set; } = true;
+
+        public double BlurRadius { get; set; } = 20;
+
+        #endregion
+
+        #region 下载事件处理
+
+        private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
+        {
+            DownloadTaskCount = e.LeftTasksCount;
+        }
+
+        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
+        {
+            DownloadTaskCount = 0;
+        }
+
+        #endregion
     }
 
     public class MainPageDesignViewModel : MainPageViewModel
     {
-        public MainPageDesignViewModel() : base(new Windows.MainWindowViewModel(null))
+        public MainPageDesignViewModel() : base(new MainWindowViewModel(null))
         {
             IsLaunching = false;
             IsPlaying = false;
             MediaSource = null;
         }
-
-        
     }
 }

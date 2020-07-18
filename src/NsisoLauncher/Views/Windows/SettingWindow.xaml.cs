@@ -1,14 +1,5 @@
-﻿using ControlzEx.Theming;
-using MahApps.Metro;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -20,15 +11,27 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using ControlzEx.Theming;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Util;
+using Application = System.Windows.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
+using Environment = System.Environment;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
-    /// SettingWindow.xaml 的交互逻辑
+    ///     SettingWindow.xaml 的交互逻辑
     /// </summary>
     public partial class SettingWindow : MetroWindow
     {
-        private bool _isGameSettingChanged = false;
+        private bool _isGameSettingChanged;
 
         public SettingWindow()
         {
@@ -49,15 +52,10 @@ namespace NsisoLauncher.Views.Windows
         private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CheckDownloadFileHash")
-            {
                 App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
-            }
             if (e.PropertyName == "DownloadSource")
             {
-                if (App.Downloader.MirrorList == null)
-                {
-                    App.Downloader.MirrorList = new List<IMirror>();
-                }
+                if (App.Downloader.MirrorList == null) App.Downloader.MirrorList = new List<IMirror>();
                 switch (App.Config.MainConfig.Download.DownloadSource)
                 {
                     case DownloadSource.Auto:
@@ -72,30 +70,28 @@ namespace NsisoLauncher.Views.Windows
                     case DownloadSource.MCBBS:
                         App.Downloader.MirrorList.Add(new McbbsMirror());
                         break;
-                    default:
-                        break;
                 }
             }
+
             if (e.PropertyName == "DownloadThreadsSize")
-            {
                 App.Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
-            }
         }
 
         private void Environment_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "GamePathType")
-            {
                 switch (App.Config.MainConfig.Environment.GamePathType)
                 {
                     case GameDirEnum.ROOT:
                         App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
                         break;
                     case GameDirEnum.APPDATA:
-                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
+                        App.Handler.GameRootPath =
+                            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
                         break;
                     case GameDirEnum.PROGRAMFILES:
-                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
+                        App.Handler.GameRootPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                                   "\\.minecraft";
                         break;
                     case GameDirEnum.CUSTOM:
                         App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
@@ -103,19 +99,18 @@ namespace NsisoLauncher.Views.Windows
                     default:
                         throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
                 }
-            }
+
             if (e.PropertyName == "VersionIsolation")
-            {
                 App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
-            }
         }
 
         private async void Refresh()
         {
             //绑定content设置
-            this.DataContext = App.Config.MainConfig;
+            DataContext = App.Config.MainConfig;
 
             #region 元素初始化
+
             javaPathComboBox.ItemsSource = App.JavaList;
             memorySlider.Maximum = SystemTools.GetTotalMemory();
 
@@ -130,7 +125,8 @@ namespace NsisoLauncher.Views.Windows
             else
             {
                 VersionsComboBox.IsEnabled = false;
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
+                versionOptionsGrid.ItemsSource =
+                    await GameHelper.GetOptionsAsync(App.Handler, new Version {ID = "null"});
             }
 
             //debug
@@ -145,22 +141,22 @@ namespace NsisoLauncher.Views.Windows
 
         private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
+            var dialog = new OpenFileDialog
             {
                 Title = "选择Java",
-                Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe",
+                Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe"
             };
             if (dialog.ShowDialog() == true)
             {
-                Java java = await Java.GetJavaInfoAsync(dialog.FileName);
+                var java = await Java.GetJavaInfoAsync(dialog.FileName);
                 if (java != null)
                 {
-                    this.javaPathComboBox.Text = java.Path;
-                    this.javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
+                    javaPathComboBox.Text = java.Path;
+                    javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
                 }
                 else
                 {
-                    this.javaPathComboBox.Text = dialog.FileName;
+                    javaPathComboBox.Text = dialog.FileName;
                     await this.ShowMessageAsync("选择的Java无法正确获取信息", "请确认您选择的是正确的Java应用");
                 }
             }
@@ -168,7 +164,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void gamedirChooseButton_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog()
+            var dialog = new FolderBrowserDialog
             {
                 Description = "选择游戏运行根目录",
                 ShowNewFolderButton = true
@@ -176,7 +172,6 @@ namespace NsisoLauncher.Views.Windows
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.Cancel)
             {
-                return;
             }
             else
             {
@@ -184,40 +179,31 @@ namespace NsisoLauncher.Views.Windows
                 App.Config.MainConfig.Environment.GamePath = dialog.SelectedPath.Trim();
             }
         }
-        #region 全局设置部分
-        private void memorySlider_UpperValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            App.Config.MainConfig.Environment.MaxMemory = Convert.ToInt32(((RangeSlider)sender).UpperValue);
-        }
-
-        private void memorySlider_LowerValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            App.Config.MainConfig.Environment.MinMemory = Convert.ToInt32(((RangeSlider)sender).LowerValue);
-        }
-        #endregion
 
         private void textBox1_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            Regex re = new Regex("[^0-9.-]+");
+            var re = new Regex("[^0-9.-]+");
             e.Handled = re.IsMatch(e.Text);
         }
-
 
 
         //保存按钮点击后
         private async void saveButton_Click(object sender, RoutedEventArgs e)
         {
             #region 实时修改
+
             switch (App.Config.MainConfig.Environment.GamePathType)
             {
                 case GameDirEnum.ROOT:
                     App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
                     break;
                 case GameDirEnum.APPDATA:
-                    App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
+                    App.Handler.GameRootPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                                               "\\.minecraft";
                     break;
                 case GameDirEnum.PROGRAMFILES:
-                    App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
+                    App.Handler.GameRootPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                               "\\.minecraft";
                     break;
                 case GameDirEnum.CUSTOM:
                     App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
@@ -225,26 +211,24 @@ namespace NsisoLauncher.Views.Windows
                 default:
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
+
             App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
             App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+
             #endregion
 
             if (_isGameSettingChanged)
             {
                 if (App.Config.MainConfig.Environment.VersionIsolation)
-                {
                     await GameHelper.SaveOptionsAsync(
-                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                    App.Handler,
-                    (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
-                }
+                        (List<VersionOption>) versionOptionsGrid.ItemsSource,
+                        App.Handler,
+                        (Version) VersionsComboBox.SelectedItem);
                 else
-                {
                     await GameHelper.SaveOptionsAsync(
-                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                    App.Handler,
-                    new NsisoLauncherCore.Modules.Version() { ID = "null" });
-                }
+                        (List<VersionOption>) versionOptionsGrid.ItemsSource,
+                        App.Handler,
+                        new Version {ID = "null"});
             }
 
             App.Config.Save();
@@ -253,16 +237,13 @@ namespace NsisoLauncher.Views.Windows
 
         private async void VersionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            System.Windows.Controls.ComboBox comboBox = (System.Windows.Controls.ComboBox)sender;
+            var comboBox = (ComboBox) sender;
 
             if (comboBox.SelectedItem != null)
-            {
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, (NsisoLauncherCore.Modules.Version)comboBox.SelectedItem);
-            }
+                versionOptionsGrid.ItemsSource =
+                    await GameHelper.GetOptionsAsync(App.Handler, (Version) comboBox.SelectedItem);
             else
-            {
                 versionOptionsGrid.ItemsSource = null;
-            }
         }
 
         private async void refreshVersionsButton_Click(object sender, RoutedEventArgs e)
@@ -272,24 +253,17 @@ namespace NsisoLauncher.Views.Windows
 
         private void appThmeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Theme item = (Theme)((System.Windows.Controls.ComboBox)sender).SelectedItem;
-            if (item != null)
-            {
-                ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, item);
-            }
+            var item = (Theme) ((ComboBox) sender).SelectedItem;
+            if (item != null) ThemeManager.Current.ChangeTheme(Application.Current, item);
         }
 
         private void javaPathComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Java java = (Java)(((System.Windows.Controls.ComboBox)sender).SelectedItem);
+            var java = (Java) ((ComboBox) sender).SelectedItem;
             if (java != null)
-            {
-                this.javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
-            }
+                javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
             else
-            {
-                this.javaInfoLabel.Content = null;
-            }
+                javaInfoLabel.Content = null;
         }
 
         private /*async*/ void forgetUserButton_Click(object sender, RoutedEventArgs e)
@@ -300,8 +274,8 @@ namespace NsisoLauncher.Views.Windows
                 return;
             }
 
-            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
-            UserNode node = selectedItem.Value;
+            var selectedItem = (KeyValuePair<string, UserNode>) userComboBox.SelectedItem;
+            var node = selectedItem.Value;
             //todo （后）恢复注销用户功能
             node.AccessToken = null;
             this.ShowMessageAsync("注销成功", "请保存以生效");
@@ -315,8 +289,8 @@ namespace NsisoLauncher.Views.Windows
                 return;
             }
 
-            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
-            UserNode node = selectedItem.Value;
+            var selectedItem = (KeyValuePair<string, UserNode>) userComboBox.SelectedItem;
+            var node = selectedItem.Value;
             node.AccessToken = null;
             node.Profiles = null;
             node.UserData = null;
@@ -332,30 +306,51 @@ namespace NsisoLauncher.Views.Windows
                 return;
             }
 
-            string key = (string)userComboBox.SelectedValue;
+            var key = (string) userComboBox.SelectedValue;
             App.Config.MainConfig.User.UserDatabase.Remove(key);
             this.ShowMessageAsync("删除用户成功", "请保存以生效");
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            Hyperlink link = sender as Hyperlink;
+            var link = sender as Hyperlink;
             // 激活的是当前默认的浏览器
             Process.Start(new ProcessStartInfo(link.NavigateUri.AbsoluteUri));
         }
+
+        private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
+        {
+            lockauthCombobox.SelectedItem = null;
+        }
+
+        private void VersionOptionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            _isGameSettingChanged = true;
+        }
+
+        #region 全局设置部分
+
+        private void memorySlider_UpperValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            App.Config.MainConfig.Environment.MaxMemory = Convert.ToInt32(((RangeSlider) sender).UpperValue);
+        }
+
+        private void memorySlider_LowerValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            App.Config.MainConfig.Environment.MinMemory = Convert.ToInt32(((RangeSlider) sender).LowerValue);
+        }
+
+        #endregion
+
         #region 自定义验证模型
 
         private void AuthModuleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            object selectedItem = authModuleCombobox.SelectedItem;
+            var selectedItem = authModuleCombobox.SelectedItem;
             if (selectedItem == null)
-            {
                 authmoduleControl.ClearAll();
-            }
             else
-            {
-                authmoduleControl.SelectionChangedAccept((KeyValuePair<string, AuthenticationNode>)selectedItem);
-            }
+                authmoduleControl.SelectionChangedAccept((KeyValuePair<string, AuthenticationNode>) selectedItem);
         }
 
         public async void AddAuthModule(string name, AuthenticationNode authmodule)
@@ -365,6 +360,7 @@ namespace NsisoLauncher.Views.Windows
                 await this.ShowMessageAsync("添加的验证模型名称已存在", "您可以尝试更换可用的验证模型名称");
                 return;
             }
+
             var item = new KeyValuePair<string, AuthenticationNode>(name, authmodule);
             App.Config.MainConfig.User.AuthenticationDic.Add(name, authmodule);
             await this.ShowMessageAsync("添加成功", "记得点击应用按钮保存噢");
@@ -386,17 +382,7 @@ namespace NsisoLauncher.Views.Windows
         {
             authModuleCombobox.SelectedItem = null;
         }
+
         #endregion
-
-        private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
-        {
-            lockauthCombobox.SelectedItem = null;
-        }
-
-        private void VersionOptionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            _isGameSettingChanged = true;
-        }
-
     }
 }

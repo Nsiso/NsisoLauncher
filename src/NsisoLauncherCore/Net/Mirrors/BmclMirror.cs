@@ -1,7 +1,5 @@
-﻿using NsisoLauncherCore.Net.Tools;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {
@@ -15,15 +13,15 @@ namespace NsisoLauncherCore.Net.Mirrors
         public string MirrorName { get; set; } = "BmclAPI";
         public string BaseDomain { get; set; } = "bmclapi2.bangbang93.com";
 
-        public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>()
+        public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>
         {
-            {GetDownloadUrl.MojangVersionUrl, BMCLVersionURL },
-            {GetDownloadUrl.MojangMainUrl, BMCLUrl },
-            {GetDownloadUrl.MojangMetaUrl, BMCLUrl },
-            {GetDownloadUrl.MojanglibrariesUrl, BMCLLibrariesURL },
-            {GetDownloadUrl.MojangAssetsBaseUrl, BMCLAssetsURL },
-            {GetDownloadUrl.ForgeHttpUrl, BMCLLibrariesURL },
-            {GetDownloadUrl.ForgeHttpsUrl, BMCLLibrariesURL }
+            {GetDownloadUrl.MojangVersionUrl, BMCLVersionURL},
+            {GetDownloadUrl.MojangMainUrl, BMCLUrl},
+            {GetDownloadUrl.MojangMetaUrl, BMCLUrl},
+            {GetDownloadUrl.MojanglibrariesUrl, BMCLLibrariesURL},
+            {GetDownloadUrl.MojangAssetsBaseUrl, BMCLAssetsURL},
+            {GetDownloadUrl.ForgeHttpUrl, BMCLLibrariesURL},
+            {GetDownloadUrl.ForgeHttpsUrl, BMCLLibrariesURL}
         };
 
         public string DoDownloadUrlReplace(string source)

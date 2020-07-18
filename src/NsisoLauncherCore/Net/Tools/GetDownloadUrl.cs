@@ -1,10 +1,10 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.AuthlibInjectorAPI;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
 {
@@ -21,35 +21,25 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static string ReplaceURLByDic(string str, Dictionary<string, string> dic)
         {
-            string ret = str;
-            foreach (var item in dic)
-            {
-                ret = ret.Replace(item.Key, item.Value);
-            }
+            var ret = str;
+            foreach (var item in dic) ret = ret.Replace(item.Key, item.Value);
             return ret;
         }
+
         private static string GetLibBasePath(Library lib)
         {
             if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Path))
-            {
                 return lib.LibDownloadInfo.Path;
-            }
-            else
-            {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Artifact.Package.Replace(".", "\\"), lib.Artifact.Name, lib.Artifact.Version);
-            }
+            return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Artifact.Package.Replace(".", "\\"), lib.Artifact.Name,
+                lib.Artifact.Version);
         }
 
         private static string GetNativeBasePath(Native native)
         {
             if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.Path))
-            {
                 return native.NativeDownloadInfo.Path;
-            }
-            else
-            {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Artifact.Package.Replace(".", "\\"), native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
-            }
+            return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Artifact.Package.Replace(".", "\\"),
+                native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
         }
 
         private static string GetAssetsBasePath(JAssetsInfo assetsInfo)
@@ -64,111 +54,87 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core)
         {
-            string to = core.GetJsonPath(verID);
-            string from = GetCoreJsonDownloadURL(verID);
+            var to = core.GetJsonPath(verID);
+            var from = GetCoreJsonDownloadURL(verID);
             return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
         }
 
-        public static string GetCoreJarDownloadURL(Modules.Version ver)
+        public static string GetCoreJarDownloadURL(Version ver)
         {
             if (ver.Downloads?.Client != null)
-            {
                 return ver.Downloads.Client.URL;
-
-            }
-            else
-            {
-                return string.Format("{0}version/{1}/client", McbbsMirror.MCBBSUrl, ver.ID);
-            }
+            return string.Format("{0}version/{1}/client", McbbsMirror.MCBBSUrl, ver.ID);
         }
 
-        public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core)
+        public static DownloadTask GetCoreJarDownloadTask(Version version, LaunchHandler core)
         {
-            string to = core.GetJarPath(version);
-            string from = GetCoreJarDownloadURL(version);
-            DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
+            var to = core.GetJarPath(version);
+            var from = GetCoreJarDownloadURL(version);
+            var downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.SHA1))
-            {
-                downloadTask.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.SHA1, FilePath = to };
-            }
+                downloadTask.Checker = new SHA1Checker {CheckSum = version.Downloads.Client.SHA1, FilePath = to};
             return downloadTask;
         }
 
         /// <summary>
-        /// 获取Lib下载地址
+        ///     获取Lib下载地址
         /// </summary>
         /// <param name="lib">lib实例</param>
         /// <returns>下载URL</returns>
         public static string GetLibDownloadURL(Library lib)
         {
-            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.URL))
-            {
-                return lib.LibDownloadInfo.URL;
-            }
-            else if (!string.IsNullOrWhiteSpace(lib.Url))
-            {
-                return lib.Url;
-            }
-            else
-            {
-                string libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
-                return MojanglibrariesUrl + libUrlPath;
-            }
+            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.URL)) return lib.LibDownloadInfo.URL;
+
+            if (!string.IsNullOrWhiteSpace(lib.Url)) return lib.Url;
+
+            var libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
+            return MojanglibrariesUrl + libUrlPath;
         }
 
         /// <summary>
-        /// 获取Lib下载任务
+        ///     获取Lib下载任务
         /// </summary>
         /// <param name="lib">lib实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
         public static DownloadTask GetLibDownloadTask(KeyValuePair<string, Library> lib)
         {
-            string to = lib.Key;
-            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, lib.Value, to);
+            var to = lib.Key;
+            var task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, lib.Value, to);
             if (lib.Value.LibDownloadInfo != null)
-            {
-                task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.SHA1, FilePath = to };
-            }
+                task.Checker = new SHA1Checker {CheckSum = lib.Value.LibDownloadInfo.SHA1, FilePath = to};
             return task;
         }
 
         /// <summary>
-        /// 获取native下载地址
+        ///     获取native下载地址
         /// </summary>
         /// <param name="native">native实例</param>
         /// <returns>下载URL</returns>
         public static string GetNativeDownloadURL(Native native)
         {
             if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.URL))
-            {
                 return native.NativeDownloadInfo.URL;
-            }
-            else
-            {
-                return (MojanglibrariesUrl + GetNativeBasePath(native)).Replace('\\', '/');
-            }
+            return (MojanglibrariesUrl + GetNativeBasePath(native)).Replace('\\', '/');
         }
 
         /// <summary>
-        /// 获取Native下载任务
+        ///     获取Native下载任务
         /// </summary>
         /// <param name="native">native实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
         public static DownloadTask GetNativeDownloadTask(KeyValuePair<string, Native> native)
         {
-            string to = native.Key;
-            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, native.Value, to);
+            var to = native.Key;
+            var task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, native.Value, to);
             if (native.Value.NativeDownloadInfo != null)
-            {
-                task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.SHA1, FilePath = to };
-            }
+                task.Checker = new SHA1Checker {CheckSum = native.Value.NativeDownloadInfo.SHA1, FilePath = to};
             return task;
         }
 
         /// <summary>
-        /// 获取assets下载地址
+        ///     获取assets下载地址
         /// </summary>
         /// <param name="assets">assets实例</param>
         /// <returns>下载URL</returns>
@@ -178,19 +144,19 @@ namespace NsisoLauncherCore.Net.Tools
         }
 
         /// <summary>
-        /// 获取assets下载任务
+        ///     获取assets下载任务
         /// </summary>
         /// <param name="assets">assets实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
         public static DownloadTask GetAssetsDownloadTask(JAssetsInfo assets, LaunchHandler core)
         {
-            string to = core.GetAssetsPath(assets);
+            var to = core.GetAssetsPath(assets);
             return new DownloadTask("游戏资源文件" + assets.Hash, assets, to);
         }
 
         /// <summary>
-        /// 获取NIDE8核心下载任务
+        ///     获取NIDE8核心下载任务
         /// </summary>
         /// <param name="downloadTo">下载目的路径</param>
         /// <returns>下载任务</returns>
@@ -199,9 +165,9 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), downloadTo);
         }
 
-        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
+        public static async Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
         {
-            AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
+            var handler = new APIHandler();
             return await handler.GetLatestAICoreDownloadTask(source, downloadTo);
         }
     }

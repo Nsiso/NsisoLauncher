@@ -1,10 +1,10 @@
-﻿ <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    
+
     <sys:String x:Key="String.LanguageInfo.Lang">中文</sys:String>
     <sys:String x:Key="String.LanguageInfo.Author">Nsiso</sys:String>
-    
+
     <sys:String x:Key="String.Base.LauncherName">Nsiso启动器</sys:String>
     <sys:String x:Key="String.Base.Launch">启动游戏</sys:String>
     <sys:String x:Key="String.Base.Download">下载</sys:String>
@@ -34,7 +34,7 @@
     <sys:String x:Key="String.MainWindow.ChooseAuthType">验证类型</sys:String>
     <sys:String x:Key="String.Mainwindow.InputPlayerName">用户名</sys:String>
     <sys:String x:Key="String.Mainwindow.Launching">正在启动中</sys:String>
-     
+
     <!--#region 登录-->
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying">在线正版验证中...</sys:String>
     <sys:String x:Key="String.Mainwindow.Auth.Mojang.Verifying2">这可能需要几秒的时间，我们正在进行处理（正在使用Mojang正版验证）</sys:String>

@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Util.Checker;
 
 namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
 {
@@ -20,21 +21,16 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
                     apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
                     break;
             }
+
             var jsonRespond = await NetRequester.Client.GetAsync(apiBase);
             string json = null;
-            if (jsonRespond.IsSuccessStatusCode)
-            {
-                json = await jsonRespond.Content.ReadAsStringAsync();
-            }
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return null;
-            }
+            if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(json)) return null;
             var jobj = JObject.Parse(json);
-            string downloadURL = jobj.Value<string>("download_url");
-            string sha256 = jobj["checksums"].Value<string>("sha256");
-            DownloadTask downloadTask = new DownloadTask("AuthlibInjector核心", new StringUrl(downloadURL), downloadTo);
-            downloadTask.Checker = new Util.Checker.SHA256Checker()
+            var downloadURL = jobj.Value<string>("download_url");
+            var sha256 = jobj["checksums"].Value<string>("sha256");
+            var downloadTask = new DownloadTask("AuthlibInjector核心", new StringUrl(downloadURL), downloadTo);
+            downloadTask.Checker = new SHA256Checker
             {
                 CheckSum = sha256,
                 FilePath = downloadTo

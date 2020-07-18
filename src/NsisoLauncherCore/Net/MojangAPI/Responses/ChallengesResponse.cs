@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
 {
-
     /// <summary>
-    /// 包含安全问题及其答案的ID
+    ///     包含安全问题及其答案的ID
     /// </summary>
     public class ChallengesResponse : Response
     {
@@ -14,19 +13,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         }
 
         /// <summary>
-        /// 安全问题包含答案的ID，以及问题和所述问题的文本的ID。
+        ///     安全问题
         /// </summary>
-        public struct Challenge
-        {
-            public long AnswerID;
-            public long QuestionID;
-            public string QuestionText;
-        }
+        public List<Challenge> Challenges { get; internal set; }
 
         public static Challenge Parse(JToken json)
         {
-            JObject challenge = JObject.Parse(json.ToString());
-            return new Challenge()
+            var challenge = JObject.Parse(json.ToString());
+            return new Challenge
             {
                 AnswerID = challenge["answer"]["id"].Value<long>(),
                 QuestionID = challenge["question"]["id"].Value<long>(),
@@ -35,8 +29,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         }
 
         /// <summary>
-        /// 安全问题
+        ///     安全问题包含答案的ID，以及问题和所述问题的文本的ID。
         /// </summary>
-        public List<Challenge> Challenges { get; internal set; }
+        public struct Challenge
+        {
+            public long AnswerID;
+            public long QuestionID;
+            public string QuestionText;
+        }
     }
 }

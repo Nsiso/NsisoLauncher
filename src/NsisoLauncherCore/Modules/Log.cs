@@ -15,17 +15,17 @@ namespace NsisoLauncherCore.Modules
     public class Log : EventArgs
     {
         /// <summary>
-        /// 日志等级
+        ///     日志等级
         /// </summary>
         public LogLevel LogLevel { get; set; }
 
         /// <summary>
-        /// LOG信息
+        ///     LOG信息
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// 异常信息
+        ///     异常信息
         /// </summary>
         public Exception Exception { get; set; }
     }

@@ -1,28 +1,27 @@
-﻿using NsisoLauncherCore.Net;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using NsisoLauncherCore.Net;
 
 namespace NsisoLauncherCore.Util.Installer.Fabric
 {
-    class FabricInstaller : IInstaller
+    internal class FabricInstaller : IInstaller
     {
+        public FabricInstaller(string installerPath, CommonInstallOptions options)
+        {
+            InstallerPath = installerPath;
+            Options = options;
+        }
+
         public string InstallerPath { get; set; }
 
         public CommonInstallOptions Options { get; set; }
 
-        public FabricInstaller(string installerPath, CommonInstallOptions options)
-        {
-            this.InstallerPath = installerPath;
-            this.Options = options;
-        }
         public void BeginInstall(ProgressCallback callback, CancellationToken cancellationToken)
         {
-            string arg = string.Format("-jar \"{0}\" client -dir \"{1}\" -mcversion {2}", InstallerPath, Options.GameRootPath, Options.VersionToInstall.ID);
-            ProcessStartInfo startInfo = new ProcessStartInfo(Options.Java.Path, arg);
+            var arg = string.Format("-jar \"{0}\" client -dir \"{1}\" -mcversion {2}", InstallerPath,
+                Options.GameRootPath, Options.VersionToInstall.ID);
+            var startInfo = new ProcessStartInfo(Options.Java.Path, arg);
             Process.Start(startInfo).WaitForExit();
         }
 

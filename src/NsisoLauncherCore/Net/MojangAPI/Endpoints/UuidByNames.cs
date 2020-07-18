@@ -1,21 +1,21 @@
-﻿using Newtonsoft.Json.Linq;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Net.MojangApi.Responses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.MojangApi.Responses;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 {
     /// <summary>
-    /// UuidByName请求类
+    ///     UuidByName请求类
     /// </summary>
     public class UuidByNames : IEndpoint<UuidByNamesResponse>
     {
         /// <summary>
-        /// 获取与给定用户名相对应的Uuid列表
+        ///     获取与给定用户名相对应的Uuid列表
         /// </summary>
         /// <param name="usernames"></param>
         public UuidByNames(List<string> usernames) : this(usernames.ToArray())
@@ -23,7 +23,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         }
 
         /// <summary>
-        /// 获取与给定用户名相对应的Uuid列表
+        ///     获取与给定用户名相对应的Uuid列表
         /// </summary>
         /// <param name="usernames"></param>
         public UuidByNames(params string[] usernames)
@@ -31,49 +31,43 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             if (usernames.Length > 100)
                 throw new ArgumentException("Only up to 100 usernames per request are allowed.");
 
-            this.Address = new Uri($"https://api.mojang.com/profiles/minecraft");
-            this.Arguments = usernames.ToList<string>();
+            Address = new Uri("https://api.mojang.com/profiles/minecraft");
+            Arguments = usernames.ToList();
         }
 
         /// <summary>
-        /// 执行UuidByNames请求
+        ///     执行UuidByNames请求
         /// </summary>
         /// <returns></returns>
-        public async override Task<UuidByNamesResponse> PerformRequestAsync()
+        public override async Task<UuidByNamesResponse> PerformRequestAsync()
         {
-            this.PostContent = "[" + string.Join(",", this.Arguments.ConvertAll(x => $"\"{x.ToString()}\"").ToArray()) + "]";
-            this.Response = await Requester.Post(this);
+            PostContent = "[" + string.Join(",", Arguments.ConvertAll(x => $"\"{x.ToString()}\"").ToArray()) + "]";
+            Response = await Requester.Post(this);
 
-            if (this.Response.IsSuccess)
+            if (Response.IsSuccess)
             {
-                JArray uuids = JArray.Parse(this.Response.RawMessage);
-                List<Uuid> uuidList = new List<Uuid>() { };
+                var uuids = JArray.Parse(Response.RawMessage);
+                var uuidList = new List<Uuid>();
 
                 foreach (JObject uuid in uuids)
                     uuidList.Add(uuid.ToObject<Uuid>());
 
-                return new UuidByNamesResponse(this.Response)
+                return new UuidByNamesResponse(Response)
                 {
-                    UuidList = uuidList,
+                    UuidList = uuidList
                 };
             }
-            else
-            {
-                if (this.Response.Code == HttpStatusCode.BadRequest)
+
+            if (Response.Code == HttpStatusCode.BadRequest)
+                return new UuidByNamesResponse(new Response(Response)
                 {
-                    return new UuidByNamesResponse(new Response(this.Response)
+                    Error =
                     {
-                        Error =
-                        {
-                            ErrorMessage = "One of the usernames is empty.",
-                            ErrorTag = "IllegalArgumentException"
-                        }
-                    });
-                }
-                else
-                    return new UuidByNamesResponse(Error.GetError(this.Response));
-            }
+                        ErrorMessage = "One of the usernames is empty.",
+                        ErrorTag = "IllegalArgumentException"
+                    }
+                });
+            return new UuidByNamesResponse(Error.GetError(Response));
         }
     }
-
 }

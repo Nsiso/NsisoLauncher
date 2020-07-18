@@ -1,60 +1,42 @@
-﻿using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace NsisoLauncherCore.Util
 {
     public static class Unzip
     {
-
         public static void UnZipNativeFile(string zipPath, string outFolder, List<string> exclude, bool check)
         {
             ZipFile zf = null;
             try
             {
-                FileStream fs = File.OpenRead(zipPath);
+                var fs = File.OpenRead(zipPath);
                 zf = new ZipFile(fs);
-                if (!Directory.Exists(outFolder))
-                {
-                    Directory.CreateDirectory(outFolder);
-                }
+                if (!Directory.Exists(outFolder)) Directory.CreateDirectory(outFolder);
 
                 foreach (ZipEntry zipEntry in zf)
                 {
-                    if (!zipEntry.IsFile)
-                    {
-                        continue;
-                    }
-                    if (exclude != null && exclude.Any(zipEntry.Name.StartsWith))
-                    {
-                        continue;
-                    }
+                    if (!zipEntry.IsFile) continue;
+                    if (exclude != null && exclude.Any(zipEntry.Name.StartsWith)) continue;
 
-                    byte[] buffer = new byte[4096];     // 4K is optimum
-                    Stream zipStream = zf.GetInputStream(zipEntry);
+                    var buffer = new byte[4096]; // 4K is optimum
+                    var zipStream = zf.GetInputStream(zipEntry);
 
-                    string fullZipToPath = Path.Combine(outFolder, zipEntry.Name);
-                    string directoryName = Path.GetDirectoryName(fullZipToPath);
-                    if (!Directory.Exists(directoryName))
-                    {
-                        Directory.CreateDirectory(directoryName);
-                    }
+                    var fullZipToPath = Path.Combine(outFolder, zipEntry.Name);
+                    var directoryName = Path.GetDirectoryName(fullZipToPath);
+                    if (!Directory.Exists(directoryName)) Directory.CreateDirectory(directoryName);
 
                     if (check)
-                    {
                         if (File.Exists(fullZipToPath))
                         {
-                            FileInfo info = new FileInfo(fullZipToPath);
-                            if (info.Length == zipEntry.Size)
-                            {
-                                continue;
-                            }
+                            var info = new FileInfo(fullZipToPath);
+                            if (info.Length == zipEntry.Size) continue;
                         }
-                    }
 
-                    using (FileStream streamWriter = File.Create(fullZipToPath))
+                    using (var streamWriter = File.Create(fullZipToPath))
                     {
                         StreamUtils.Copy(zipStream, streamWriter, buffer);
                     }
@@ -72,7 +54,7 @@ namespace NsisoLauncherCore.Util
 
         public static void UnZipFile(string zipPath, string outFolder)
         {
-            (new FastZip()).ExtractZip(zipPath, outFolder, null);
+            new FastZip().ExtractZip(zipPath, outFolder, null);
         }
     }
 }

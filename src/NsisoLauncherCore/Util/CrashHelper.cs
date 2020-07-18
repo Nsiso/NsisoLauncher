@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,64 +10,48 @@ namespace NsisoLauncherCore.Util
     {
         public string GetCrashInfo(LaunchHandler handler, GameExitArg exitArg)
         {
-            if (!exitArg.Process.HasExited)
-            {
-                throw new Exception("The game is running.");
-            }
+            if (!exitArg.Process.HasExited) throw new Exception("The game is running.");
             if (exitArg.IsNormalExit())
-            {
                 throw new ArgumentException("It seems that the game is safe exit.Exit code equal zero");
-            }
-            Process process = exitArg.Process;
-            DateTime launchTime = process.StartTime;
-            DateTime exitTime = process.ExitTime;
-            string verRootDir = handler.GetGameVersionRootDir(exitArg.Version);
-            string crashreportDir = verRootDir + "\\crash-reports";
-            string latestlogPath = verRootDir + "\\logs\\latest.log";
+            var process = exitArg.Process;
+            var launchTime = process.StartTime;
+            var exitTime = process.ExitTime;
+            var verRootDir = handler.GetGameVersionRootDir(exitArg.Version);
+            var crashreportDir = verRootDir + "\\crash-reports";
+            var latestlogPath = verRootDir + "\\logs\\latest.log";
 
             if (Directory.Exists(crashreportDir))
             {
                 var files = Directory.EnumerateFiles(crashreportDir);
-                var logs = files.Where((x) =>
+                var logs = files.Where(x =>
                 {
-                    string time = Path.GetFileName(x).Substring(6, 19).Replace('-', '/').Replace('_', ' ').Replace('.', ':');
-                    if (DateTime.TryParse(time, out DateTime logtime))
-                    {
-                        return (launchTime < logtime) && (logtime < exitTime);
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    var time = Path.GetFileName(x).Substring(6, 19).Replace('-', '/').Replace('_', ' ')
+                        .Replace('.', ':');
+                    if (DateTime.TryParse(time, out var logtime))
+                        return launchTime < logtime && logtime < exitTime;
+                    return false;
                 });
                 if (logs.Count() != 0)
-                {
                     return File.ReadAllText(logs.FirstOrDefault());
-                }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
 
             //没有崩溃日志直接查找log
-            else if (File.Exists(latestlogPath))
-            {
-                DateTime lastWrtTime = File.GetLastWriteTime(latestlogPath);
-                if ((launchTime < lastWrtTime) && (lastWrtTime < exitTime))
-                {
-                    string[] allLogArr = File.ReadAllLines(latestlogPath);
-                    List<int> valiLogNo = new List<int>();
-                    bool keepRead = false;
-                    StringBuilder builder = new StringBuilder();
-                    for (int i = 0; i < allLogArr.Length; i++)
-                    {
-                        string current = allLogArr[i];
 
-                        if (keepRead)
-                        {
-                            builder.AppendLine(allLogArr[i - 1]);
-                        }
+            if (File.Exists(latestlogPath))
+            {
+                var lastWrtTime = File.GetLastWriteTime(latestlogPath);
+                if (launchTime < lastWrtTime && lastWrtTime < exitTime)
+                {
+                    var allLogArr = File.ReadAllLines(latestlogPath);
+                    var valiLogNo = new List<int>();
+                    var keepRead = false;
+                    var builder = new StringBuilder();
+                    for (var i = 0; i < allLogArr.Length; i++)
+                    {
+                        var current = allLogArr[i];
+
+                        if (keepRead) builder.AppendLine(allLogArr[i - 1]);
 
                         //最简单的检查
                         if (!current.StartsWith("[")) continue;
@@ -87,31 +70,22 @@ namespace NsisoLauncherCore.Util
                         if (secondRBrac == -1) continue;
                         var secondBlock = current.Substring(secondLBrac + 1, secondRBrac - secondLBrac - 1);
 
-                        if (DateTime.TryParse(firstBlock, out DateTime time))
+                        if (DateTime.TryParse(firstBlock, out var time))
                         {
                             if (secondBlock.Contains("ERROR"))
-                            {
                                 keepRead = true;
-                            }
                             else
-                            {
                                 keepRead = false;
-                            }
                         }
                     }
+
                     return builder.ToString();
                 }
-                else
-                {
-                    return null;
-                }
-            }
 
-            else
-            {
                 return null;
             }
 
+            return null;
         }
     }
 }

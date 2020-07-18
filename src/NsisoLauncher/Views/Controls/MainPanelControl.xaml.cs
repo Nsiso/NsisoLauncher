@@ -1,167 +1,18 @@
-﻿using NsisoLauncher.Config;
-using NsisoLauncher.Views.Windows;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using NsisoLauncherCore.Modules;
+using NsisoLauncher.Config;
 using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
-    /// MainPanelControl.xaml 的交互逻辑
+    ///     MainPanelControl.xaml 的交互逻辑
     /// </summary>
     public partial class MainPanelControl : UserControl
     {
-
-        #region Propdp(Command)
-        public ICommand LaunchCommand
-        {
-            get { return (ICommand)GetValue(LaunchCommandProperty); }
-            set { SetValue(LaunchCommandProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for LaunchCommand.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LaunchCommandProperty =
-            DependencyProperty.Register("LaunchCommand", typeof(ICommand), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public ICommand OpenSettingCommand
-        {
-            get { return (ICommand)GetValue(OpenSettingCommandProperty); }
-            set { SetValue(OpenSettingCommandProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for OpenSettingCommand.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty OpenSettingCommandProperty =
-            DependencyProperty.Register("OpenSettingCommand", typeof(ICommand), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-
-        public ICommand OpenDownloadingCommand
-        {
-            get { return (ICommand)GetValue(OpenDownloadingCommandProperty); }
-            set { SetValue(OpenDownloadingCommandProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for OpenDownloadingCommand.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty OpenDownloadingCommandProperty =
-            DependencyProperty.Register("OpenDownloadingCommand", typeof(ICommand), typeof(MainPanelControl), new PropertyMetadata(null));
-        #endregion
-
-        #region Propdp(Sources)
-        public IEnumerable<KeyValuePair<string, UserNode>> UsersSource
-        {
-            get { return (IEnumerable<KeyValuePair<string, UserNode>>)GetValue(UsersSourceProperty); }
-            set { SetValue(UsersSourceProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for UsersSource.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty UsersSourceProperty =
-            DependencyProperty.Register("UsersSource", typeof(IEnumerable<KeyValuePair<string, UserNode>>), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public IEnumerable<KeyValuePair<string, AuthenticationNode>> AuthNodesSource
-        {
-            get { return (IEnumerable<KeyValuePair<string, AuthenticationNode>>)GetValue(AuthNodesSourceProperty); }
-            set { SetValue(AuthNodesSourceProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for AuthNodesSource.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty AuthNodesSourceProperty =
-            DependencyProperty.Register("AuthNodesSource", typeof(IEnumerable<KeyValuePair<string, AuthenticationNode>>), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public IEnumerable<Version> VersionsSource
-        {
-            get { return (IEnumerable<Version>)GetValue(VersionsSourceProperty); }
-            set { SetValue(VersionsSourceProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for VersionsSource.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty VersionsSourceProperty =
-            DependencyProperty.Register("VersionsSource", typeof(IEnumerable<Version>), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-        #endregion
-
-        #region Propdp(Selection)
-        public Version SelectedVersion
-        {
-            get { return (Version)GetValue(SelectedVersionProperty); }
-            set { SetValue(SelectedVersionProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedVersion.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectedVersionProperty =
-            DependencyProperty.Register("SelectedVersion", typeof(Version), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public KeyValuePair<string, UserNode>? SelectedUserNode
-        {
-            get { return (KeyValuePair<string, UserNode>?)GetValue(SelectedUserNodeProperty); }
-            set { SetValue(SelectedUserNodeProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedUser.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectedUserNodeProperty =
-            DependencyProperty.Register("SelectedUserNode", typeof(KeyValuePair<string, UserNode>?), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public KeyValuePair<string, AuthenticationNode>? SelectedAuthNode
-        {
-            get { return (KeyValuePair<string, AuthenticationNode>?)GetValue(SelectedAuthNodeProperty); }
-            set { SetValue(SelectedAuthNodeProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedAuthNode.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectedAuthNodeProperty =
-            DependencyProperty.Register("SelectedAuthNode", typeof(KeyValuePair<string, AuthenticationNode>?), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        public string UserNameText
-        {
-            get { return (string)GetValue(UserNameTextProperty); }
-            set { SetValue(UserNameTextProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for UserNameText.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty UserNameTextProperty =
-            DependencyProperty.Register("UserNameText", typeof(string), typeof(MainPanelControl), new PropertyMetadata(null));
-
-
-
-        #endregion
-
-        #region Propdp(data)
-
-
-        public int DownloadTaskCount
-        {
-            get { return (int)GetValue(DownloadTaskCountProperty); }
-            set { SetValue(DownloadTaskCountProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for DownloadTaskCount.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DownloadTaskCountProperty =
-            DependencyProperty.Register("DownloadTaskCount", typeof(int), typeof(MainPanelControl), new PropertyMetadata(0));
-
-
-        #endregion
-
         //public event Action<object, LaunchEventArgs> Launch;
 
         //private ObservableCollection<KeyValuePair<string, UserNode>> userList = new ObservableCollection<KeyValuePair<string, UserNode>>();
@@ -172,6 +23,151 @@ namespace NsisoLauncher.Views.Controls
         {
             InitializeComponent();
         }
+
+        #region Propdp(Command)
+
+        public ICommand LaunchCommand
+        {
+            get => (ICommand) GetValue(LaunchCommandProperty);
+            set => SetValue(LaunchCommandProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for LaunchCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LaunchCommandProperty =
+            DependencyProperty.Register("LaunchCommand", typeof(ICommand), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+
+        public ICommand OpenSettingCommand
+        {
+            get => (ICommand) GetValue(OpenSettingCommandProperty);
+            set => SetValue(OpenSettingCommandProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for OpenSettingCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OpenSettingCommandProperty =
+            DependencyProperty.Register("OpenSettingCommand", typeof(ICommand), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+
+        public ICommand OpenDownloadingCommand
+        {
+            get => (ICommand) GetValue(OpenDownloadingCommandProperty);
+            set => SetValue(OpenDownloadingCommandProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for OpenDownloadingCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OpenDownloadingCommandProperty =
+            DependencyProperty.Register("OpenDownloadingCommand", typeof(ICommand), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+        #endregion
+
+        #region Propdp(Sources)
+
+        public IEnumerable<KeyValuePair<string, UserNode>> UsersSource
+        {
+            get => (IEnumerable<KeyValuePair<string, UserNode>>) GetValue(UsersSourceProperty);
+            set => SetValue(UsersSourceProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UsersSource.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UsersSourceProperty =
+            DependencyProperty.Register("UsersSource", typeof(IEnumerable<KeyValuePair<string, UserNode>>),
+                typeof(MainPanelControl), new PropertyMetadata(null));
+
+
+        public IEnumerable<KeyValuePair<string, AuthenticationNode>> AuthNodesSource
+        {
+            get => (IEnumerable<KeyValuePair<string, AuthenticationNode>>) GetValue(AuthNodesSourceProperty);
+            set => SetValue(AuthNodesSourceProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for AuthNodesSource.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AuthNodesSourceProperty =
+            DependencyProperty.Register("AuthNodesSource",
+                typeof(IEnumerable<KeyValuePair<string, AuthenticationNode>>), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+
+        public IEnumerable<Version> VersionsSource
+        {
+            get => (IEnumerable<Version>) GetValue(VersionsSourceProperty);
+            set => SetValue(VersionsSourceProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for VersionsSource.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty VersionsSourceProperty =
+            DependencyProperty.Register("VersionsSource", typeof(IEnumerable<Version>), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+        #endregion
+
+        #region Propdp(Selection)
+
+        public Version SelectedVersion
+        {
+            get => (Version) GetValue(SelectedVersionProperty);
+            set => SetValue(SelectedVersionProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedVersion.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedVersionProperty =
+            DependencyProperty.Register("SelectedVersion", typeof(Version), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+
+        public KeyValuePair<string, UserNode>? SelectedUserNode
+        {
+            get => (KeyValuePair<string, UserNode>?) GetValue(SelectedUserNodeProperty);
+            set => SetValue(SelectedUserNodeProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedUser.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedUserNodeProperty =
+            DependencyProperty.Register("SelectedUserNode", typeof(KeyValuePair<string, UserNode>?),
+                typeof(MainPanelControl), new PropertyMetadata(null));
+
+
+        public KeyValuePair<string, AuthenticationNode>? SelectedAuthNode
+        {
+            get => (KeyValuePair<string, AuthenticationNode>?) GetValue(SelectedAuthNodeProperty);
+            set => SetValue(SelectedAuthNodeProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedAuthNode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedAuthNodeProperty =
+            DependencyProperty.Register("SelectedAuthNode", typeof(KeyValuePair<string, AuthenticationNode>?),
+                typeof(MainPanelControl), new PropertyMetadata(null));
+
+
+        public string UserNameText
+        {
+            get => (string) GetValue(UserNameTextProperty);
+            set => SetValue(UserNameTextProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for UserNameText.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UserNameTextProperty =
+            DependencyProperty.Register("UserNameText", typeof(string), typeof(MainPanelControl),
+                new PropertyMetadata(null));
+
+        #endregion
+
+        #region Propdp(data)
+
+        public int DownloadTaskCount
+        {
+            get => (int) GetValue(DownloadTaskCountProperty);
+            set => SetValue(DownloadTaskCountProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for DownloadTaskCount.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DownloadTaskCountProperty =
+            DependencyProperty.Register("DownloadTaskCount", typeof(int), typeof(MainPanelControl),
+                new PropertyMetadata(0));
+
+        #endregion
 
         //private UserNode GetSelectedAuthNode()
         //{
@@ -339,6 +335,7 @@ namespace NsisoLauncher.Views.Controls
         //    a.ShowDialog();
         //    Refresh();
         //}
+
         #endregion
 
         //private /*async*/ void UserComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

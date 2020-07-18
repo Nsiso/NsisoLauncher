@@ -1,16 +1,17 @@
-﻿using Newtonsoft.Json;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Tools;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Util
 {
     public class AssetsReader
     {
-        private object locker = new object();
-        private LaunchHandler handler;
+        private readonly LaunchHandler handler;
+        private readonly object locker = new object();
 
         public AssetsReader(LaunchHandler handler)
         {
@@ -22,17 +23,14 @@ namespace NsisoLauncherCore.Util
             return JsonConvert.DeserializeObject<JAssets>(json);
         }
 
-        public JAssets GetAssets(Modules.Version version)
+        public JAssets GetAssets(Version version)
         {
             try
             {
                 lock (locker)
                 {
-                    string assetsPath = handler.GetAssetsIndexPath(version.Assets);
-                    if (!File.Exists(assetsPath))
-                    {
-                        return null;
-                    }
+                    var assetsPath = handler.GetAssetsIndexPath(version.Assets);
+                    if (!File.Exists(assetsPath)) return null;
                     var ja = GetAssetsByJson(File.ReadAllText(assetsPath));
                     return ja;
                 }
@@ -46,17 +44,14 @@ namespace NsisoLauncherCore.Util
 
     public class JAssets
     {
-        [JsonProperty("objects")]
-        public Dictionary<string, JAssetsInfo> Objects { get; set; }
+        [JsonProperty("objects")] public Dictionary<string, JAssetsInfo> Objects { get; set; }
     }
 
     public class JAssetsInfo : IDownloadable
     {
-        [JsonProperty("hash")]
-        public string Hash { get; set; }
+        [JsonProperty("hash")] public string Hash { get; set; }
 
-        [JsonProperty("size")]
-        public int Size { get; set; }
+        [JsonProperty("size")] public int Size { get; set; }
 
         public string GetDownloadSourceURL()
         {

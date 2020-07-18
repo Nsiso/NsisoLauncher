@@ -1,74 +1,70 @@
-﻿using Newtonsoft.Json.Linq;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Net.MojangApi.Responses;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.MojangApi.Responses;
 using static NsisoLauncherCore.Net.MojangApi.Responses.ProfileResponse;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 {
-
     /// <summary>
-    /// Profile请求类
+    ///     Profile请求类
     /// </summary>
     public class Profile : IEndpoint<ProfileResponse>
     {
-
         /// <summary>
-        /// 将未签名设置应用于请求
-        /// </summary>
-        public bool Unsigned { get; private set; }
-
-        /// <summary>
-        /// 返回玩家的用户名和其他信息
+        ///     返回玩家的用户名和其他信息
         /// </summary>
         /// <param name="uuid">Player UUID</param>
         /// <param name="unsigned"></param>
         public Profile(string uuid, bool unsigned = true)
         {
-            this.Unsigned = unsigned;
+            Unsigned = unsigned;
 
-            if (this.Unsigned)
-                this.Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
+            if (Unsigned)
+                Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
             else
-                this.Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}?unsigned=false");
-            this.Arguments.Add(uuid);
-            this.Arguments.Add(unsigned.ToString());
+                Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}?unsigned=false");
+            Arguments.Add(uuid);
+            Arguments.Add(unsigned.ToString());
         }
 
         /// <summary>
-        /// 执行profile请求
+        ///     将未签名设置应用于请求
         /// </summary>
-        public async override Task<ProfileResponse> PerformRequestAsync()
+        public bool Unsigned { get; }
+
+        /// <summary>
+        ///     执行profile请求
+        /// </summary>
+        public override async Task<ProfileResponse> PerformRequestAsync()
         {
-            this.Response = await Requester.Get(this);
+            Response = await Requester.Get(this);
 
-            if (this.Response.IsSuccess)
+            if (Response.IsSuccess)
             {
-                JObject profile = JObject.Parse(this.Response.RawMessage);
+                var profile = JObject.Parse(Response.RawMessage);
 
-                return new ProfileResponse(this.Response)
+                return new ProfileResponse(Response)
                 {
-                    Uuid = new Uuid()
+                    Uuid = new Uuid
                     {
                         PlayerName = profile["name"].ToObject<string>(),
                         Value = profile["id"].ToObject<string>()
                     },
-                    Properties = new ProfileProperties(profile["properties"].ToObject<JArray>()[0]["value"].ToObject<string>())
+                    Properties =
+                        new ProfileProperties(profile["properties"].ToObject<JArray>()[0]["value"].ToObject<string>())
                 };
             }
-            else
+
+            if (Response.Code == (HttpStatusCode) 429)
             {
-                if (this.Response.Code == (HttpStatusCode)429)
-                {
-                    ProfileResponseError error = new ProfileResponseError(JObject.Parse(this.Response.RawMessage));
-                    return new ProfileResponse(this.Response) { Error = error };
-                }
-                else
-                    return new ProfileResponse(Error.GetError(this.Response));
+                var error = new ProfileResponseError(JObject.Parse(Response.RawMessage));
+                return new ProfileResponse(Response) {Error = error};
             }
+
+            return new ProfileResponse(Error.GetError(Response));
         }
     }
-
 }

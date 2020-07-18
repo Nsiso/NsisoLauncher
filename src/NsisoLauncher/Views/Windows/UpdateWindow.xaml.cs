@@ -1,16 +1,15 @@
-﻿using MahApps.Metro.Controls;
-using NsisoLauncherCore.Net.PhalAPI;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
+using MahApps.Metro.Controls;
+using NsisoLauncherCore.Net.PhalAPI;
 
 namespace NsisoLauncher.Views.Windows
 {
     /// <summary>
-    /// UpdateWindow.xaml 的交互逻辑
+    ///     UpdateWindow.xaml 的交互逻辑
     /// </summary>
     public partial class UpdateWindow : MetroWindow
     {
-        public NsisoLauncherVersionResponse VersionResponse { get; set; }
         public UpdateWindow(NsisoLauncherVersionResponse response)
         {
             InitializeComponent();
@@ -20,6 +19,8 @@ namespace NsisoLauncher.Views.Windows
             descriptionLabel.Text = VersionResponse.Description;
             infoTextbox.Text = VersionResponse.UpdateInformation;
         }
+
+        public NsisoLauncherVersionResponse VersionResponse { get; set; }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -45,7 +46,7 @@ namespace NsisoLauncher.Views.Windows
             //    }
             //}
             Process.Start(new ProcessStartInfo(VersionResponse.DownloadSource_manual));
-            if ((bool)noCheckBox.IsChecked)
+            if ((bool) noCheckBox.IsChecked)
             {
                 App.Config.MainConfig.Launcher.CheckUpdate = false;
                 App.Config.Save();
@@ -54,12 +55,13 @@ namespace NsisoLauncher.Views.Windows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if ((bool)noCheckBox.IsChecked)
+            if ((bool) noCheckBox.IsChecked)
             {
                 App.Config.MainConfig.Launcher.CheckUpdate = false;
                 App.Config.Save();
             }
-            this.Close();
+
+            Close();
         }
     }
 }

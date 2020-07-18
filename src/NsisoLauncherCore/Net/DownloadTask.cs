@@ -1,8 +1,7 @@
-﻿using NsisoLauncherCore.Util.Checker;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Threading;
+using NsisoLauncherCore.Util.Checker;
 using static NsisoLauncherCore.Net.ProgressCallback;
 
 namespace NsisoLauncherCore.Net
@@ -11,51 +10,59 @@ namespace NsisoLauncherCore.Net
     {
         public DownloadTask(string name, IDownloadable downloadable, string to)
         {
-            this.TaskName = name;
-            this.Downloadable = downloadable;
-            this.To = to;
-            this.OriginFrom = downloadable.GetDownloadSourceURL();
+            TaskName = name;
+            Downloadable = downloadable;
+            To = to;
+            OriginFrom = downloadable.GetDownloadSourceURL();
         }
 
         /// <summary>
-        /// 任务名称
+        ///     任务名称
         /// </summary>
         public string TaskName { get; set; }
 
         /// <summary>
-        /// 任务下载来源
+        ///     任务下载来源
         /// </summary>
         public IDownloadable Downloadable { get; set; }
 
         /// <summary>
-        /// 下载原本来源
+        ///     下载原本来源
         /// </summary>
         public string OriginFrom { get; set; }
 
         /// <summary>
-        /// 下载到路径
+        ///     下载到路径
         /// </summary>
         public string To { get; set; }
 
         /// <summary>
-        /// 下载完成后执行方法
+        ///     下载完成后执行方法
         /// </summary>
         public Func<ProgressCallback, CancellationToken, Exception> Todo { get; set; }
 
         /// <summary>
-        /// 校验器，不设置即不校验
+        ///     校验器，不设置即不校验
         /// </summary>
         public IChecker Checker { get; set; }
+
+        public void AcceptProgressChangedArg(object sender, ProgressChangedArg arg)
+        {
+            DownloadSize = arg.CompletedSize;
+            TotalSize = arg.TotalSize;
+            State = arg.State;
+        }
 
         #region 界面绑定属性
 
         private long _totalSize = 1;
+
         /// <summary>
-        /// 文件总大小
+        ///     文件总大小
         /// </summary>
         public long TotalSize
         {
-            get { return _totalSize; }
+            get => _totalSize;
             private set
             {
                 _totalSize = value;
@@ -63,13 +70,14 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        private long _downloadSize = 0;
+        private long _downloadSize;
+
         /// <summary>
-        /// 已下载大小
+        ///     已下载大小
         /// </summary>
         public long DownloadSize
         {
-            get { return _downloadSize; }
+            get => _downloadSize;
             private set
             {
                 _downloadSize = value;
@@ -78,12 +86,13 @@ namespace NsisoLauncherCore.Net
         }
 
         private string _state;
+
         /// <summary>
-        /// 任务状态
+        ///     任务状态
         /// </summary>
         public string State
         {
-            get { return _state; }
+            get => _state;
             private set
             {
                 _state = value;
@@ -92,13 +101,14 @@ namespace NsisoLauncherCore.Net
         }
 
         private string _uiFrom;
+
         /// <summary>
-        /// UI上显示下载源
+        ///     UI上显示下载源
         /// </summary>
         public string UIFrom
         {
-            get { return _uiFrom; }
-            set 
+            get => _uiFrom;
+            set
             {
                 _uiFrom = value;
                 OnPropertyChanged("UIFrom");
@@ -106,12 +116,13 @@ namespace NsisoLauncherCore.Net
         }
 
         private string _uiReplaceFrom;
+
         /// <summary>
-        /// UI上显示下载源
+        ///     UI上显示下载源
         /// </summary>
         public string UIReplaceFrom
         {
-            get { return _uiReplaceFrom; }
+            get => _uiReplaceFrom;
             set
             {
                 _uiReplaceFrom = value;
@@ -119,10 +130,10 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-
         #endregion
 
         #region 设置属性方法
+
         public void SetTotalSize(long size)
         {
             TotalSize = size;
@@ -143,105 +154,26 @@ namespace NsisoLauncherCore.Net
         {
             State = state;
         }
+
         #endregion
 
         #region 属性更改通知事件(base)
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged(string strPropertyInfo)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(strPropertyInfo));
         }
-        #endregion
 
-        public void AcceptProgressChangedArg(object sender, ProgressChangedArg arg)
-        {
-            this.DownloadSize = arg.CompletedSize;
-            this.TotalSize = arg.TotalSize;
-            this.State = arg.State;
-        }
+        #endregion
     }
 
 
     public class ProgressCallback
     {
-        #region 属性
-
-        /// <summary>
-        /// 文件总大小
-        /// </summary>
-        public long TotalSize { get; private set; } = 1;
-
-        /// <summary>
-        /// 已下载大小
-        /// </summary>
-        public long DoneSize { get; private set; } = 0;
-
-        /// <summary>
-        /// 任务状态
-        /// </summary>
-        public string State { get; private set; }
-
-        #endregion
-
-        #region 设置属性方法
-        public void SetTotalSize(long size)
-        {
-            TotalSize = size;
-            this.ProgressChanged?.Invoke(this, new ProgressChangedArg()
-            {
-                TotalSize = this.TotalSize,
-                CompletedSize = this.DoneSize,
-                State = this.State
-            });
-        }
-
-        public void SetDoneSize(long size)
-        {
-            DoneSize = size;
-            this.ProgressChanged?.Invoke(this, new ProgressChangedArg()
-            {
-                TotalSize = this.TotalSize,
-                CompletedSize = this.DoneSize,
-                State = this.State
-            });
-        }
-
-        public void IncreaseDoneSize(long size)
-        {
-            DoneSize += size;
-            this.ProgressChanged?.Invoke(this, new ProgressChangedArg()
-            {
-                TotalSize = this.TotalSize,
-                CompletedSize = this.DoneSize,
-                State = this.State
-            });
-        }
-
-        public void SetDone()
-        {
-            DoneSize = TotalSize;
-            State = "已完成";
-            this.ProgressChanged?.Invoke(this, new ProgressChangedArg()
-            {
-                TotalSize = this.TotalSize,
-                CompletedSize = this.DoneSize,
-                State = this.State
-            });
-        }
-
-        public void SetState(string state)
-        {
-            State = state;
-            this.ProgressChanged?.Invoke(this, new ProgressChangedArg()
-            {
-                TotalSize = this.TotalSize,
-                CompletedSize = this.DoneSize,
-                State = this.State
-            });
-        }
-        #endregion
-
         public event EventHandler<ProgressChangedArg> ProgressChanged;
+
         public class ProgressChangedArg : EventArgs
         {
             public long CompletedSize { get; set; }
@@ -250,6 +182,85 @@ namespace NsisoLauncherCore.Net
 
             public string State { get; set; }
         }
+
+        #region 属性
+
+        /// <summary>
+        ///     文件总大小
+        /// </summary>
+        public long TotalSize { get; private set; } = 1;
+
+        /// <summary>
+        ///     已下载大小
+        /// </summary>
+        public long DoneSize { get; private set; }
+
+        /// <summary>
+        ///     任务状态
+        /// </summary>
+        public string State { get; private set; }
+
+        #endregion
+
+        #region 设置属性方法
+
+        public void SetTotalSize(long size)
+        {
+            TotalSize = size;
+            ProgressChanged?.Invoke(this, new ProgressChangedArg
+            {
+                TotalSize = TotalSize,
+                CompletedSize = DoneSize,
+                State = State
+            });
+        }
+
+        public void SetDoneSize(long size)
+        {
+            DoneSize = size;
+            ProgressChanged?.Invoke(this, new ProgressChangedArg
+            {
+                TotalSize = TotalSize,
+                CompletedSize = DoneSize,
+                State = State
+            });
+        }
+
+        public void IncreaseDoneSize(long size)
+        {
+            DoneSize += size;
+            ProgressChanged?.Invoke(this, new ProgressChangedArg
+            {
+                TotalSize = TotalSize,
+                CompletedSize = DoneSize,
+                State = State
+            });
+        }
+
+        public void SetDone()
+        {
+            DoneSize = TotalSize;
+            State = "已完成";
+            ProgressChanged?.Invoke(this, new ProgressChangedArg
+            {
+                TotalSize = TotalSize,
+                CompletedSize = DoneSize,
+                State = State
+            });
+        }
+
+        public void SetState(string state)
+        {
+            State = state;
+            ProgressChanged?.Invoke(this, new ProgressChangedArg
+            {
+                TotalSize = TotalSize,
+                CompletedSize = DoneSize,
+                State = State
+            });
+        }
+
+        #endregion
     }
     //public class DownloadInfo
     //{

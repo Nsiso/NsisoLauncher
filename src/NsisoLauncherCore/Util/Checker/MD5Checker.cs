@@ -12,10 +12,7 @@ namespace NsisoLauncherCore.Util.Checker
 
         public bool CheckFilePass()
         {
-            if (string.IsNullOrWhiteSpace(CheckSum))
-            {
-                throw new ArgumentException("检验器缺少校验值");
-            }
+            if (string.IsNullOrWhiteSpace(CheckSum)) throw new ArgumentException("检验器缺少校验值");
             return string.Equals(CheckSum, GetFileChecksum(), StringComparison.OrdinalIgnoreCase);
         }
 
@@ -26,16 +23,13 @@ namespace NsisoLauncherCore.Util.Checker
 
         public string GetFileChecksum()
         {
-            if (string.IsNullOrWhiteSpace(FilePath))
+            if (string.IsNullOrWhiteSpace(FilePath)) throw new ArgumentException("检验器校验目标文件路径为空");
+            using (var file = new FileStream(FilePath, FileMode.Open))
             {
-                throw new ArgumentException("检验器校验目标文件路径为空");
-            }
-            using (FileStream file = new FileStream(FilePath, FileMode.Open))
-            {
-                using (MD5 md5 = new MD5CryptoServiceProvider())//创建SHA1对象
+                using (MD5 md5 = new MD5CryptoServiceProvider()) //创建SHA1对象
                 {
-                    byte[] md5Bytes = md5.ComputeHash(file);//Hash运算
-                    string result = BitConverter.ToString(md5Bytes);//将运算结果转为string类型
+                    var md5Bytes = md5.ComputeHash(file); //Hash运算
+                    var result = BitConverter.ToString(md5Bytes); //将运算结果转为string类型
                     result = result.Replace("-", "");
                     return result;
                 }

@@ -1,18 +1,16 @@
-﻿using NsisoLauncherCore.Net.Mirrors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using NsisoLauncherCore.Net.Mirrors;
 
 namespace NsisoLauncherCore.Net.Tools
 {
     public class DownloadUtils
     {
-       
-        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
+        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IMirror mirror,
+            CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
         {
             try
             {
@@ -21,57 +19,42 @@ namespace NsisoLauncherCore.Net.Tools
                     monitor.SetDoneSize(0);
                     monitor.SetState(string.Format("补全库文件{0}", item.Name));
                     Exception exception = null;
-                    for (int i = 1; i <= 3; i++)
-                    {
+                    for (var i = 1; i <= 3; i++)
                         try
                         {
-                            string from = mirror.DoDownloadUrlReplace(item.Downloads.Artifact.URL);
-                            string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
-                            string buffFilename = to + ".downloadtask";
+                            var from = mirror.DoDownloadUrlReplace(item.Downloads.Artifact.URL);
+                            var to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
+                            var buffFilename = to + ".downloadtask";
 
-                            if (File.Exists(to))
-                            {
-                                continue;
-                            }
-                            if (string.IsNullOrWhiteSpace(from))
-                            {
-                                continue;
-                            }
+                            if (File.Exists(to)) continue;
+                            if (string.IsNullOrWhiteSpace(from)) continue;
                             if (Path.IsPathRooted(to))
                             {
-                                string dirName = Path.GetDirectoryName(to);
-                                if (!Directory.Exists(dirName))
-                                {
-                                    Directory.CreateDirectory(dirName);
-                                }
-                            }
-                            if (File.Exists(buffFilename))
-                            {
-                                File.Delete(buffFilename);
+                                var dirName = Path.GetDirectoryName(to);
+                                if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
                             }
 
-                            HttpWebRequest request = WebRequest.Create(from) as HttpWebRequest;
+                            if (File.Exists(buffFilename)) File.Delete(buffFilename);
+
+                            var request = WebRequest.Create(from) as HttpWebRequest;
                             cancelToken.Register(() => { request.Abort(); });
                             request.Timeout = 5000;
-                            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                            using (var response = request.GetResponse() as HttpWebResponse)
                             {
                                 monitor.SetTotalSize(response.ContentLength);
-                                using (Stream responseStream = response.GetResponseStream())
+                                using (var responseStream = response.GetResponseStream())
                                 {
                                     responseStream.ReadTimeout = 5000;
-                                    using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
+                                    using (var fs = new FileStream(buffFilename, FileMode.Create))
                                     {
-                                        byte[] bArr = new byte[1024];
-                                        int size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                                        var bArr = new byte[1024];
+                                        var size = responseStream.Read(bArr, 0, bArr.Length);
 
                                         while (size > 0)
                                         {
-                                            if (cancelToken.IsCancellationRequested)
-                                            {
-                                                return null;
-                                            }
+                                            if (cancelToken.IsCancellationRequested) return null;
                                             fs.Write(bArr, 0, size);
-                                            size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                                            size = responseStream.Read(bArr, 0, bArr.Length);
                                             monitor.IncreaseDoneSize(size);
                                         }
                                     }
@@ -90,11 +73,9 @@ namespace NsisoLauncherCore.Net.Tools
                             monitor.SetState(string.Format("重试第{0}次", i));
 
                             //继续重试
-                            continue;
                         }
-                        
-                    }
                 }
+
                 return null;
             }
             catch (Exception e)

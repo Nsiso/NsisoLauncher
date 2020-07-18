@@ -27,6 +27,7 @@ namespace NsisoLauncher.Utils
         {
             return Regex.IsMatch(str_UpChar, @"^[A-Z]+$");
         }
+
         public static bool IsLowerChar(string str_UpChar)
         {
             return Regex.IsMatch(str_UpChar, @"^[a-z]+$");
@@ -48,7 +49,7 @@ namespace NsisoLauncher.Utils
         public static bool IsEmail(string str_Email)
         {
             return Regex.IsMatch(str_Email,
-            @"^(([\w\.]+)@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))|((\w+\.?)+)@([a-zA-Z]{2,4}|[0-9]{1,3})(\.[a-zA-Z]{2,4}))$");
+                @"^(([\w\.]+)@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))|((\w+\.?)+)@([a-zA-Z]{2,4}|[0-9]{1,3})(\.[a-zA-Z]{2,4}))$");
         }
     }
 }

@@ -9,6 +9,7 @@ namespace NsisoLauncherCore.Util.Checker
 
         bool CheckFilePass();
         Task<bool> CheckFilePassAsync();
+
         string GetFileChecksum();
         //Task<string> GetFileChecksumAsync();
     }

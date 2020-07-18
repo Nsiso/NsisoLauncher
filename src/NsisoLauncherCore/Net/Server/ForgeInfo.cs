@@ -1,38 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace NsisoLauncherCore.Net.Server
 {
     /// <summary>
-    /// Contains information about a modded server install.
+    ///     Contains information about a modded server install.
     /// </summary>
     public class ForgeInfo
     {
-        /// <summary>
-        /// Represents an individual forge mod.
-        /// </summary>
-        public class ForgeMod
-        {
-            public ForgeMod(String ModID, String Version)
-            {
-                this.ModID = ModID;
-                this.Version = Version;
-            }
-
-            public readonly String ModID;
-            public readonly String Version;
-
-            public override string ToString()
-            {
-                return ModID + " [" + Version + ']';
-            }
-        }
-
         public List<ForgeMod> Mods;
 
         /// <summary>
-        /// Create a new ForgeInfo from the given data.
+        ///     Create a new ForgeInfo from the given data.
         /// </summary>
         /// <param name="data">The modinfo JSON tag.</param>
         internal ForgeInfo(JToken data)
@@ -56,13 +35,33 @@ namespace NsisoLauncherCore.Net.Server
             //     }]
             // }
 
-            this.Mods = new List<ForgeMod>();
-            foreach (JToken mod in data["modList"])
+            Mods = new List<ForgeMod>();
+            foreach (var mod in data["modList"])
             {
-                String modid = mod["modid"].ToString();
-                String version = mod["version"].ToString();
+                var modid = mod["modid"].ToString();
+                var version = mod["version"].ToString();
 
-                this.Mods.Add(new ForgeMod(modid, version));
+                Mods.Add(new ForgeMod(modid, version));
+            }
+        }
+
+        /// <summary>
+        ///     Represents an individual forge mod.
+        /// </summary>
+        public class ForgeMod
+        {
+            public readonly string ModID;
+            public readonly string Version;
+
+            public ForgeMod(string ModID, string Version)
+            {
+                this.ModID = ModID;
+                this.Version = Version;
+            }
+
+            public override string ToString()
+            {
+                return ModID + " [" + Version + ']';
             }
         }
     }

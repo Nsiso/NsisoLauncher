@@ -1,76 +1,74 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace NsisoLauncherCore.Util
 {
     public class InstallJavaOptions
     {
         /// <summary>
-        /// 是否静默安装
+        ///     是否静默安装
         /// </summary>
         public bool SilentInstall { get; set; }
 
         /// <summary>
-        /// 安装目录
+        ///     安装目录
         /// </summary>
         public string InstallDir { get; set; }
 
         public string ToArg()
         {
-            StringBuilder str = new StringBuilder();
+            var str = new StringBuilder();
             if (SilentInstall)
             {
                 str.Append("/s INSTALL_SILENT=1 ");
                 str.Append("/L setup.log ");
             }
-            if (!string.IsNullOrWhiteSpace(InstallDir))
-            {
-                str.AppendFormat("INSTALLDIR={0} ", InstallDir);
-            }
+
+            if (!string.IsNullOrWhiteSpace(InstallDir)) str.AppendFormat("INSTALLDIR={0} ", InstallDir);
             return str.ToString().Trim();
         }
     }
 
     public class Java
     {
-        /// <summary>
-        /// JAVA路径
-        /// </summary>
-        public string Path { get; private set; }
-
-        /// <summary>
-        /// JAVA版本
-        /// </summary>
-        public string Version { get; private set; }
-
-        /// <summary>
-        /// java位数
-        /// </summary>
-        public ArchEnum Arch { get; private set; }
-
         public Java(string path, string version, ArchEnum arch)
         {
-            this.Path = path;
-            this.Version = version;
-            this.Arch = arch;
+            Path = path;
+            Version = version;
+            Arch = arch;
         }
 
         /// <summary>
-        /// 安装JAVA
+        ///     JAVA路径
+        /// </summary>
+        public string Path { get; }
+
+        /// <summary>
+        ///     JAVA版本
+        /// </summary>
+        public string Version { get; }
+
+        /// <summary>
+        ///     java位数
+        /// </summary>
+        public ArchEnum Arch { get; }
+
+        /// <summary>
+        ///     安装JAVA
         /// </summary>
         /// <param name="installerPath">JAVA安装包路径</param>
         /// <param name="options">JAVA安装选项</param>
         /// <returns></returns>
         public static Process InstallJava(string installerPath, InstallJavaOptions options)
         {
-            Process p = Process.Start(
-                new ProcessStartInfo()
+            var p = Process.Start(
+                new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
                     Arguments = string.Format("{0} {1}", installerPath, options.ToArg()),
@@ -82,7 +80,7 @@ namespace NsisoLauncherCore.Util
         }
 
         /// <summary>
-        /// 根据路径获取单个JAVA详细信息
+        ///     根据路径获取单个JAVA详细信息
         /// </summary>
         /// <param name="javaPath"></param>
         /// <returns></returns>
@@ -92,26 +90,27 @@ namespace NsisoLauncherCore.Util
             {
                 if (!string.IsNullOrWhiteSpace(javaPath) && File.Exists(javaPath))
                 {
-                    Process p = new Process();
+                    var p = new Process();
                     p.StartInfo.FileName = javaPath;
                     p.StartInfo.Arguments = "-version";
                     p.StartInfo.RedirectStandardError = true;
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.CreateNoWindow = true;
                     p.Start();
-                    string result = p.StandardError.ReadToEnd();
-                    string version = result.Replace("java version \"", "");
+                    var result = p.StandardError.ReadToEnd();
+                    var version = result.Replace("java version \"", "");
                     version = version.Remove(version.IndexOf("\""));
-                    bool is64 = result.Contains("64-Bit");
+                    var is64 = result.Contains("64-Bit");
                     Java info;
-                    if (is64) { info = new Java(javaPath, version, ArchEnum.x64); } else { info = new Java(javaPath, version, ArchEnum.x32); }
+                    if (is64)
+                        info = new Java(javaPath, version, ArchEnum.x64);
+                    else
+                        info = new Java(javaPath, version, ArchEnum.x32);
                     p.Dispose();
                     return info;
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
             catch (Exception)
             {
@@ -120,20 +119,17 @@ namespace NsisoLauncherCore.Util
         }
 
         /// <summary>
-        /// 根据路径获取单个JAVA详细信息
+        ///     根据路径获取单个JAVA详细信息
         /// </summary>
         /// <param name="javaPath"></param>
         /// <returns></returns>
         public static Task<Java> GetJavaInfoAsync(string javaPath)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return GetJavaInfo(javaPath);
-            });
+            return Task.Factory.StartNew(() => { return GetJavaInfo(javaPath); });
         }
 
         /// <summary>
-        /// 从所给JAVA列表中寻找最适合本机的JAVA
+        ///     从所给JAVA列表中寻找最适合本机的JAVA
         /// </summary>
         /// <param name="javalist"></param>
         /// <returns></returns>
@@ -141,35 +137,28 @@ namespace NsisoLauncherCore.Util
         {
             try
             {
-                List<Java> goodjava = new List<Java>();
+                var goodjava = new List<Java>();
                 if (SystemTools.GetSystemArch() == ArchEnum.x64)
                 {
                     foreach (var item in javalist)
-                    {
                         if (item.Arch == ArchEnum.x64)
-                        { goodjava.Add(item); }
-                    }
-                    if (goodjava.Count == 0)
-                    { goodjava.AddRange(javalist); }
+                            goodjava.Add(item);
+                    if (goodjava.Count == 0) goodjava.AddRange(javalist);
                 }
                 else
-                { goodjava = javalist; }
+                {
+                    goodjava = javalist;
+                }
 
-                var java8 = goodjava.Where((x) =>
-                {
-                    return x.Version.StartsWith("1.8");
-                });
+                var java8 = goodjava.Where(x => { return x.Version.StartsWith("1.8"); });
                 if (java8.Count() != 0)
-                {
                     return java8.OrderByDescending(x => x.Version).ToList().FirstOrDefault();
-                }
-                else
-                {
-                    return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
-                }
+                return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
             }
             catch (Exception)
-            { return null; }
+            {
+                return null;
+            }
         }
 
         public static Java GetSuitableJava()
@@ -179,7 +168,7 @@ namespace NsisoLauncherCore.Util
 
         public static Dictionary<string, string> GetJavaRegisterPath(RegistryKey key)
         {
-            Dictionary<string, string> jres = new Dictionary<string, string>();
+            var jres = new Dictionary<string, string>();
 
             var oldKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Runtime Environment");
             var newKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JRE");
@@ -187,63 +176,42 @@ namespace NsisoLauncherCore.Util
 
             //oldJre
             if (oldKey != null)
-            {
                 foreach (var verStr in oldKey.GetSubKeyNames())
-                {
                     if (verStr.Length > 3)
                     {
-                        string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
-                        if (File.Exists(path) && !jres.ContainsKey(verStr))
-                        {
-                            jres.Add(verStr, path);
-                        }
+                        var path = oldKey.OpenSubKey(verStr).GetValue("JavaHome") + @"\bin\javaw.exe";
+                        if (File.Exists(path) && !jres.ContainsKey(verStr)) jres.Add(verStr, path);
                     }
-                }
-            }
 
             //newJre
             if (newKey != null)
-            {
                 foreach (var verStr in newKey.GetSubKeyNames())
-                {
                     if (verStr.Length > 3)
                     {
-                        string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
-                        if (File.Exists(path) && !jres.ContainsKey(verStr))
-                        {
-                            jres.Add(verStr, path);
-                        }
+                        var path = newKey.OpenSubKey(verStr).GetValue("JavaHome") + @"\bin\javaw.exe";
+                        if (File.Exists(path) && !jres.ContainsKey(verStr)) jres.Add(verStr, path);
                     }
-                }
-            }
 
             //jdk
             if (jdkKey != null)
-            {
                 foreach (var verStr in jdkKey.GetSubKeyNames())
-                {
                     if (verStr.Length > 3)
                     {
-                        string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\jre\bin\javaw.exe";
-                        if (File.Exists(path) && !jres.ContainsKey(verStr))
-                        {
-                            jres.Add(verStr, path);
-                        }
+                        var path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome") + @"\jre\bin\javaw.exe";
+                        if (File.Exists(path) && !jres.ContainsKey(verStr)) jres.Add(verStr, path);
                     }
-                }
-            }
 
             return jres;
         }
 
         /// <summary>
-        /// 从注册表寻找本机JAVA列表
+        ///     从注册表寻找本机JAVA列表
         /// </summary>
         /// <returns></returns>
         public static List<Java> GetJavaList()
         {
-            List<Java> javas = new List<Java>();
-            RegistryKey localMachine = Registry.LocalMachine.OpenSubKey("SOFTWARE");
+            var javas = new List<Java>();
+            var localMachine = Registry.LocalMachine.OpenSubKey("SOFTWARE");
             switch (SystemTools.GetSystemArch())
             {
                 case ArchEnum.x32:
@@ -258,6 +226,7 @@ namespace NsisoLauncherCore.Util
                     javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
                     break;
             }
+
             return javas;
         }
 

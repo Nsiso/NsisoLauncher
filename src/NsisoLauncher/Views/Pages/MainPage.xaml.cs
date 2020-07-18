@@ -1,30 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
+using NsisoLauncher.ViewModels.Pages;
+using NsisoLauncher.ViewModels.Windows;
 
 namespace NsisoLauncher.Views.Pages
 {
     /// <summary>
-    /// MainPage.xaml 的交互逻辑
+    ///     MainPage.xaml 的交互逻辑
     /// </summary>
     public partial class MainPage : Page
     {
-        public MainPage(ViewModels.Windows.MainWindowViewModel mainWindowVM)
+        public MainPage(MainWindowViewModel mainWindowVM)
         {
             InitializeComponent();
-            ViewModels.Pages.MainPageViewModel vm = new ViewModels.Pages.MainPageViewModel(mainWindowVM);
-            this.DataContext = vm;
+            var vm = new MainPageViewModel(mainWindowVM);
+            DataContext = vm;
         }
     }
 }

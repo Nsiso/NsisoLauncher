@@ -1,7 +1,5 @@
-﻿using NsisoLauncherCore.Net.Tools;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {
@@ -15,15 +13,15 @@ namespace NsisoLauncherCore.Net.Mirrors
         public string MirrorName { get; set; } = "MCBBS-BmclAPI";
         public string BaseDomain { get; set; } = "download.mcbbs.net";
 
-        public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>()
+        public Dictionary<string, string> ReplaceDictionary { get; set; } = new Dictionary<string, string>
         {
-            {GetDownloadUrl.MojangVersionUrl, MCBBSVersionURL },
-            {GetDownloadUrl.MojangMainUrl, MCBBSUrl },
-            {GetDownloadUrl.MojangMetaUrl, MCBBSUrl },
-            {GetDownloadUrl.MojanglibrariesUrl, MCBBSLibrariesURL },
-            {GetDownloadUrl.MojangAssetsBaseUrl, MCBBSAssetsURL },
-            {GetDownloadUrl.ForgeHttpUrl, MCBBSLibrariesURL },
-            {GetDownloadUrl.ForgeHttpsUrl, MCBBSLibrariesURL }
+            {GetDownloadUrl.MojangVersionUrl, MCBBSVersionURL},
+            {GetDownloadUrl.MojangMainUrl, MCBBSUrl},
+            {GetDownloadUrl.MojangMetaUrl, MCBBSUrl},
+            {GetDownloadUrl.MojanglibrariesUrl, MCBBSLibrariesURL},
+            {GetDownloadUrl.MojangAssetsBaseUrl, MCBBSAssetsURL},
+            {GetDownloadUrl.ForgeHttpUrl, MCBBSLibrariesURL},
+            {GetDownloadUrl.ForgeHttpsUrl, MCBBSLibrariesURL}
         };
 
         public string DoDownloadUrlReplace(string source)

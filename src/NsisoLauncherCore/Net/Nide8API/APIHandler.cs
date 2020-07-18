@@ -1,52 +1,32 @@
-﻿using Heijden.DNS;
-using Newtonsoft.Json;
-using System.Net.Http;
+﻿using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace NsisoLauncherCore.Net.Nide8API
 {
     public class APIHandler
     {
-        public string Nide8ID { get; private set; }
         public APIHandler(string id)
         {
             Nide8ID = id;
         }
 
+        public string Nide8ID { get; }
+
         public async Task<APIModules> GetInfoAsync()
         {
-            HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
+            var jsonRespond =
+                await NetRequester.Client.GetAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
             string json = null;
-            if (jsonRespond.IsSuccessStatusCode)
-            {
-                json = await jsonRespond.Content.ReadAsStringAsync();
-            }
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return null;
-            }
-            return await Task.Factory.StartNew(() =>
-            {
-                return JsonConvert.DeserializeObject<APIModules>(json);
-            });
+            if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(json)) return null;
+            return await Task.Factory.StartNew(() => { return JsonConvert.DeserializeObject<APIModules>(json); });
         }
 
         public async Task<bool> TestIsNide8DnsOK()
         {
-            Response response = null;
-            await Task.Factory.StartNew(() =>
-            {
-                Resolver resolver = new Resolver();
-                response = resolver.Query("auth2.nide8.com", Heijden.DNS.QType.A);
-            });
-            if (string.IsNullOrWhiteSpace(response.Error) && response.RecordsA.Length != 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var query = await Dns.GetHostEntryAsync("auth2.nide8.com").ConfigureAwait(false);
+            return query?.AddressList?.Length > 0;
         }
     }
 }

@@ -1,52 +1,53 @@
 ﻿<Page x:Class="NsisoLauncher.Views.Pages.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
-        xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
-        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
-        xmlns:converters="clr-namespace:NsisoLauncher.Utils"
+      xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
+      xmlns:converters="clr-namespace:NsisoLauncher.Utils"
       mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainPageDesignViewModel, IsDesignTimeCreatable=True}"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
     <Page.Resources>
-        <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
-        <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
+        <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter" />
+        <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter" />
     </Page.Resources>
     <Grid>
 
         <Grid x:Name="bgGrid">
-            <Image Source="{Binding StaticMediaSource}" Stretch="UniformToFill"/>
+            <Image Source="{Binding StaticMediaSource}" Stretch="UniformToFill" />
             <MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"
-                                  Stretch="UniformToFill"/>
+                          Stretch="UniformToFill" />
         </Grid>
-        <Grid HorizontalAlignment="Right" Width="280" Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
+        <Grid HorizontalAlignment="Right" Width="280"
+              Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
             <Border x:Name="blurBackgroundRect">
                 <Border.Effect>
-                    <BlurEffect Radius="{Binding BlurRadius}"/>
+                    <BlurEffect Radius="{Binding BlurRadius}" />
                 </Border.Effect>
                 <Border.Background>
                     <VisualBrush Stretch="Fill" Visual="{Binding ElementName=bgGrid}" ViewboxUnits="Absolute">
                         <VisualBrush.Viewbox>
                             <MultiBinding Converter="{StaticResource visualBrushTargetConverter}">
-                                <Binding ElementName="bgGrid"/>
-                                <Binding ElementName="blurBackgroundRect"/>
-                                <Binding ElementName="bgGrid" Path="ActualWidth"/>
-                                <Binding ElementName="bgGrid" Path="ActualHeight"/>
+                                <Binding ElementName="bgGrid" />
+                                <Binding ElementName="blurBackgroundRect" />
+                                <Binding ElementName="bgGrid" Path="ActualWidth" />
+                                <Binding ElementName="bgGrid" Path="ActualHeight" />
                             </MultiBinding>
                         </VisualBrush.Viewbox>
                     </VisualBrush>
                 </Border.Background>
             </Border>
-            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6"/>
+            <Rectangle Fill="{DynamicResource WhiteColorBrush}" Opacity="0.6" />
             <!--#endregion-->
             <userControl:MainPanelControl Margin="10"
-                                          AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
+                                          AuthNodesSource="{Binding AuthNodes, Mode=OneWay}"
                                           VersionsSource="{Binding Versions, Mode=OneWay}"
                                           UsersSource="{Binding Users, Mode=OneWay}"
                                           SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}"
@@ -56,34 +57,33 @@
                                           LaunchCommand="{Binding LaunchCmd}"
                                           OpenDownloadingCommand="{Binding OpenDownloadingCmd}"
                                           OpenSettingCommand="{Binding OpenSettingCmd}"
-                                          DownloadTaskCount="{Binding DownloadTaskCount}"
-                                          />
+                                          DownloadTaskCount="{Binding DownloadTaskCount}" />
         </Grid>
-        <ToggleButton Style ="{DynamicResource MetroCircleToggleButtonStyle}"
+        <ToggleButton Style="{DynamicResource MetroCircleToggleButtonStyle}"
                       Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
                       IsChecked="{Binding IsPlaying}"
-                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource BooleanToVisibilityConverter}}"
-                >
-            <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
+                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <iconPacks:FontAwesome Kind="VolumeUpSolid" />
         </ToggleButton>
 
         <Grid Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Rectangle>
                 <Rectangle.Fill>
-                    <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
+                    <VisualBrush Visual="{Binding ElementName=bgGrid}" />
                 </Rectangle.Fill>
                 <Rectangle.Effect>
-                    <BlurEffect Radius="{Binding BlurRadius}"/>
+                    <BlurEffect Radius="{Binding BlurRadius}" />
                 </Rectangle.Effect>
             </Rectangle>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <controls:ProgressRing Foreground="{DynamicResource AccentBaseColorBrush}" IsActive="{Binding IsLaunching}"/>
+                <controls:ProgressRing Foreground="{DynamicResource AccentBaseColorBrush}"
+                                       IsActive="{Binding IsLaunching}" />
                 <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center"
-                           Foreground="{DynamicResource WhiteBrush}" Margin="0,10,0,20"/>
-                <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}"/>
+                           Foreground="{DynamicResource WhiteBrush}" Margin="0,10,0,20" />
+                <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}" />
             </StackPanel>
             <TextBlock Text="{Binding LogLine}" TextAlignment="Right" Foreground="{DynamicResource WhiteBrush}"
-                       VerticalAlignment="Bottom" Padding="10,0" Background="{DynamicResource AccentColorBrush}"/>
+                       VerticalAlignment="Bottom" Padding="10,0" Background="{DynamicResource AccentColorBrush}" />
         </Grid>
     </Grid>
 </Page>

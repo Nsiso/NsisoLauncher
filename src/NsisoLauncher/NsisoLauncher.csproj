@@ -31,6 +31,10 @@
 		<PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
 		<PackageReference Include="MahApps.Metro" Version="2.1.1" />
 		<PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" Version="4.3.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -45,5 +49,18 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resource\bg.jpg" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 </Project>

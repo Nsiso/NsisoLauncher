@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -10,18 +10,21 @@ namespace NsisoLauncherCore.Net
     public static class NetRequester
     {
         /// <summary>
-        /// NsisoLauncher目前名称.
+        ///     NsisoLauncher目前名称.
         /// </summary>
-        public readonly static string ClientName = "NsisoLauncher";
+        public static readonly string ClientName = "NsisoLauncher";
 
         /// <summary>
-        /// NsisoLauncher目前版本号.
+        ///     NsisoLauncher目前版本号.
         /// </summary>
-        public readonly static string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static readonly string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         private static HttpClient _client;
+
+        private static HttpClientHandler _clientHandler;
+
         /// <summary>
-        /// 表示Web请求中使用的http客户端.
+        ///     表示Web请求中使用的http客户端.
         /// </summary>
         public static HttpClient Client
         {
@@ -29,35 +32,26 @@ namespace NsisoLauncherCore.Net
             {
                 if (_client == null)
                 {
-                    _client = new HttpClient(ClientHandler) {/* Timeout = NetRequester.Timeout */};
+                    _client = new HttpClient(ClientHandler);
                     _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(ClientName, ClientVersion));
                 }
+
                 return _client;
             }
-            private set
-            {
-                _client = value;
-            }
+            private set => _client = value;
         }
 
-        private static HttpClientHandler _clientHandler;
         /// <summary>
-        /// 表示http客户端handler
+        ///     表示http客户端handler
         /// </summary>
         public static HttpClientHandler ClientHandler
         {
             get
             {
-                if (_clientHandler == null)
-                {
-                    _clientHandler = new HttpClientHandler();
-                }
+                if (_clientHandler == null) _clientHandler = new HttpClientHandler();
                 return _clientHandler;
             }
-            set
-            {
-                _clientHandler = value;
-            }
+            set => _clientHandler = value;
         }
 
         ///// <summary>
@@ -65,7 +59,7 @@ namespace NsisoLauncherCore.Net
         ///// </summary>
         //public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
-        public async static Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
+        public static async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
             try
             {
@@ -73,7 +67,7 @@ namespace NsisoLauncherCore.Net
             }
             catch (TaskCanceledException)
             {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
         }
     }

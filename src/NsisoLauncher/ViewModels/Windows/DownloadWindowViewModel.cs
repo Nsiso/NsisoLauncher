@@ -1,42 +1,16 @@
-﻿using LiveCharts;
-using LiveCharts.Wpf;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncherCore.Net;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LiveCharts;
+using LiveCharts.Wpf;
+using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncherCore.Net;
 
 namespace NsisoLauncher.ViewModels.Windows
 {
     public class DownloadWindowViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<DownloadTask> Tasks { get; private set; }
-
-        public double Percentage { get; set; }
-
-        public string SpeedStr { get; set; }
-
-        public int ProgressMaximum { get; set; }
-
-        public int ProgressValue { get; set; }
-
-        /// <summary>
-        /// 窗口对话
-        /// </summary>
-        public IDialogCoordinator Instance { get; set; }
-
-        #region Char
-        public SeriesCollection ChartSeries { get; set; }
-
-        public ChartValues<double> SpeedValues { get; set; }
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public DownloadWindowViewModel()
         {
             InitChart();
@@ -53,26 +27,22 @@ namespace NsisoLauncher.ViewModels.Windows
             }
         }
 
-        public void InitChart()
-        {
-            SpeedValues = new ChartValues<double>();
-            for (int i = 0; i < 50; i++)
-            {
-                SpeedValues.Add(0);
-            }
-            ChartSeries = new SeriesCollection() { new LineSeries()
-            { Values = SpeedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度" } };
-        }
+        public ObservableCollection<DownloadTask> Tasks { get; }
 
-        private void ClearSpeedValues()
-        {
-            for (int i = 0; i < 50; i++)
-            {
-                SpeedValues[i] = 0;
-            }
-        }
+        public double Percentage { get; set; }
 
-        public Func<double, string> YFormatter { get; set; } = new Func<double, string>((value) =>
+        public string SpeedStr { get; set; }
+
+        public int ProgressMaximum { get; set; }
+
+        public int ProgressValue { get; set; }
+
+        /// <summary>
+        ///     窗口对话
+        /// </summary>
+        public IDialogCoordinator Instance { get; set; }
+
+        public Func<double, string> YFormatter { get; set; } = value =>
         {
             string speedUnit;
             double speedValue;
@@ -91,8 +61,25 @@ namespace NsisoLauncher.ViewModels.Windows
                 speedUnit = "B/s";
                 speedValue = value;
             }
+
             return string.Format("{0}{1}", speedValue, speedUnit);
-        });
+        };
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void InitChart()
+        {
+            SpeedValues = new ChartValues<double>();
+            for (var i = 0; i < 50; i++) SpeedValues.Add(0);
+            ChartSeries = new SeriesCollection
+                {new LineSeries {Values = SpeedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度"}};
+        }
+
+        private void ClearSpeedValues()
+        {
+            for (var i = 0; i < 50; i++) SpeedValues[i] = 0;
+        }
+
         private async void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
             SpeedStr = "0Kb/s";
@@ -101,31 +88,37 @@ namespace NsisoLauncher.ViewModels.Windows
             Percentage = 0;
             ClearSpeedValues();
             if (e.ErrorList == null || e.ErrorList.Count == 0)
-            {
                 await Instance.ShowMessageAsync(this, App.GetResourceString("String.Downloadwindow.DownloadComplete"),
                     App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
-                //undo close window
-            }
+            //undo close window
             else
-            {
-                await Instance.ShowMessageAsync(this, App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
-            }
+                await Instance.ShowMessageAsync(this,
+                    App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
+                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"),
+                        e.ErrorList.Count, e.ErrorList.First().Value.Message));
         }
 
         private void Downloader_DownloadSpeedChanged(object sender, DownloadSpeedChangedArg e)
         {
-            SpeedStr = e.SpeedValue.ToString() + e.SpeedUnit;
+            SpeedStr = e.SpeedValue + e.SpeedUnit;
             SpeedValues.Add(e.SizePerSec);
             SpeedValues.RemoveAt(0);
         }
 
         private void Downloader_DownloadProgressChanged(object sender, DownloadProgressChangedArg e)
         {
-            int total = e.LeftTasksCount + e.DoneTaskCount;
+            var total = e.LeftTasksCount + e.DoneTaskCount;
             ProgressMaximum = total;
             ProgressValue = e.DoneTaskCount;
-            Percentage = (double)e.DoneTaskCount / (e.DoneTaskCount + e.LeftTasksCount);
+            Percentage = (double) e.DoneTaskCount / (e.DoneTaskCount + e.LeftTasksCount);
         }
+
+        #region Char
+
+        public SeriesCollection ChartSeries { get; set; }
+
+        public ChartValues<double> SpeedValues { get; set; }
+
+        #endregion
     }
 }

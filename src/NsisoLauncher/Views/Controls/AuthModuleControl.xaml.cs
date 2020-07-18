@@ -1,22 +1,21 @@
-﻿using MahApps.Metro.Controls;
+﻿using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Modules;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace NsisoLauncher.Views.Controls
 {
     /// <summary>
-    /// AuthModuleControl.xaml 的交互逻辑
+    ///     AuthModuleControl.xaml 的交互逻辑
     /// </summary>
     public partial class AuthModuleControl : UserControl
     {
-        private KeyValuePair<string, AuthenticationNode> authModule;
-
         private AuthenticationType authenticationType = AuthenticationType.OFFLINE;
+        private KeyValuePair<string, AuthenticationNode> authModule;
 
         public AuthModuleControl()
         {
@@ -48,6 +47,7 @@ namespace NsisoLauncher.Views.Controls
                     default:
                         return;
                 }
+
                 addButton.IsEnabled = false;
                 saveButton.IsEnabled = true;
                 delButton.IsEnabled = true;
@@ -91,9 +91,9 @@ namespace NsisoLauncher.Views.Controls
         {
             if (!CheckIsEmpty())
             {
-                string authName = authmoduleNameTextbox.Text;
-                string authData = authDataTextbox.Text;
-                AuthenticationNode node = new AuthenticationNode() { AuthType = authenticationType, Name = authName };
+                var authName = authmoduleNameTextbox.Text;
+                var authData = authDataTextbox.Text;
+                var node = new AuthenticationNode {AuthType = authenticationType, Name = authName};
                 switch (authenticationType)
                 {
                     case AuthenticationType.NIDE8:
@@ -109,7 +109,8 @@ namespace NsisoLauncher.Views.Controls
                         node.Property.Add("authserver", authData);
                         break;
                 }
-                ((SettingWindow)Window.GetWindow(this)).AddAuthModule(authName, node);
+
+                ((SettingWindow) Window.GetWindow(this)).AddAuthModule(authName, node);
             }
         }
 
@@ -117,19 +118,22 @@ namespace NsisoLauncher.Views.Controls
         {
             if (authenticationType == AuthenticationType.OFFLINE)
             {
-                ((MetroWindow)Window.GetWindow(this)).ShowMessageAsync("未选择验证模型", "请选择您要使用的验证模型");
+                ((MetroWindow) Window.GetWindow(this)).ShowMessageAsync("未选择验证模型", "请选择您要使用的验证模型");
                 return true;
             }
+
             if (string.IsNullOrWhiteSpace(authmoduleNameTextbox.Text))
             {
-                ((MetroWindow)Window.GetWindow(this)).ShowMessageAsync("未填写验证模型名称", "请填写您验证模型的名称");
+                ((MetroWindow) Window.GetWindow(this)).ShowMessageAsync("未填写验证模型名称", "请填写您验证模型的名称");
                 return true;
             }
+
             if (string.IsNullOrWhiteSpace(authDataTextbox.Text))
             {
-                ((MetroWindow)Window.GetWindow(this)).ShowMessageAsync("未填写模型数据", "请填写您验证模型的数据");
+                ((MetroWindow) Window.GetWindow(this)).ShowMessageAsync("未填写模型数据", "请填写您验证模型的数据");
                 return true;
             }
+
             return false;
         }
 
@@ -137,7 +141,7 @@ namespace NsisoLauncher.Views.Controls
         {
             if (!CheckIsEmpty())
             {
-                string authData = authDataTextbox.Text;
+                var authData = authDataTextbox.Text;
                 authModule.Value.Property.Clear();
                 authModule.Value.AuthType = authenticationType;
                 switch (authenticationType)
@@ -155,13 +159,14 @@ namespace NsisoLauncher.Views.Controls
                         authModule.Value.Property.Add("authserver", authData);
                         break;
                 }
-                ((SettingWindow)Window.GetWindow(this)).SaveAuthModule(authModule);
+
+                ((SettingWindow) Window.GetWindow(this)).SaveAuthModule(authModule);
             }
         }
 
         private void DelButton_Click(object sender, RoutedEventArgs e)
         {
-            ((SettingWindow)Window.GetWindow(this)).DeleteAuthModule(authModule);
+            ((SettingWindow) Window.GetWindow(this)).DeleteAuthModule(authModule);
         }
     }
 }

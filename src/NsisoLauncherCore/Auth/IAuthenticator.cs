@@ -1,7 +1,7 @@
-﻿using NsisoLauncherCore.Net.MojangApi;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using NsisoLauncherCore.Net.MojangApi;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Auth
@@ -13,6 +13,11 @@ namespace NsisoLauncherCore.Auth
 
     public class AuthenticateResult
     {
+        public AuthenticateResult(AuthState state)
+        {
+            State = state;
+        }
+
         public AuthState State { get; set; }
 
         public Error Error { get; set; }
@@ -24,11 +29,6 @@ namespace NsisoLauncherCore.Auth
         public Uuid SelectedProfileUUID { get; set; }
 
         public UserData UserData { get; set; }
-
-        public AuthenticateResult(AuthState state)
-        {
-            this.State = state;
-        }
     }
 
     public enum AuthState

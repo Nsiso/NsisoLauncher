@@ -1,11 +1,10 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
-using System;
+﻿using System;
+using NsisoLauncherCore.Net.MojangApi.Api;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
 {
-
     /// <summary>
-    /// 包含玩家在给定时间的UUID的响应
+    ///     包含玩家在给定时间的UUID的响应
     /// </summary>
     public class UuidAtTimeResponse : Response
     {
@@ -14,14 +13,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         }
 
         /// <summary>
-        /// Uuid
+        ///     Uuid
         /// </summary>
         public Uuid Uuid { get; internal set; }
 
         /// <summary>
-        /// UUID对应的日期
+        ///     UUID对应的日期
         /// </summary>
         public DateTime Date { get; internal set; }
     }
-
 }

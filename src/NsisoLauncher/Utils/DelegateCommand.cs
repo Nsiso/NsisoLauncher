@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NsisoLauncher.Utils
 {
     public class DelegateCommand : ICommand
     {
-        Func<object, bool> canExecute;
-        Action<object> executeAction;
-        bool canExecuteCache;
+        private readonly Func<object, bool> canExecute;
+        private bool canExecuteCache;
+        private readonly Action<object> executeAction;
 
-        public DelegateCommand(Action<object> executeAction) : this(executeAction, (a) => true) { }
+        public DelegateCommand(Action<object> executeAction) : this(executeAction, a => true)
+        {
+        }
 
         public DelegateCommand(Action<object> executeAction, Func<object, bool> canExecute)
         {
@@ -25,7 +23,7 @@ namespace NsisoLauncher.Utils
 
         public bool CanExecute(object parameter)
         {
-            bool temp = canExecute(parameter);
+            var temp = canExecute(parameter);
 
             if (canExecuteCache != temp)
             {

@@ -1,88 +1,89 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Security;
+using System.Threading;
+using System.Windows;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Windows;
 
 namespace NsisoLauncher.Config
 {
     public class ConfigHandler : IDisposable
     {
-        /// <summary>
-        /// 首要配置文件路径
-        /// </summary>
-        public string MainConfigPath { get => PathManager.BaseStorageDirectory + @"\Config\MainConfig.json"; }
+        private readonly ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
 
-        /// <summary>
-        /// 官方用户配置文件路径
-        /// </summary>
-        public string LauncherProfilesConfigPath { get => Path.GetFullPath(@".minecraft\launcher_profiles.json"); }
-
-        /// <summary>
-        /// 首要配置文件内容
-        /// </summary>
-        public MainConfig MainConfig { get; set; }
-
-        /// <summary>
-        /// 官方用户配置文件内容
-        /// </summary>
-        public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
-
-        private ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
-        private ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
 
         public ConfigHandler()
         {
             try
             {
                 if (!File.Exists(MainConfigPath))
-                { NewConfig(); }
+                    NewConfig();
                 else
-                { Read(); }
+                    Read();
 
 
-                if (!File.Exists(LauncherProfilesConfigPath))
-                {
-                    NewProfilesConfig();
-                }
+                if (!File.Exists(LauncherProfilesConfigPath)) NewProfilesConfig();
             }
             catch (UnauthorizedAccessException e)
             {
                 NoAccessWarning(e);
             }
-            catch (System.Security.SecurityException e)
+            catch (SecurityException e)
             {
                 NoAccessWarning(e);
             }
-
         }
 
         /// <summary>
-        /// 保存配置文件
+        ///     首要配置文件路径
+        /// </summary>
+        public string MainConfigPath => PathManager.BaseStorageDirectory + @"\Config\MainConfig.json";
+
+        /// <summary>
+        ///     官方用户配置文件路径
+        /// </summary>
+        public string LauncherProfilesConfigPath => Path.GetFullPath(@".minecraft\launcher_profiles.json");
+
+        /// <summary>
+        ///     首要配置文件内容
+        /// </summary>
+        public MainConfig MainConfig { get; set; }
+
+        /// <summary>
+        ///     官方用户配置文件内容
+        /// </summary>
+        public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
+
+        public void Dispose()
+        {
+            mainconfigLock.Dispose();
+            launcherProfilesLock.Dispose();
+        }
+
+        /// <summary>
+        ///     保存配置文件
         /// </summary>
         public void Save()
         {
             mainconfigLock.EnterWriteLock();
             try
             {
-                string dir = Path.GetDirectoryName(MainConfigPath);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
+                var dir = Path.GetDirectoryName(MainConfigPath);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                 File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented));
             }
             catch (UnauthorizedAccessException e)
             {
                 NoAccessWarning(e);
             }
-            catch (System.Security.SecurityException e)
+            catch (SecurityException e)
             {
                 NoAccessWarning(e);
             }
@@ -90,11 +91,10 @@ namespace NsisoLauncher.Config
             {
                 mainconfigLock.ExitWriteLock();
             }
-
         }
 
         /// <summary>
-        /// 读配置文件
+        ///     读配置文件
         /// </summary>
         public void Read()
         {
@@ -116,7 +116,7 @@ namespace NsisoLauncher.Config
             {
                 NoAccessWarning(e);
             }
-            catch (System.Security.SecurityException e)
+            catch (SecurityException e)
             {
                 NoAccessWarning(e);
             }
@@ -127,25 +127,22 @@ namespace NsisoLauncher.Config
         }
 
         /// <summary>
-        /// 写配置文件
+        ///     写配置文件
         /// </summary>
         public void SaveProfilesConfig()
         {
             launcherProfilesLock.EnterWriteLock();
             try
             {
-                string profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
-                if (!Directory.Exists(profilesConfigDir))
-                {
-                    Directory.CreateDirectory(profilesConfigDir);
-                }
+                var profilesConfigDir = Path.GetDirectoryName(LauncherProfilesConfigPath);
+                if (!Directory.Exists(profilesConfigDir)) Directory.CreateDirectory(profilesConfigDir);
                 File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
             }
             catch (UnauthorizedAccessException e)
             {
                 NoAccessWarning(e);
             }
-            catch (System.Security.SecurityException e)
+            catch (SecurityException e)
             {
                 NoAccessWarning(e);
             }
@@ -164,11 +161,11 @@ namespace NsisoLauncher.Config
         //}
 
         /// <summary>
-        /// 新的官方用户配置文件
+        ///     新的官方用户配置文件
         /// </summary>
         private void NewProfilesConfig()
         {
-            LauncherProfilesConfig = new LauncherProfilesConfig()
+            LauncherProfilesConfig = new LauncherProfilesConfig
             {
                 ClientToken = "88888888-8888-8888-8888-888888888888",
                 SelectedProfile = "(Default)",
@@ -178,24 +175,24 @@ namespace NsisoLauncher.Config
         }
 
         /// <summary>
-        /// 新建配置文件
+        ///     新建配置文件
         /// </summary>
         private void NewConfig()
         {
-            MainConfig = new MainConfig()
+            MainConfig = new MainConfig
             {
-                User = new User()
+                User = new User
                 {
                     ClientToken = Guid.NewGuid().ToString("N"),
                     UserDatabase = new ObservableDictionary<string, UserNode>(),
-                    AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
+                    AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>
                     {
-                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} },
-                        {"online", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.MOJANG, Name="正版验证"} }
+                        {"offline", new AuthenticationNode {AuthType = AuthenticationType.OFFLINE, Name = "离线验证"}},
+                        {"online", new AuthenticationNode {AuthType = AuthenticationType.MOJANG, Name = "正版验证"}}
                     }
                 },
                 History = new History(),
-                Environment = new Environment()
+                Environment = new Environment
                 {
                     VersionIsolation = true,
                     AutoMemory = true,
@@ -203,34 +200,34 @@ namespace NsisoLauncher.Config
                     DownloadLostAssets = true,
                     DownloadLostDepend = true,
                     GCEnabled = true,
-                    GCType = NsisoLauncherCore.Modules.GCType.G1GC,
+                    GCType = GCType.G1GC,
                     AutoJava = true,
-                    WindowSize = new NsisoLauncherCore.Modules.WindowSize() { FullScreen = false },
+                    WindowSize = new WindowSize {FullScreen = false},
                     ExitAfterLaunch = false
                 },
-                Download = new Download()
+                Download = new Download
                 {
                     DownloadSource = DownloadSource.MCBBS,
                     DownloadThreadsSize = 3,
                     CheckDownloadFileHash = true
                 },
-                Launcher = new Launcher()
+                Launcher = new Launcher
                 {
                     Debug = false,
                     CheckUpdate = true,
                     NoTracking = false
                 },
-                Server = new Server()
+                Server = new Server
                 {
                     ShowServerInfo = false,
                     LaunchToServer = false,
                     Port = 25565
                 },
-                Customize = new Customize()
+                Customize = new Customize
                 {
                     CustomBackGroundMusic = false,
                     CustomBackGroundPicture = false,
-                    AppThme = "Light.Blue"
+                    AppTheme = "Light.Blue"
                 },
                 ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };
@@ -240,22 +237,13 @@ namespace NsisoLauncher.Config
         private void NoAccessWarning(Exception e)
         {
             var result = MessageBox.Show("启动器无法正常读/写配置文件。\n" +
-                    "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
-                    "或您没有足够的系统操作权限而导致系统自我保护机制，禁止启动器读写文件。\n" +
-                    "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行。\n" +
-                    "详细信息:\n" +
-                    e.ToString(),
-                    "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
-            if (result == MessageBoxResult.Yes)
-            {
-                App.Reboot(true);
-            }
-        }
-
-        public void Dispose()
-        {
-            mainconfigLock.Dispose();
-            launcherProfilesLock.Dispose();
+                                         "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                                         "或您没有足够的系统操作权限而导致系统自我保护机制，禁止启动器读写文件。\n" +
+                                         "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行。\n" +
+                                         "详细信息:\n" +
+                                         e,
+                "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
+            if (result == MessageBoxResult.Yes) App.Reboot(true);
         }
     }
 }
