@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualBasic.Devices;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Text;
@@ -46,13 +46,29 @@ namespace NsisoLauncherCore.Util
 
         }
 
+
+        private static string GetWmicOutput(string query, bool redirectStandardOutput = true)
+        {
+            var info = new ProcessStartInfo("wmic");
+            info.Arguments = query;
+            info.RedirectStandardOutput = redirectStandardOutput;
+            var output = "";
+            using (var process = Process.Start(info))
+            {
+                output = process.StandardOutput.ReadToEnd();
+            }
+            return output.Trim();
+        }
+
         /// <summary>
         /// 获取电脑总内存(MB)
         /// </summary>
         /// <returns>物理内存</returns>
         public static ulong GetTotalMemory()
         {
-            return new Computer().Info.TotalPhysicalMemory / 1048576;
+            var memorielines = GetWmicOutput("OS get FreePhysicalMemory,TotalVisibleMemorySize /Value").Split("\n");
+            var totalMemory = memorielines[1].Split("=", StringSplitOptions.RemoveEmptyEntries)[1];
+            return ulong.Parse(totalMemory);
         }
 
         /// <summary>
@@ -77,8 +93,9 @@ namespace NsisoLauncherCore.Util
         /// <returns>剩余内存</returns>
         public static ulong GetRunmemory()
         {
-            ComputerInfo ComputerMemory = new ComputerInfo();
-            return ComputerMemory.AvailablePhysicalMemory / 1048576;
+            var memorielines = GetWmicOutput("OS get FreePhysicalMemory,TotalVisibleMemorySize /Value").Split("\n");
+            var freeMemory = memorielines[0].Split("=", StringSplitOptions.RemoveEmptyEntries)[1];
+            return ulong.Parse(freeMemory);
         }
 
         /// <summary>

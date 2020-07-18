@@ -376,12 +376,7 @@ namespace NsisoLauncher.Config
         public bool CustomBackGroundMusic { get; set; }
 
         /// <summary>
-        /// 主题颜色
-        /// </summary>
-        public string AccentColor { get; set; }
-
-        /// <summary>
-        /// 主题Thme
+        /// 主题Theme
         /// </summary>
         public string AppTheme { get; set; }
 

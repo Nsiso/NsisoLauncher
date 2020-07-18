@@ -1,4 +1,5 @@
 ﻿
+using ControlzEx.Theming;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using NsisoLauncher.Config;
@@ -245,6 +246,16 @@ namespace NsisoLauncher
             MainWindow mainwindow = new MainWindow();
             this.MainWindow = mainwindow;
             mainwindow.Show();
+            
+            // #region 自定义主题初始化
+            // var custom = Config.MainConfig.Customize;
+            // if (!string.IsNullOrWhiteSpace(custom.AppThme))
+            // {
+            //     LogHandler.AppendInfo("自定义->更改主题:" + custom.AppThme);
+            //     var theme = ThemeManager.Current.GetTheme(custom.AppThme);
+            //     ThemeManager.Current.ChangeTheme(Current, theme ?? ThemeManager.Current.GetTheme("Light.Blue"));
+            // }
+            // #endregion    
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

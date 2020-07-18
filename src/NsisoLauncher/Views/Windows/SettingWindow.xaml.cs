@@ -1,4 +1,5 @@
-﻿using MahApps.Metro;
+﻿using ControlzEx.Theming;
+using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
@@ -38,8 +39,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void FirstBinding()
         {
-            AccentColorComboBox.ItemsSource = ThemeManager.Accents;
-            appThmeComboBox.ItemsSource = ThemeManager.AppThemes;
+            appThmeComboBox.ItemsSource = ThemeManager.Current.Themes;
             authModuleCombobox.ItemsSource = App.Config.MainConfig.User.AuthenticationDic;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             App.Config.MainConfig.Environment.PropertyChanged += Environment_PropertyChanged;
@@ -185,12 +185,12 @@ namespace NsisoLauncher.Views.Windows
             }
         }
         #region 全局设置部分
-        private void memorySlider_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
+        private void memorySlider_UpperValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             App.Config.MainConfig.Environment.MaxMemory = Convert.ToInt32(((RangeSlider)sender).UpperValue);
         }
 
-        private void memorySlider_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
+        private void memorySlider_LowerValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             App.Config.MainConfig.Environment.MinMemory = Convert.ToInt32(((RangeSlider)sender).LowerValue);
         }
@@ -270,25 +270,12 @@ namespace NsisoLauncher.Views.Windows
             VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
         }
 
-        private void AccentColorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Accent item = (Accent)((System.Windows.Controls.ComboBox)sender).SelectedItem;
-            if (item != null)
-            {
-                var AppStyle = ThemeManager.DetectAppStyle(System.Windows.Application.Current);
-                var theme = AppStyle.Item1;
-                ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent(item.Name), theme);
-            }
-        }
-
         private void appThmeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppTheme item = (AppTheme)((System.Windows.Controls.ComboBox)sender).SelectedItem;
+            Theme item = (Theme)((System.Windows.Controls.ComboBox)sender).SelectedItem;
             if (item != null)
             {
-                var AppStyle = ThemeManager.DetectAppStyle(System.Windows.Application.Current);
-                var accent = AppStyle.Item2;
-                ThemeManager.ChangeAppStyle(System.Windows.Application.Current, accent, item);
+                ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, item);
             }
         }
 
@@ -410,5 +397,6 @@ namespace NsisoLauncher.Views.Windows
         {
             _isGameSettingChanged = true;
         }
+
     }
 }

@@ -27,13 +27,16 @@ namespace NsisoLauncher.Utils
         }
     }
 
-    [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class OppositeBooleanToVisibilityConverter : IValueConverter
+    public class BootToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool isVisible = (bool)value;
-            return new System.Windows.Controls.BooleanToVisibilityConverter().Convert(!isVisible, targetType, parameter, culture);
+            return (value is bool boolean && boolean) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is Visibility visibility && visibility == Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
