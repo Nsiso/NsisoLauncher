@@ -84,6 +84,12 @@ namespace NsisoLauncher
                             ThemeManager.Current.Themes.First();
                 ThemeManager.Current.ChangeTheme(this, theme);
             }
+            else
+            {
+                var theme = ThemeManager.Current.GetTheme("Light.Blue") ??
+                            ThemeManager.Current.Themes.First();
+                ThemeManager.Current.ChangeTheme(this, theme);
+            }
 
             #endregion
 

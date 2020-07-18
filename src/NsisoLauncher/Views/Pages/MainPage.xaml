@@ -19,7 +19,6 @@
         <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter" />
     </Page.Resources>
     <Grid>
-
         <Grid x:Name="bgGrid">
             <Image Source="{Binding StaticMediaSource}" Stretch="UniformToFill" />
             <MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"
