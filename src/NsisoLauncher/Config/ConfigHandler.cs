@@ -167,7 +167,7 @@ namespace NsisoLauncher.Config
         {
             LauncherProfilesConfig = new LauncherProfilesConfig
             {
-                ClientToken = "88888888-8888-8888-8888-888888888888",
+                ClientToken = Guid.NewGuid().ToString(),
                 SelectedProfile = "(Default)",
                 Profiles = JObject.Parse("{\"(Default)\":{\"name\":\"(Default)\"}}")
             };
