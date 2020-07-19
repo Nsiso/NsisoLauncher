@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
 {
-    public static class GetDownloadUrl
+    public static class GetDownloadUri
     {
         public const string MojangMainUrl = "https://launcher.mojang.com/";
         public const string MojangMetaUrl = "https://launchermeta.mojang.com/";
@@ -19,7 +19,7 @@ namespace NsisoLauncherCore.Net.Tools
         public const string ForgeHttpUrl = "http://files.minecraftforge.net/maven/";
         public const string ForgeHttpsUrl = "https://files.minecraftforge.net/maven/";
 
-        public static string ReplaceURLByDic(string str, Dictionary<string, string> dic)
+        public static string ReplaceUriByDic(string str, Dictionary<string, string> dic)
         {
             string ret = str;
             foreach (var item in dic)
@@ -28,6 +28,7 @@ namespace NsisoLauncherCore.Net.Tools
             }
             return ret;
         }
+
         private static string GetLibBasePath(Library lib)
         {
             if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Path))
@@ -57,19 +58,19 @@ namespace NsisoLauncherCore.Net.Tools
             return string.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
 
-        public static string GetCoreJsonDownloadURL(string verID)
+        public static string GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
         {
-            return string.Format("{0}version/{1}/json", McbbsMirror.MCBBSUrl, verID);
+            return string.Format("{0}version/{1}/json", mirror.BaseUri, verID);
         }
 
-        public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core)
+        public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core, IVersionListMirror mirror)
         {
             string to = core.GetJsonPath(verID);
-            string from = GetCoreJsonDownloadURL(verID);
+            string from = GetCoreJsonDownloadURL(verID, mirror);
             return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
         }
 
-        public static string GetCoreJarDownloadURL(Modules.Version ver)
+        public static string GetCoreJarDownloadURL(Modules.Version ver, IVersionListMirror mirror)
         {
             if (ver.Downloads?.Client != null)
             {
@@ -78,14 +79,21 @@ namespace NsisoLauncherCore.Net.Tools
             }
             else
             {
-                return string.Format("{0}version/{1}/client", McbbsMirror.MCBBSUrl, ver.ID);
+                if (mirror == null)
+                {
+                    throw new Exception("Version List Mirror is null");
+                }
+                else
+                {
+                    return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.ID);
+                }
             }
         }
 
-        public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core)
+        public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core, IVersionListMirror mirror)
         {
             string to = core.GetJarPath(version);
-            string from = GetCoreJarDownloadURL(version);
+            string from = GetCoreJarDownloadURL(version, mirror);
             DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.SHA1))
             {
@@ -199,10 +207,10 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), downloadTo);
         }
 
-        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
+        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo, NetRequester requester)
         {
             AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
-            return await handler.GetLatestAICoreDownloadTask(source, downloadTo);
+            return await handler.GetLatestAICoreDownloadTask(source, downloadTo, requester);
         }
     }
 }

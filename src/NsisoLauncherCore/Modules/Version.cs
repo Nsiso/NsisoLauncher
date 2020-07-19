@@ -160,7 +160,7 @@ namespace NsisoLauncherCore.Modules
 
         public string GetDownloadSourceURL()
         {
-            return GetDownloadUrl.GetLibDownloadURL(this);
+            return GetDownloadUri.GetLibDownloadURL(this);
         }
     }
 
@@ -188,7 +188,7 @@ namespace NsisoLauncherCore.Modules
         }
         public new string GetDownloadSourceURL()
         {
-            return GetDownloadUrl.GetNativeDownloadURL(this);
+            return GetDownloadUri.GetNativeDownloadURL(this);
         }
     }
 

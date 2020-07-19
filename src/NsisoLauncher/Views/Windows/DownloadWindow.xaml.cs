@@ -34,7 +34,7 @@ namespace NsisoLauncher.Views.Windows
                 try
                 {
                     EventWaitHandle _waitHandle = new AutoResetEvent(false);
-                    App.Downloader.DownloadCompleted += (a, b) =>
+                    App.NetHandler.Downloader.DownloadCompleted += (a, b) =>
                     {
                         this.Dispatcher.Invoke(new Action(() =>
                         {
@@ -65,7 +65,7 @@ namespace NsisoLauncher.Views.Windows
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (App.Downloader.IsBusy)
+            if (App.NetHandler.Downloader.IsBusy)
             {
                 var result = await this.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.MakesureCancel"),
                App.GetResourceString("String.Downloadwindow.MakesureCancel"),
@@ -77,7 +77,7 @@ namespace NsisoLauncher.Views.Windows
                });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    App.Downloader.RequestCancel();
+                    App.NetHandler.Downloader.RequestCancel();
                     this.progressBar.Value = 0;
                 }
             }
@@ -94,7 +94,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (App.Downloader.IsBusy)
+            if (App.NetHandler.Downloader.IsBusy)
             {
                 this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
             }
@@ -102,7 +102,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (App.Downloader.Proxy != null)
+            if (App.NetHandler.Downloader.Proxy != null)
             {
                 this.ShowMessageAsync("您开启了下载代理", "请注意您现在正在使用代理进行下载，若代理设置异常可能会导致下载错误。");
             }

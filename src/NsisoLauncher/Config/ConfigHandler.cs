@@ -208,11 +208,13 @@ namespace NsisoLauncher.Config
                     WindowSize = new NsisoLauncherCore.Modules.WindowSize() { FullScreen = false },
                     ExitAfterLaunch = false
                 },
-                Download = new Download()
+                Net = new Net()
                 {
-                    DownloadSource = DownloadSource.MCBBS,
+                    DownloadSource = DownloadSource.Auto,
                     DownloadThreadsSize = 3,
-                    CheckDownloadFileHash = true
+                    CheckDownloadFileHash = true,
+                    FunctionSource = FunctionSourceType.MCBBS,
+                    VersionSource = VersionSourceType.MCBBS
                 },
                 Launcher = new Launcher()
                 {

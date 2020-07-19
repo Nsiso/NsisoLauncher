@@ -79,7 +79,7 @@ namespace NsisoLauncher.Views.Windows
                 bool moreInfo = (bool)moreInfoCheckBox.IsChecked;
                 if (moreInfo)
                 { report += ("/r/n" + await GetEnvironmentInfoAsync()); }
-                await App.NsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, report);
+                await App.NetHandler.NsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, report);
             }
             catch (Exception ex)
             {

@@ -15,9 +15,12 @@ namespace NsisoLauncherCore.Net.PhalAPI
 
         public bool NoTracking { get; set; }
 
-        public APIHandler(bool isNoTracking)
+        private NetRequester _netRequester;
+
+        public APIHandler(bool isNoTracking, NetRequester requester)
         {
             NoTracking = isNoTracking;
+            _netRequester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         public async Task<NsisoLauncherVersionResponse> GetLatestLauncherVersion()
@@ -34,7 +37,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
                 args.Add("where", "[[\"id\", \">\", \"0\"]]");
                 //仅返回一条（即ID最高的最新版本）
                 args.Add("perpage", "1");
-                HttpResponseMessage resultRespond = await NetRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
+                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
                 if (!resultRespond.IsSuccessStatusCode)
                 {
                     return null;
@@ -64,7 +67,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
             args.Add("app_key", App_key);
             args.Add("super_type", level.ToString());
             args.Add("super_message", log);
-            var result = await NetRequester.HttpPostAsync(APIUrl + "?s=App.Market_SuperLogger.Record", args);
+            var result = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Market_SuperLogger.Record", args);
             Console.WriteLine(result);
         }
 
@@ -83,7 +86,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
                     args.Add("type", "forever");
                     args.Add("name", "NsisoLauncherUsingTimes");
                     args.Add("value", "1");
-                    await NetRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
+                    await _netRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
                 }
                 catch
                 { }

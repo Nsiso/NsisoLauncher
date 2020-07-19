@@ -1,4 +1,5 @@
 ﻿
+using ControlzEx.Standard;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using NsisoLauncher.Config;
@@ -8,6 +9,7 @@ using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -40,19 +42,14 @@ namespace NsisoLauncher
         public static ConfigHandler Config { get; private set; }
 
         /// <summary>
-        /// 下载核心
-        /// </summary>
-        public static MultiThreadDownloader Downloader { get; private set; }
-
-        /// <summary>
         /// 日志处理器
         /// </summary>
         public static LogHandler LogHandler { get; private set; }
 
         /// <summary>
-        /// 应用API
+        /// 网络处理类
         /// </summary>
-        public static NsisoLauncherCore.Net.PhalAPI.APIHandler NsisoAPIHandler { get; private set; }
+        public static NetHandler NetHandler { get; set; }
 
         #region 全局数据属性
 
@@ -128,16 +125,6 @@ namespace NsisoLauncher
             ThemeManager.ChangeAppStyle(this, accent, theme);
             #endregion    
 
-            #region Nsiso反馈API初始化
-
-#if DEBUG
-            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(true);
-#else
-            NsisoAPIHandler = new NsisoLauncherCore.Net.PhalAPI.APIHandler(Config.MainConfig.Launcher.NoTracking);
-#endif
-
-            #endregion
-
             #region 数据初始化
             Config.Environment env = Config.MainConfig.Environment;
 
@@ -201,11 +188,15 @@ namespace NsisoLauncher
             Handler.LaunchLog += (s, log) => LogHandler.AppendLog(s, log);
             #endregion
 
-            #region 下载核心初始化
+            #region 网络功能初始化
+            #region 网络核心初始化
+            NetHandler = new NetHandler();
+            #endregion
+
+            #region 下载核心设置
             ServicePointManager.DefaultConnectionLimit = 10;
 
-            Download downloadCfg = Config.MainConfig.Download;
-            Downloader = new MultiThreadDownloader();
+            Net downloadCfg = Config.MainConfig.Net;
             if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
             {
                 WebProxy proxy = new WebProxy(downloadCfg.DownloadProxyAddress, downloadCfg.DownloadProxyPort);
@@ -214,32 +205,63 @@ namespace NsisoLauncher
                     NetworkCredential credential = new NetworkCredential(downloadCfg.ProxyUserName, downloadCfg.ProxyUserPassword);
                     proxy.Credentials = credential;
                 }
-                Downloader.Proxy = proxy;
+                NetHandler.Downloader.Proxy = proxy;
             }
-            if (Downloader.MirrorList == null)
+            NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
+            NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
+            NetHandler.Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
+            #endregion
+
+            #region 处理镜像源
+            if (NetHandler.Downloader.MirrorList == null)
             {
-                Downloader.MirrorList = new List<IMirror>();
+                NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
             }
-            switch (App.Config.MainConfig.Download.DownloadSource)
+           
+            switch (App.Config.MainConfig.Net.DownloadSource)
             {
                 case DownloadSource.Auto:
-                    Downloader.MirrorList.Add(new McbbsMirror());
-                    Downloader.MirrorList.Add(new BmclMirror());
+                    NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
+                    NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
                     break;
                 case DownloadSource.Mojang:
                     break;
                 case DownloadSource.BMCLAPI:
-                    Downloader.MirrorList.Add(new BmclMirror());
+                    NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
                     break;
                 case DownloadSource.MCBBS:
-                    Downloader.MirrorList.Add(new McbbsMirror());
+                    NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
                     break;
                 default:
                     break;
             }
-            Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
-            Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
-            Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
+
+            switch (App.Config.MainConfig.Net.VersionSource)
+            {
+                case VersionSourceType.MOJANG:
+                    break;
+                case VersionSourceType.BMCLAPI:
+                    NetHandler.Mirrors.VersionListMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
+                    break;
+                case VersionSourceType.MCBBS:
+                    NetHandler.Mirrors.VersionListMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
+                    break;
+                default:
+                    break;
+            }
+
+            switch (App.Config.MainConfig.Net.FunctionSource)
+            {
+                case FunctionSourceType.BMCLAPI:
+                    NetHandler.Mirrors.FunctionalMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
+                    break;
+                case FunctionSourceType.MCBBS:
+                    NetHandler.Mirrors.FunctionalMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
+                    break;
+                default:
+                    break;
+            }
+            #endregion
             #endregion
 
             MainWindow mainwindow = new MainWindow();

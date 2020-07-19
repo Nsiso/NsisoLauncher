@@ -19,6 +19,7 @@ using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncherCore.Net
 {
+    #region 下载事件参数
     public class DownloadProgressChangedArg : EventArgs
     {
         public int DoneTaskCount { get; set; }
@@ -37,13 +38,14 @@ namespace NsisoLauncherCore.Net
     {
         public Dictionary<DownloadTask, Exception> ErrorList { get; set; }
     }
+    #endregion
 
-    public class MultiThreadDownloader : INotifyPropertyChanged
+    public class MultiThreadDownloader : INotifyPropertyChanged , IDisposable
     {
         /// <summary>
         /// 初始化一个多线程下载器
         /// </summary>
-        public MultiThreadDownloader()
+        public MultiThreadDownloader(NetRequester requester)
         {
             _timer.Elapsed += _timer_Elapsed;
             if (SynchronizationContext.Current != null)
@@ -54,6 +56,8 @@ namespace NsisoLauncherCore.Net
             {
                 sc = new SynchronizationContext();
             }
+
+            _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         #region 速度计算（每秒触发事件）
@@ -113,8 +117,11 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 下载源列表
         /// </summary>
-        public IList<IMirror> MirrorList { get; set; }
+        public IList<IDownloadableMirror> MirrorList { get; set; }
 
+        /// <summary>
+        /// 下载任务（只读）
+        /// </summary>
         public IEnumerable<DownloadTask> DownloadTaskList { get => ViewDownloadTasks.AsEnumerable(); }
         #endregion
 
@@ -182,10 +189,11 @@ namespace NsisoLauncherCore.Net
         private Task[] _workers;
         private int _downloadSizePerSec;
         private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
-        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private ManualResetEventSlim _pauseResetEvent = new ManualResetEventSlim(true);
         private SynchronizationContext sc;
-        private IMirror mirror = null;
+        private IDownloadableMirror mirror = null;
+        private NetRequester _requester;
 
         /// <summary>
         /// 清除全部下载任务
@@ -238,7 +246,7 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         public void RequestCancel()
         {
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
             ApendDebugLog("已申请取消下载");
         }
 
@@ -285,7 +293,7 @@ namespace NsisoLauncherCore.Net
                     }
 
                     IsBusy = true;
-                    cancellationTokenSource = new CancellationTokenSource();
+                    _cancellationTokenSource = new CancellationTokenSource();
                     _errorList.Clear();
                     DoneTaskCount = 0;
 
@@ -294,13 +302,13 @@ namespace NsisoLauncherCore.Net
 
                     if (MirrorList?.Count != 0)
                     {
-                        mirror = await MirrorHelper.ChooseBestMirror(MirrorList);
+                        mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(MirrorList);
                     }
 
                     #region 新建工作线程
                     for (int i = 0; i < ProcessorSize; i++)
                     {
-                        _workers[i] = Task.Run(() => ThreadDownloadWork(cancellationTokenSource.Token));
+                        _workers[i] = Task.Run(() => ThreadDownloadWork(_cancellationTokenSource.Token));
                     }
                     #endregion
 
@@ -417,7 +425,7 @@ namespace NsisoLauncherCore.Net
             #region 镜像站替换URL处理
             if (mirror != null)
             {
-                from = mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
+                from = mirror.DoDownloadUriReplace(task.Downloadable.GetDownloadSourceURL());
                 task.UIFrom = mirror.MirrorName;
             }
             task.UIReplaceFrom = from;
@@ -458,7 +466,7 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    using (var getResult = await NetRequester.Client.GetAsync(from, cancelToken))
+                    using (var getResult = await _requester.Client.GetAsync(from, cancelToken))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
@@ -561,6 +569,13 @@ namespace NsisoLauncherCore.Net
         protected virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            _timer.Dispose();
+            _cancellationTokenSource.Dispose();
+            _pauseResetEvent.Dispose();
         }
     }
 }

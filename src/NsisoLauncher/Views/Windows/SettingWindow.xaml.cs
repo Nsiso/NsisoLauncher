@@ -43,34 +43,34 @@ namespace NsisoLauncher.Views.Windows
             authModuleCombobox.ItemsSource = App.Config.MainConfig.User.AuthenticationDic;
             versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             App.Config.MainConfig.Environment.PropertyChanged += Environment_PropertyChanged;
-            App.Config.MainConfig.Download.PropertyChanged += Download_PropertyChanged;
+            App.Config.MainConfig.Net.PropertyChanged += Download_PropertyChanged;
         }
 
         private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CheckDownloadFileHash")
             {
-                App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+                App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
             }
             if (e.PropertyName == "DownloadSource")
             {
-                if (App.Downloader.MirrorList == null)
+                if (App.NetHandler.Downloader.MirrorList == null)
                 {
-                    App.Downloader.MirrorList = new List<IMirror>();
+                    App.NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
                 }
-                switch (App.Config.MainConfig.Download.DownloadSource)
+                switch (App.Config.MainConfig.Net.DownloadSource)
                 {
                     case DownloadSource.Auto:
-                        App.Downloader.MirrorList.Add(new McbbsMirror());
-                        App.Downloader.MirrorList.Add(new BmclMirror());
+                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetBmclApi());
+                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetMcbbsApi());
                         break;
                     case DownloadSource.Mojang:
                         break;
                     case DownloadSource.BMCLAPI:
-                        App.Downloader.MirrorList.Add(new BmclMirror());
+                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetBmclApi());
                         break;
                     case DownloadSource.MCBBS:
-                        App.Downloader.MirrorList.Add(new McbbsMirror());
+                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetMcbbsApi());
                         break;
                     default:
                         break;
@@ -78,7 +78,7 @@ namespace NsisoLauncher.Views.Windows
             }
             if (e.PropertyName == "DownloadThreadsSize")
             {
-                App.Downloader.ProcessorSize = App.Config.MainConfig.Download.DownloadThreadsSize;
+                App.NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
             }
         }
 
@@ -226,7 +226,7 @@ namespace NsisoLauncher.Views.Windows
                     throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
             }
             App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
-            App.Downloader.CheckFileHash = App.Config.MainConfig.Download.CheckDownloadFileHash;
+            App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
             #endregion
 
             if (_isGameSettingChanged)

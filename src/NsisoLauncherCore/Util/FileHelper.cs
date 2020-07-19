@@ -1,9 +1,12 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -248,39 +251,74 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, Version version)
+        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, Version version, IList<IVersionListMirror> mirrors, NetRequester netRequester)
         {
             var lostLibs = GetLostLibs(core, version);
             var lostNatives = GetLostNatives(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
+            IVersionListMirror mirror = null;
+            if (mirrors == null)
+            {
+                throw new ArgumentNullException("IList<IVersionListMirror> mirrors is null");
+            }
             if (IsLostJarCore(core, version))
             {
                 if (version.Jar == null)
                 {
-                    tasks.Add(GetDownloadUrl.GetCoreJarDownloadTask(version, core));
+                    if (mirror == null)
+                    {
+                        if (mirrors.Count == 0)
+                        {
+                            throw new Exception("no Version List Mirror");
+                        }
+                        else if (mirrors.Count == 1)
+                        {
+                            mirror = mirrors.First();
+                        }
+                        else
+                        {
+                            mirror = ((IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors));
+                        }
+                    }
+                    tasks.Add(GetDownloadUri.GetCoreJarDownloadTask(version, core, mirror));
                 }
             }
 
             if (version.InheritsVersion != null)
             {
                 string innerJsonPath = core.GetJsonPath(version.InheritsVersion);
-                string innerJsonStr;
+                string innerJsonStr = null;
                 if (!File.Exists(innerJsonPath))
                 {
-                    //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(GetDownloadUrl.GetCoreJsonDownloadURL(version.InheritsVersion));
-                    //if (jsonRespond.IsSuccessStatusCode)
-                    //{
-                    //    innerJsonPath = await jsonRespond.Content.ReadAsStringAsync();
-                    //}
-                    //if (!string.IsNullOrWhiteSpace(innerJsonStr))
-                    //{
-                    //    string jsonFolder = Path.GetDirectoryName(innerJsonPath);
-                    //    if (!Directory.Exists(jsonFolder))
-                    //    {
-                    //        Directory.CreateDirectory(jsonFolder);
-                    //    }
-                    //    File.WriteAllText(innerJsonPath, innerJsonStr);
-                    //}
+                    if (mirror == null)
+                    {
+                        if (mirrors.Count == 0)
+                        {
+                            throw new Exception("no Version List Mirror");
+                        }
+                        else if (mirrors.Count == 1)
+                        {
+                            mirror = mirrors.First();
+                        }
+                        else
+                        {
+                            mirror = ((IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors));
+                        }
+                    }
+                    HttpResponseMessage jsonRespond = await netRequester.Client.GetAsync(GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsVersion, mirror));
+                    if (jsonRespond.IsSuccessStatusCode)
+                    {
+                        innerJsonPath = await jsonRespond.Content.ReadAsStringAsync();
+                    }
+                    if (!string.IsNullOrWhiteSpace(innerJsonStr))
+                    {
+                        string jsonFolder = Path.GetDirectoryName(innerJsonPath);
+                        if (!Directory.Exists(jsonFolder))
+                        {
+                            Directory.CreateDirectory(jsonFolder);
+                        }
+                        File.WriteAllText(innerJsonPath, innerJsonStr);
+                    }
                     throw new Exception("缺少inner json");
                 }
                 else
@@ -290,17 +328,17 @@ namespace NsisoLauncherCore.Util
                 Version innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester));
                 }
 
             }
             foreach (var item in lostLibs)
             {
-                tasks.Add(GetDownloadUrl.GetLibDownloadTask(item));
+                tasks.Add(GetDownloadUri.GetLibDownloadTask(item));
             }
             foreach (var item in lostNatives)
             {
-                tasks.Add(GetDownloadUrl.GetNativeDownloadTask(item));
+                tasks.Add(GetDownloadUri.GetNativeDownloadTask(item));
             }
             return tasks;
         }
@@ -350,7 +388,7 @@ namespace NsisoLauncherCore.Util
             var lostAssets = GetLostAssets(core, assets);
             foreach (var item in lostAssets)
             {
-                DownloadTask task = GetDownloadUrl.GetAssetsDownloadTask(item.Value, core);
+                DownloadTask task = GetDownloadUri.GetAssetsDownloadTask(item.Value, core);
                 tasks.Add(task);
             }
             return tasks;
