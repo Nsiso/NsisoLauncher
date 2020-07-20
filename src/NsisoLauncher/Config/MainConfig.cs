@@ -6,6 +6,7 @@ using NsisoLauncher.Utils;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace NsisoLauncher.Config
 {
@@ -40,40 +41,125 @@ namespace NsisoLauncher.Config
     /// </summary>
     public class MainConfig
     {
+        private User user;
+        private Environment environment;
+        private History history;
+        private Launcher launcher;
+        private Net net;
+        private Server server;
+        private Customize customize;
+
         /// <summary>
         /// 用户信息
         /// </summary>
-        public User User { get; set; }
+        public User User
+        {
+            get
+            {
+                if (user == null)
+                {
+                    user = new User();
+                }
+                return user;
+            }
+            set { user = value; }
+        }
 
         /// <summary>
         /// 启动环境设置
         /// </summary>
-        public Environment Environment { get; set; }
+        public Environment Environment
+        {
+            get
+            {
+                if (environment == null)
+                {
+                    environment = new Environment();
+                }
+                return environment;
+            }
+            set { environment = value; }
+        }
 
         /// <summary>
         /// 历史数据
         /// </summary>
-        public History History { get; set; }
+        public History History
+        {
+            get
+            {
+                if (history == null)
+                {
+                    history = new History();
+                }
+                return history;
+            }
+            set { history = value; }
+        }
 
         /// <summary>
         /// 启动器设置
         /// </summary>
-        public Launcher Launcher { get; set; }
+        public Launcher Launcher
+        {
+            get
+            {
+                if (launcher == null)
+                {
+                    launcher = new Launcher();
+                }
+                return launcher;
+            }
+            set { launcher = value; }
+        }
 
         /// <summary>
         /// 网络设置
         /// </summary>
-        public Net Net { get; set; }
+        public Net Net
+        {
+            get
+            {
+                if (net == null)
+                {
+                    net = new Net();
+                }
+                return net;
+            }
+            set { net = value; }
+        }
 
         /// <summary>
         /// 服务器设置
         /// </summary>
-        public Server Server { get; set; }
+        public Server Server
+        {
+            get
+            {
+                if (server == null)
+                {
+                    server = new Server();
+                }
+                return server;
+            }
+            set { server = value; }
+        }
 
         /// <summary>
         /// 自定义设置
         /// </summary>
-        public Customize Customize { get; set; }
+        public Customize Customize
+        {
+            get
+            {
+                if (customize == null)
+                {
+                    customize = new Customize();
+                }
+                return customize;
+            }
+            set { customize = value; }
+        }
 
         /// <summary>
         /// 配置文件版本
@@ -86,15 +172,49 @@ namespace NsisoLauncher.Config
     /// </summary>
     public class User : INotifyPropertyChanged
     {
+        private ObservableDictionary<string, UserNode> userDatabase;
+
         /// <summary>
         /// 用户数据库
         /// </summary>
-        public ObservableDictionary<string, UserNode> UserDatabase { get; set; }
+        public ObservableDictionary<string, UserNode> UserDatabase
+        {
+            get
+            {
+                if (userDatabase == null)
+                {
+                    userDatabase = new ObservableDictionary<string, UserNode>();
+                }
+                return userDatabase;
+            }
+            set
+            {
+                userDatabase = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserDatabase"));
+            }
+        }
+
+        private ObservableDictionary<string, AuthenticationNode> authenticationDic;
 
         /// <summary> 
         /// 验证节点
         /// </summary>
-        public ObservableDictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
+        public ObservableDictionary<string, AuthenticationNode> AuthenticationDic
+        {
+            get
+            {
+                if (authenticationDic == null)
+                {
+                    authenticationDic = new ObservableDictionary<string, AuthenticationNode>();
+                }
+                return authenticationDic;
+            }
+            set
+            {
+                authenticationDic = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AuthenticationDic"));
+            }
+        }
 
         /// <summary>
         /// 用户端Token
@@ -205,10 +325,28 @@ namespace NsisoLauncher.Config
         /// </summary>
         public string AdvencedGameArguments { get; set; }
 
+
+        private WindowSize windowSize;
+
         /// <summary>
         /// 游戏窗口大小
         /// </summary>
-        public WindowSize WindowSize { get; set; }
+        public WindowSize WindowSize
+        {
+            get
+            {
+                if (windowSize == null)
+                {
+                    windowSize = new WindowSize();
+                }
+                return windowSize;
+            }
+            set
+            {
+                windowSize = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WindowSize"));
+            }
+        }
 
         /// <summary>
         /// 是否下载丢失游戏依赖库
@@ -252,6 +390,29 @@ namespace NsisoLauncher.Config
         /// 是否记录日志到本地
         /// </summary>
         public bool WriteLog { get; set; }
+
+
+        private WindowSize launcherWindowSize;
+
+        /// <summary>
+        /// 游戏窗口大小
+        /// </summary>
+        public WindowSize LauncherWindowSize
+        {
+            get
+            {
+                if (launcherWindowSize == null)
+                {
+                    launcherWindowSize = new WindowSize();
+                }
+                return launcherWindowSize;
+            }
+            set
+            {
+                launcherWindowSize = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LauncherWindowSize"));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -438,15 +599,47 @@ namespace NsisoLauncher.Config
         /// </summary>
         public string SelectProfileUUID { get; set; }
 
+        private Dictionary<string, Uuid> profiles = new Dictionary<string, Uuid>();
         /// <summary>
-        /// 玩家选择的角色UUID
+        /// 用户profile字典
         /// </summary>
-        public Dictionary<string, Uuid> Profiles { get; set; } = new Dictionary<string, Uuid>();
+        public Dictionary<string, Uuid> Profiles
+        {
+            get
+            {
+                if (profiles == null)
+                {
+                    profiles = new Dictionary<string, Uuid>();
+                }
+                return profiles;
+            }
+            set 
+            {
+                profiles = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Profiles"));
+            }
+        }
 
+        private UserData userData;
         /// <summary>
         /// 用户资料
         /// </summary>
-        public UserData UserData { get; set; }
+        public UserData UserData
+        {
+            get 
+            {
+                if (userData == null)
+                {
+                    userData = new UserData();
+                }
+                return userData;
+            }
+            set 
+            {
+                userData = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserData"));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

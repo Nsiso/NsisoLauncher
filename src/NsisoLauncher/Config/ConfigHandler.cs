@@ -34,8 +34,8 @@ namespace NsisoLauncher.Config
         /// </summary>
         public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
 
-        private ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
-        private ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
 
         public ConfigHandler()
         {
@@ -107,7 +107,7 @@ namespace NsisoLauncher.Config
                         (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
                     {
                         MessageBox.Show("启动器配置文件版本不符。\n" +
-                            "这可能是因为配置文件为旧版本启动器生成而导致的，继续使用可能导致bug出现，请重新生成（删除）原配置文件以保证平稳运行",
+                            "这可能是因为配置文件为旧版本启动器生成而导致的，虽然已经做了兼容，但有可能仍会出现异常，如果出现异常可以尝试删除配置文件",
                             "启动器配置文件版本不符", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
 #endif
