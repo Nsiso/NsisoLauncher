@@ -344,7 +344,7 @@ namespace NsisoLauncherCore
             return await Task.Factory.StartNew(() =>
             {
                 return GetVersion(ID);
-            });
+            }).ConfigureAwait(false);
         }
 
         public List<Modules.Version> GetVersions()

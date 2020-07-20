@@ -244,7 +244,8 @@ namespace NsisoLauncherCore.Util
         {
             List<Java> javas = new List<Java>();
             RegistryKey localMachine = Registry.LocalMachine.OpenSubKey("SOFTWARE");
-            switch (SystemTools.GetSystemArch())
+            ArchEnum arch = SystemTools.GetSystemArch();
+            switch (arch)
             {
                 case ArchEnum.x32:
                     var jres = GetJavaRegisterPath(localMachine);
@@ -256,6 +257,11 @@ namespace NsisoLauncherCore.Util
                     javas.AddRange(jres64.Select(x => new Java(x.Value, x.Key, ArchEnum.x64)));
                     var jres32 = GetJavaRegisterPath(localMachine.OpenSubKey("Wow6432Node"));
                     javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    break;
+
+                default:
+                    var jresDefault = GetJavaRegisterPath(localMachine);
+                    javas.AddRange(jresDefault.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
                     break;
             }
             return javas;

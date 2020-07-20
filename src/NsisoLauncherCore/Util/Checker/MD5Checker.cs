@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Util.Checker
 {
+    [Obsolete("use sha256 instead")]
     public class MD5Checker : IChecker
     {
         public string CheckSum { get; set; }
@@ -16,6 +17,7 @@ namespace NsisoLauncherCore.Util.Checker
             {
                 throw new ArgumentException("检验器缺少校验值");
             }
+            
             return string.Equals(CheckSum, GetFileChecksum(), StringComparison.OrdinalIgnoreCase);
         }
 

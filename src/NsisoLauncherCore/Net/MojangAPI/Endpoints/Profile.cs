@@ -25,7 +25,10 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// </summary>
         /// <param name="uuid">Player UUID</param>
         /// <param name="unsigned"></param>
-        public Profile(string uuid, bool unsigned = true)
+        public Profile(string uuid) : this(uuid, true)
+        { }
+
+        public Profile(string uuid, bool unsigned)
         {
             this.Unsigned = unsigned;
 

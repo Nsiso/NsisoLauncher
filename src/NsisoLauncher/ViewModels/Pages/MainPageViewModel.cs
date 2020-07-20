@@ -104,11 +104,11 @@ namespace NsisoLauncher.ViewModels.Pages
                    if ((obj != null) && (obj is LaunchType))
                    {
                        LaunchType launchType = (LaunchType)obj;
-                       await LaunchFromVM(launchType);
+                       await LaunchFromVM(launchType).ConfigureAwait(false);
                    }
                    else
                    {
-                       await LaunchFromVM(LaunchType.NORMAL);
+                       await LaunchFromVM(LaunchType.NORMAL).ConfigureAwait(false);
                    }
                },
                (obj) =>
@@ -504,7 +504,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     string currentLoginType = string.Format("正在进行{0}中...", LaunchAuthNode.Name);
                     string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                    var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true);
+                    var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
 
                     loader.SetIndeterminate();
                     var authResult = await authenticator.DoAuthenticateAsync();
@@ -805,7 +805,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 else
                 {
-                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
+                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result).ConfigureAwait(false));
 
                     #region 等待游戏响应
                     try
@@ -858,7 +858,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                 Volume -= 0.01;
                                 Thread.Sleep(50);
                             }
-                        });
+                        }).ConfigureAwait(false);
                         MediaSource = null;
                     }
                 }
@@ -949,8 +949,11 @@ namespace NsisoLauncher.ViewModels.Pages
                                 Thread.Sleep(50);
                             }
                         }
-                        catch (Exception) { }
-                    });
+                        catch (Exception) 
+                        {
+                            //可忽略的错误
+                        }
+                    }).ConfigureAwait(false);
                 }
             }
 
@@ -997,7 +1000,7 @@ namespace NsisoLauncher.ViewModels.Pages
             #region 检查更新
             if (App.Config.MainConfig.Launcher.CheckUpdate)
             {
-                await CheckUpdate();
+                await CheckUpdate().ConfigureAwait(false);
             }
             #endregion
         }

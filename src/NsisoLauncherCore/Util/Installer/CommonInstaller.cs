@@ -112,7 +112,7 @@ namespace NsisoLauncherCore.Util.Installer
             await Task.Factory.StartNew(() =>
             {
                 BeginInstall(callback, cancellationToken);
-            });
+            }).ConfigureAwait(false);
         }
     }
 }

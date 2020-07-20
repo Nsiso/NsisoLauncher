@@ -89,7 +89,9 @@ namespace NsisoLauncherCore.Net.PhalAPI
                     await _netRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
                 }
                 catch
-                { }
+                {
+                    //刷新次数不是必要的，出现错误可以忽略
+                }
             }
         }
     }

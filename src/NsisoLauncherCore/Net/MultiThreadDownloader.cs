@@ -345,7 +345,7 @@ namespace NsisoLauncherCore.Net
                     {
                         item.SetState("下载中");
 
-                        await HTTPDownload(item, cancelToken);
+                        await HTTPDownload(item, cancelToken).ConfigureAwait(false);
 
                         #region 执行下载后函数
                         if (item.Todo != null)
@@ -359,7 +359,7 @@ namespace NsisoLauncherCore.Net
                                 callback.ProgressChanged += item.AcceptProgressChangedArg;
                                 try
                                 {
-                                    Exception exc = await Task.Run(() => item.Todo(callback, cancelToken));
+                                    Exception exc = await Task.Run(() => item.Todo(callback, cancelToken)).ConfigureAwait(false);
                                     if (exc != null)
                                     {
                                         SendDownloadErrLog(item, exc);
@@ -475,13 +475,13 @@ namespace NsisoLauncherCore.Net
                             using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
                             {
                                 byte[] bArr = new byte[1024];
-                                int size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length);
+                                int size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length).ConfigureAwait(false);
 
                                 while (size > 0)
                                 {
                                     _pauseResetEvent.Wait(cancelToken);
-                                    await fs.WriteAsync(bArr, 0, size);
-                                    size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length);
+                                    await fs.WriteAsync(bArr, 0, size).ConfigureAwait(false);
+                                    size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length).ConfigureAwait(false);
                                     _downloadSizePerSec += size;
                                     task.IncreaseDownloadSize(size);
                                 }

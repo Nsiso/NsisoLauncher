@@ -72,7 +72,7 @@ namespace NsisoLauncher.ViewModels.Windows
             {
                 await ShowMessageAsync("游戏非正常退出",
                     string.Format("这很有可能是因为游戏崩溃导致的，退出代码:{0}，游戏持续时间:{1}",
-                    arg.ExitCode, arg.Duration));
+                    arg.ExitCode, arg.Duration)).ConfigureAwait(false);
             }
         }
 

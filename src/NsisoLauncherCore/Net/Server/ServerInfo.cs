@@ -225,7 +225,7 @@ namespace NsisoLauncherCore.Net.Server
             await Task.Factory.StartNew(() =>
             {
                 StartGetServerInfo();
-            });
+            }).ConfigureAwait(false);
         }
 
         private void SetInfoFromJsonText(string JsonText)

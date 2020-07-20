@@ -19,13 +19,22 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// <param name="uuid">玩家的UUID</param>
         /// <param name="skinUrl">皮肤的URL</param>
         /// <param name="slim">定义是否使用slim模型</param>
-        public ChangeSkin(string accessToken, string uuid, string skinUrl, bool slim = false)
+        public ChangeSkin(string accessToken, string uuid, string skinUrl, bool slim)
         {
             this.Address = new Uri($"https://api.mojang.com/user/profile/{uuid}/skin");
             this.Arguments.Add(accessToken);
             this.Arguments.Add(skinUrl);
             this.Arguments.Add(slim.ToString());
         }
+
+        /// <summary>
+        /// 使用给定的UUID创建更改外观请求
+        /// </summary>
+        /// <param name="accessToken">用户访问令牌</param>
+        /// <param name="uuid">玩家的UUID</param>
+        /// <param name="skinUrl">皮肤的URL</param>
+        public ChangeSkin(string accessToken, string uuid, string skinUrl) : this(accessToken, uuid, skinUrl, false)
+        { }
 
         /// <summary>
         /// 执行换肤

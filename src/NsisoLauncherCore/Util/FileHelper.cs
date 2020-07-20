@@ -17,21 +17,6 @@ namespace NsisoLauncherCore.Util
     public static class FileHelper
     {
         #region 文件工具
-        public static string GetSHA1(string path)
-        {
-            FileStream file = new FileStream(path, FileMode.Open);
-            SHA1 sha1 = new SHA1CryptoServiceProvider();
-            byte[] retval = sha1.ComputeHash(file);
-            file.Close();
-
-            StringBuilder sc = new StringBuilder();
-            for (int i = 0; i < retval.Length; i++)
-            {
-                sc.Append(retval[i].ToString("x2"));
-            }
-            return sc.ToString();
-        }
-
         public static bool CopyDirectory(string SourcePath, string DestinationPath, bool overwriteexisting)
         {
             bool ret;
@@ -235,7 +220,7 @@ namespace NsisoLauncherCore.Util
                 return await Task.Factory.StartNew(() =>
                 {
                     return IsLostAnyAssetsFromJassets(core, assets);
-                });
+                }).ConfigureAwait(false);
             }
         }
         #endregion
@@ -332,7 +317,7 @@ namespace NsisoLauncherCore.Util
                 Version innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester).ConfigureAwait(false));
                 }
 
             }

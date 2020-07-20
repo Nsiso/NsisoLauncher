@@ -95,7 +95,7 @@ namespace NsisoLauncherCore
             return await Task.Factory.StartNew(() =>
             {
                 return assetsReader.GetAssets(version);
-            });
+            }).ConfigureAwait(false);
 
         }
 

@@ -59,7 +59,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
             /// <summary>
             /// 已知的破解服务器列表
             /// </summary>
-            public static List<BlockedServer> KnownCrackedServers = new List<BlockedServer>()
+            public static readonly List<BlockedServer> KnownCrackedServers = new List<BlockedServer>()
             {
                 new BlockedServer() { Address = "*.minetime.com", AddressSHA1 = "6f2520f8bd70a718c568ab5274c56bdbbfc14ef4"},
                 new BlockedServer() { Address = "*.trollingbrandon.club", AddressSHA1 = "7ea72de5f8e70a2ac45f1aa17d43f0ca3cddeedd"},

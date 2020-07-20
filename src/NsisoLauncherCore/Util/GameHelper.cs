@@ -66,7 +66,7 @@ namespace NsisoLauncherCore.Util
                 {
                     return null;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         [DllImport("User32.dll")]
@@ -85,8 +85,11 @@ namespace NsisoLauncherCore.Util
                         Thread.Sleep(1000);
                     }
                 }
-                catch (Exception) { }
-            });
+                catch (Exception)
+                { 
+                    //设置窗口标题出错不是重要错误，可忽略
+                }
+            }).ConfigureAwait(false);
         }
 
         public async static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, Modules.Version version)

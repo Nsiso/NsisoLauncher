@@ -47,8 +47,9 @@ namespace NsisoLauncher.Views.Windows
                     MessageBox.Show("很抱歉启动器在重启之后再次发生错误\n您可以在左下角联系开发者加快解决这个问题，我们由衷的表示感谢");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                MessageBox.Show(e.ToString());
             }
         }
 
@@ -78,7 +79,7 @@ namespace NsisoLauncher.Views.Windows
                 progress.SetIndeterminate();
                 bool moreInfo = (bool)moreInfoCheckBox.IsChecked;
                 if (moreInfo)
-                { report += ("/r/n" + await GetEnvironmentInfoAsync()); }
+                { report += "/r/n" + await GetEnvironmentInfoAsync().ConfigureAwait(false); }
                 await App.NetHandler.NsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, report);
             }
             catch (Exception ex)

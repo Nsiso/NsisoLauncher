@@ -22,12 +22,12 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         /// <summary>
         /// 定义读取响应和写入请求的编码.
         /// </summary>
-        public static Encoding Encoding = Encoding.UTF8;
+        public static readonly Encoding Encoding = Encoding.UTF8;
 
         /// <summary>
         /// 定义验证服务器URL
         /// </summary>
-        public static string AuthURL = "https://authserver.mojang.com";
+        public const string AuthURL = "https://authserver.mojang.com";
 
         /// <summary>
         /// 代表请求者实例的UUID.

@@ -45,7 +45,7 @@ namespace NsisoLauncherCore.Auth
 
         public async Task<AuthenticateResult> DoAuthenticateAsync()
         {
-            return await Task.Factory.StartNew(() => { return DoAuthenticate(); });
+            return await Task.Factory.StartNew(() => { return DoAuthenticate(); }).ConfigureAwait(false);
         }
     }
 }

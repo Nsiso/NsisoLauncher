@@ -9,6 +9,7 @@ using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
@@ -191,6 +192,9 @@ namespace NsisoLauncher
             #region 网络功能初始化
             #region 网络核心初始化
             NetHandler = new NetHandler();
+            Requester.Client = NetHandler.Requester.Client;
+            Requester.ClientName = NetHandler.Requester.ClientName;
+            Requester.ClientVersion = NetHandler.Requester.ClientVersion;
             #endregion
 
             #region 下载核心设置
@@ -307,8 +311,10 @@ namespace NsisoLauncher
             {
                 Config.Save();
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         public async static Task RefreshVersionListAsync()

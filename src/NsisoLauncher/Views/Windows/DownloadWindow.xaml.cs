@@ -38,11 +38,7 @@ namespace NsisoLauncher.Views.Windows
                     {
                         this.Dispatcher.Invoke(new Action(() =>
                         {
-                            try
-                            {
-                                this.Close();
-                            }
-                            catch (Exception) { }
+                            this.Close();
                         }));
                         _waitHandle.Set();
                         completedArg = b;

@@ -75,7 +75,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         /// <summary>
         /// 可用统计项目的列表
         /// </summary>
-        public static Dictionary<Item, string> StatisticItems = new Dictionary<Item, string>()
+        public readonly Dictionary<Item, string> StatisticItems = new Dictionary<Item, string>()
         {
             {  Item.MinecraftAccountsSold, "item_sold_minecraft" },
             {  Item.MinecraftPrepaidCardsRedeemed, "prepaid_card_redeemed_minecraft" },
