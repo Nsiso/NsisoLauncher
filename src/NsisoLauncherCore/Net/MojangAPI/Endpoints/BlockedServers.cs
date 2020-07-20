@@ -45,7 +45,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 };
             }
             else
+            {
                 return new BlockedServersResponse(Error.GetError(this.Response));
+            }
         }
     }
 

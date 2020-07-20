@@ -45,9 +45,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
                 foreach (string address in addresses.Split('\n'))
                 {
                     if (KnownCrackedServers.Any(x => x.AddressSHA1 == address))
+                    {
                         blockServers.Add(KnownCrackedServers.Find(x => x.AddressSHA1 == address));
+                    }
                     else
+                    {
                         blockServers.Add(new BlockedServer() { AddressSHA1 = address });
+                    }
                 }
                 return blockServers;
             }

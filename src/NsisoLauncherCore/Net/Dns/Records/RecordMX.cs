@@ -46,13 +46,21 @@ namespace Heijden.DNS
         {
             RecordMX recordMX = objA as RecordMX;
             if (recordMX == null)
+            {
                 return -1;
+            }
             else if (this.PREFERENCE > recordMX.PREFERENCE)
+            {
                 return 1;
+            } 
             else if (this.PREFERENCE < recordMX.PREFERENCE)
+            {
                 return -1;
+            }
             else // they are the same, now compare case insensitive names
+            {
                 return string.Compare(this.EXCHANGE, recordMX.EXCHANGE, true);
+            }
         }
 
     }

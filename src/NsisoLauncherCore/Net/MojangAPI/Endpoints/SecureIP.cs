@@ -29,9 +29,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             this.Response = await Requester.Get(this, true);
 
             if (this.Response.IsSuccess)
+            {
                 return new Response(this.Response);
+            }
             else
+            {
                 return new Response(Error.GetError(this.Response));
+            }
         }
     }
 }

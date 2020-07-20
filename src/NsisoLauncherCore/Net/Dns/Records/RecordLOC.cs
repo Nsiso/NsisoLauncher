@@ -127,7 +127,10 @@ namespace Heijden.DNS
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0}", intBase);
             for (; intPow > 0; intPow--)
+            {
                 sb.Append('0');
+            }
+
             sb.Append(strUnit);
             return sb.ToString();
         }

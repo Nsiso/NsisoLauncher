@@ -27,7 +27,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         {
             this.Address = new Uri($"https://api.mojang.com/orders/statistics");
             foreach (Item item in items)
+            {
                 this.Arguments.Add(StatisticItems[item]);
+            }
         }
 
         /// <summary>
@@ -64,7 +66,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                     });
                 }
                 else
+                {
                     return new StatisticsResponse(Error.GetError(this.Response));
+                }
             }
         }
 

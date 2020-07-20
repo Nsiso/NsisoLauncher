@@ -65,7 +65,7 @@ namespace NsisoLauncher.ViewModels.Windows
             this.NavigationService.Navigate(new Views.Pages.WelcomePage(this));
         }
 
-        private async void Handler_GameExit(object sender, NsisoLauncherCore.GameExitArg arg)
+        private async void Handler_GameExit(object sender, GameExitArg arg)
         {
             this.WindowState = WindowState.Normal;
             if (!arg.IsNormalExit())
@@ -76,30 +76,55 @@ namespace NsisoLauncher.ViewModels.Windows
             }
         }
 
+        public async Task<MessageDialogResult> ShowMessageAsync(string title, string message)
+        {
+            return await instance.ShowMessageAsync(this, title, message);
+        }
+
         public async Task<MessageDialogResult> ShowMessageAsync(string title, string message,
-            MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
+            MessageDialogStyle style, MetroDialogSettings settings)
         {
             return await instance.ShowMessageAsync(this, title, message, style, settings);
         }
 
         public async Task<LoginDialogData> ShowLoginAsync(string title, string message,
-            LoginDialogSettings settings = null)
+            LoginDialogSettings settings)
         {
             return await instance.ShowLoginAsync(this, title, message, settings);
         }
 
+        public async Task<LoginDialogData> ShowLoginAsync(string title, string message)
+        {
+            return await instance.ShowLoginAsync(this, title, message);
+        }
+
         public async Task<ProgressDialogController> ShowProgressAsync(string title, string message,
-            bool isCancelable = false, MetroDialogSettings settings = null)
+            bool isCancelable, MetroDialogSettings settings)
         {
             return await instance.ShowProgressAsync(this, title, message, isCancelable, settings);
         }
 
-        public async Task ShowMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings = null)
+        public async Task<ProgressDialogController> ShowProgressAsync(string title, string message)
+        {
+            return await instance.ShowProgressAsync(this, title, message);
+        }
+
+        public async Task ShowMetroDialogAsync(BaseMetroDialog dialog)
+        {
+            await instance.ShowMetroDialogAsync(this, dialog);
+        }
+
+        public async Task ShowMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings)
         {
             await instance.ShowMetroDialogAsync(this, dialog, settings);
         }
 
-        public async Task HideMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings = null)
+        public async Task HideMetroDialogAsync(BaseMetroDialog dialog)
+        {
+            await instance.HideMetroDialogAsync(this, dialog);
+        }
+
+        public async Task HideMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings)
         {
             await instance.HideMetroDialogAsync(this, dialog, settings);
         }

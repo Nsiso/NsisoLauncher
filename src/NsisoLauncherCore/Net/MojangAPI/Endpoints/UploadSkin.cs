@@ -41,9 +41,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             this.Response = await Requester.Put(this, this.Skin);
 
             if (this.Response.Code == HttpStatusCode.NoContent || this.Response.IsSuccess)
+            {
                 return new Response(this.Response) { IsSuccess = true };
+            }
             else
+            {
                 return new Response(this.Response);
+            }
         }
     }
 }

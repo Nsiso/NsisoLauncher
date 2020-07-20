@@ -30,7 +30,10 @@ namespace Heijden.DNS
                 header.QDCOUNT = (ushort)questions.Count;
                 data.AddRange(header.Data);
                 foreach (Question q in questions)
+                {
                     data.AddRange(q.Data);
+                }
+
                 return data.ToArray();
             }
         }

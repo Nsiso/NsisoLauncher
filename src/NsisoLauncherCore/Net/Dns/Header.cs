@@ -176,7 +176,9 @@ namespace Heijden.DNS
         {
             // sanity check
             if (length <= 0 || position >= 16)
+            {
                 return oldValue;
+            } 
 
             // get some mask to put on
             int mask = (2 << (length - 1)) - 1;
@@ -193,7 +195,9 @@ namespace Heijden.DNS
         {
             // sanity check
             if (length <= 0 || position >= 16)
+            {
                 return 0;
+            }
 
             // get some mask to put on
             int mask = (2 << (length - 1)) - 1;

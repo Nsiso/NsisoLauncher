@@ -56,7 +56,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 };
             }
             else
+            {
                 return new UuidAtTimeResponse(Error.GetError(this.Response));
+            }
         }
     }
 

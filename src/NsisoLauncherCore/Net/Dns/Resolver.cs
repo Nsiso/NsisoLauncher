@@ -135,8 +135,7 @@ namespace Heijden.DNS
 
         private void Verbose(string format, params object[] args)
         {
-            if (OnVerbose != null)
-                OnVerbose(this, new VerboseEventArgs(string.Format(format, args)));
+            OnVerbose?.Invoke(this, new VerboseEventArgs(string.Format(format, args)));
         }
 
         /// <summary>
@@ -182,7 +181,9 @@ namespace Heijden.DNS
             set
             {
                 if (value >= 1)
+                {
                     m_Retries = value;
+                }
             }
         }
 
@@ -270,7 +271,9 @@ namespace Heijden.DNS
             {
                 m_UseCache = value;
                 if (!m_UseCache)
+                {
                     m_ResponseCache.Clear();
+                }
             }
         }
 
@@ -285,7 +288,9 @@ namespace Heijden.DNS
         private Response SearchInCache(Question question)
         {
             if (!m_UseCache)
+            {
                 return null;
+            }
 
             string strKey = question.QClass + "-" + question.QType + "-" + question.QName;
 
@@ -294,7 +299,9 @@ namespace Heijden.DNS
             lock (m_ResponseCache)
             {
                 if (!m_ResponseCache.ContainsKey(strKey))
+                {
                     return null;
+                }
 
                 response = m_ResponseCache[strKey];
             }
@@ -305,7 +312,9 @@ namespace Heijden.DNS
                 rr.TimeLived = TimeLived;
                 // The TTL property calculates its actual time to live
                 if (rr.TTL == 0)
+                {
                     return null; // out of date
+                }
             }
             return response;
         }
@@ -313,15 +322,21 @@ namespace Heijden.DNS
         private void AddToCache(Response response)
         {
             if (!m_UseCache)
+            {
                 return;
+            }
 
             // No question, no caching
             if (response.Questions.Count == 0)
+            {
                 return;
+            }
 
             // Only cached non-error responses
             if (response.header.RCODE != RCode.NoError)
+            {
                 return;
+            }
 
             Question question = response.Questions[0];
 
@@ -330,7 +345,9 @@ namespace Heijden.DNS
             lock (m_ResponseCache)
             {
                 if (m_ResponseCache.ContainsKey(strKey))
+                {
                     m_ResponseCache.Remove(strKey);
+                }
 
                 m_ResponseCache.Add(strKey, response);
             }
@@ -437,7 +454,9 @@ namespace Heijden.DNS
                             //Debug.WriteLine("Received "+ (intLength+2)+" bytes in "+sw.ElapsedMilliseconds +" mS");
 
                             if (response.header.RCODE != RCode.NoError)
+                            {
                                 return response;
+                            }
 
                             if (response.Questions[0].QType != QType.AXFR)
                             {
@@ -448,13 +467,18 @@ namespace Heijden.DNS
                             // Zone transfer!!
 
                             if (TransferResponse.Questions.Count == 0)
+                            {
                                 TransferResponse.Questions.AddRange(response.Questions);
+                            }
+
                             TransferResponse.Answers.AddRange(response.Answers);
                             TransferResponse.Authorities.AddRange(response.Authorities);
                             TransferResponse.Additionals.AddRange(response.Additionals);
 
                             if (response.Answers[0].Type == Type.SOA)
+                            {
                                 intSoa++;
+                            }
 
                             if (intSoa == 2)
                             {
@@ -497,7 +521,9 @@ namespace Heijden.DNS
             Question question = new Question(name, qtype, qclass);
             Response response = SearchInCache(question);
             if (response != null)
+            {
                 return response;
+            }
 
             Request request = new Request();
             request.AddQuestion(question);
@@ -515,7 +541,9 @@ namespace Heijden.DNS
             Question question = new Question(name, qtype, QClass.IN);
             Response response = SearchInCache(question);
             if (response != null)
+            {
                 return response;
+            }
 
             Request request = new Request();
             request.AddQuestion(question);
@@ -528,10 +556,14 @@ namespace Heijden.DNS
             request.header.RD = m_Recursion;
 
             if (m_TransportType == TransportType.Udp)
+            {
                 return UdpRequest(request);
+            }
 
             if (m_TransportType == TransportType.Tcp)
+            {
                 return TcpRequest(request);
+            }
 
             Response response = new Response();
             response.Error = "Unknown TransportType";
@@ -557,7 +589,9 @@ namespace Heijden.DNS
                     {
                         IPEndPoint entry = new IPEndPoint(ipAddr, DefaultPort);
                         if (!list.Contains(entry))
+                        {
                             list.Add(entry);
+                        }
                     }
 
                 }
@@ -590,7 +624,9 @@ namespace Heijden.DNS
                 else
                 {
                     if (answerRR.Type == Type.CNAME)
+                    {
                         Aliases.Add(answerRR.NAME);
+                    }
                 }
             }
             entry.AddressList = AddressList.ToArray();
@@ -819,9 +855,13 @@ namespace Heijden.DNS
         {
             Response response = Query(GetArpaFromIp(ip), QType.PTR, QClass.IN);
             if (response.RecordsPTR.Length > 0)
+            {
                 return MakeEntry(response.RecordsPTR[0].PTRDNAME);
+            }
             else
+            {
                 return new IPHostEntry();
+            }
         }
 
         /// <summary>
@@ -836,9 +876,13 @@ namespace Heijden.DNS
         {
             IPAddress iPAddress;
             if (IPAddress.TryParse(hostNameOrAddress, out iPAddress))
+            {
                 return GetHostEntry(iPAddress);
+            }
             else
+            {
                 return MakeEntry(hostNameOrAddress);
+            }
         }
 
         private delegate IPHostEntry GetHostEntryViaIPDelegate(IPAddress ip);
@@ -926,13 +970,22 @@ namespace Heijden.DNS
             {
                 string strLine = sr.ReadLine();
                 if (strLine == null)
+                {
                     break;
+                }
+
                 int intI = strLine.IndexOf(';');
                 if (intI >= 0)
+                {
                     strLine = strLine.Substring(0, intI);
+                }
+
                 strLine = strLine.Trim();
                 if (strLine.Length == 0)
+                {
                     continue;
+                }
+
                 RRRecordStatus status = RRRecordStatus.NAME;
                 string Name = "";
                 string Ttl = "";
@@ -974,7 +1027,9 @@ namespace Heijden.DNS
                         strW = "";
                     }
                     if (C > ' ')
+                    {
                         strW += C;
+                    }
                 }
 
             }

@@ -105,7 +105,9 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                         char end = item[item.Length - 1];
 
                         if (start == '[' && end == ']') //Library
+                        {
                             argBuilder.Append("\"").Append(GetArtifactPath(gamerootPath, item.Substring(1, item.Length - 2))).Append("\" ");
+                        }
                         else if (start == '{' && end == '}')
                         { // Data
                             string key = item.Substring(1, item.Length - 2);

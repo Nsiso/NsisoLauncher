@@ -52,14 +52,21 @@ namespace Heijden.DNS
         {
             RecordKX recordKX = objA as RecordKX;
             if (recordKX == null)
+            {
                 return -1;
+            }
             else if (this.PREFERENCE > recordKX.PREFERENCE)
+            {
                 return 1;
+            }
             else if (this.PREFERENCE < recordKX.PREFERENCE)
+            {
                 return -1;
+            }
             else // they are the same, now compare case insensitive names
+            {
                 return string.Compare(this.EXCHANGER, recordKX.EXCHANGER, true);
+            }
         }
-
     }
 }

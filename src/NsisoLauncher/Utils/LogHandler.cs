@@ -43,9 +43,6 @@ namespace NsisoLauncher.Core.Util
                                 File.AppendAllText("log.txt", string.Format("[{0}][{1}]{2}\r\n", DateTime.Now.ToString(), log.LogLevel, log.Message));
                             }
                         }
-                        catch (Exception)
-                        {
-                        }
                         finally
                         {
                             LogLock.ExitWriteLock();

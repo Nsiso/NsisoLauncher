@@ -30,9 +30,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             this.Unsigned = unsigned;
 
             if (this.Unsigned)
+            {
                 this.Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
+            }
             else
+            {
                 this.Address = new Uri($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}?unsigned=false");
+            }
+
             this.Arguments.Add(uuid);
             this.Arguments.Add(unsigned.ToString());
         }
@@ -66,7 +71,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                     return new ProfileResponse(this.Response) { Error = error };
                 }
                 else
+                {
                     return new ProfileResponse(Error.GetError(this.Response));
+                }
             }
         }
     }

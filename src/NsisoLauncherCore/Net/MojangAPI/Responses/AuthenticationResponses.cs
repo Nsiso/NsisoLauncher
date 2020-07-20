@@ -150,7 +150,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
             this.ErrorTag = json["error"].ToObject<string>();
             this.ErrorMessage = json["errorMessage"].ToObject<string>();
             if (json.ToString().Contains("cause"))
+            {
                 this.Cause = json["cause"].ToObject<string>();
+            }
         }
 
         /// <summary>

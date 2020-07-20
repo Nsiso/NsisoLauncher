@@ -59,7 +59,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         internal async static Task<Response> Get<T>(IEndpoint<T> endpoint, bool authenticate = false)
         {
             if (endpoint == null)
+            {
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
+            }
 
             HttpResponseMessage httpResponse = null;
             string rawMessage = null;
@@ -120,10 +122,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         internal async static Task<Response> Post<T>(IEndpoint<T> endpoint)
         {
             if (endpoint == null)
+            {
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
+            }
 
             if (endpoint.PostContent == null)
+            {
                 throw new ArgumentNullException("PostContent", "PostContent should not be null.");
+            }
 
             HttpResponseMessage httpResponse = null;
             string rawMessage = null;
@@ -175,11 +181,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         internal async static Task<Response> Post<T>(IEndpoint<T> endpoint, Dictionary<string, string> toEncode)
         {
             if (endpoint == null)
+            {
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
+            }
 
             if (toEncode == null || toEncode.Count < 1)
+            {
                 throw new ArgumentNullException("PostContent", "PostContent should not be null.");
-
+            }
 
             HttpResponseMessage httpResponse = null;
             Error error = null;
@@ -246,14 +255,19 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         internal async static Task<Response> Put<T>(IEndpoint<T> endpoint, FileInfo file)
         {
             if (endpoint == null)
+            {
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
+            }
 
             if (file == null)
+            {
                 throw new ArgumentNullException("Skin", "No file given.");
+            }
 
             if (!file.Exists)
+            {
                 throw new ArgumentException("Given file does not exist.");
-
+            }
 
             HttpResponseMessage httpResponse = null;
             Error error = null;
@@ -328,8 +342,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         internal async static Task<Response> Delete<T>(IEndpoint<T> endpoint)
         {
             if (endpoint == null)
+            {
                 throw new ArgumentNullException("Endpoint", "Endpoint should not be null.");
-
+            }
 
             HttpResponseMessage httpResponse = null;
             Error error = null;

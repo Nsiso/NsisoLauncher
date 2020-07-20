@@ -114,9 +114,13 @@ namespace NsisoLauncher.ViewModels.Pages
                (obj) =>
                {
                    if (App.Handler == null)
+                   {
                        return false;
+                   }
                    else
+                   {
                        return !App.Handler.IsBusyLaunching;
+                   }
                });
             OpenDownloadingCmd = new DelegateCommand((obj) =>
             {

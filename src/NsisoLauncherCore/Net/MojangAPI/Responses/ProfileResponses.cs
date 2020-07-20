@@ -34,7 +34,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
             public ProfileProperties(string base64)
             {
                 if (base64 == null)
+                {
                     throw new ArgumentNullException("Base64", "Base 64 string must not be null");
+                }
 
                 string json = Requester.Encoding.GetString(Convert.FromBase64String(base64));
                 JObject data = JObject.Parse(json);
@@ -48,9 +50,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
                 JObject textures = data["textures"].ToObject<JObject>();
 
                 if (textures["SKIN"] != null && textures["SKIN"]["url"] != null)
+                {
                     this.SkinUri = new Uri(textures["SKIN"]["url"].ToObject<string>());
+                }
+
                 if (textures["CAPE"] != null && textures["CAPE"]["url"] != null)
+                {
                     this.CapeUri = new Uri(textures["CAPE"]["url"].ToObject<string>());
+                }
             }
 
             /// <summary>

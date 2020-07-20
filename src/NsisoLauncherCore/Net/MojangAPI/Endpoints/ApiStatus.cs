@@ -60,8 +60,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 };
             }
             else
+            {
                 return new ApiStatusResponse(Error.GetError(this.Response));
-
+            }
         }
     }
 

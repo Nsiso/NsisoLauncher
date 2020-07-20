@@ -66,7 +66,7 @@ namespace NsisoLauncherCore
             var result = await Task.Factory.StartNew(() =>
             {
                 return Launch(setting);
-            });
+            }).ConfigureAwait(false);
             return result;
         }
 

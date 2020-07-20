@@ -43,7 +43,9 @@ namespace NsisoLauncherCore.Util
                 if (Directory.Exists(SourcePath))
                 {
                     if (Directory.Exists(DestinationPath) == false)
+                    {
                         Directory.CreateDirectory(DestinationPath);
+                    }
 
                     foreach (string fls in Directory.GetFiles(SourcePath))
                     {
@@ -54,7 +56,9 @@ namespace NsisoLauncherCore.Util
                     {
                         DirectoryInfo drinfo = new DirectoryInfo(drs);
                         if (CopyDirectory(drs, DestinationPath + drinfo.Name, overwriteexisting) == false)
+                        {
                             ret = false;
+                        }
                     }
                 }
                 ret = true;

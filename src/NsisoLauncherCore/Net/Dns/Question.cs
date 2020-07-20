@@ -58,7 +58,9 @@ namespace Heijden.DNS
             {
                 m_QName = value;
                 if (!m_QName.EndsWith("."))
+                {
                     m_QName += ".";
+                }
             }
         }
         public QType QType;
@@ -81,10 +83,14 @@ namespace Heijden.DNS
         private byte[] WriteName(string src)
         {
             if (!src.EndsWith("."))
+            {
                 src += ".";
+            }
 
             if (src == ".")
+            {
                 return new byte[1];
+            }
 
             StringBuilder sb = new StringBuilder();
             int intI, intJ, intLen = src.Length;

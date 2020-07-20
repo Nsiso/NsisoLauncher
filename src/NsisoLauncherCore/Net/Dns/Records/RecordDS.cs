@@ -52,7 +52,10 @@ namespace Heijden.DNS
         {
             StringBuilder sb = new StringBuilder();
             for (int intI = 0; intI < DIGEST.Length; intI++)
+            {
                 sb.AppendFormat("{0:x2}", DIGEST[intI]);
+            }
+
             return string.Format("{0} {1} {2} {3}",
                 KEYTAG,
                 ALGORITHM,

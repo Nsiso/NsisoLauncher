@@ -71,20 +71,39 @@ namespace NsisoLauncherCore.Util
                         }
 
                         //最简单的检查
-                        if (!current.StartsWith("[")) continue;
+                        if (!current.StartsWith("["))
+                        {
+                            continue;
+                        }
 
                         //寻找第一个固定要素区块
                         var firstLBrac = current.IndexOf('[');
-                        if (firstLBrac == -1) continue;
+                        if (firstLBrac == -1)
+                        {
+                            continue;
+                        }
+
                         var firstRBrac = current.IndexOf(']');
-                        if (firstRBrac == -1) continue;
+                        if (firstRBrac == -1)
+                        {
+                            continue;
+                        }
+
                         var firstBlock = current.Substring(firstLBrac + 1, firstRBrac - firstLBrac - 1);
 
                         //寻找第二个固定要素区块
                         var secondLBrac = current.IndexOf('[', firstRBrac);
-                        if (secondLBrac == -1) continue;
+                        if (secondLBrac == -1)
+                        {
+                            continue;
+                        }
+
                         var secondRBrac = current.IndexOf(']', secondLBrac);
-                        if (secondRBrac == -1) continue;
+                        if (secondRBrac == -1)
+                        {
+                            continue;
+                        }
+
                         var secondBlock = current.Substring(secondLBrac + 1, secondRBrac - secondLBrac - 1);
 
                         if (DateTime.TryParse(firstBlock, out DateTime time))

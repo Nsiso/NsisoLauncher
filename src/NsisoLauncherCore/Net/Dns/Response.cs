@@ -106,7 +106,9 @@ namespace Heijden.DNS
                 {
                     RecordMX record = answerRR.RECORD as RecordMX;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 list.Sort();
                 return list.ToArray();
@@ -125,7 +127,9 @@ namespace Heijden.DNS
                 {
                     RecordTXT record = answerRR.RECORD as RecordTXT;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -143,7 +147,9 @@ namespace Heijden.DNS
                 {
                     RecordA record = answerRR.RECORD as RecordA;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -161,7 +167,9 @@ namespace Heijden.DNS
                 {
                     RecordPTR record = answerRR.RECORD as RecordPTR;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -179,7 +187,9 @@ namespace Heijden.DNS
                 {
                     RecordCNAME record = answerRR.RECORD as RecordCNAME;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -197,7 +207,9 @@ namespace Heijden.DNS
                 {
                     RecordAAAA record = answerRR.RECORD as RecordAAAA;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -215,7 +227,9 @@ namespace Heijden.DNS
                 {
                     RecordNS record = answerRR.RECORD as RecordNS;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -233,7 +247,9 @@ namespace Heijden.DNS
                 {
                     RecordSOA record = answerRR.RECORD as RecordSOA;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }
@@ -251,7 +267,9 @@ namespace Heijden.DNS
                 {
                     RecordSRV record = answerRR.RECORD as RecordSRV;
                     if (record != null)
+                    {
                         list.Add(record);
+                    }
                 }
                 return list.ToArray();
             }

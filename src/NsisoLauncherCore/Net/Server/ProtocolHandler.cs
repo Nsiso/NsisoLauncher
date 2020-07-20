@@ -75,8 +75,15 @@ namespace NsisoLauncherCore.Net.Server
                 Receive(tmp, 0, 1, SocketFlags.None);
                 k = tmp[0];
                 i |= (k & 0x7F) << j++ * 7;
-                if (j > 5) throw new OverflowException("VarInt too big");
-                if ((k & 0x80) != 128) break;
+                if (j > 5)
+                {
+                    throw new OverflowException("VarInt too big");
+                }
+
+                if ((k & 0x80) != 128)
+                {
+                    break;
+                }
             }
             return i;
         }
@@ -106,8 +113,15 @@ namespace NsisoLauncherCore.Net.Server
             {
                 k = readNextByte(cache);
                 i |= (k & 0x7F) << j++ * 7;
-                if (j > 5) throw new OverflowException("VarInt too big");
-                if ((k & 0x80) != 128) break;
+                if (j > 5)
+                {
+                    throw new OverflowException("VarInt too big");
+                }
+
+                if ((k & 0x80) != 128)
+                {
+                    break;
+                }
             }
             return i;
         }
@@ -124,7 +138,10 @@ namespace NsisoLauncherCore.Net.Server
             {
                 return Encoding.UTF8.GetString(readData(length, cache));
             }
-            else return "";
+            else
+            {
+                return "";
+            }
         }
 
         /// <summary>
@@ -153,7 +170,10 @@ namespace NsisoLauncherCore.Net.Server
         {
             List<byte> result = new List<byte>();
             foreach (byte[] array in bytes)
+            {
                 result.AddRange(array);
+            }
+
             return result.ToArray();
         }
     }

@@ -49,7 +49,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 return history;
             }
             else
+            {
                 return new NameHistoryResponse(Error.GetError(this.Response));
+            }
         }
     }
 

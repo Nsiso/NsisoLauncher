@@ -48,7 +48,10 @@ namespace Heijden.DNS
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0} ", LENGTH);
             for (int intI = 0; intI < NSAPADDRESS.Length; intI++)
+            {
                 sb.AppendFormat("{0:X00}", NSAPADDRESS[intI]);
+            }
+
             return sb.ToString();
         }
 

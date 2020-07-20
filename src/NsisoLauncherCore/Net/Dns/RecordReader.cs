@@ -36,9 +36,13 @@ namespace Heijden.DNS
         public byte ReadByte()
         {
             if (m_Position >= m_Data.Length)
+            {
                 return 0;
+            }
             else
+            {
                 return m_Data[m_Position++];
+            }
         }
 
         public char ReadChar()
@@ -89,9 +93,13 @@ namespace Heijden.DNS
                 name.Append('.');
             }
             if (name.Length == 0)
+            {
                 return ".";
+            }
             else
+            {
                 return name.ToString();
+            }
         }
 
         public string ReadString()
@@ -100,7 +108,9 @@ namespace Heijden.DNS
 
             StringBuilder name = new StringBuilder();
             for (int intI = 0; intI < length; intI++)
+            {
                 name.Append(ReadChar());
+            }
             return name.ToString();
         }
 
@@ -108,7 +118,9 @@ namespace Heijden.DNS
         {
             List<byte> list = new List<byte>();
             for (int intI = 0; intI < intLength; intI++)
+            {
                 list.Add(ReadByte());
+            }
             return list.ToArray();
         }
 

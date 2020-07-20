@@ -37,7 +37,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 JArray jchallenges = JArray.Parse(this.Response.RawMessage);
                 List<Challenge> challenges = new List<Challenge>();
                 foreach (JToken token in jchallenges)
+                {
                     challenges.Add(Parse(token));
+                }
 
                 return new ChallengesResponse(this.Response)
                 {
@@ -45,7 +47,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 };
             }
             else
+            {
                 return new ChallengesResponse(Error.GetError(this.Response));
+            }
         }
     }
 }

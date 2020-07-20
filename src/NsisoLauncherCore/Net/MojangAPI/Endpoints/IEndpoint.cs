@@ -28,7 +28,10 @@ namespace NsisoLauncherCore.Net.MojangApi
             get
             {
                 if (_arguments == null)
+                {
                     _arguments = new List<string>() { };
+                }
+
                 return _arguments;
             }
             set { _arguments = value; }

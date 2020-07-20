@@ -170,7 +170,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                     };
                 }
                 else
+                {
                     return new TokenResponse(Error.GetError(this.Response));
+                }
             }
             catch (Exception)
             {
@@ -208,9 +210,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 this.Response = await Requester.Post(this);
 
                 if (this.Response.Code == HttpStatusCode.NoContent)
+                {
                     return new Response(this.Response) { IsSuccess = true };
+                }
                 else
+                {
                     return new Response(Error.GetError(this.Response));
+                }
             }
             catch (Exception)
             {
@@ -247,9 +253,13 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             this.Response = await Requester.Post(this);
 
             if (string.IsNullOrWhiteSpace(this.Response.RawMessage))
+            {
                 return new Response(this.Response) { IsSuccess = true };
+            }
             else
+            {
                 return new Response(Error.GetError(this.Response));
+            }
         }
     }
 
@@ -284,7 +294,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 return new Response(this.Response) { IsSuccess = true }; ;
             }
             else
+            {
                 return new Response(Error.GetError(this.Response));
+            }
         }
     }
 

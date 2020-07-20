@@ -29,7 +29,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
         public UuidByNames(params string[] usernames)
         {
             if (usernames.Length > 100)
+            {
                 throw new ArgumentException("Only up to 100 usernames per request are allowed.");
+            }
 
             this.Address = new Uri($"https://api.mojang.com/profiles/minecraft");
             this.Arguments = usernames.ToList<string>();
@@ -50,7 +52,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 List<Uuid> uuidList = new List<Uuid>() { };
 
                 foreach (JObject uuid in uuids)
+                {
                     uuidList.Add(uuid.ToObject<Uuid>());
+                }
 
                 return new UuidByNamesResponse(this.Response)
                 {
@@ -71,7 +75,9 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                     });
                 }
                 else
+                {
                     return new UuidByNamesResponse(Error.GetError(this.Response));
+                }
             }
         }
     }

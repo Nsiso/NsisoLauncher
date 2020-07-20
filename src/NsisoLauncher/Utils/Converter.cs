@@ -15,7 +15,10 @@ namespace NsisoLauncher.Utils
            CultureInfo culture)
         {
             if (targetType != typeof(bool))
+            {
                 throw new InvalidOperationException("The target must be a boolean");
+            }
+
             return !(bool)value;
 
         }

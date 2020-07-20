@@ -58,9 +58,13 @@ namespace Heijden.DNS
             byte b = BITMAP[intByte];
             int intTest = 1 << intOffset;
             if ((b & intTest) == 0)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
 
 
@@ -70,7 +74,9 @@ namespace Heijden.DNS
             for (int bitNr = 1; bitNr < (BITMAP.Length * 8); bitNr++)
             {
                 if (IsSet(bitNr))
+                {
                     sb.Append(" " + (Type)bitNr);
+                }
             }
             return string.Format("{0}{1}", NEXTDOMAINNAME, sb.ToString());
         }
