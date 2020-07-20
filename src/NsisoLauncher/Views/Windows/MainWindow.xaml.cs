@@ -31,7 +31,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void mainWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (App.Downloader.IsBusy)
+            if (App.NetHandler.Downloader.IsBusy)
             {
                 var choose = this.ShowModalMessageExternal("后台正在下载中", "是否确认关闭程序？这将会取消下载"
                     , MessageDialogStyle.AffirmativeAndNegative,
@@ -41,7 +41,9 @@ namespace NsisoLauncher.Views.Windows
                         NegativeButtonText = App.GetResourceString("String.Base.Cancel")
                     });
                 if (choose == MessageDialogResult.Affirmative)
-                    App.Downloader.RequestCancel();
+                {
+                    App.NetHandler.Downloader.RequestCancel();
+                }
                 else
                     e.Cancel = true;
             }

@@ -62,9 +62,9 @@ namespace NsisoLauncher.Config
         public Launcher Launcher { get; set; }
 
         /// <summary>
-        ///     下载设置
+        /// 网络设置
         /// </summary>
-        public Download Download { get; set; }
+        public Net Net { get; set; }
 
         /// <summary>
         ///     服务器设置
@@ -253,9 +253,9 @@ namespace NsisoLauncher.Config
     }
 
     /// <summary>
-    ///     下载设置
+    /// 网络设置
     /// </summary>
-    public class Download : INotifyPropertyChanged
+    public class Net : INotifyPropertyChanged
     {
         /// <summary>
         ///     下载源设置
@@ -263,7 +263,17 @@ namespace NsisoLauncher.Config
         public DownloadSource DownloadSource { get; set; }
 
         /// <summary>
-        ///     线程数量
+        /// 版本设置
+        /// </summary>
+        public VersionSourceType VersionSource { get; set; }
+
+        /// <summary>
+        /// 功能设置
+        /// </summary>
+        public FunctionSourceType FunctionSource { get; set; }
+
+        /// <summary>
+        /// 线程数量
         /// </summary>
         public int DownloadThreadsSize { get; set; }
 
@@ -459,5 +469,18 @@ namespace NsisoLauncher.Config
         public Dictionary<string, string> Property { get; set; } = new Dictionary<string, string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
+    }
+
+    public enum VersionSourceType
+    {
+        MOJANG = 0,
+        BMCLAPI = 1,
+        MCBBS = 2
+    }
+
+    public enum FunctionSourceType
+    {
+        BMCLAPI = 0,
+        MCBBS = 1
     }
 }

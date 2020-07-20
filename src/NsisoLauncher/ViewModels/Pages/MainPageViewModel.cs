@@ -89,8 +89,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 #endregion
 
-                App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-                App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
+                App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+                App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
 
                 _ = CustomizeRefresh();
                 //检查环境
@@ -615,7 +615,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
                     App.Handler,
-                    launchSetting.Version);
+                    launchSetting.Version, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
 
                 if (LaunchAuthNode.AuthType == AuthenticationType.NIDE8)
                 {
@@ -629,14 +629,16 @@ namespace NsisoLauncher.ViewModels.Pages
                     var aiJarPath = App.Handler.GetAIJarPath();
                     if (!File.Exists(aiJarPath))
                     {
-                        var aicore =
-                            await GetDownloadUrl.GetAICoreDownloadTask(App.Config.MainConfig.Download.DownloadSource,
-                                aiJarPath);
-                        if (aicore != null) lostDepend.Add(aicore);
+                        DownloadTask aicore = await NsisoLauncherCore.Net.Tools.GetDownloadUri.GetAICoreDownloadTask(App.Config.MainConfig.Net.DownloadSource,
+                            aiJarPath, App.NetHandler.Requester);
+                        if (aicore != null)
+                        {
+                            lostDepend.Add(aicore);
+                        }
                     }
                 }
 
-                if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count != 0)
+                if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count() != 0)
                 {
                     var downDependResult = await MainWindowVM.ShowMessageAsync(
                         App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
@@ -688,10 +690,10 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 if (losts.Count != 0)
                 {
-                    if (!App.Downloader.IsBusy)
+                    if (!App.NetHandler.Downloader.IsBusy)
                     {
-                        App.Downloader.AddDownloadTask(losts);
-                        await App.Downloader.StartDownload();
+                        App.NetHandler.Downloader.AddDownloadTask(losts);
+                        await App.NetHandler.Downloader.StartDownload();
                         var downloadResult = await new DownloadWindow().ShowWhenDownloading();
                         if (downloadResult?.ErrorList?.Count != 0)
                             await MainWindowVM.ShowMessageAsync(
@@ -816,7 +818,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
 #if !DEBUG
                         //API使用次数计数器+1
-                        await App.NsisoAPIHandler.RefreshUsingTimesCounter();
+                        await App.NetHandler.NsisoAPIHandler.RefreshUsingTimesCounter();
 #endif
 
                     #endregion
@@ -956,16 +958,14 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包",
-                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
-                            await App.Downloader.StartDownload();
+                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
+                            await App.NetHandler.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包",
-                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
-                            await App.Downloader.StartDownload();
+                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
+                            await App.NetHandler.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             Process.Start("Explorer.exe", "jre_x64.exe");
                             break;
@@ -1000,7 +1000,7 @@ namespace NsisoLauncher.ViewModels.Pages
         {
             try
             {
-                var ver = await App.NsisoAPIHandler.GetLatestLauncherVersion();
+                var ver = await App.NetHandler.NsisoAPIHandler.GetLatestLauncherVersion();
                 if (ver != null)
                 {
                     var currentVersion = Application.ResourceAssembly.GetName().Version;

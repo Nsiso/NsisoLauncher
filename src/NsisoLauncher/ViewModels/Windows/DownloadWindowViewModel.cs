@@ -18,12 +18,12 @@ namespace NsisoLauncher.ViewModels.Windows
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
-            if (App.Downloader != null)
+            if (App.NetHandler.Downloader != null)
             {
-                Tasks = App.Downloader.ViewDownloadTasks;
-                App.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-                App.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
-                App.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
+                Tasks = App.NetHandler.Downloader.ViewDownloadTasks;
+                App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+                App.NetHandler.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
+                App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
             }
         }
 

@@ -38,9 +38,9 @@ namespace NsisoLauncher.Views.Windows
             //        task.Checker = new MD5Checker() { CheckSum = VersionResponse.MD5, FilePath = path };
             //    }
             //    DownloadWindow downloadWindow = new DownloadWindow();
-            //    App.downloader.StartDownload();
+            //    App.NetHandler.Downloader.StartDownload();
             //    downloadWindow.Show();
-            //    App.downloader.DownloadCompleted += (a, b) =>
+            //    App.NetHandler.Downloader.DownloadCompleted += (a, b) =>
             //    {
             //        this.show
             //    }

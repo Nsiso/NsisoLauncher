@@ -9,8 +9,8 @@ namespace NsisoLauncherCore.Net.Tools
 {
     public class DownloadUtils
     {
-        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IMirror mirror,
-            CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
+       
+        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
         {
             try
             {
@@ -22,9 +22,9 @@ namespace NsisoLauncherCore.Net.Tools
                     for (var i = 1; i <= 3; i++)
                         try
                         {
-                            var from = mirror.DoDownloadUrlReplace(item.Downloads.Artifact.URL);
-                            var to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
-                            var buffFilename = to + ".downloadtask";
+                            string from = mirror.DoDownloadUriReplace(item.Downloads.Artifact.URL);
+                            string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
+                            string buffFilename = to + ".downloadtask";
 
                             if (File.Exists(to)) continue;
                             if (string.IsNullOrWhiteSpace(from)) continue;

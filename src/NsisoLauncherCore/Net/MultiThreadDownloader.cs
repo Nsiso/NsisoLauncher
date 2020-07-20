@@ -16,6 +16,7 @@ using Timer = System.Timers.Timer;
 
 namespace NsisoLauncherCore.Net
 {
+    #region 下载事件参数
     public class DownloadProgressChangedArg : EventArgs
     {
         public int DoneTaskCount { get; set; }
@@ -34,8 +35,9 @@ namespace NsisoLauncherCore.Net
     {
         public Dictionary<DownloadTask, Exception> ErrorList { get; set; }
     }
+    #endregion
 
-    public class MultiThreadDownloader : INotifyPropertyChanged
+    public class MultiThreadDownloader : INotifyPropertyChanged , IDisposable
     {
         private int _downloadSizePerSec;
         private readonly ConcurrentQueue<DownloadTask> _downloadTasks = new ConcurrentQueue<DownloadTask>();
@@ -51,13 +53,16 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         ///     初始化一个多线程下载器
         /// </summary>
-        public MultiThreadDownloader()
+        public MultiThreadDownloader(NetRequester requester)
         {
             _timer.Elapsed += _timer_Elapsed;
             if (SynchronizationContext.Current != null)
                 sc = SynchronizationContext.Current;
             else
                 sc = new SynchronizationContext();
+            }
+
+            _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         #region 速度计算（每秒触发事件）
@@ -89,11 +94,72 @@ namespace NsisoLauncherCore.Net
                 arg.SpeedValue = _downloadSizePerSec;
                 DownloadSpeedChanged?.Invoke(this, arg);
             }
+            _downloadSizePerSec = 0;
+        }
+        #endregion
+
+        #region 公共属性
+        /// <summary>
+        /// 多线程数量
+        /// </summary>
+        public int ProcessorSize { get; set; } = 3;
+
+        /// <summary>
+        /// 网络代理
+        /// </summary>
+        public WebProxy Proxy { get; set; }
+
+        /// <summary>
+        /// 是否检查文件HASH（如果可用）
+        /// </summary>
+        public bool CheckFileHash { get; set; }
+
+        /// <summary>
+        /// 重新下载尝试次数
+        /// </summary>
+        public int RetryTimes { get; set; } = 3;
+
+        /// <summary>
+        /// 下载源列表
+        /// </summary>
+        public IList<IDownloadableMirror> MirrorList { get; set; }
+
+        /// <summary>
+        /// 下载任务（只读）
+        /// </summary>
+        public IEnumerable<DownloadTask> DownloadTaskList { get => ViewDownloadTasks.AsEnumerable(); }
+        #endregion
+
+        #region 只读数据属性（可绑定NotifyPropertyChanged）
+        private int _leftTaskCount;
+        /// <summary>
+        /// 剩余下载任务数量
+        /// </summary>
+        public int LeftTaskCount
+        {
+            get { return _leftTaskCount; }
+            private set
+            {
+                _leftTaskCount = value;
+                OnPropertyChanged("LeftTaskCount");
+            }
+        }
 
             _downloadSizePerSec = 0;
         }
 
         #endregion
+
+        private System.Timers.Timer _timer = new System.Timers.Timer(1000);
+        private ConcurrentQueue<DownloadTask> _downloadTasks = new ConcurrentQueue<DownloadTask>();
+        private Task[] _workers;
+        private int _downloadSizePerSec;
+        private Dictionary<DownloadTask, Exception> _errorList = new Dictionary<DownloadTask, Exception>();
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private ManualResetEventSlim _pauseResetEvent = new ManualResetEventSlim(true);
+        private SynchronizationContext sc;
+        private IDownloadableMirror mirror = null;
+        private NetRequester _requester;
 
         /// <summary>
         ///     清除全部下载任务
@@ -112,7 +178,7 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         public void RequestCancel()
         {
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
             ApendDebugLog("已申请取消下载");
         }
 
@@ -151,20 +217,23 @@ namespace NsisoLauncherCore.Net
                     if (_downloadTasks == null || _downloadTasks.Count == 0) return;
 
                     IsBusy = true;
-                    cancellationTokenSource = new CancellationTokenSource();
+                    _cancellationTokenSource = new CancellationTokenSource();
                     _errorList.Clear();
                     DoneTaskCount = 0;
 
                     _workers = new Task[ProcessorSize];
                     _timer.Start();
 
-                    if (MirrorList?.Count != 0) mirror = await MirrorHelper.ChooseBestMirror(MirrorList);
+                    if (MirrorList?.Count != 0)
+                    {
+                        mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(MirrorList);
+                    }
 
                     #region 新建工作线程
-
-                    for (var i = 0; i < ProcessorSize; i++)
-                        _workers[i] = Task.Run(() => ThreadDownloadWork(cancellationTokenSource.Token));
-
+                    for (int i = 0; i < ProcessorSize; i++)
+                    {
+                        _workers[i] = Task.Run(() => ThreadDownloadWork(_cancellationTokenSource.Token));
+                    }
                     #endregion
 
                     #region 监控线程
@@ -274,7 +343,7 @@ namespace NsisoLauncherCore.Net
 
             if (mirror != null)
             {
-                from = mirror.DoDownloadUrlReplace(task.Downloadable.GetDownloadSourceURL());
+                from = mirror.DoDownloadUriReplace(task.Downloadable.GetDownloadSourceURL());
                 task.UIFrom = mirror.MirrorName;
             }
 
@@ -311,8 +380,7 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-
-                    using (var getResult = await NetRequester.Client.GetAsync(from, cancelToken))
+                    using (var getResult = await _requester.Client.GetAsync(from, cancelToken))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
@@ -526,15 +594,11 @@ namespace NsisoLauncherCore.Net
             LeftTaskCount += 1;
         }
 
-        /// <summary>
-        ///     添加一堆下载任务
-        /// </summary>
-        /// <param name="tasks"></param>
-        public void AddDownloadTask(List<DownloadTask> tasks)
+        public void Dispose()
         {
-            foreach (var item in tasks) AddDownloadTask(item);
+            _timer.Dispose();
+            _cancellationTokenSource.Dispose();
+            _pauseResetEvent.Dispose();
         }
-
-        #endregion
     }
 }

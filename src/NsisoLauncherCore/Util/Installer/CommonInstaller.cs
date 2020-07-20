@@ -34,7 +34,7 @@ namespace NsisoLauncherCore.Util.Installer
 
         public Version VersionToInstall { get; set; }
 
-        public IMirror Mirror { get; set; }
+        public IDownloadableMirror Mirror { get; set; }
 
         public Java Java { get; set; }
     }

@@ -28,13 +28,16 @@ namespace NsisoLauncher.Views.Windows
     /// </summary>
     public partial class NewDownloadTaskWindow : MetroWindow
     {
-        private readonly FunctionAPIHandler apiHandler;
-        private readonly ObservableCollection<JWForge> forgeList = new ObservableCollection<JWForge>();
-        private readonly ObservableCollection<JWVersion> verList = new ObservableCollection<JWVersion>();
+        ObservableCollection<JWVersion> verList = new ObservableCollection<JWVersion>();
+        ObservableCollection<JWForge> forgeList = new ObservableCollection<JWForge>();
+
+        private FunctionAPIHandler apiHandler;
+        private NetRequester _netRequester;
 
         public NewDownloadTaskWindow()
         {
-            apiHandler = new FunctionAPIHandler(App.Config.MainConfig.Download.DownloadSource);
+            _netRequester = App.NetHandler.Requester;
+            apiHandler = new FunctionAPIHandler(App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Mirrors.FunctionalMirrorList, _netRequester);
             InitializeComponent();
             versionListDataGrid.ItemsSource = verList;
             forgeListDataGrid.ItemsSource = forgeList;
@@ -179,9 +182,17 @@ namespace NsisoLauncher.Views.Windows
             {
                 foreach (JWVersion item in list)
                 {
-                    var jsonRespond = await NetRequester.Client.GetAsync(
-                        (await MirrorHelper.ChooseBestMirror(App.Downloader.MirrorList))
-                        .DoDownloadUrlReplace(item.Url));
+                    IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
+                    string url;
+                    if (mirror == null)
+                    {
+                        url = item.Url;
+                    }
+                    else
+                    {
+                        url = mirror.DoDownloadUriReplace(item.Url);
+                    }
+                    HttpResponseMessage jsonRespond = await _netRequester.Client.GetAsync(url);
                     string json = null;
                     if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
                     if (string.IsNullOrWhiteSpace(json))
@@ -204,10 +215,10 @@ namespace NsisoLauncher.Views.Windows
                     tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.URL),
                         App.Handler.GetAssetsIndexPath(ver.Assets)));
 
-                    tasks.AddRange(await FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver));
+                    tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester));
 
-                    App.Downloader.AddDownloadTask(tasks);
-                    await App.Downloader.StartDownload();
+                    App.NetHandler.Downloader.AddDownloadTask(tasks);
+                    await App.NetHandler.Downloader.StartDownload();
                 }
             }
             catch (WebException ex)
@@ -226,12 +237,17 @@ namespace NsisoLauncher.Views.Windows
 
         private async Task AppendForgeDownloadTask(Version ver, JWForge forge)
         {
-            var forgePath = PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
-            var dt = new DownloadTask("forge核心",
-                new StringUrl(string.Format("https://bmclapi2.bangbang93.com/forge/download/{0}", forge.Build)),
+            IFunctionalMirror functionalMirror = (IFunctionalMirror)(await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.FunctionalMirrorList));
+            if (functionalMirror == null)
+            {
+                throw new Exception("Functional Mirror is null");
+            }
+            string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
+            DownloadTask dt = new DownloadTask("forge核心",
+                new StringUrl(string.Format("{0}forge/download/{1}", functionalMirror.BaseUri, forge.Build)),
                 forgePath);
-            var mirror = await MirrorHelper.ChooseBestMirror(App.Downloader.MirrorList);
-            dt.Todo = (callback, cancelToken) =>
+            IDownloadableMirror mirror = (IDownloadableMirror) await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
+            dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
                 try
                 {
@@ -248,12 +264,11 @@ namespace NsisoLauncher.Views.Windows
                     return null;
                 }
                 catch (Exception ex)
-                {
-                    return ex;
-                }
-            };
-            App.Downloader.AddDownloadTask(dt);
-            await App.Downloader.StartDownload();
+                { return ex; }
+            });
+            App.NetHandler.Downloader.AddDownloadTask(dt);
+            await App.NetHandler.Downloader.StartDownload();
+
         }
 
         private void RefreshVerButton_Click(object sender, RoutedEventArgs e)

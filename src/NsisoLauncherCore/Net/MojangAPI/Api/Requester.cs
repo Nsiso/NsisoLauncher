@@ -42,6 +42,12 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
             set => _clientToken = value;
         }
 
+        public static HttpClient Client { get; set; }
+
+        public static string ClientName { get; set; }
+
+        public static string ClientVersion { get; set; }
+
         /// <summary>
         ///     向给定endpoint发送GET请求.
         /// </summary>

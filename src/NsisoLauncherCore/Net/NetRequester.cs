@@ -7,26 +7,23 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net
 {
-    public static class NetRequester
+    public class NetRequester : IDisposable
     {
         /// <summary>
         ///     NsisoLauncher目前名称.
         /// </summary>
-        public static readonly string ClientName = "NsisoLauncher";
+        public string ClientName { get; set; } = "NsisoLauncher";
 
         /// <summary>
         ///     NsisoLauncher目前版本号.
         /// </summary>
-        public static readonly string ClientVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        private static HttpClient _client;
-
-        private static HttpClientHandler _clientHandler;
-
+        private HttpClient _client;
         /// <summary>
         ///     表示Web请求中使用的http客户端.
         /// </summary>
-        public static HttpClient Client
+        public HttpClient Client
         {
             get
             {
@@ -41,10 +38,11 @@ namespace NsisoLauncherCore.Net
             private set => _client = value;
         }
 
+        private HttpClientHandler _clientHandler;
         /// <summary>
         ///     表示http客户端handler
         /// </summary>
-        public static HttpClientHandler ClientHandler
+        public HttpClientHandler ClientHandler
         {
             get
             {
@@ -59,7 +57,7 @@ namespace NsisoLauncherCore.Net
         ///// </summary>
         //public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
-        public static async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
+        public async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
             try
             {
@@ -68,6 +66,18 @@ namespace NsisoLauncherCore.Net
             catch (TaskCanceledException)
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_clientHandler != null)
+            {
+                _clientHandler.Dispose();
+            }
+            if (_client != null)
+            {
+                _client.Dispose();
             }
         }
     }

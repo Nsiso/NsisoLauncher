@@ -55,7 +55,7 @@ namespace NsisoLauncherCore.Util
 
         public string GetDownloadSourceURL()
         {
-            return GetDownloadUrl.GetAssetsDownloadURL(this);
+            return GetDownloadUri.GetAssetsDownloadURL(this);
         }
     }
 }

@@ -10,29 +10,43 @@ namespace NsisoLauncherCore.Net.Tools
     {
         public static async Task<IMirror> ChooseBestMirror(IEnumerable<IMirror> mirrors)
         {
-            var ping = new Ping();
-            long currentLowestPing = 0;
-            IMirror currentLowestMirror = null;
-            if (mirrors.Count() == 1) return mirrors.First();
-            foreach (var item in mirrors)
+            if (mirrors == null)
             {
-                var result = await ping.SendPingAsync(item.BaseDomain, 1000);
-                if (currentLowestPing <= 0)
+                return null;
+            }
+            int count = mirrors.Count();
+            if (count == 0)
+            {
+                return null;
+            }
+            if (count == 1)
+            {
+                return mirrors.First();
+            }
+            using (Ping ping = new Ping())
+            {
+                long currentLowestPing = 0;
+                IMirror currentLowestMirror = null;
+
+                foreach (var item in mirrors)
                 {
-                    currentLowestPing = result.RoundtripTime;
-                    currentLowestMirror = item;
-                }
-                else
-                {
-                    if (result.RoundtripTime < currentLowestPing)
+                    var result = await ping.SendPingAsync(item.BaseUri.Host, 1000);
+                    if (currentLowestPing <= 0)
                     {
-                        currentLowestMirror = item;
                         currentLowestPing = result.RoundtripTime;
+                        currentLowestMirror = item;
+                    }
+                    else
+                    {
+                        if (result.RoundtripTime < currentLowestPing)
+                        {
+                            currentLowestMirror = item;
+                            currentLowestPing = result.RoundtripTime;
+                        }
                     }
                 }
+                return currentLowestMirror;
             }
-
-            return currentLowestMirror;
         }
     }
 }

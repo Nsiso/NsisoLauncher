@@ -6,6 +6,12 @@ namespace NsisoLauncherCore.Net.Nide8API
 {
     public class APIHandler
     {
+        private NetRequester _netRequester;
+        public APIHandler(NetRequester requester)
+        {
+            _netRequester = requester;
+        }
+        public string Nide8ID { get; private set; }
         public APIHandler(string id)
         {
             Nide8ID = id;
@@ -15,8 +21,7 @@ namespace NsisoLauncherCore.Net.Nide8API
 
         public async Task<APIModules> GetInfoAsync()
         {
-            var jsonRespond =
-                await NetRequester.Client.GetAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
+            HttpResponseMessage jsonRespond = await _netRequester.Client.GetAsync(string.Format("https://auth2.nide8.com:233/{0}", Nide8ID));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(json)) return null;
