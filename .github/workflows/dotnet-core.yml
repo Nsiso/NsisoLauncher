@@ -1,0 +1,25 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master, dev, net5 ]
+  pull_request:
+    branches: [ master, dev, net5 ]
+
+jobs:
+  build:
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100-preview.6.20318.15
+    - name: Install dependencies
+      run: dotnet restore src/NsisoLauncher.sln
+    - name: Build
+      run: dotnet build --configuration Release --no-restore src/NsisoLauncher.sln
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal src/NsisoLauncher.sln
