@@ -1052,8 +1052,6 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public double Volume { get; set; } = 0.5;
 
-        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
-
         public string MediaSource { get; set; } /* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
 
         public bool IsPlaying { get; set; } = true;
