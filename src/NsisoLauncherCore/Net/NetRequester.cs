@@ -17,7 +17,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// NsisoLauncher目前版本号.
         /// </summary>
-        public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
 
         private HttpClient _client;
         /// <summary>
