@@ -403,7 +403,7 @@ namespace NsisoLauncher.Config
             {
                 if (launcherWindowSize == null)
                 {
-                    launcherWindowSize = new WindowSize();
+                    launcherWindowSize = new WindowSize() { Width = 980, Height = 540 };
                 }
                 return launcherWindowSize;
             }
@@ -613,7 +613,7 @@ namespace NsisoLauncher.Config
                 }
                 return profiles;
             }
-            set 
+            set
             {
                 profiles = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Profiles"));
@@ -626,7 +626,7 @@ namespace NsisoLauncher.Config
         /// </summary>
         public UserData UserData
         {
-            get 
+            get
             {
                 if (userData == null)
                 {
@@ -634,7 +634,7 @@ namespace NsisoLauncher.Config
                 }
                 return userData;
             }
-            set 
+            set
             {
                 userData = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserData"));

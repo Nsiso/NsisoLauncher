@@ -185,13 +185,7 @@
                                 <CheckBox Content="{StaticResource String.Settingwindow.Env.Habbit.Exit}" IsChecked="{Binding Environment.ExitAfterLaunch}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
-                        <Expander Header="{StaticResource String.Settingwindow.Env.Launcher}" Margin="0,0,0,5">
-                            <StackPanel>
-                                <CheckBox Content="自动检查启动器更新" IsChecked="{Binding Launcher.CheckUpdate}" Margin="0,0,0,5"/>
-                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Launcher.DebugMode}" IsChecked="{Binding Launcher.Debug}" Margin="0,0,0,5"/>
-                                <CheckBox Content="禁用数据收集" IsChecked="{Binding Launcher.NoTracking}" Margin="0,0,0,5"/>
-                            </StackPanel>
-                        </Expander>
+                       
                         <TextBlock TextWrapping="Wrap" Text="{StaticResource String.Settingwindow.Env.Note}"/>
                     </StackPanel>
                 </ScrollViewer>
@@ -390,7 +384,7 @@
             <!--#region 自定义设置-->
             <TabItem Header="自定义">
                 <ScrollViewer>
-                    <StackPanel x:Name="customGrid" Margin="10,0,10,0">
+                    <StackPanel x:Name="customGrid" Margin="10,0">
                         <Expander Header="启动器主题设置" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="启动器主题颜色:"/>
@@ -408,6 +402,23 @@
                                 <CheckBox x:Name="checkBox1" Content="开启自定义背景图片" IsChecked="{Binding Customize.CustomBackGroundPicture}" Margin="0,0,0,2"/>
                                 <CheckBox x:Name="checkBox2" Content="开启自定义背景音乐" IsChecked="{Binding Customize.CustomBackGroundMusic}" Margin="0,0,0,2"/>
                                 <Label Content="*自定义方法请查看启动器教程文档"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="启动器初始窗口大小" Margin="0,0,0,5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox TextWrapping="Wrap" 
+                                         PreviewTextInput="textBox1_PreviewTextInput"
+                                         InputMethod.IsInputMethodEnabled="False"
+                                         Text="{Binding Launcher.LauncherWindowSize.Width}" 
+                                         Width="50"/>
+                                <Label Content="{StaticResource String.Settingwindow.Env.Window.WH}"/>
+                                <TextBox TextWrapping="Wrap"
+                                         PreviewTextInput="textBox1_PreviewTextInput"
+                                         InputMethod.IsInputMethodEnabled="False"
+                                         Text="{Binding Launcher.LauncherWindowSize.Height}"
+                                         Width="50"/>
+                                <Label Content="（最小限制750*445，过小将限制）"/>
                             </StackPanel>
                         </Expander>
 
@@ -444,27 +455,36 @@
             <!--#endregion-->
 
             <!--#region 关于-->
-            <TabItem Header="关于">
-                <StackPanel>
-                    <TextBlock Margin="10,0">
+            <TabItem Header="启动器">
+                <ScrollViewer>
+                    <StackPanel Margin="10,0">
+                        <Expander Header="{StaticResource String.Settingwindow.Env.Launcher}" Margin="0,0,0,5">
+                            <StackPanel>
+                                <CheckBox Content="自动检查启动器更新" IsChecked="{Binding Launcher.CheckUpdate}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Launcher.DebugMode}" IsChecked="{Binding Launcher.Debug}" Margin="0,0,0,5"/>
+                                <CheckBox Content="禁用数据收集" IsChecked="{Binding Launcher.NoTracking}" Margin="0,0,0,5"/>
+                            </StackPanel>
+                        </Expander>
+                        <TextBlock>
                         启动器开源
                         <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher">
                             https://github.com/Nsiso/NsisoLauncher
                         </Hyperlink>
-                    </TextBlock>
-                    <TextBlock Margin="10,0">
+                        </TextBlock>
+                        <TextBlock>
                         启动器声明
                         <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/blob/master/README.md">
                             https://github.com/Nsiso/NsisoLauncher/blob/master/README.md
                         </Hyperlink>
-                    </TextBlock>
-                    <TextBlock Margin="10,0">
+                        </TextBlock>
+                        <TextBlock>
                         启动器文档
                         <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/wiki">
                             https://github.com/Nsiso/NsisoLauncher/wiki
                         </Hyperlink>
-                    </TextBlock>
-                </StackPanel>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <!--#endregion-->
         </TabControl>

@@ -47,6 +47,16 @@ namespace NsisoLauncher.ViewModels.Windows
         public Action CloseWindow { get; set; }
 
         /// <summary>
+        /// 窗口高
+        /// </summary>
+        public ushort Height { get; set; } = 540;
+
+        /// <summary>
+        /// 窗口宽
+        /// </summary>
+        public ushort Width { get; set; } = 980;
+
+        /// <summary>
         /// 窗口对话
         /// </summary>
         private IDialogCoordinator instance;
@@ -54,6 +64,11 @@ namespace NsisoLauncher.ViewModels.Windows
         public MainWindowViewModel(IDialogCoordinator instance)
         {
             this.instance = instance;
+            if (App.Config.MainConfig?.Launcher?.LauncherWindowSize != null)
+            {
+                Height = App.Config.MainConfig.Launcher.LauncherWindowSize.Height;
+                Width = App.Config.MainConfig.Launcher.LauncherWindowSize.Width;
+            }
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;
