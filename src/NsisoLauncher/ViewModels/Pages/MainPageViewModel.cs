@@ -813,7 +813,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         await Task.Factory.StartNew(() =>
                         {
                             result.Process.WaitForInputIdle();
-                        });
+                        }).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {

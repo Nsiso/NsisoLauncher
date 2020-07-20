@@ -27,7 +27,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
         /// <summary>
         /// 定义验证服务器URL
         /// </summary>
-        public const string AuthURL = "https://authserver.mojang.com";
+        public static string AuthURL { get => "https://authserver.mojang.com"; }
 
         /// <summary>
         /// 代表请求者实例的UUID.

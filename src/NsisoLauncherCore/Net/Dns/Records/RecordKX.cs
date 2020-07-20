@@ -48,9 +48,9 @@ namespace Heijden.DNS
             return string.Format("{0} {1}", PREFERENCE, EXCHANGER);
         }
 
-        public int CompareTo(object objA)
+        public int CompareTo(object obj)
         {
-            RecordKX recordKX = objA as RecordKX;
+            RecordKX recordKX = obj as RecordKX;
             if (recordKX == null)
             {
                 return -1;

@@ -38,7 +38,7 @@ namespace Heijden.DNS
         /// <summary>
         /// Default DNS port
         /// </summary>
-        public static int DefaultPort = 53;
+        public static readonly int DefaultPort = 53;
 
         /// <summary>
         /// Gets list of OPENDNS servers

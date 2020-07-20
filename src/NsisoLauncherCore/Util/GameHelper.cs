@@ -108,8 +108,11 @@ namespace NsisoLauncherCore.Util
                         File.WriteAllLines(core.GetVersionOptionsPath(version), optLines.ToArray());
                     }
                 }
-                catch (Exception) { }
-            });
+                catch (Exception e) 
+                {
+                    throw e;
+                }
+            }).ConfigureAwait(false);
         }
     }
 }
