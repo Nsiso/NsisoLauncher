@@ -18,30 +18,29 @@ namespace NsisoLauncherCore.Util
         /// <summary>
         ///     获取匹配JAVA位数的最佳内存
         /// </summary>
-        /// <param name="arch">JAVA位数</param>
+        /// <param name="java">使用Java实例</param>
         /// <returns>最佳内存大小</returns>
         public static int GetBestMemory(Java java)
         {
-            if (java != null)
+            if (java == null) 
+                return 1024;
+            var rm = Convert.ToInt32(Math.Floor(GetRunmemory() * 0.6));
+            switch (java.Arch)
             {
-                var rm = Convert.ToInt32(Math.Floor(GetRunmemory() * 0.6));
-                switch (java.Arch)
-                {
-                    case ArchEnum.x32:
-                        if (rm > 1024)
-                            return 1024;
-                        else
-                            return rm;
-
-                    case ArchEnum.x64:
-                        if (rm > 4096)
-                            return 4096;
-                        else
-                            return rm;
-
-                    default:
+                case ArchEnum.x32:
+                    if (rm > 1024)
+                        return 1024;
+                    else
                         return rm;
-                }
+
+                case ArchEnum.x64:
+                    if (rm > 4096)
+                        return 4096;
+                    else
+                        return rm;
+
+                default:
+                    return rm;
             }
 
             return 1024;
