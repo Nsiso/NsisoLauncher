@@ -629,12 +629,10 @@ namespace NsisoLauncher.ViewModels.Pages
                     var aiJarPath = App.Handler.GetAIJarPath();
                     if (!File.Exists(aiJarPath))
                     {
-                        DownloadTask aicore = await NsisoLauncherCore.Net.Tools.GetDownloadUri.GetAICoreDownloadTask(App.Config.MainConfig.Net.DownloadSource,
+                        var aicore = await GetDownloadUri.GetAICoreDownloadTask(
+                            App.Config.MainConfig.Net.DownloadSource,
                             aiJarPath, App.NetHandler.Requester);
-                        if (aicore != null)
-                        {
-                            lostDepend.Add(aicore);
-                        }
+                        if (aicore != null) lostDepend.Add(aicore);
                     }
                 }
 
@@ -958,13 +956,15 @@ namespace NsisoLauncher.ViewModels.Pages
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
+                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包",
+                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
                             await App.NetHandler.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
-                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
+                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包",
+                                new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
                             await App.NetHandler.Downloader.StartDownload();
                             await new DownloadWindow().ShowWhenDownloading();
                             Process.Start("Explorer.exe", "jre_x64.exe");

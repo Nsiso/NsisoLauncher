@@ -22,7 +22,7 @@ namespace NsisoLauncherCore.Util
         /// <returns>最佳内存大小</returns>
         public static int GetBestMemory(Java java)
         {
-            if (java == null) 
+            if (java == null)
                 return 1024;
             var rm = Convert.ToInt32(Math.Floor(GetRunmemory() * 0.6));
             switch (java.Arch)
@@ -42,8 +42,6 @@ namespace NsisoLauncherCore.Util
                 default:
                     return rm;
             }
-
-            return 1024;
         }
 
 
@@ -52,11 +50,9 @@ namespace NsisoLauncherCore.Util
             var info = new ProcessStartInfo("wmic");
             info.Arguments = query;
             info.RedirectStandardOutput = redirectStandardOutput;
-            var output = "";
-            using (var process = Process.Start(info))
-            {
-                output = process.StandardOutput.ReadToEnd();
-            }
+            string output;
+            using var process = Process.Start(info);
+            output = process.StandardOutput.ReadToEnd();
 
             return output.Trim();
         }

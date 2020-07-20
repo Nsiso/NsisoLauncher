@@ -13,7 +13,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
         private const string APIUrl = "http://hn2.api.okayapi.com/";
         private const string App_key = "7B27B7B6A3C10158C28E3DE0B13785CD";
 
-        private NetRequester _netRequester;
+        private readonly NetRequester _netRequester;
 
         public APIHandler(bool isNoTracking, NetRequester requester)
         {
@@ -37,13 +37,10 @@ namespace NsisoLauncherCore.Net.PhalAPI
                 args.Add("where", "[[\"id\", \">\", \"0\"]]");
                 //仅返回一条（即ID最高的最新版本）
                 args.Add("perpage", "1");
-                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
-                if (!resultRespond.IsSuccessStatusCode)
-                {
-                    return null;
-                }
-                string result = await resultRespond.Content.ReadAsStringAsync();
-                PhalApiClientResponse desObj = JsonConvert.DeserializeObject<PhalApiClientResponse>(result);
+                var resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
+                if (!resultRespond.IsSuccessStatusCode) return null;
+                var result = await resultRespond.Content.ReadAsStringAsync();
+                var desObj = JsonConvert.DeserializeObject<PhalApiClientResponse>(result);
                 JObject listJobj = desObj.Data;
                 var list = listJobj.ToObject<NsisoLauncherVersionListResponse>();
                 return list.List.FirstOrDefault();

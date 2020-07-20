@@ -1,12 +1,6 @@
-﻿using Newtonsoft.Json;
-using NsisoLauncherCore.Net.FunctionAPI;
-using NsisoLauncherCore.Net.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
+using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {
@@ -16,16 +10,17 @@ namespace NsisoLauncherCore.Net.Mirrors
         public string MirrorName { get; set; }
 
         public Uri BaseUri { get; set; }
-        public Uri VersionListUri { get; set; }
-        public Uri JavaListUri { get; set; }
-        public Uri ForgeListUri { get; set; }
-        public Uri LiteloaderListUri { get; set; }
-        public Uri OptifineListUri { get; set; }
-        public Uri FabriceListUri { get; set; }
 
         public string DoDownloadUriReplace(string source)
         {
             return GetDownloadUri.ReplaceUriByDic(source, ReplaceDictionary);
         }
+
+        public Uri JavaListUri { get; set; }
+        public Uri ForgeListUri { get; set; }
+        public Uri LiteloaderListUri { get; set; }
+        public Uri OptifineListUri { get; set; }
+        public Uri FabriceListUri { get; set; }
+        public Uri VersionListUri { get; set; }
     }
 }

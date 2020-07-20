@@ -223,45 +223,54 @@
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Auto}"
                                              IsChecked="{Binding Net.DownloadSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Auto}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Auto}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Mojang}"
                                              IsChecked="{Binding Net.DownloadSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Mojang}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Mojang}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
                                              IsChecked="{Binding Net.DownloadSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.BMCLAPI}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.BMCLAPI}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
                                              IsChecked="{Binding Net.DownloadSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.MCBBS}}" Margin="0,0,0,5"/>
-                                <Label Content="{StaticResource String.Settingwindow.Net.Source.Note}"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.MCBBS}}"
+                                             Margin="0,0,0,5" />
+                                <Label Content="{StaticResource String.Settingwindow.Net.Source.Note}" />
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.VersionSource}" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Mojang}"
                                              IsChecked="{Binding Net.VersionSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MOJANG}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MOJANG}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
                                              IsChecked="{Binding Net.VersionSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.BMCLAPI}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.BMCLAPI}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
                                              IsChecked="{Binding Net.VersionSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MCBBS}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MCBBS}}"
+                                             Margin="0,0,0,5" />
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.FunctionSource}" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
                                              IsChecked="{Binding Net.FunctionSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.BMCLAPI}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.BMCLAPI}}"
+                                             Margin="0,0,0,5" />
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
                                              IsChecked="{Binding Net.FunctionSource,
-                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.MCBBS}}" Margin="0,0,0,5"/>
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.MCBBS}}"
+                                             Margin="0,0,0,5" />
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.Thread}" Margin="0,0,0,5">
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="{StaticResource String.Settingwindow.Net.Thread.Num}"/>
+                                <Label Content="{StaticResource String.Settingwindow.Net.Thread.Num}" />
                                 <TextBox Text="{Binding Net.DownloadThreadsSize}"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
@@ -270,23 +279,23 @@
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.Proxy}" Margin="0,0,0,5">
                             <StackPanel>
-                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Address}"/>
-                                <TextBox Text="{Binding Net.DownloadProxyAddress}" Margin="0,0,0,5"/>
-                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Port}"/>
-                                <TextBox 
+                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Address}" />
+                                <TextBox Text="{Binding Net.DownloadProxyAddress}" Margin="0,0,0,5" />
+                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Port}" />
+                                <TextBox
                                     PreviewTextInput="textBox1_PreviewTextInput"
                                     InputMethod.IsInputMethodEnabled="False"
-                                    Text="{Binding Net.DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
-                                    Margin="0,0,0,5" MaxLength="6"/>
-                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.User}"/>
-                                <TextBox Text="{Binding Net.ProxyUserName}" Margin="0,0,0,5"/>
-                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Password}"/>
-                                <TextBox Text="{Binding Net.ProxyUserPassword}" Margin="0,0,0,5"/>
+                                    Text="{Binding Net.DownloadProxyPort}" Width="60" HorizontalAlignment="Left"
+                                    Margin="0,0,0,5" MaxLength="6" />
+                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.User}" />
+                                <TextBox Text="{Binding Net.ProxyUserName}" Margin="0,0,0,5" />
+                                <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Password}" />
+                                <TextBox Text="{Binding Net.ProxyUserPassword}" Margin="0,0,0,5" />
                             </StackPanel>
                         </Expander>
                         <Expander Header="高级下载设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="校验下载文件哈希值" IsChecked="{Binding Net.CheckDownloadFileHash}"/>
+                                <CheckBox Content="校验下载文件哈希值" IsChecked="{Binding Net.CheckDownloadFileHash}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>

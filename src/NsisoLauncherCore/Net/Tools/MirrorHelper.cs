@@ -10,20 +10,11 @@ namespace NsisoLauncherCore.Net.Tools
     {
         public static async Task<IMirror> ChooseBestMirror(IEnumerable<IMirror> mirrors)
         {
-            if (mirrors == null)
-            {
-                return null;
-            }
-            int count = mirrors.Count();
-            if (count == 0)
-            {
-                return null;
-            }
-            if (count == 1)
-            {
-                return mirrors.First();
-            }
-            using (Ping ping = new Ping())
+            if (mirrors == null) return null;
+            var count = mirrors.Count();
+            if (count == 0) return null;
+            if (count == 1) return mirrors.First();
+            using (var ping = new Ping())
             {
                 long currentLowestPing = 0;
                 IMirror currentLowestMirror = null;
@@ -45,6 +36,7 @@ namespace NsisoLauncherCore.Net.Tools
                         }
                     }
                 }
+
                 return currentLowestMirror;
             }
         }

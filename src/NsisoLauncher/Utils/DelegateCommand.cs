@@ -6,8 +6,8 @@ namespace NsisoLauncher.Utils
     public class DelegateCommand : ICommand
     {
         private readonly Func<object, bool> canExecute;
-        private bool canExecuteCache;
         private readonly Action<object> executeAction;
+        private bool canExecuteCache;
 
         public DelegateCommand(Action<object> executeAction) : this(executeAction, a => true)
         {

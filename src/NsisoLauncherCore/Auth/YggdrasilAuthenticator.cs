@@ -97,10 +97,8 @@ namespace NsisoLauncherCore.Auth
                 if (AuthArgs != null && AuthArgs.Count != 0) validate.Arguments = AuthArgs;
                 var result = await validate.PerformRequestAsync();
                 if (result.IsSuccess)
-                {
                     return new AuthenticateResult(AuthState.SUCCESS)
                         {AccessToken = AccessToken, UserData = UserData, SelectedProfileUUID = SelectedProfileUUID};
-                }
 
                 AuthState state;
                 var refresh = new Refresh(AccessToken);

@@ -52,15 +52,11 @@ namespace NsisoLauncher.Views.Windows
         private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CheckDownloadFileHash")
-            {
                 App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
-            }
             if (e.PropertyName == "DownloadSource")
             {
                 if (App.NetHandler.Downloader.MirrorList == null)
-                {
                     App.NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
-                }
                 switch (App.Config.MainConfig.Net.DownloadSource)
                 {
                     case DownloadSource.Auto:
@@ -79,9 +75,7 @@ namespace NsisoLauncher.Views.Windows
             }
 
             if (e.PropertyName == "DownloadThreadsSize")
-            {
                 App.NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
-            }
         }
 
         private void Environment_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -221,6 +215,7 @@ namespace NsisoLauncher.Views.Windows
 
             App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
             App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
+
             #endregion
 
             if (_isGameSettingChanged)

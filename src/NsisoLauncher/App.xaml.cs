@@ -29,37 +29,6 @@ namespace NsisoLauncher
     /// </summary>
     public partial class App : Application
     {
-        #region 全局属性
-        /// <summary>
-        /// 启动主模块
-        /// </summary>
-        public static LaunchHandler Handler { get; private set; }
-
-        /// <summary>
-        /// 应用配置文件
-        /// </summary>
-        public static ConfigHandler Config { get; private set; }
-
-        /// <summary>
-        /// 日志处理器
-        /// </summary>
-        public static LogHandler LogHandler { get; private set; }
-
-        /// <summary>
-        /// 网络处理类
-        /// </summary>
-        public static NetHandler NetHandler { get; set; }
-
-        #region 全局数据属性
-
-        /// <summary>
-        /// JAVA本机列表
-        /// </summary>
-        public static List<Java> JavaList { get; private set; }
-        public static ObservableCollection<Version> VersionList { get; private set; }
-        #endregion
-        #endregion
-
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
@@ -190,15 +159,19 @@ namespace NsisoLauncher
             #endregion
 
             #region 网络功能初始化
+
             #region 网络核心初始化
+
             NetHandler = new NetHandler();
+
             #endregion
 
             #region 下载核心设置
+
             ServicePointManager.DefaultConnectionLimit = 10;
 
-            Net downloadCfg = Config.MainConfig.Net;
-            if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
+            var downloadCfg = Config.MainConfig.Net;
+            if (!string.IsNullOrWhiteSpace(downloadCfg?.DownloadProxyAddress))
             {
                 var proxy = new WebProxy(downloadCfg.DownloadProxyAddress, downloadCfg.DownloadProxyPort);
                 if (!string.IsNullOrWhiteSpace(downloadCfg.ProxyUserName))
@@ -206,20 +179,22 @@ namespace NsisoLauncher
                     var credential = new NetworkCredential(downloadCfg.ProxyUserName, downloadCfg.ProxyUserPassword);
                     proxy.Credentials = credential;
                 }
+
                 NetHandler.Downloader.Proxy = proxy;
             }
-            NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
-            NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
+
+            NetHandler.Downloader.ProcessorSize = Config.MainConfig.Net.DownloadThreadsSize;
+            NetHandler.Downloader.CheckFileHash = Config.MainConfig.Net.CheckDownloadFileHash;
             NetHandler.Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
+
             #endregion
 
             #region 处理镜像源
+
             if (NetHandler.Downloader.MirrorList == null)
-            {
                 NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
-            }
-           
-            switch (App.Config.MainConfig.Net.DownloadSource)
+
+            switch (Config.MainConfig.Net.DownloadSource)
             {
                 case DownloadSource.Auto:
                     NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
@@ -235,7 +210,7 @@ namespace NsisoLauncher
                     break;
             }
 
-            switch (App.Config.MainConfig.Net.VersionSource)
+            switch (Config.MainConfig.Net.VersionSource)
             {
                 case VersionSourceType.MOJANG:
                     break;
@@ -245,11 +220,9 @@ namespace NsisoLauncher
                 case VersionSourceType.MCBBS:
                     NetHandler.Mirrors.VersionListMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
                     break;
-                default:
-                    break;
             }
 
-            switch (App.Config.MainConfig.Net.FunctionSource)
+            switch (Config.MainConfig.Net.FunctionSource)
             {
                 case FunctionSourceType.BMCLAPI:
                     NetHandler.Mirrors.FunctionalMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
@@ -257,10 +230,10 @@ namespace NsisoLauncher
                 case FunctionSourceType.MCBBS:
                     NetHandler.Mirrors.FunctionalMirrorList.Add(NetHandler.Mirrors.GetMcbbsApi());
                     break;
-                default:
-                    break;
             }
+
             #endregion
+
             #endregion
 
             var mainwindow = new MainWindow();
@@ -334,14 +307,24 @@ namespace NsisoLauncher
         public static ConfigHandler Config { get; private set; }
 
         /// <summary>
+        ///     日志处理器
+        /// </summary>
+        public static LogHandler LogHandler { get; private set; }
+
+        /// <summary>
+        ///     网络处理类
+        /// </summary>
+        public static NetHandler NetHandler { get; set; }
+
+        #endregion
+
+        #region 全局属性
+
+        /// <summary>
         ///     下载核心
         /// </summary>
         public static MultiThreadDownloader Downloader { get; private set; }
 
-        /// <summary>
-        ///     日志处理器
-        /// </summary>
-        public static LogHandler LogHandler { get; private set; }
 
         /// <summary>
         ///     应用API

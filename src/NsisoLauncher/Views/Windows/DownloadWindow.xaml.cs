@@ -75,7 +75,7 @@ namespace NsisoLauncher.Views.Windows
                 if (result == MessageDialogResult.Affirmative)
                 {
                     App.NetHandler.Downloader.RequestCancel();
-                    this.progressBar.Value = 0;
+                    progressBar.Value = 0;
                 }
             }
             else
@@ -91,18 +91,13 @@ namespace NsisoLauncher.Views.Windows
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (App.NetHandler.Downloader.IsBusy)
-            {
-                this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
-            }
+            if (App.NetHandler.Downloader.IsBusy) this.ShowModalMessageExternal("正在下载中", "将会在后台进行下载，再次打开下载窗口能查看或取消下载");
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             if (App.NetHandler.Downloader.Proxy != null)
-            {
                 this.ShowMessageAsync("您开启了下载代理", "请注意您现在正在使用代理进行下载，若代理设置异常可能会导致下载错误。");
-            }
         }
     }
 }

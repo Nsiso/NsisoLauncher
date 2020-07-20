@@ -18,10 +18,10 @@ namespace NsisoLauncherCore
 
         public delegate void LaunchLogHandler(object sender, Log log);
 
-        private readonly object launchLocker = new object();
-
         private readonly ArgumentsParser argumentsParser;
         private readonly AssetsReader assetsReader;
+
+        private readonly object launchLocker = new object();
         private readonly VersionReader versionReader;
 
         public LaunchHandler() : this(PathManager.CurrentLauncherDirectory + "\\.minecraft", Java.GetSuitableJava(),

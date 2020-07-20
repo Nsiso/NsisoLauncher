@@ -1,38 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Net.FunctionAPI
 {
     public class FunctionAPIHandler
     {
-        public IList<IFunctionalMirror> FunctionalMirrorList { get; set; }
-        public IList<IVersionListMirror> VersionListMirrorList { get; set; }
+        private readonly NetRequester _requester;
 
-        private NetRequester _requester;
-
-        public FunctionAPIHandler(IList<IVersionListMirror> versionListMirrors, IList<IFunctionalMirror> functionMirrors, NetRequester requester)
+        public FunctionAPIHandler(IList<IVersionListMirror> versionListMirrors,
+            IList<IFunctionalMirror> functionMirrors, NetRequester requester)
         {
             FunctionalMirrorList = functionMirrors ?? throw new ArgumentNullException("FunctionalMirror is null");
             VersionListMirrorList = versionListMirrors ?? throw new ArgumentNullException("VersionListMirror is null");
             _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
-        public DownloadSource Source { get; }
-
-        public string VersionListURL { get; set; } = GetDownloadUrl.MojangVersionUrl;
-        public string JavaListURL { get; set; } = BmclMirror.BMCLUrl + "java/list";
-        public string ForgeListURL { get; set; } = BmclMirror.BMCLUrl + "forge/minecraft";
-        public string NewListURL { get; set; } = "https://authentication.x-speed.cc/mcbbsNews/";
+        public IList<IFunctionalMirror> FunctionalMirrorList { get; set; }
+        public IList<IVersionListMirror> VersionListMirrorList { get; set; }
 
         /// <summary>
         ///     联网获取版本列表
@@ -41,16 +31,12 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWVersion>> GetVersionList()
         {
             Uri versionListUri;
-            IVersionListMirror mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(VersionListMirrorList);
+            var mirror = (IVersionListMirror) await MirrorHelper.ChooseBestMirror(VersionListMirrorList);
             if (mirror == null)
-            {
                 versionListUri = new Uri(GetDownloadUri.MojangVersionUrl);
-            }
             else
-            {
                 versionListUri = mirror.VersionListUri;
-            }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(versionListUri);
+            var jsonRespond = await _requester.Client.GetAsync(versionListUri);
             string json = null;
             if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
             if (!string.IsNullOrEmpty(json))
@@ -69,25 +55,14 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWJava>> GetJavaList()
         {
             Uri javaListUri;
-            IFunctionalMirror mirror = (IFunctionalMirror)await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
+            var mirror = (IFunctionalMirror) await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
             if (mirror == null)
-            {
                 throw new Exception("The Functional Mirror is null");
-            }
-            else
-            {
-                javaListUri = mirror.JavaListUri;
-            }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(javaListUri);
+            javaListUri = mirror.JavaListUri;
+            var jsonRespond = await _requester.Client.GetAsync(javaListUri);
             string json = null;
-            if (jsonRespond.IsSuccessStatusCode)
-            {
-                json = await jsonRespond.Content.ReadAsStringAsync();
-            }
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return null;
-            }
+            if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(json)) return null;
             var e = JsonConvert.DeserializeObject<List<JWJava>>(json);
             return e;
         }
@@ -97,19 +72,14 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// </summary>
         /// <param name="version">要搜索的版本</param>
         /// <returns>Forge列表</returns>
-        public async Task<List<JWForge>> GetForgeList(Modules.Version version)
+        public async Task<List<JWForge>> GetForgeList(Version version)
         {
             Uri forgeListUri;
-            IFunctionalMirror mirror = (IFunctionalMirror)await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
+            var mirror = (IFunctionalMirror) await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
             if (mirror == null)
-            {
                 throw new Exception("The Functional Mirror is null");
-            }
-            else
-            {
-                forgeListUri = mirror.ForgeListUri;
-            }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(new Uri(forgeListUri, version.ID));
+            forgeListUri = mirror.ForgeListUri;
+            var jsonRespond = await _requester.Client.GetAsync(new Uri(forgeListUri, version.ID));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode) json = await jsonRespond.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(json)) return null;

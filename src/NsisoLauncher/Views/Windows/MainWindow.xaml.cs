@@ -41,9 +41,7 @@ namespace NsisoLauncher.Views.Windows
                         NegativeButtonText = App.GetResourceString("String.Base.Cancel")
                     });
                 if (choose == MessageDialogResult.Affirmative)
-                {
                     App.NetHandler.Downloader.RequestCancel();
-                }
                 else
                     e.Cancel = true;
             }

@@ -62,7 +62,7 @@ namespace NsisoLauncher.Config
         public Launcher Launcher { get; set; }
 
         /// <summary>
-        /// 网络设置
+        ///     网络设置
         /// </summary>
         public Net Net { get; set; }
 
@@ -253,7 +253,7 @@ namespace NsisoLauncher.Config
     }
 
     /// <summary>
-    /// 网络设置
+    ///     网络设置
     /// </summary>
     public class Net : INotifyPropertyChanged
     {
@@ -263,17 +263,17 @@ namespace NsisoLauncher.Config
         public DownloadSource DownloadSource { get; set; }
 
         /// <summary>
-        /// 版本设置
+        ///     版本设置
         /// </summary>
         public VersionSourceType VersionSource { get; set; }
 
         /// <summary>
-        /// 功能设置
+        ///     功能设置
         /// </summary>
         public FunctionSourceType FunctionSource { get; set; }
 
         /// <summary>
-        /// 线程数量
+        ///     线程数量
         /// </summary>
         public int DownloadThreadsSize { get; set; }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -181,7 +180,7 @@ namespace NsisoLauncherCore.Net.Server
                     }
 
                     var ping_id = ProtocolHandler.getVarInt(1);
-                    var ping_content = BitConverter.GetBytes((long)233);
+                    var ping_content = BitConverter.GetBytes((long) 233);
                     var ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
                     var ping_tosend =
                         ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(ping_packet.Length), ping_packet);
@@ -247,14 +246,14 @@ namespace NsisoLauncherCore.Net.Server
 
                 if (jsonData.ContainsKey("version"))
                 {
-                    var versionData = (JObject)jsonData["version"];
+                    var versionData = (JObject) jsonData["version"];
                     GameVersion = versionData["name"].ToString();
                     ProtocolVersion = int.Parse(versionData["protocol"].ToString());
                 }
 
                 if (jsonData.ContainsKey("players"))
                 {
-                    var playerData = (JObject)jsonData["players"];
+                    var playerData = (JObject) jsonData["players"];
                     MaxPlayerCount = int.Parse(playerData["max"].ToString());
                     CurrentPlayerCount = int.Parse(playerData["online"].ToString());
                     if (playerData.ContainsKey("sample"))
@@ -278,7 +277,7 @@ namespace NsisoLauncherCore.Net.Server
                     }
                     else if (descriptionData.Type == JTokenType.Object)
                     {
-                        var descriptionDataObj = (JObject)descriptionData;
+                        var descriptionDataObj = (JObject) descriptionData;
                         if (descriptionDataObj.ContainsKey("extra"))
                             foreach (var item in descriptionDataObj["extra"])
                             {
@@ -312,7 +311,7 @@ namespace NsisoLauncherCore.Net.Server
                 // Check for forge on the server.
                 if (jsonData.ContainsKey("modinfo") && jsonData["modinfo"].Type == JTokenType.Object)
                 {
-                    var modData = (JObject)jsonData["modinfo"];
+                    var modData = (JObject) jsonData["modinfo"];
                     if (modData.ContainsKey("type") && modData["type"].ToString() == "FML")
                     {
                         ForgeInfo = new ForgeInfo(modData);

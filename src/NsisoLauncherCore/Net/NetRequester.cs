@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,10 @@ namespace NsisoLauncherCore.Net
 {
     public class NetRequester : IDisposable
     {
+        private HttpClient _client;
+
+        private HttpClientHandler _clientHandler;
+
         /// <summary>
         ///     NsisoLauncher目前名称.
         /// </summary>
@@ -19,7 +24,6 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        private HttpClient _client;
         /// <summary>
         ///     表示Web请求中使用的http客户端.
         /// </summary>
@@ -38,7 +42,6 @@ namespace NsisoLauncherCore.Net
             private set => _client = value;
         }
 
-        private HttpClientHandler _clientHandler;
         /// <summary>
         ///     表示http客户端handler
         /// </summary>
@@ -50,6 +53,12 @@ namespace NsisoLauncherCore.Net
                 return _clientHandler;
             }
             set => _clientHandler = value;
+        }
+
+        public void Dispose()
+        {
+            if (_clientHandler != null) _clientHandler.Dispose();
+            if (_client != null) _client.Dispose();
         }
 
         ///// <summary>
@@ -66,18 +75,6 @@ namespace NsisoLauncherCore.Net
             catch (TaskCanceledException)
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_clientHandler != null)
-            {
-                _clientHandler.Dispose();
-            }
-            if (_client != null)
-            {
-                _client.Dispose();
             }
         }
     }

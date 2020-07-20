@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {

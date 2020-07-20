@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.AuthlibInjectorAPI;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Net.Tools
 {
@@ -54,35 +56,26 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core, IVersionListMirror mirror)
         {
-            string to = core.GetJsonPath(verID);
-            string from = GetCoreJsonDownloadURL(verID, mirror);
+            var to = core.GetJsonPath(verID);
+            var from = GetCoreJsonDownloadURL(verID, mirror);
             return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
         }
 
-        public static string GetCoreJarDownloadURL(Modules.Version ver, IVersionListMirror mirror)
+        public static string GetCoreJarDownloadURL(Version ver, IVersionListMirror mirror)
         {
-            if (ver.Downloads?.Client != null)
-                return ver.Downloads.Client.URL;
+            if (ver.Downloads?.Client != null) return ver.Downloads.Client.URL;
 
-            }
-            else
-            {
-                if (mirror == null)
-                {
-                    throw new Exception("Version List Mirror is null");
-                }
-                else
-                {
-                    return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.ID);
-                }
-            }
+            if (mirror == null)
+                throw new Exception("Version List Mirror is null");
+            return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.ID);
         }
 
-        public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core, IVersionListMirror mirror)
+        public static DownloadTask GetCoreJarDownloadTask(Version version, LaunchHandler core,
+            IVersionListMirror mirror)
         {
-            string to = core.GetJarPath(version);
-            string from = GetCoreJarDownloadURL(version, mirror);
-            DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
+            var to = core.GetJarPath(version);
+            var from = GetCoreJarDownloadURL(version, mirror);
+            var downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.SHA1))
                 downloadTask.Checker = new SHA1Checker {CheckSum = version.Downloads.Client.SHA1, FilePath = to};
             return downloadTask;
@@ -177,9 +170,10 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), downloadTo);
         }
 
-        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo, NetRequester requester)
+        public static async Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo,
+            NetRequester requester)
         {
-            AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
+            var handler = new APIHandler();
             return await handler.GetLatestAICoreDownloadTask(source, downloadTo, requester);
         }
     }

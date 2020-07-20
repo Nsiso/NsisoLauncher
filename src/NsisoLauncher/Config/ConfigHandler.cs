@@ -205,7 +205,7 @@ namespace NsisoLauncher.Config
                     WindowSize = new WindowSize {FullScreen = false},
                     ExitAfterLaunch = false
                 },
-                Net = new Net()
+                Net = new Net
                 {
                     DownloadSource = DownloadSource.Auto,
                     DownloadThreadsSize = 3,

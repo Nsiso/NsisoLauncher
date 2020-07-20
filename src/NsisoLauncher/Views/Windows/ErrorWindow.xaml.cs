@@ -79,10 +79,9 @@ namespace NsisoLauncher.Views.Windows
             {
                 var progress = await this.ShowProgressAsync("正在处理中", "请稍后...");
                 progress.SetIndeterminate();
-                bool moreInfo = (bool)moreInfoCheckBox.IsChecked;
-                if (moreInfo)
-                { report += ("/r/n" + await GetEnvironmentInfoAsync()); }
-                await App.NetHandler.NsisoAPIHandler.PostLogAsync(NsisoLauncherCore.Modules.LogLevel.FATAL, report);
+                var moreInfo = (bool) moreInfoCheckBox.IsChecked;
+                if (moreInfo) report += "/r/n" + await GetEnvironmentInfoAsync();
+                await App.NetHandler.NsisoAPIHandler.PostLogAsync(LogLevel.FATAL, report);
             }
             catch (Exception ex)
             {
