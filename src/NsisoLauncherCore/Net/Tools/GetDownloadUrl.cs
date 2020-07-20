@@ -10,14 +10,14 @@ namespace NsisoLauncherCore.Net.Tools
 {
     public static class GetDownloadUri
     {
-        public const string MojangMainUrl = "https://launcher.mojang.com/";
-        public const string MojangMetaUrl = "https://launchermeta.mojang.com/";
-        public const string MojangVersionUrl = MojangMetaUrl + "mc/game/version_manifest.json";
-        public const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
-        public const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
+        public static string MojangMainUrl { get => "https://launcher.mojang.com/"; }
+        public static string MojangMetaUrl { get => "https://launchermeta.mojang.com/"; }
+        public static string MojangVersionUrl { get => MojangMetaUrl + "mc/game/version_manifest.json"; }
+        public static string MojanglibrariesUrl { get => "https://libraries.minecraft.net/"; }
+        public static string MojangAssetsBaseUrl { get => "https://resources.download.minecraft.net/"; }
 
-        public const string ForgeHttpUrl = "http://files.minecraftforge.net/maven/";
-        public const string ForgeHttpsUrl = "https://files.minecraftforge.net/maven/";
+        public static string ForgeHttpUrl { get => "http://files.minecraftforge.net/maven/"; }
+        public static string ForgeHttpsUrl { get => "https://files.minecraftforge.net/maven/"; }
 
         public static string ReplaceUriByDic(string str, Dictionary<string, string> dic)
         {
