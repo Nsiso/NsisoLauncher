@@ -86,7 +86,7 @@ namespace NsisoLauncherCore.Util
                     }
                 }
                 catch (Exception)
-                { 
+                {
                     //设置窗口标题出错不是重要错误，可忽略
                 }
             }).ConfigureAwait(false);
@@ -108,7 +108,7 @@ namespace NsisoLauncherCore.Util
                         File.WriteAllLines(core.GetVersionOptionsPath(version), optLines.ToArray());
                     }
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 {
                     throw e;
                 }

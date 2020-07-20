@@ -1,7 +1,6 @@
 ﻿using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {

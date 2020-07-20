@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NsisoLauncherCore.Util.Installer.Forge.Json
 {
@@ -66,7 +63,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Json
         /// <summary>
         /// Extra libraries needed by processors, that may differ from the installer version's library list. Uses the same format as Mojang for simplicities sake.
         /// </summary>
-       [JsonProperty("libraries")]
+        [JsonProperty("libraries")]
         public List<JLibrary> Libraries { get; set; }
 
         /// <summary>

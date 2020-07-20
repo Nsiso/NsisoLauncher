@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using System;
 using System.Collections.Generic;
-using static NsisoLauncherCore.Util.JsonTools;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
 {

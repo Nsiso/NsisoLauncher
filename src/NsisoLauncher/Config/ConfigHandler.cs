@@ -4,7 +4,6 @@ using NsisoLauncher.Utils;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -103,13 +102,13 @@ namespace NsisoLauncher.Config
             {
                 MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
 #if !DEBUG
-                    if (string.IsNullOrWhiteSpace(MainConfig.ConfigVersion) || 
-                        (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
-                    {
-                        MessageBox.Show("启动器配置文件版本不符。\n" +
-                            "这可能是因为配置文件为旧版本启动器生成而导致的，虽然已经做了兼容，但有可能仍会出现异常，如果出现异常可以尝试删除配置文件",
-                            "启动器配置文件版本不符", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
+                if (string.IsNullOrWhiteSpace(MainConfig.ConfigVersion) ||
+                    (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
+                {
+                    MessageBox.Show("启动器配置文件版本不符。\n" +
+                        "这可能是因为配置文件为旧版本启动器生成而导致的，虽然已经做了兼容，但有可能仍会出现异常，如果出现异常可以尝试删除配置文件",
+                        "启动器配置文件版本不符", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
 #endif
             }
             catch (UnauthorizedAccessException e)

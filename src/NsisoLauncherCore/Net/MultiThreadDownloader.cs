@@ -1,4 +1,16 @@
 ﻿using NsisoLauncherCore.Modules;
+
+/* 项目“NsisoLauncher.Test”的未合并的更改
+在此之前:
+using System;
+在此之后:
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Net.Tools;
+using System;
+*/
+using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,6 +19,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+
+/* 项目“NsisoLauncher.Test”的未合并的更改
+在此之前:
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Timers;
@@ -16,6 +31,17 @@ using System.Net.Http;
 using NsisoLauncherCore.Net.Mirrors;
 using System.Net.NetworkInformation;
 using NsisoLauncherCore.Net.Tools;
+在此之后:
+using System.Net.Http;
+using System.Net.Http.Tasks;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+*/
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace NsisoLauncherCore.Net
 {
@@ -40,7 +66,7 @@ namespace NsisoLauncherCore.Net
     }
     #endregion
 
-    public class MultiThreadDownloader : INotifyPropertyChanged , IDisposable
+    public class MultiThreadDownloader : INotifyPropertyChanged, IDisposable
     {
         /// <summary>
         /// 初始化一个多线程下载器
@@ -563,8 +589,13 @@ namespace NsisoLauncherCore.Net
 
         private void SendDownloadErrLog(DownloadTask task, Exception ex)
         {
-            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.ERROR, Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
-                task.TaskName, task.Downloadable.GetDownloadSourceURL(), ex.ToString()) });
+            SendLog(new Log()
+            {
+                Exception = ex,
+                LogLevel = LogLevel.ERROR,
+                Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
+                task.TaskName, task.Downloadable.GetDownloadSourceURL(), ex.ToString())
+            });
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

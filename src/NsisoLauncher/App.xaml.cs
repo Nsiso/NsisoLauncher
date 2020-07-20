@@ -1,7 +1,4 @@
-﻿
-using ControlzEx.Standard;
-using MahApps.Metro;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Views.Windows;
@@ -10,7 +7,6 @@ using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -18,7 +14,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows;
 using Version = NsisoLauncherCore.Modules.Version;
@@ -211,8 +206,8 @@ namespace NsisoLauncher
                 }
                 NetHandler.Downloader.Proxy = proxy;
             }
-            NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
-            NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
+            NetHandler.Downloader.ProcessorSize = Config.MainConfig.Net.DownloadThreadsSize;
+            NetHandler.Downloader.CheckFileHash = Config.MainConfig.Net.CheckDownloadFileHash;
             NetHandler.Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);
             #endregion
 
@@ -221,8 +216,8 @@ namespace NsisoLauncher
             {
                 NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
             }
-           
-            switch (App.Config.MainConfig.Net.DownloadSource)
+
+            switch (Config.MainConfig.Net.DownloadSource)
             {
                 case DownloadSource.Auto:
                     NetHandler.Mirrors.DownloadableMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
@@ -240,7 +235,7 @@ namespace NsisoLauncher
                     break;
             }
 
-            switch (App.Config.MainConfig.Net.VersionSource)
+            switch (Config.MainConfig.Net.VersionSource)
             {
                 case VersionSourceType.MOJANG:
                     break;
@@ -254,7 +249,7 @@ namespace NsisoLauncher
                     break;
             }
 
-            switch (App.Config.MainConfig.Net.FunctionSource)
+            switch (Config.MainConfig.Net.FunctionSource)
             {
                 case FunctionSourceType.BMCLAPI:
                     NetHandler.Mirrors.FunctionalMirrorList.Add(NetHandler.Mirrors.GetBmclApi());
@@ -269,13 +264,18 @@ namespace NsisoLauncher
             #endregion
 
             MainWindow mainwindow = new MainWindow();
+            if (Config.MainConfig.Launcher.LauncherWindowSize != null)
+            {
+                mainwindow.Height = Config.MainConfig.Launcher.LauncherWindowSize.Height;
+                mainwindow.Width = Config.MainConfig.Launcher.LauncherWindowSize.Width;
+            }
             this.MainWindow = mainwindow;
             mainwindow.Show();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            App.LogHandler.AppendFatal(e.Exception);
+            LogHandler.AppendFatal(e.Exception);
             e.Handled = true;
         }
 
@@ -302,7 +302,7 @@ namespace NsisoLauncher
             }
             info.Arguments += "-reboot";
             System.Diagnostics.Process.Start(info);
-            App.Current.Shutdown();
+            Current.Shutdown();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

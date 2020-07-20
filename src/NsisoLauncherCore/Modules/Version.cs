@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Tools;
-using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using static NsisoLauncherCore.Util.JsonTools;
@@ -165,7 +164,7 @@ namespace NsisoLauncherCore.Modules
     }
 
 
-    public class Native : Library , IDownloadable
+    public class Native : Library, IDownloadable
     {
         /// <summary>
         /// windows系统修改后缀

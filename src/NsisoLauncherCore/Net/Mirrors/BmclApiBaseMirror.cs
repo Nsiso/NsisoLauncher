@@ -1,12 +1,6 @@
-﻿using Newtonsoft.Json;
-using NsisoLauncherCore.Net.FunctionAPI;
-using NsisoLauncherCore.Net.Tools;
+﻿using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 
 namespace NsisoLauncherCore.Net.Mirrors
 {

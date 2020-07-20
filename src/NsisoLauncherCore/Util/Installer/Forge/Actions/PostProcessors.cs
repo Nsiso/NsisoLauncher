@@ -1,15 +1,28 @@
-﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net;
+﻿using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util.Installer.Forge.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using static NsisoLauncherCore.Util.Installer.Forge.Json.Install;
+using System.Diagnostics;
+using System.IO;
+
+/* 项目“NsisoLauncher.Test”的未合并的更改
+在此之前:
 using static NsisoLauncherCore.PathManager;
 using System.IO;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+在此之后:
+using static NsisoLauncherCore.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using static NsisoLauncherCore.PathManager;
+using static NsisoLauncherCore.Util.Installer.Forge.Text.RegularExpressions;
+*/
+using System.Text;
+using System.Text.RegularExpressions;
+using static NsisoLauncherCore.PathManager;
+using static NsisoLauncherCore.Util.Installer.Forge.Json.Install;
 
 namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 {

@@ -1,7 +1,4 @@
-﻿using NsisoLauncher.Config;
-using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;

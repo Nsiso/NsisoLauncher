@@ -1,6 +1,5 @@
 ﻿using NsisoLauncherCore.Util.Checker;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using static NsisoLauncherCore.Net.ProgressCallback;
@@ -98,7 +97,7 @@ namespace NsisoLauncherCore.Net
         public string UIFrom
         {
             get { return _uiFrom; }
-            set 
+            set
             {
                 _uiFrom = value;
                 OnPropertyChanged("UIFrom");

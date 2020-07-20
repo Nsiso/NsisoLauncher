@@ -3,15 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
 {
     public class DownloadUtils
     {
-       
+
         public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
         {
             try
@@ -92,7 +90,7 @@ namespace NsisoLauncherCore.Net.Tools
                             //继续重试
                             continue;
                         }
-                        
+
                     }
                 }
                 return null;

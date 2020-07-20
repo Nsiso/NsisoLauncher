@@ -1,29 +1,24 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
+using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore.Auth;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using NsisoLauncherCore.Modules;
-using Version = NsisoLauncherCore.Modules.Version;
-using System.Windows;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Auth;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Util;
 using System.IO;
-using NsisoLauncher.Views.Windows;
+using System.Linq;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Controls;
-using NsisoLauncherCore;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -832,8 +827,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     #region 数据反馈
 #if !DEBUG
-                        //API使用次数计数器+1
-                        await App.NetHandler.NsisoAPIHandler.RefreshUsingTimesCounter();
+                    //API使用次数计数器+1
+                    await App.NetHandler.NsisoAPIHandler.RefreshUsingTimesCounter();
 #endif
                     #endregion
 
@@ -949,7 +944,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                 Thread.Sleep(50);
                             }
                         }
-                        catch (Exception) 
+                        catch (Exception)
                         {
                             //可忽略的错误
                         }
@@ -1062,6 +1057,6 @@ namespace NsisoLauncher.ViewModels.Pages
             MediaSource = null;
         }
 
-        
+
     }
 }

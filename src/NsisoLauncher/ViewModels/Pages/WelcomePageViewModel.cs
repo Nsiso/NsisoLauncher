@@ -1,13 +1,7 @@
 ﻿using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncher.Views.Pages;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
 
 namespace NsisoLauncher.ViewModels.Pages
 {

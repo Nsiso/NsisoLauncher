@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncherCore.Net.MojangApi.Endpoints
@@ -109,7 +108,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                         User = user["user"]?.ToObject<UserData>()
                     };
 
-                    return response; 
+                    return response;
                 }
                 else
                 {

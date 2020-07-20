@@ -5,9 +5,7 @@ using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util.Installer.Forge.Actions;
 using NsisoLauncherCore.Util.Installer.Forge.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -99,7 +97,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             }
 
             PostProcessors postProcessors = new PostProcessors(profile, Options.IsClient, monitor);
-            Exception procExc = postProcessors.Process(tempPath, Options.GameRootPath, clientTarget,Options.Java);
+            Exception procExc = postProcessors.Process(tempPath, Options.GameRootPath, clientTarget, Options.Java);
             if (procExc != null)
             {
                 throw procExc;

@@ -276,14 +276,14 @@ RCODE           Response code - this 4 bit field is set as part of
         BADNAME = 20,       // Duplicate key name                 [RFC2930]
         BADALG = 21,        // Algorithm not supported            [RFC2930]
         BADTRUNC = 22       // Bad Truncation                     [RFC4635]
-                            /*
-                                23-3840              available for assignment
-                                    0x0016-0x0F00
-                                3841-4095            Private Use
-                                    0x0F01-0x0FFF
-                                4096-65535           available for assignment
-                                    0x1000-0xFFFF
-                            */
+        /*
+            23-3840              available for assignment
+                0x0016-0x0F00
+            3841-4095            Private Use
+                0x0F01-0x0FFF
+            4096-65535           available for assignment
+                0x1000-0xFFFF
+        */
 
     }
 

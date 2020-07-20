@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NsisoLauncherCore;
-using NsisoLauncherCore.Util;
-using NsisoLauncherCore.Net;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NsisoLauncher.Test
 {

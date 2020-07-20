@@ -1,28 +1,9 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncher.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using NsisoLauncherCore.Modules;
-using Version = NsisoLauncherCore.Modules.Version;
-using System.Windows;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Auth;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Util;
-using System.IO;
-using NsisoLauncher.Views.Windows;
-using System.Threading;
-using System.Windows.Media;
-using System.Windows.Controls;
 using NsisoLauncherCore;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Navigation;
 
 namespace NsisoLauncher.ViewModels.Windows
@@ -47,16 +28,6 @@ namespace NsisoLauncher.ViewModels.Windows
         public Action CloseWindow { get; set; }
 
         /// <summary>
-        /// 窗口高
-        /// </summary>
-        public ushort Height { get; set; } = 540;
-
-        /// <summary>
-        /// 窗口宽
-        /// </summary>
-        public ushort Width { get; set; } = 980;
-
-        /// <summary>
         /// 窗口对话
         /// </summary>
         private IDialogCoordinator instance;
@@ -64,11 +35,8 @@ namespace NsisoLauncher.ViewModels.Windows
         public MainWindowViewModel(IDialogCoordinator instance)
         {
             this.instance = instance;
-            if (App.Config.MainConfig?.Launcher?.LauncherWindowSize != null)
-            {
-                Height = App.Config.MainConfig.Launcher.LauncherWindowSize.Height;
-                Width = App.Config.MainConfig.Launcher.LauncherWindowSize.Width;
-            }
+
+
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;

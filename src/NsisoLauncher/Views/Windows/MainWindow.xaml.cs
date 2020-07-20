@@ -1,26 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncher.Views.Windows;
-using NsisoLauncherCore;
-using NsisoLauncherCore.Auth;
-using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Util;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Views.Windows
 {

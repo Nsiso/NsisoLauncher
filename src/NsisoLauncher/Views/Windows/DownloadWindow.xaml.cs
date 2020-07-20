@@ -1,15 +1,10 @@
-﻿using LiveCharts;
-using LiveCharts.Wpf;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncherCore.Net;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 
 namespace NsisoLauncher.Views.Windows
 {
@@ -57,7 +52,7 @@ namespace NsisoLauncher.Views.Windows
             });
         }
 
-        
+
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {

@@ -52,7 +52,7 @@ namespace Heijden.DNS
             else if (this.PREFERENCE > recordMX.PREFERENCE)
             {
                 return 1;
-            } 
+            }
             else if (this.PREFERENCE < recordMX.PREFERENCE)
             {
                 return -1;

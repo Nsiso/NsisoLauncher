@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NsisoLauncherCore.Modules;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NsisoLauncherCore.Util
 {
