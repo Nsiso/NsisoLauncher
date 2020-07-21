@@ -35,9 +35,9 @@ namespace NsisoLauncherCore.Util
 
     public static class GameHelper
     {
-        public async static Task<List<VersionOption>> GetOptionsAsync(LaunchHandler core, Modules.Version version)
+        public static Task<List<VersionOption>> GetOptionsAsync(LaunchHandler core, Modules.Version version)
         {
-            return await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 if (version != null)
                 {
@@ -66,7 +66,7 @@ namespace NsisoLauncherCore.Util
                 {
                     return null;
                 }
-            }).ConfigureAwait(false);
+            });
         }
 
         [DllImport("User32.dll")]
@@ -89,12 +89,12 @@ namespace NsisoLauncherCore.Util
                 {
                     //设置窗口标题出错不是重要错误，可忽略
                 }
-            }).ConfigureAwait(false);
+            });
         }
 
-        public async static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, Modules.Version version)
+        public static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, Modules.Version version)
         {
-            await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 try
                 {
@@ -112,7 +112,7 @@ namespace NsisoLauncherCore.Util
                 {
                     throw e;
                 }
-            }).ConfigureAwait(false);
+            });
         }
     }
 }

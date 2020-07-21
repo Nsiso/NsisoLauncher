@@ -52,8 +52,6 @@ namespace NsisoLauncher.Views.Windows
             });
         }
 
-
-
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (App.NetHandler.Downloader.IsBusy)

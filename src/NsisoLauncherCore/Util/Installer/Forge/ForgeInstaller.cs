@@ -157,7 +157,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             await Task.Factory.StartNew(() =>
             {
                 BeginInstall(monitor, cancellationToken);
-            }).ConfigureAwait(false);
+            });
         }
     }
 }

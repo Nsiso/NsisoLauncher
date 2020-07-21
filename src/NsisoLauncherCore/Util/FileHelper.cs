@@ -218,7 +218,7 @@ namespace NsisoLauncherCore.Util
                 return await Task.Factory.StartNew(() =>
                 {
                     return IsLostAnyAssetsFromJassets(core, assets);
-                }).ConfigureAwait(false);
+                });
             }
         }
         #endregion
@@ -315,7 +315,7 @@ namespace NsisoLauncherCore.Util
                 Version innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester).ConfigureAwait(false));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester));
                 }
 
             }

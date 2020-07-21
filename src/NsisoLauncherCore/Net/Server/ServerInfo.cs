@@ -220,12 +220,12 @@ namespace NsisoLauncherCore.Net.Server
             }
         }
 
-        public async Task StartGetServerInfoAsync()
+        public Task StartGetServerInfoAsync()
         {
-            await Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 StartGetServerInfo();
-            }).ConfigureAwait(false);
+            });
         }
 
         private void SetInfoFromJsonText(string JsonText)

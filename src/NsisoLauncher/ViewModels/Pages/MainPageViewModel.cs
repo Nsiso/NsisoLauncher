@@ -99,11 +99,11 @@ namespace NsisoLauncher.ViewModels.Pages
                    if ((obj != null) && (obj is LaunchType))
                    {
                        LaunchType launchType = (LaunchType)obj;
-                       await LaunchFromVM(launchType).ConfigureAwait(false);
+                       await LaunchFromVM(launchType);
                    }
                    else
                    {
-                       await LaunchFromVM(LaunchType.NORMAL).ConfigureAwait(false);
+                       await LaunchFromVM(LaunchType.NORMAL);
                    }
                },
                (obj) =>
@@ -800,7 +800,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 else
                 {
-                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result).ConfigureAwait(false));
+                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
 
                     #region 等待游戏响应
                     try
@@ -808,7 +808,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         await Task.Factory.StartNew(() =>
                         {
                             result.Process.WaitForInputIdle();
-                        }).ConfigureAwait(false);
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -853,7 +853,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                 Volume -= 0.01;
                                 Thread.Sleep(50);
                             }
-                        }).ConfigureAwait(false);
+                        });
                         MediaSource = null;
                     }
                 }
@@ -948,7 +948,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         {
                             //可忽略的错误
                         }
-                    }).ConfigureAwait(false);
+                    });
                 }
             }
 
@@ -995,7 +995,7 @@ namespace NsisoLauncher.ViewModels.Pages
             #region 检查更新
             if (App.Config.MainConfig.Launcher.CheckUpdate)
             {
-                await CheckUpdate().ConfigureAwait(false);
+                await CheckUpdate();
             }
             #endregion
         }

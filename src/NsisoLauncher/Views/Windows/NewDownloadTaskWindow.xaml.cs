@@ -149,7 +149,7 @@ namespace NsisoLauncher.Views.Windows
             {
                 var loading = await this.ShowProgressAsync("准备进行下载", string.Format("即将为您下载{0}个版本", selectItems.Count));
                 loading.SetIndeterminate();
-                await AppendVersionsDownloadTask(selectItems).ConfigureAwait(false);
+                await AppendVersionsDownloadTask(selectItems);
                 await loading.CloseAsync();
                 this.Close();
             }
@@ -180,7 +180,7 @@ namespace NsisoLauncher.Views.Windows
                 return;
             }
 
-            await AppendForgeDownloadTask(ver, forge).ConfigureAwait(false);
+            await AppendForgeDownloadTask(ver, forge);
             this.Close();
         }
 

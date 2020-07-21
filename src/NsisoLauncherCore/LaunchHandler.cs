@@ -66,7 +66,7 @@ namespace NsisoLauncherCore
             var result = await Task.Factory.StartNew(() =>
             {
                 return Launch(setting);
-            }).ConfigureAwait(false);
+            });
             return result;
         }
 
@@ -95,7 +95,7 @@ namespace NsisoLauncherCore
             return await Task.Factory.StartNew(() =>
             {
                 return assetsReader.GetAssets(version);
-            }).ConfigureAwait(false);
+            });
 
         }
 

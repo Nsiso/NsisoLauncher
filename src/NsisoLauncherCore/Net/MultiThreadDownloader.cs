@@ -298,6 +298,10 @@ namespace NsisoLauncherCore.Net
             DoneTaskCount += 1;
             DownloadProgressChanged?.Invoke(this, new DownloadProgressChangedArg()
             { LeftTasksCount = this.LeftTaskCount, DoneTaskCount = this.DoneTaskCount, DoneTask = task });
+            if (LeftTaskCount == 0)
+            {
+                CompleteDownload();
+            }
         }
 
         /// <summary>
@@ -328,7 +332,7 @@ namespace NsisoLauncherCore.Net
 
                     if (MirrorList?.Count != 0)
                     {
-                        mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(MirrorList);
+                        mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(MirrorList).ConfigureAwait(false);
                     }
 
                     #region 新建工作线程
@@ -336,22 +340,6 @@ namespace NsisoLauncherCore.Net
                     {
                         _workers[i] = Task.Run(() => ThreadDownloadWork(_cancellationTokenSource.Token));
                     }
-                    #endregion
-
-                    #region 监控线程
-                    _ = Task.Run(() =>
-                       {
-                           try
-                           {
-                               Task.WaitAll(_workers);
-                               CompleteDownload();
-                               return;
-                           }
-                           catch (Exception ex)
-                           {
-                               SendFatalLog(ex, "下载监视线程发生异常");
-                           }
-                       });
                     #endregion
                 }
             }
@@ -492,22 +480,22 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    using (var getResult = await _requester.Client.GetAsync(from, cancelToken))
+                    using (var getResult = await _requester.Client.GetAsync(from, cancelToken).ConfigureAwait(false))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
-                        using (Stream responseStream = await getResult.Content.ReadAsStreamAsync())
+                        using (Stream responseStream = await getResult.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
                             using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
                             {
                                 byte[] bArr = new byte[1024];
-                                int size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length).ConfigureAwait(false);
+                                int size = await responseStream.ReadAsync(bArr, 0, bArr.Length, cancelToken).ConfigureAwait(false);
 
                                 while (size > 0)
                                 {
                                     _pauseResetEvent.Wait(cancelToken);
-                                    await fs.WriteAsync(bArr, 0, size).ConfigureAwait(false);
-                                    size = await responseStream.ReadAsync(bArr, 0, (int)bArr.Length).ConfigureAwait(false);
+                                    await fs.WriteAsync(bArr, 0, size, cancelToken).ConfigureAwait(false);
+                                    size = await responseStream.ReadAsync(bArr, 0, bArr.Length, cancelToken).ConfigureAwait(false);
                                     _downloadSizePerSec += size;
                                     task.IncreaseDownloadSize(size);
                                 }
@@ -523,7 +511,7 @@ namespace NsisoLauncherCore.Net
                     if (CheckFileHash && task.Checker != null)
                     {
                         task.SetState("校验中");
-                        if (!(await task.Checker.CheckFilePassAsync()))
+                        if (!await task.Checker.CheckFilePassAsync().ConfigureAwait(false))
                         {
                             task.SetState("校验失败");
                             ApendDebugLog(string.Format("{0}校验哈希值失败，目标哈希值:{1}", task.TaskName, task.Checker.CheckSum));
@@ -542,6 +530,10 @@ namespace NsisoLauncherCore.Net
                 }
                 catch (Exception e)
                 {
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     exception = e;
                     task.SetState(string.Format("重试第{0}次", i));
                     SendDownloadErrLog(task, e);
