@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">
     <Grid>
-        <Ellipse  Height="100" Fill="{DynamicResource WhiteColorBrush}" Width="100"/>
+        <Ellipse  Height="100" Fill="{DynamicResource MahApps.Brushes.ThemeBackground}" Width="100" Opacity="0.8"/>
         <Image x:Name="iconImage" Source="/NsisoLauncher;component/Resource/Steve.jpg" Height="50" Width="50"/>
         <controls:ProgressRing x:Name="progressRing" IsActive="False"/>
     </Grid>

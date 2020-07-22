@@ -14,7 +14,7 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid Background="{DynamicResource AccentBaseColorBrush}">
+    <Grid Background="{DynamicResource MahApps.Brushes.Accent}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/NsisoLauncher;component/Resource/icon.ico" Stretch="None" Margin="20" HorizontalAlignment="Center"/>
             <!--<controls:ProgressRing Foreground="White" Width="40" Height="40" HorizontalAlignment="Center"/>-->

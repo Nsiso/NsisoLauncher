@@ -18,7 +18,7 @@
         <StackPanel Grid.ColumnSpan="2" DockPanel.Dock="Top">
             <userControl:HeadSculControl VerticalAlignment="Top" Margin="0,10"/>
             <DockPanel Margin="10,5">
-                <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}"/>
                 <ComboBox x:Name="launchVersionCombobox" Margin="5,0,10,0"
                   DisplayMemberPath="ID"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=VersionsSource}"
@@ -26,7 +26,7 @@
                   controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseLaunchVersion}"/>
             </DockPanel>
             <DockPanel Margin="10,5">
-                <Label Content="{iconPacks:FontAwesome Kind=UserSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                <Label Content="{iconPacks:FontAwesome Kind=UserSolid}"/>
                 <ComboBox x:Name="userComboBox" Margin="5,0,10,0"
                           IsEditable="True" Grid.ColumnSpan="2"
                           controls:TextBoxHelper.ClearTextButton="True"
@@ -44,7 +44,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0">
-                    <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}" Foreground="{DynamicResource GrayBrush2}"/>
+                    <Label Content="{iconPacks:FontAwesome Kind=LocationArrowSolid}"/>
                     <ComboBox x:Name="authTypeCombobox" Margin="5,0,5,0"
                   DisplayMemberPath="Value.Name"
                   SelectedValuePath="Key"
@@ -55,8 +55,7 @@
                               />
 
                 </DockPanel>
-                <Button ToolTip="{DynamicResource String.Mainwindow.Auth.Add}" Grid.Column="1" Margin="0,0,10,0"
-                 Foreground="{DynamicResource GrayBrush2}">
+                <Button ToolTip="{DynamicResource String.Mainwindow.Auth.Add}" Grid.Column="1" Margin="0,0,10,0">
                     <iconPacks:FontAwesome Kind="PlusSolid" Width="10" Height="10"/>
                 </Button>
             </Grid>
@@ -68,20 +67,18 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Margin="5"
-                    Foreground="{DynamicResource GrayBrush2}"
                 Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenSettingCommand}">
                     <iconPacks:FontAwesome Kind="CogSolid"/>
                 </Button>
 
                 <controls:Badged Grid.Column="1" Margin="5"
                 Badge="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=DownloadTaskCount}">
-                    <Button Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenDownloadingCommand}"
-                    Foreground="{DynamicResource GrayBrush2}">
+                    <Button Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=OpenDownloadingCommand}">
                         <iconPacks:FontAwesome  Kind="CloudDownloadAltSolid"/>
                     </Button>
                 </controls:Badged>
             </Grid>
-            <Button MinHeight="50" Margin="5" Background="{DynamicResource AccentColorBrush}" Foreground="White" BorderThickness="0"
+            <Button MinHeight="50" Margin="5" Background="{DynamicResource MahApps.Brushes.Accent}" Foreground="White" BorderThickness="0"
                 Command="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=LaunchCommand}"
                 CommandParameter="{x:Static modules:LaunchType.NORMAL}">
                 <StackPanel Margin="5">

@@ -1,4 +1,5 @@
-﻿using MahApps.Metro;
+﻿using ControlzEx.Theming;
+using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Views.Windows;
@@ -98,27 +99,16 @@ namespace NsisoLauncher
             #region 自定义主题初始化
             //todo 恢复自定义主题初始化
             var custom = Config.MainConfig.Customize;
-            Accent accent = null;
-            AppTheme theme = null;
             if (!string.IsNullOrWhiteSpace(custom.AccentColor))
             {
                 LogHandler.AppendInfo("自定义->更改主题颜色:" + custom.AccentColor);
-                accent = ThemeManager.GetAccent(custom.AccentColor);
+                ThemeManager.Current.ChangeThemeColorScheme(Current, custom.AccentColor);
             }
             if (!string.IsNullOrWhiteSpace(custom.AppTheme))
             {
                 LogHandler.AppendInfo("自定义->更改主题:" + custom.AppTheme);
-                theme = ThemeManager.GetAppTheme(custom.AppTheme);
+                ThemeManager.Current.ChangeThemeBaseColor(Current, custom.AppTheme);
             }
-            if (accent == null)
-            {
-                accent = ThemeManager.GetAccent("Blue");
-            }
-            if (theme == null)
-            {
-                theme = ThemeManager.GetAppTheme("BaseLight");
-            }
-            ThemeManager.ChangeAppStyle(this, accent, theme);
             #endregion    
 
             #region 数据初始化

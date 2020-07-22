@@ -30,8 +30,8 @@
         <TextBox x:Name="infoTextbox" Margin="10,5,10,0" Height="190" IsReadOnly="True"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <CheckBox x:Name="noCheckBox" Content="不再自动检查更新" Margin="0,10,20,10"/>
-            <Button Style="{DynamicResource SquareButtonStyle}" Margin="0,10,10,10" Content="忽略" Width="100" Click="Button_Click"/>
-            <Button Style="{StaticResource AccentedSquareButtonStyle}" Margin="0,10,10,10" Content="前往下载" Width="150" Click="UpdateButton_Click"/>
+            <Button Style="{DynamicResource MahApps.Styles.Button.Square}" Margin="0,10,10,10" Content="忽略" Width="100" Click="Button_Click"/>
+            <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Margin="0,10,10,10" Content="前往下载" Width="150" Click="UpdateButton_Click"/>
         </StackPanel>
     </StackPanel>
 </Controls:MetroWindow>

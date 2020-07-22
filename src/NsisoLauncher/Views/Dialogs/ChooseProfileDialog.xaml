@@ -1,0 +1,14 @@
+﻿<dialog:CustomDialog x:Class="NsisoLauncher.Views.Dialogs.ChooseProfileDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NsisoLauncher.Views.Dialogs"
+      xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      mc:Ignorable="d" DataContext=""
+      d:DesignWidth="800" Title="请选择要进行游戏的角色">
+    <StackPanel Margin="10" Orientation="Vertical">
+        <ComboBox x:Name="comboBox" Margin="0,10" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" DisplayMemberPath="PlayerName"/>
+        <Button x:Name="okButton" Margin="0,10" HorizontalAlignment="Right" Content="选择" Padding="30,0" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="okButton_Click"/>
+    </StackPanel>
+</dialog:CustomDialog>

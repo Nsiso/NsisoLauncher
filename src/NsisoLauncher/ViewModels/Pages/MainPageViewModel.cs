@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
+using NsisoLauncher.Views.Dialogs;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
@@ -516,18 +517,28 @@ namespace NsisoLauncher.ViewModels.Pages
                     {
                         case AuthState.SUCCESS:
                             #region 成功登陆
-                            #region 检验
+                            #region 无选中角色处理
                             if (authResult.SelectedProfileUUID == null)
                             {
                                 if (authResult.Profiles == null || authResult.Profiles.Count == 0)
                                 {
                                     await MainWindowVM.ShowMessageAsync("验证失败：您没有可用的游戏角色（Profile）",
-                                    "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置可用角色");
+                                    "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置或添加可用角色");
                                     return;
                                 }
-                                await MainWindowVM.ShowMessageAsync("验证失败：您没有选中任何游戏角色（Profile）",
-                                "请选中您要进行游戏的角色");
-                                return;
+                                ChooseProfileDialog chooseProfileDialog = new ChooseProfileDialog(MainWindowVM, authResult.Profiles);
+                                await MainWindowVM.ShowMetroDialogAsync(chooseProfileDialog);
+                                await chooseProfileDialog.WaitUntilUnloadedAsync();
+                                if (chooseProfileDialog.SelectedProfile == null)
+                                {
+                                    await MainWindowVM.ShowMessageAsync("验证失败：您没有选中任何游戏角色（Profile）",
+                               "请选中您要进行游戏的角色");
+                                    return;
+                                }
+                                else
+                                {
+                                    authResult.SelectedProfileUUID = chooseProfileDialog.SelectedProfile;
+                                }
                             }
                             #endregion
                             launchUser.SelectProfileUUID = authResult.SelectedProfileUUID.Value;

@@ -23,9 +23,9 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}" Grid.Row="0"
-                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource SquareButtonStyle}" Click="Button_Click" Height="28"/>
+                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"  Style="{DynamicResource MahApps.Styles.Button.Square}" Click="Button_Click" Height="28"/>
         <Button Content="{DynamicResource String.Downloadwindow.NewTask}" Grid.Row="0"
-                Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1" Height="28"/>
+                Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Click="Button_Click_1" Height="28"/>
         <DataGrid x:Name="downloadList" Margin="10,43,10,2" Grid.Row="0"  ItemsSource="{Binding Tasks}"
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
                   VirtualizingPanel.IsVirtualizing="True" EnableColumnVirtualization="True" EnableRowVirtualization="True">
@@ -37,7 +37,6 @@
                         <DataTemplate>
                             <controls:MetroProgressBar
                                 VerticalAlignment="Center"
-                                Foreground="{DynamicResource AccentColorBrush}"
                                 Maximum="{Binding TotalSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Value="{Binding DownloadSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Background="LightGray"/>
