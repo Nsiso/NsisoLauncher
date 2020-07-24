@@ -196,6 +196,7 @@ namespace NsisoLauncher
                 }
                 NetHandler.Downloader.Proxy = proxy;
             }
+            NetHandler.Downloader.ProtocolType = Config.MainConfig.Net.DownloadProtocolType;
             NetHandler.Downloader.ProcessorSize = Config.MainConfig.Net.DownloadThreadsSize;
             NetHandler.Downloader.CheckFileHash = Config.MainConfig.Net.CheckDownloadFileHash;
             NetHandler.Downloader.DownloadLog += (s, log) => LogHandler?.AppendLog(s, log);

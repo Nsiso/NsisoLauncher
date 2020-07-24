@@ -228,6 +228,19 @@
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.MCBBS}}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
+                        <Expander Header="下载使用协议" Margin="0,0,0,5">
+                            <StackPanel>
+                                <RadioButton Content="原协议（推荐）"
+                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.ORIGIN}}" Margin="0,0,0,5"/>
+                                <RadioButton Content="Http（兼容性强）"
+                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.HTTP}}" Margin="0,0,0,5"/>
+                                <RadioButton Content="Https（安全性强）"
+                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.HTTPS}}" Margin="0,0,0,5"/>
+                            </StackPanel>
+                        </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.Thread}" Margin="0,0,0,5">
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{StaticResource String.Settingwindow.Net.Thread.Num}"/>

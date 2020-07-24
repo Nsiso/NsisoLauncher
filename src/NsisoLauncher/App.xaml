@@ -13,10 +13,9 @@
                 <!-- Theme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
                 <!-- Fonts -->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="Themes/Base/Fonts.xaml"/>
                 <!-- Language -->
                 <ResourceDictionary Source="pack://application:,,,/Resource/Language/zh_CN.xaml"/>
-                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

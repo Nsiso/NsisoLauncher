@@ -23,22 +23,12 @@ namespace NsisoLauncherCore.Net.Mirrors
         public BmclApiBaseMirror GetBmclApi()
         {
             string BMCLUrl = "https://bmclapi2.bangbang93.com/";
-            string BMCLLibrariesURL = BMCLUrl + "libraries/";
             string BMCLVersionURL = BMCLUrl + "mc/game/version_manifest.json";
-            string BMCLAssetsURL = BMCLUrl + "objects/";
 
             BmclApiBaseMirror bmclapi = new BmclApiBaseMirror();
             bmclapi.MirrorName = "BmclAPI";
             bmclapi.BaseUri = new Uri(BMCLUrl);
-            bmclapi.ReplaceDictionary = new Dictionary<string, string>()
-            {
-                    { GetDownloadUri.MojangVersionUrl, BMCLVersionURL },
-                    { GetDownloadUri.MojangMainUrl, BMCLUrl },
-                    { GetDownloadUri.MojangMetaUrl, BMCLUrl },
-                    { GetDownloadUri.MojanglibrariesUrl, BMCLLibrariesURL },
-                    { GetDownloadUri.MojangAssetsBaseUrl, BMCLAssetsURL },
-                    { GetDownloadUri.ForgeHttpUrl, BMCLLibrariesURL }
-            };
+            bmclapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("bmclapi2.bangbang93.com");
             bmclapi.VersionListUri = new Uri(BMCLVersionURL);
             bmclapi.ForgeListUri = new Uri(bmclapi.BaseUri, "/forge/minecraft/");
             return bmclapi;
@@ -47,25 +37,30 @@ namespace NsisoLauncherCore.Net.Mirrors
         public BmclApiBaseMirror GetMcbbsApi()
         {
             string MCBBSUrl = "https://download.mcbbs.net/";
-            string MCBBSLibrariesURL = MCBBSUrl + "libraries/";
             string MCBBSVersionURL = MCBBSUrl + "mc/game/version_manifest.json";
-            string MCBBSAssetsURL = MCBBSUrl + "objects/";
 
             BmclApiBaseMirror mcbbsapi = new BmclApiBaseMirror();
             mcbbsapi.MirrorName = "MCBBS-BmclAPI";
             mcbbsapi.BaseUri = new Uri(MCBBSUrl);
-            mcbbsapi.ReplaceDictionary = new Dictionary<string, string>()
-            {
-                    { GetDownloadUri.MojangVersionUrl, MCBBSVersionURL },
-                    { GetDownloadUri.MojangMainUrl, MCBBSUrl },
-                    { GetDownloadUri.MojangMetaUrl, MCBBSUrl },
-                    { GetDownloadUri.MojanglibrariesUrl, MCBBSLibrariesURL },
-                    { GetDownloadUri.MojangAssetsBaseUrl, MCBBSAssetsURL },
-                    { GetDownloadUri.ForgeHttpUrl, MCBBSLibrariesURL }
-            };
+            mcbbsapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("download.mcbbs.net");
             mcbbsapi.VersionListUri = new Uri(MCBBSVersionURL);
             mcbbsapi.ForgeListUri = new Uri(mcbbsapi.BaseUri, "/forge/minecraft/");
             return mcbbsapi;
+        }
+
+        private Dictionary<string, string> GetBmclApiBaseReplaceUriDic(string bmclBase)
+        {
+            string maven = bmclBase + "/maven";
+            return new Dictionary<string, string>()
+            {
+                {"launchermeta.mojang.com", bmclBase },
+                {"launcher.mojang.com", bmclBase },
+                {"resources.download.minecraft.net", bmclBase + "/assets" },
+                {"libraries.minecraft.net", maven },
+                {"files.minecraftforge.net/maven", maven },
+                {"meta.fabricmc.net", bmclBase + "/fabric-meta" },
+                {"maven.fabricmc.net", maven }
+            };
         }
     }
 }

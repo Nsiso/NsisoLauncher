@@ -15,7 +15,6 @@ namespace NsisoLauncherCore.Net.Tools
         public static string MojangVersionUrl { get => MojangMetaUrl + "mc/game/version_manifest.json"; }
         public static string MojanglibrariesUrl { get => "https://libraries.minecraft.net/"; }
         public static string MojangAssetsBaseUrl { get => "https://resources.download.minecraft.net/"; }
-
         public static string ForgeHttpUrl { get => "http://files.minecraftforge.net/maven/"; }
         public static string ForgeHttpsUrl { get => "https://files.minecraftforge.net/maven/"; }
 

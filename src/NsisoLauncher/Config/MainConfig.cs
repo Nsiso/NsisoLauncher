@@ -1,9 +1,11 @@
 ﻿using NsisoLauncher.Utils;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Sockets;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
@@ -434,6 +436,11 @@ namespace NsisoLauncher.Config
         /// 功能设置
         /// </summary>
         public FunctionSourceType FunctionSource { get; set; }
+
+        /// <summary>
+        /// 下载使用协议
+        /// </summary>
+        public DownloadProtocolType DownloadProtocolType { get; set; }
 
         /// <summary>
         /// 线程数量

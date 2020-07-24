@@ -10,6 +10,7 @@
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:media="https://github.com/JohanLarsson/Gu.Wpf.Media"
       xmlns:converters="clr-namespace:NsisoLauncher.Utils"
+      xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:MainPageDesignViewModel, IsDesignTimeCreatable=True}"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
@@ -18,12 +19,19 @@
         <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
     </Page.Resources>
     <Grid>
-
         <Grid x:Name="bgGrid">
             <Image Source="{Binding StaticMediaSource}" Stretch="UniformToFill"/>
             <MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"
                                   Stretch="UniformToFill"/>
         </Grid>
+        
+        <!--发布前需要删除-->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="10">
+            <iconPacks:PackIconFontAwesome Kind="ExclamationCircleSolid" Width="24" Height="24" VerticalAlignment="Center" Foreground="Yellow"/>
+            <Label Content="不稳定测试版本启动器" FontSize="24" Foreground="White"/>
+        </StackPanel>
+        <!--发布前需要删除-->
+        
         <Grid HorizontalAlignment="Right" Width="280" Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
             <Border x:Name="blurBackgroundRect">
                 <Border.Effect>

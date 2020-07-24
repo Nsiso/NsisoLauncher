@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using ControlzEx.Standard;
+using NsisoLauncherCore.Modules;
 
 /* 项目“NsisoLauncher.Test”的未合并的更改
 在此之前:
@@ -149,6 +150,11 @@ namespace NsisoLauncherCore.Net
         /// 下载任务（只读）
         /// </summary>
         public IEnumerable<DownloadTask> DownloadTaskList { get => ViewDownloadTasks.AsEnumerable(); }
+
+        /// <summary>
+        /// 下载使用的协议
+        /// </summary>
+        public DownloadProtocolType ProtocolType { get; set; } = DownloadProtocolType.ORIGIN;
         #endregion
 
         #region 只读数据属性（可绑定NotifyPropertyChanged）
@@ -405,6 +411,10 @@ namespace NsisoLauncherCore.Net
 
                         item.SetDone();
                         CompletedOneTask(item);
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            CompleteDownload();
+                        }
                     }
                 }
             }
@@ -443,6 +453,21 @@ namespace NsisoLauncherCore.Net
                 task.UIFrom = mirror.MirrorName;
             }
             task.UIReplaceFrom = from;
+
+            UriBuilder fromUriBuilder = new UriBuilder(from);
+            switch (ProtocolType)
+            {
+                case DownloadProtocolType.ORIGIN:
+                    break;
+                case DownloadProtocolType.HTTP:
+                    fromUriBuilder.Scheme = "http";
+                    break;
+                case DownloadProtocolType.HTTPS:
+                    fromUriBuilder.Scheme = "https";
+                    break;
+                default:
+                    break;
+            }
             #endregion
 
             for (int i = 1; i <= RetryTimes; i++)
@@ -480,7 +505,7 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    using (var getResult = await _requester.Client.GetAsync(from, cancelToken).ConfigureAwait(false))
+                    using (var getResult = await _requester.Client.GetAsync(fromUriBuilder.Uri, cancelToken).ConfigureAwait(false))
                     {
                         getResult.EnsureSuccessStatusCode();
                         task.SetTotalSize(getResult.Content.Headers.ContentLength.GetValueOrDefault());
@@ -488,7 +513,7 @@ namespace NsisoLauncherCore.Net
                         {
                             using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
                             {
-                                byte[] bArr = new byte[1024];
+                                byte[] bArr = new byte[4096]; //4k
                                 int size = await responseStream.ReadAsync(bArr, 0, bArr.Length, cancelToken).ConfigureAwait(false);
 
                                 while (size > 0)
@@ -600,5 +625,12 @@ namespace NsisoLauncherCore.Net
             _cancellationTokenSource.Dispose();
             _pauseResetEvent.Dispose();
         }
+    }
+
+    public enum DownloadProtocolType
+    {
+        ORIGIN = 0,
+        HTTP = 1,
+        HTTPS = 2
     }
 }

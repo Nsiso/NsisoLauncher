@@ -58,6 +58,7 @@ namespace NsisoLauncher.Views.Windows
                 {
                     App.NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
                 }
+                App.NetHandler.Mirrors.DownloadableMirrorList.Clear();
                 switch (App.Config.MainConfig.Net.DownloadSource)
                 {
                     case DownloadSource.Auto:
