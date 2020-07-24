@@ -1,5 +1,4 @@
-﻿using ControlzEx.Standard;
-using NsisoLauncherCore.Modules;
+﻿using NsisoLauncherCore.Modules;
 
 /* 项目“NsisoLauncher.Test”的未合并的更改
 在此之前:

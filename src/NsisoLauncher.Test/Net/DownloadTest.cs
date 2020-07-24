@@ -1,12 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NsisoLauncherCore.Net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NsisoLauncher.Test.Net
+﻿namespace NsisoLauncher.Test.Net
 {
     //[TestClass]
     //public class DownloadTest

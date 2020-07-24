@@ -5,7 +5,6 @@ using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net.Sockets;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config

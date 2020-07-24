@@ -1,5 +1,4 @@
 ﻿using NsisoLauncherCore.Net;
-using System;
 /* 项目“NsisoLauncher.Test”的未合并的更改
 在此之前:
 using System;

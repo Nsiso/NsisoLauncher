@@ -1,5 +1,4 @@
 ﻿using ControlzEx.Theming;
-using MahApps.Metro;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
 using NsisoLauncher.Views.Windows;
