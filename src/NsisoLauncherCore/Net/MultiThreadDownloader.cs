@@ -1,14 +1,4 @@
 ﻿using NsisoLauncherCore.Modules;
-
-/* 项目“NsisoLauncher.Test”的未合并的更改
-在此之前:
-using System;
-在此之后:
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Net.Tools;
-using System;
-*/
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using System;
@@ -19,26 +9,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-
-/* 项目“NsisoLauncher.Test”的未合并的更改
-在此之前:
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Timers;
-using NsisoLauncherCore.Net;
-using System.Threading.Tasks;
-using System.Net.Http;
-using NsisoLauncherCore.Net.Mirrors;
-using System.Net.NetworkInformation;
-using NsisoLauncherCore.Net.Tools;
-在此之后:
-using System.Net.Http;
-using System.Net.Http.Tasks;
-using System.Net.NetworkInformation;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
-*/
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Util;
 using System;
 using System.IO;
 using System.Reflection;
@@ -232,7 +233,7 @@ namespace NsisoLauncher.Config
                     CustomBackGroundMusic = false,
                     CustomBackGroundPicture = false,
                     AccentColor = "Blue",
-                    AppTheme = "BaseLight"
+                    AppTheme = "Light"
                 },
                 ConfigVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString()
             };

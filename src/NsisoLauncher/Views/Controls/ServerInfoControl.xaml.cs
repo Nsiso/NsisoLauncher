@@ -48,7 +48,7 @@ namespace NsisoLauncher.Views.Controls
                 switch (serverInfo.State)
                 {
                     case ServerInfo.StateType.GOOD:
-                        this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CheckCircleSolid;
+                        this.serverStateIcon.Kind = MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CircleRegular;
                         this.serverStateIcon.Foreground = System.Windows.Media.Brushes.Green;
                         this.serverPeopleTextBlock.Text = string.Format("人数:[{0}/{1}]", serverInfo.CurrentPlayerCount, serverInfo.MaxPlayerCount);
                         this.serverVersionTextBlock.Text = serverInfo.GameVersion;
