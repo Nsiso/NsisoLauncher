@@ -15,6 +15,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Auth\Nide8Authenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\OfflineAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\YggdrasilAuthenticator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherProfiles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSkins.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\LaunchException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NativeNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NullJavaExceptioncs.cs" />
@@ -23,6 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\BmclApiBaseMirror.cs" />
@@ -161,6 +165,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Java.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\JsonTools.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\ObservableDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\SystemTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Unzip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VersionReader.cs" />

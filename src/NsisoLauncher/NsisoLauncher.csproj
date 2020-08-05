@@ -120,7 +120,6 @@
     <Compile Include="Utils\LogHandler.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
-    <Compile Include="Utils\ObservableDictionary.cs" />
     <Compile Include="ViewModels\Windows\DownloadWindowViewModel.cs" />
     <Compile Include="Views\Dialogs\ChooseProfileDialog.xaml.cs">
       <DependentUpon>ChooseProfileDialog.xaml</DependentUpon>

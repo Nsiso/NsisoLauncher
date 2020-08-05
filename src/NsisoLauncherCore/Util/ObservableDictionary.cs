@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
-namespace NsisoLauncher.Utils
+namespace NsisoLauncherCore.Util
 {
     /// <summary>
     /// Provides a dictionary for use with data binding.
