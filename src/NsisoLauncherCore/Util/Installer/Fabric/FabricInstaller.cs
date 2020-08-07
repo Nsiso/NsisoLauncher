@@ -18,7 +18,7 @@ namespace NsisoLauncherCore.Util.Installer.Fabric
         }
         public void BeginInstall(ProgressCallback callback, CancellationToken cancellationToken)
         {
-            string arg = string.Format("-jar \"{0}\" client -dir \"{1}\" -mcversion {2}", InstallerPath, Options.GameRootPath, Options.VersionToInstall.ID);
+            string arg = string.Format("-jar \"{0}\" client -dir \"{1}\" -mcversion {2}", InstallerPath, Options.GameRootPath, Options.VersionToInstall.Id);
             ProcessStartInfo startInfo = new ProcessStartInfo(Options.Java.Path, arg);
             Process.Start(startInfo).WaitForExit();
         }

@@ -2,95 +2,6 @@
 
 namespace NsisoLauncherCore.Modules
 {
-    public enum GCType
-    {
-        /// <summary>
-        /// 默认G1垃圾回收器 兼容JAVA9
-        /// </summary>
-        G1GC = 0,
-
-        /// <summary>
-        /// 串行垃圾回收器
-        /// </summary>
-        SerialGC = 1,
-
-        /// <summary>
-        /// 并行垃圾回收器
-        /// </summary>
-        ParallelGC = 2,
-
-        /// <summary>
-        /// 并发标记扫描垃圾回收器
-        /// </summary>
-        CMSGC = 3,
-
-        /// <summary>
-        /// 设置为空（手动设置）
-        /// </summary>
-        NULL = 4
-    }
-
-    public enum LaunchType
-    {
-        /// <summary>
-        /// 正常启动模式
-        /// </summary>
-        NORMAL,
-
-        /// <summary>
-        /// 安全启动模式
-        /// </summary>
-        SAFE,
-
-        /// <summary>
-        /// 开发者启动模式
-        /// </summary>
-        DEBUG,
-
-        /// <summary>
-        /// 创建快捷方式启动模式
-        /// </summary>
-        CREATE_SHORT
-    }
-
-    public class WindowSize
-    {
-        /// <summary>
-        /// 是否全屏
-        /// </summary>
-        public bool FullScreen { get; set; }
-
-        /// <summary>
-        /// 高px
-        /// </summary>
-        public ushort Height { get; set; }
-
-        /// <summary>
-        /// 宽px
-        /// </summary>
-        public ushort Width { get; set; }
-
-        public WindowSize()
-        {
-            Height = 0;
-            Width = 0;
-            FullScreen = false;
-        }
-    }
-
-    public class Server
-    {
-        /// <summary>
-        /// 服务器地址
-        /// </summary>
-        public string Address { get; set; }
-
-        /// <summary>
-        /// 服务器端口
-        /// </summary>
-        public ushort Port { get; set; }
-    }
-
     public class LaunchSetting
     {
         /// <summary>
@@ -118,21 +29,6 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public string GCArgument { get; set; }
 
-        ///// <summary>
-        ///// 验证Token
-        ///// </summary>
-        //public string AuthenticateAccessToken { get; set; }
-
-        ///// <summary>
-        ///// 选择的角色
-        ///// </summary>
-        //public Net.MojangApi.Api.Uuid AuthenticateUUID { get; set; }
-
-        ///// <summary>
-        ///// 验证的用户信息
-        ///// </summary>
-        //public UserData AuthenticationUserData { get; set; }
-
         /// <summary>
         /// 启动版本
         /// </summary>
@@ -151,7 +47,7 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 启动窗口设置
         /// </summary>
-        public WindowSize WindowSize { get; set; }
+        public Resolution WindowSize { get; set; }
 
         /// <summary>
         /// JavaAgent

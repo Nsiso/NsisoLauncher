@@ -23,7 +23,7 @@ namespace NsisoLauncherCore.Net.Tools
                     {
                         try
                         {
-                            string from = mirror.DoDownloadUriReplace(item.Downloads.Artifact.URL);
+                            string from = mirror.DoDownloadUriReplace(item.Downloads.Artifact.Url);
                             string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
                             string buffFilename = to + ".downloadtask";
 

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
@@ -13,6 +14,8 @@ namespace NsisoLauncherCore
 {
     public class VersionReader
     {
+        public JsonSerializer JsonSerializer { get; set; } = new JsonSerializer() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
         public event EventHandler<Log> VersionReaderLog;
 
         private DirectoryInfo dirInfo;
@@ -27,12 +30,12 @@ namespace NsisoLauncherCore
         public Modules.Version JsonToVersion(JObject obj)
         {
             Modules.Version ver = new Modules.Version();
-            ver = obj.ToObject<Modules.Version>();
+            ver = obj.ToObject<Modules.Version>(JsonSerializer);
             JObject innerVer = null;
-            if (ver.InheritsVersion != null)
+            if (ver.InheritsFrom != null)
             {
-                SendDebugLog(string.Format("检测到\"{0}\"继承于\"{1}\"", ver.ID, ver.InheritsVersion));
-                string innerJsonStr = GetVersionJsonText(ver.InheritsVersion);
+                SendDebugLog(string.Format("检测到\"{0}\"继承于\"{1}\"", ver.Id, ver.InheritsFrom));
+                string innerJsonStr = GetVersionJsonText(ver.InheritsFrom);
                 if (innerJsonStr != null)
                 {
                     innerVer = JObject.Parse(innerJsonStr);
@@ -42,7 +45,7 @@ namespace NsisoLauncherCore
             {
                 #region 处理新版本引导
 
-                SendDebugLog(string.Format("检测到\"{0}\"使用新版本启动参数", ver.ID));
+                SendDebugLog(string.Format("检测到\"{0}\"使用新版本启动参数", ver.Id));
 
                 #region 处理版本继承
                 if (innerVer != null && innerVer.ContainsKey("arguments"))
@@ -81,7 +84,7 @@ namespace NsisoLauncherCore
             else
             {
                 #region 旧版本添加默认JVM参数
-                SendDebugLog(string.Format("检测到\"{0}\"使用旧版本启动参数", ver.ID));
+                SendDebugLog(string.Format("检测到\"{0}\"使用旧版本启动参数", ver.Id));
                 ver.JvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}";
                 #endregion
             }
@@ -92,7 +95,7 @@ namespace NsisoLauncherCore
             var libToken = obj["libraries"];
             foreach (JToken lib in libToken)
             {
-                var libObj = lib.ToObject<JLibrary>();
+                var libObj = lib.ToObject<JLibrary>(JsonSerializer);
 
                 if (CheckAllowed(libObj.Rules))
                 {
@@ -142,7 +145,7 @@ namespace NsisoLauncherCore
                     ver.AssetIndex = iv.AssetIndex;
                     ver.Natives.AddRange(iv.Natives);
                     ver.Libraries.AddRange(iv.Libraries);
-                    ver.Jar = iv.ID;
+                    ver.Jar = iv.Id;
                 }
             }
             #endregion

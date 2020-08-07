@@ -103,7 +103,7 @@ namespace NsisoLauncherCore
             {
                 {"${auth_player_name}",string.Format("\"{0}\"", setting.AuthenticateResult.SelectedProfileUUID.PlayerName) },
                 {"${auth_session}",setting.AuthenticateResult.AccessToken },
-                {"${version_name}",string.Format("\"{0}\"", setting.Version.ID) },
+                {"${version_name}",string.Format("\"{0}\"", setting.Version.Id) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },

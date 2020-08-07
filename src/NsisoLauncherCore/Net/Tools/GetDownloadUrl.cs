@@ -73,7 +73,7 @@ namespace NsisoLauncherCore.Net.Tools
         {
             if (ver.Downloads?.Client != null)
             {
-                return ver.Downloads.Client.URL;
+                return ver.Downloads.Client.Url;
 
             }
             else
@@ -84,7 +84,7 @@ namespace NsisoLauncherCore.Net.Tools
                 }
                 else
                 {
-                    return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.ID);
+                    return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.Id);
                 }
             }
         }
@@ -94,9 +94,9 @@ namespace NsisoLauncherCore.Net.Tools
             string to = core.GetJarPath(version);
             string from = GetCoreJarDownloadURL(version, mirror);
             DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
-            if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.SHA1))
+            if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.Sha1))
             {
-                downloadTask.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.SHA1, FilePath = to };
+                downloadTask.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.Sha1, FilePath = to };
             }
             return downloadTask;
         }
@@ -108,9 +108,9 @@ namespace NsisoLauncherCore.Net.Tools
         /// <returns>下载URL</returns>
         public static string GetLibDownloadURL(Library lib)
         {
-            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.URL))
+            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Url))
             {
-                return lib.LibDownloadInfo.URL;
+                return lib.LibDownloadInfo.Url;
             }
             else if (!string.IsNullOrWhiteSpace(lib.Url))
             {
@@ -135,7 +135,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, lib.Value, to);
             if (lib.Value.LibDownloadInfo != null)
             {
-                task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.SHA1, FilePath = to };
+                task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.Sha1, FilePath = to };
             }
             return task;
         }
@@ -147,9 +147,9 @@ namespace NsisoLauncherCore.Net.Tools
         /// <returns>下载URL</returns>
         public static string GetNativeDownloadURL(Native native)
         {
-            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.URL))
+            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.Url))
             {
-                return native.NativeDownloadInfo.URL;
+                return native.NativeDownloadInfo.Url;
             }
             else
             {
@@ -169,7 +169,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, native.Value, to);
             if (native.Value.NativeDownloadInfo != null)
             {
-                task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.SHA1, FilePath = to };
+                task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.Sha1, FilePath = to };
             }
             return task;
         }

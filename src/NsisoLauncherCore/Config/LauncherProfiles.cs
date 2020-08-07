@@ -1,9 +1,8 @@
-﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace NsisoLauncherCore.Config
 {
@@ -52,6 +51,23 @@ namespace NsisoLauncherCore.Config
             }
             set { profiles = value; }
         }
+
+        private SelectedUser selectedUser;
+        /// <summary>
+        /// 选中的用户信息
+        /// </summary>
+        public SelectedUser SelectedUser
+        {
+            get
+            {
+                if (selectedUser == null)
+                {
+                    selectedUser = new SelectedUser();
+                }
+                return selectedUser;
+            }
+            set { selectedUser = value; }
+        }
     }
 
     /// <summary>
@@ -63,6 +79,21 @@ namespace NsisoLauncherCore.Config
         /// 创建时间
         /// </summary>
         public DateTime Created { get; set; }
+
+        /// <summary>
+        /// 游戏目录
+        /// </summary>
+        public string GameDir { get; set; }
+
+        /// <summary>
+        /// Java参数
+        /// </summary>
+        public string JavaArgs { get; set; }
+
+        /// <summary>
+        /// Java路径
+        /// </summary>
+        public string JavaDir { get; set; }
 
         /// <summary>
         /// 上次启动时间
@@ -88,5 +119,71 @@ namespace NsisoLauncherCore.Config
         /// 类型
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// 窗口分辨率
+        /// </summary>
+        public Resolution Resolution { get; set; }
+    }
+
+    /// <summary>
+    /// 用户
+    /// </summary>
+    public class User
+    {
+        /// <summary>
+        /// 验证token
+        /// </summary>
+        public string AccessToken { get; set; }
+
+        /// <summary>
+        /// 用户角色列表
+        /// </summary>
+        public ObservableDictionary<string, UserProfile> Profiles { get; set; }
+
+        /// <summary>
+        /// 用户属性
+        /// </summary>
+        public List<UserProperty> Properties { get; set; }
+    }
+
+    /// <summary>
+    /// 角色
+    /// </summary>
+    public class UserProfile
+    {
+        /// <summary>
+        /// 显示的名字
+        /// </summary>
+        public string DisplayName { get; set; }
+    }
+
+    /// <summary>
+    /// 代表一个用户属性
+    /// </summary>
+    public class UserProperty
+    {
+        /// <summary>
+        /// 属性名
+        /// </summary>
+        public string Name { get; internal set; }
+
+        /// <summary>
+        /// 属性值
+        /// </summary>
+        public string Value { get; internal set; }
+    }
+
+    public class SelectedUser
+    {
+        /// <summary>
+        /// 选中的用户
+        /// </summary>
+        public string Account { get; set; }
+
+        /// <summary>
+        /// 选中的角色
+        /// </summary>
+        public string Profile { get; set; }
     }
 }

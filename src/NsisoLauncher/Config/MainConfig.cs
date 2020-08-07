@@ -326,18 +326,18 @@ namespace NsisoLauncher.Config
         public string AdvencedGameArguments { get; set; }
 
 
-        private WindowSize windowSize;
+        private Resolution windowSize;
 
         /// <summary>
         /// 游戏窗口大小
         /// </summary>
-        public WindowSize WindowSize
+        public Resolution WindowSize
         {
             get
             {
                 if (windowSize == null)
                 {
-                    windowSize = new WindowSize();
+                    windowSize = new Resolution();
                 }
                 return windowSize;
             }
@@ -392,18 +392,18 @@ namespace NsisoLauncher.Config
         public bool WriteLog { get; set; }
 
 
-        private WindowSize launcherWindowSize;
+        private Resolution launcherWindowSize;
 
         /// <summary>
         /// 游戏窗口大小
         /// </summary>
-        public WindowSize LauncherWindowSize
+        public Resolution LauncherWindowSize
         {
             get
             {
                 if (launcherWindowSize == null)
                 {
-                    launcherWindowSize = new WindowSize() { Width = 980, Height = 540 };
+                    launcherWindowSize = new Resolution() { Width = 980, Height = 540 };
                 }
                 return launcherWindowSize;
             }

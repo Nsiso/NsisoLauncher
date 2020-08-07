@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore;
+using NsisoLauncherCore.Config;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System;
@@ -32,7 +34,9 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 官方用户配置文件内容
         /// </summary>
-        public LauncherProfilesConfig LauncherProfilesConfig { get; set; }
+        public LauncherProfiles LauncherProfilesConfig { get; set; }
+
+        public JsonSerializerSettings SerializerSettings { get; set; } = new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
         private readonly ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
         private readonly ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();
@@ -76,7 +80,7 @@ namespace NsisoLauncher.Config
                 {
                     Directory.CreateDirectory(dir);
                 }
-                File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented));
+                File.WriteAllText(MainConfigPath, JsonConvert.SerializeObject(MainConfig, Formatting.Indented, SerializerSettings));
             }
             catch (UnauthorizedAccessException e)
             {
@@ -101,7 +105,7 @@ namespace NsisoLauncher.Config
             mainconfigLock.EnterReadLock();
             try
             {
-                MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath));
+                MainConfig = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(MainConfigPath), SerializerSettings);
 #if !DEBUG
                 if (string.IsNullOrWhiteSpace(MainConfig.ConfigVersion) ||
                     (!string.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString(), MainConfig.ConfigVersion)))
@@ -168,11 +172,10 @@ namespace NsisoLauncher.Config
         /// </summary>
         private void NewProfilesConfig()
         {
-            LauncherProfilesConfig = new LauncherProfilesConfig()
+            LauncherProfilesConfig = new LauncherProfiles()
             {
-                ClientToken = "88888888-8888-8888-8888-888888888888",
-                SelectedProfile = "(Default)",
-                Profiles = JObject.Parse("{\"(Default)\":{\"name\":\"(Default)\"}}")
+                ClientToken = Guid.NewGuid().ToString("N"),
+                Profiles = new ObservableDictionary<string, VersionProfile>()
             };
             SaveProfilesConfig();
         }
@@ -205,7 +208,7 @@ namespace NsisoLauncher.Config
                     GCEnabled = true,
                     GCType = NsisoLauncherCore.Modules.GCType.G1GC,
                     AutoJava = true,
-                    WindowSize = new NsisoLauncherCore.Modules.WindowSize() { FullScreen = false },
+                    WindowSize = new NsisoLauncherCore.Modules.Resolution() { FullScreen = false },
                     ExitAfterLaunch = false
                 },
                 Net = new Net()

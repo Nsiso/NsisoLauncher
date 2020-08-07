@@ -152,7 +152,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 if (!string.IsNullOrEmpty(App.Config.MainConfig.History.LastLaunchVersion))
                 {
-                    LaunchVersion = App.VersionList.FirstOrDefault((x) => x.ID == App.Config.MainConfig.History.LastLaunchVersion);
+                    LaunchVersion = App.VersionList.FirstOrDefault((x) => x.Id == App.Config.MainConfig.History.LastLaunchVersion);
                 }
                 #endregion
 
@@ -207,7 +207,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 保存启动数据
-                App.Config.MainConfig.History.LastLaunchVersion = LaunchVersion.ID;
+                App.Config.MainConfig.History.LastLaunchVersion = LaunchVersion.Id;
                 App.Config.MainConfig.History.LastLaunchTime = DateTime.Now;
                 #endregion
 

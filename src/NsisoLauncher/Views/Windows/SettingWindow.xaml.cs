@@ -130,7 +130,7 @@ namespace NsisoLauncher.Views.Windows
             else
             {
                 VersionsComboBox.IsEnabled = false;
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, new NsisoLauncherCore.Modules.Version() { ID = "null" });
+                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, new NsisoLauncherCore.Modules.Version() { Id = "null" });
             }
 
             //debug
@@ -243,7 +243,7 @@ namespace NsisoLauncher.Views.Windows
                     await GameHelper.SaveOptionsAsync(
                     (List<VersionOption>)versionOptionsGrid.ItemsSource,
                     App.Handler,
-                    new NsisoLauncherCore.Modules.Version() { ID = "null" });
+                    new NsisoLauncherCore.Modules.Version() { Id = "null" });
                 }
             }
 

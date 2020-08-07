@@ -53,7 +53,7 @@ namespace NsisoLauncherCore
         {
             if (versionIsolation)
             {
-                return string.Format(@"{0}\versions\{1}", gameRootPath, ver.ID);
+                return string.Format(@"{0}\versions\{1}", gameRootPath, ver.Id);
             }
             else
             {
@@ -141,7 +141,7 @@ namespace NsisoLauncherCore
             }
             else
             {
-                return GetJarPath(gameRootPath, ver.ID);
+                return GetJarPath(gameRootPath, ver.Id);
             }
         }
 

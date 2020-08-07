@@ -20,7 +20,7 @@
             <DockPanel Margin="10,5">
                 <Label Content="{iconPacks:FontAwesome Kind=RocketSolid}"/>
                 <ComboBox x:Name="launchVersionCombobox" Margin="5,0,10,0"
-                  DisplayMemberPath="ID"
+                  DisplayMemberPath="Id"
                   ItemsSource="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=VersionsSource}"
                   SelectedItem="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType={x:Type userControl:MainPanelControl}}, Path=SelectedVersion}"
                   controls:TextBoxHelper.Watermark="{StaticResource String.MainWindow.ChooseLaunchVersion}"/>

@@ -15,32 +15,27 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 资源引导
         /// </summary>
-        [JsonProperty("assetIndex")]
         public AssetIndex AssetIndex { get; set; }
 
         /// <summary>
         /// 资源ID
         /// </summary>
-        [JsonProperty("assets")]
         public string Assets { get; set; }
 
         /// <summary>
         /// 下载引导
         /// </summary>
-        [JsonProperty("downloads")]
         public CoreDownloads Downloads { get; set; }
 
         /// <summary>
         /// 版本ID
         /// </summary>
-        [JsonProperty("id")]
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 继承版本
         /// </summary>
-        [JsonProperty("inheritsFrom")]
-        public string InheritsVersion { get; set; }
+        public string InheritsFrom { get; set; }
 
         /// <summary>
         /// 库列表
@@ -57,13 +52,11 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 启动主类
         /// </summary>
-        [JsonProperty("mainClass")]
         public string MainClass { get; set; }
 
         /// <summary>
         /// 指定JAR包
         /// </summary>
-        [JsonProperty("jar")]
         public string Jar { get; set; }
 
         /// <summary>
@@ -75,31 +68,26 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// Minecraft启动参数
         /// </summary>
-        [JsonProperty("minecraftArguments")]
         public string MinecraftArguments { get; set; }
 
         /// <summary>
         /// 启动器最低能启动版本号
         /// </summary>
-        [JsonProperty("minimumLauncherVersion")]
         public int MinimumLauncherVersion { get; set; }
 
         /// <summary>
         /// 修改时间
         /// </summary>
-        [JsonProperty("time")]
         public DateTime Time { get; set; }
 
         /// <summary>
         /// 发布时间
         /// </summary>
-        [JsonProperty("releaseTime")]
         public DateTime ReleaseTime { get; set; }
 
         /// <summary>
         /// 版本类型
         /// </summary>
-        [JsonProperty("type")]
         public string Type { get; set; }
     }
 
@@ -109,13 +97,11 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 资源ID
         /// </summary>
-        [JsonProperty("id")]
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 总大小
         /// </summary>
-        [JsonProperty("totalSize")]
         public long TotalSize { get; set; }
     }
     #endregion
@@ -126,13 +112,11 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 客户端下载信息
         /// </summary>
-        [JsonProperty("client")]
         public Sha1SizeUrl Client { get; set; }
 
         /// <summary>
         /// 服务端下载信息
         /// </summary>
-        [JsonProperty("server")]
         public Sha1SizeUrl Server { get; set; }
     }
     #endregion
@@ -260,20 +244,17 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// SHA1
         /// </summary>
-        [JsonProperty("sha1")]
-        public string SHA1 { get; set; }
+        public string Sha1 { get; set; }
 
         /// <summary>
         /// 文件大小
         /// </summary>
-        [JsonProperty("size")]
         public int Size { get; set; }
 
         /// <summary>
         /// 下载URL
         /// </summary>
-        [JsonProperty("url")]
-        public string URL { get; set; }
+        public string Url { get; set; }
     }
 
     /// <summary>
@@ -284,7 +265,6 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 路径
         /// </summary>
-        [JsonProperty("path")]
         public string Path { get; set; }
     }
 }

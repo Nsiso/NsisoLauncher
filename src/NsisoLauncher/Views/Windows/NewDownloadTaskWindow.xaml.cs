@@ -212,7 +212,7 @@ namespace NsisoLauncher.Views.Windows
                         return;
                     }
                     NsisoLauncherCore.Modules.Version ver = App.Handler.JsonToVersion(json);
-                    string jsonPath = App.Handler.GetJsonPath(ver.ID);
+                    string jsonPath = App.Handler.GetJsonPath(ver.Id);
 
                     string dir = Path.GetDirectoryName(jsonPath);
                     if (!Directory.Exists(dir))
@@ -225,7 +225,7 @@ namespace NsisoLauncher.Views.Windows
 
                     List<DownloadTask> tasks = new List<DownloadTask>();
 
-                    tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.URL), App.Handler.GetAssetsIndexPath(ver.Assets)));
+                    tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.Url), App.Handler.GetAssetsIndexPath(ver.Assets)));
 
                     tasks.AddRange(await NsisoLauncherCore.Util.FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester));
 

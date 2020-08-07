@@ -23,10 +23,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NullJavaExceptioncs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\GCType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\BmclApiBaseMirror.cs" />

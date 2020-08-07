@@ -57,7 +57,7 @@ namespace NsisoLauncherCore.Util
         #region 检查Jar核心文件
         public static bool IsLostJarCore(LaunchHandler core, Version version)
         {
-            if (version.InheritsVersion == null)
+            if (version.InheritsFrom == null)
             {
                 string jarPath = core.GetJarPath(version);
                 return !File.Exists(jarPath);
@@ -271,9 +271,9 @@ namespace NsisoLauncherCore.Util
                 }
             }
 
-            if (version.InheritsVersion != null)
+            if (version.InheritsFrom != null)
             {
-                string innerJsonPath = core.GetJsonPath(version.InheritsVersion);
+                string innerJsonPath = core.GetJsonPath(version.InheritsFrom);
                 string innerJsonStr = null;
                 if (!File.Exists(innerJsonPath))
                 {
@@ -292,7 +292,7 @@ namespace NsisoLauncherCore.Util
                             mirror = ((IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors));
                         }
                     }
-                    HttpResponseMessage jsonRespond = await netRequester.Client.GetAsync(GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsVersion, mirror));
+                    HttpResponseMessage jsonRespond = await netRequester.Client.GetAsync(GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsFrom, mirror));
                     if (jsonRespond.IsSuccessStatusCode)
                     {
                         innerJsonPath = await jsonRespond.Content.ReadAsStringAsync();
@@ -349,7 +349,7 @@ namespace NsisoLauncherCore.Util
             {
                 if (ver.AssetIndex != null)
                 {
-                    string jsonUrl = ver.AssetIndex.URL;
+                    string jsonUrl = ver.AssetIndex.Url;
                     tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
                     //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
                     //string assetsJson = null;

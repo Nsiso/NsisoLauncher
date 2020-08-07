@@ -214,7 +214,7 @@ namespace NsisoLauncherCore
 
         public Modules.Version RefreshVersion(Modules.Version ver)
         {
-            return versionReader.GetVersion(ver.ID);
+            return versionReader.GetVersion(ver.Id);
         }
 
         public async Task<List<Modules.Version>> GetVersionsAsync()
