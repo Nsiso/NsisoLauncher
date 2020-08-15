@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using MahApps.Metro.IconPacks;
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Dialogs;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Version = NsisoLauncherCore.Modules.Version;
+using MahAppsMetroHamburgerMenuNavigation.ViewModels;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -67,8 +69,6 @@ namespace NsisoLauncher.ViewModels.Pages
         public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
 
         public bool IsPlaying { get; set; } = true;
-
-        public double BlurRadius { get; set; } = 20;
         #endregion
 
         public ViewModels.Windows.MainWindowViewModel MainWindowVM { get; set; }

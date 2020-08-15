@@ -1,0 +1,32 @@
+﻿<Page x:Class="NsisoLauncher.Views.Pages.LaunchPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="LaunchPage">
+
+    <Grid>
+        <Grid VerticalAlignment="Bottom" Height="60" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseMediumLow}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <!--<userControl:VersionPanelControl Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20,0"/>-->
+            <Button VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                FontSize="20" FontWeight="Light" BorderThickness="0" Grid.Column="1"
+                Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <iconPacks:PackIconFontAwesome Kind="RocketSolid" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock FontSize="16" Text="{StaticResource String.Base.Launch}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</Page>

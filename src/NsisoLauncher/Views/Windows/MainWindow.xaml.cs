@@ -25,6 +25,8 @@ namespace NsisoLauncher.Views.Windows
             vm.NavigationService = frame.NavigationService;
             vm.InitializeMainPage();
             App.LogHandler.AppendDebug("启动器主窗体已载入");
+
+            App.MainWindowVM = vm;
         }
 
 

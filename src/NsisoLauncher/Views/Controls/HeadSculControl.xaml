@@ -8,8 +8,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">
     <Grid>
-        <Ellipse  Height="100" Fill="{DynamicResource MahApps.Brushes.ThemeBackground}" Width="100" Opacity="0.8"/>
-        <Image x:Name="iconImage" Source="/NsisoLauncher;component/Resource/Steve.jpg" Height="50" Width="50"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Ellipse Opacity="0.8" Grid.ColumnSpan="3" Grid.RowSpan="3" Stroke="Gray" />
+        <Image x:Name="iconImage" Source="/NsisoLauncher;component/Resource/Steve.jpg" Grid.Column="1" Grid.Row="1"/>
         <controls:ProgressRing x:Name="progressRing" IsActive="False"/>
     </Grid>
 </UserControl>

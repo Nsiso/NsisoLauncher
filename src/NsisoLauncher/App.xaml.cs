@@ -1,6 +1,7 @@
 ﻿using ControlzEx.Theming;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
@@ -55,6 +56,13 @@ namespace NsisoLauncher
         public static List<Java> JavaList { get; private set; }
         public static ObservableCollection<Version> VersionList { get; private set; }
         #endregion
+        #endregion
+
+        #region 应用窗口级属性
+        /// <summary>
+        /// 主窗口VM
+        /// </summary>
+        public static MainWindowViewModel MainWindowVM { get; set; }
         #endregion
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
