@@ -5,28 +5,48 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LaunchPage">
-
+    <Page.DataContext>
+        <vm:LaunchPageViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <utils:StringNotEmptyToVisibilityConverter x:Key="strEmptyToVis"/>
+    </Page.Resources>
     <Grid>
-        <Grid VerticalAlignment="Bottom" Height="60" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseMediumLow}">
+        <Grid VerticalAlignment="Bottom" Height="60" Background="{DynamicResource MahApps.HamburgerMenu.Pane.Background}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <!--<userControl:VersionPanelControl Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20,0"/>-->
-            <Button VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="启动的游戏版本:" Foreground="White" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox x:Name="launchVersionCombobox" Background="{x:Null}" BorderBrush="LightGray"
+                          VerticalAlignment="Center"  Foreground="LightGray"
+                  ItemsSource="{Binding Versions}" SelectedItem="{Binding LaunchVersion}" DisplayMemberPath="Id"/>
+            </StackPanel>
+            <Button VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Command="{Binding LaunchCmd}"
                 FontSize="20" FontWeight="Light" BorderThickness="0" Grid.Column="1"
                 Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <iconPacks:PackIconFontAwesome Kind="RocketSolid" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock FontSize="16" Text="{StaticResource String.Base.Launch}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <iconPacks:PackIconFontAwesome Kind="RocketSolid" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock FontSize="16" Text="{StaticResource String.Base.Launch}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock FontWeight="Light" HorizontalAlignment="Center" Visibility="{Binding Text, ElementName=launchVersionCombobox, Converter={StaticResource strEmptyToVis}}"
+                               Text="{Binding Text, ElementName=launchVersionCombobox}" FontSize="10"/>
                 </StackPanel>
             </Button>
+            <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="{Binding UserName, TargetNullValue='未登录'}" Foreground="White"/>
+                <TextBlock Text="{Binding UserProfileName, TargetNullValue='登录后即可选择角色'}" Foreground="White"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

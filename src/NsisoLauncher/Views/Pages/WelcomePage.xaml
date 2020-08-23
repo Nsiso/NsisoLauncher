@@ -6,6 +6,7 @@
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="WelcomePage">
@@ -14,7 +15,13 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid Background="{DynamicResource MahApps.Brushes.Accent}">
+    <Grid Background="{DynamicResource MahApps.Brushes.AccentBase}">
+        <!--发布前需要删除-->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10" HorizontalAlignment="Right">
+            <iconPacks:PackIconFontAwesome Kind="ExclamationCircleSolid" Width="24" Height="24" VerticalAlignment="Center" Foreground="Yellow"/>
+            <Label Content="不稳定测试版本启动器" FontSize="24" Foreground="White"/>
+        </StackPanel>
+        <!--发布前需要删除-->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/NsisoLauncher;component/Resource/icon.ico" Stretch="None" Margin="20" HorizontalAlignment="Center"/>
             <!--<controls:ProgressRing Foreground="White" Width="40" Height="40" HorizontalAlignment="Center"/>-->

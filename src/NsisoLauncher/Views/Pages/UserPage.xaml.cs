@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NsisoLauncher.Views.Controls
+namespace NsisoLauncher.Views.Pages
 {
     /// <summary>
-    /// VersionPanelControl.xaml 的交互逻辑
+    /// UserPage.xaml 的交互逻辑
     /// </summary>
-    public partial class VersionPanelControl : UserControl
+    public partial class UserPage : Page
     {
-        public VersionPanelControl()
+        public UserPage()
         {
             InitializeComponent();
         }

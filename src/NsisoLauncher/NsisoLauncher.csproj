@@ -102,8 +102,10 @@
     <Compile Include="Config\MainConfig.cs" />
     <Compile Include="Utils\MenuItem.cs" />
     <Compile Include="Utils\NavigationServiceEx.cs" />
+    <Compile Include="ViewModels\Pages\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\LaunchPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\UserPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\Controls\AuthModuleControl.xaml.cs">
@@ -124,9 +126,6 @@
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\DataChecker.cs" />
     <Compile Include="ViewModels\Windows\DownloadWindowViewModel.cs" />
-    <Compile Include="Views\Controls\VersionPanelControl.xaml.cs">
-      <DependentUpon>VersionPanelControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Dialogs\ChooseProfileDialog.xaml.cs">
       <DependentUpon>ChooseProfileDialog.xaml</DependentUpon>
     </Compile>
@@ -141,6 +140,9 @@
     </Compile>
     <Compile Include="Views\Pages\SettingPage.xaml.cs">
       <DependentUpon>SettingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\UserPage.xaml.cs">
+      <DependentUpon>UserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
@@ -179,10 +181,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Controls\VersionPanelControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Dialogs\ChooseProfileDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -200,6 +198,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\SettingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\UserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

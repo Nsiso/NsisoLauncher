@@ -194,7 +194,32 @@ namespace NsisoLauncher.Config
             }
         }
 
+        /// <summary>
+        /// 选中的用户
+        /// </summary>
+        public string SelectedUser { get; set; }
+
         private ObservableDictionary<string, AuthenticationNode> authenticationDic;
+
+        /// <summary>
+        /// 获得选中的用户实例
+        /// </summary>
+        /// <returns>用户实例</returns>
+        public UserNode GetSelectedUser()
+        {
+            if (string.IsNullOrEmpty(SelectedUser))
+            {
+                return null;
+            }
+            if (UserDatabase.ContainsKey(SelectedUser))
+            {
+                return UserDatabase[SelectedUser];
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         /// <summary> 
         /// 验证节点
@@ -480,11 +505,6 @@ namespace NsisoLauncher.Config
     /// </summary>
     public class History : INotifyPropertyChanged
     {
-        /// <summary>
-        /// 选中的用户的ID
-        /// </summary>
-        public string SelectedUserNodeID { get; set; }
-
         /// <summary>
         /// 上一次启动版本
         /// </summary>

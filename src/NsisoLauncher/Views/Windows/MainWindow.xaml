@@ -5,12 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Windows"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" TitleCharacterCasing="Normal"
         Dialog:DialogParticipation.Register="{Binding}"
         Title="{Binding WindowTitle}" MinHeight="445" MinWidth="750"
         WindowState="{Binding WindowState}" WindowTransitionsEnabled="False"
         Closing="mainWindow_Closing">
+    <controls:MetroWindow.Background>
+        <VisualBrush Stretch="UniformToFill">
+            <VisualBrush.Visual>
+                <Grid>
+                    <Image Source="{Binding StaticMediaSource}"/>
+                    <!--<MediaElement x:Name="mediaElement" Volume="{Binding Volume}" Source="{Binding MediaSource}"/>-->
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
+    </controls:MetroWindow.Background>
     <Frame NavigationUIVisibility="Hidden" x:Name="frame"/>
 </controls:MetroWindow>
     

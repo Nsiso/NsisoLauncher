@@ -2,6 +2,9 @@
 using NsisoLauncherCore;
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
@@ -20,6 +23,9 @@ namespace NsisoLauncher.ViewModels.Windows
         /// </summary>
         public string WindowTitle { get; set; } = "Nsiso Launcher";
 
+        /// <summary>
+        /// 导航服务实例
+        /// </summary>
         public NavigationService NavigationService { get; set; }
 
         /// <summary>
@@ -30,16 +36,29 @@ namespace NsisoLauncher.ViewModels.Windows
         /// <summary>
         /// 窗口对话
         /// </summary>
-        private IDialogCoordinator instance;
+        private readonly IDialogCoordinator instance;
 
-        public MainWindowViewModel(IDialogCoordinator instance)
+        #region ElementsState
+
+        public double Volume { get; set; } = 0.5;
+
+        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
+
+        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
+
+        public bool IsPlaying { get; set; } = true;
+        #endregion
+
+        public MainWindowViewModel()
         {
-            this.instance = instance;
+            this.instance = DialogCoordinator.Instance;
 
+            App.MainWindowVM = this;
 
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;
+                _ = CustomizeRefresh();
             }
         }
 
@@ -110,6 +129,91 @@ namespace NsisoLauncher.ViewModels.Windows
         public async Task HideMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings)
         {
             await instance.HideMetroDialogAsync(this, dialog, settings);
+        }
+
+        private async Task CustomizeRefresh()
+        {
+            if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.LauncherTitle))
+            {
+                this.WindowTitle = App.Config.MainConfig.Customize.LauncherTitle;
+            }
+            if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
+            {
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
+                if (files.Count() != 0)
+                {
+                    Random random = new Random();
+                    MediaSource = files[random.Next(files.Count())];
+                    //ImageBrush brush = new ImageBrush(new BitmapImage(new Uri()))
+                    //{ TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
+                    //this.Background = brush;
+                }
+            }
+
+            //undo app back server info control
+            //if (App.Config.MainConfig.User.Nide8ServerDependence)
+            //{
+            //    try
+            //    {
+            //        var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
+            //        if ((lockAuthNode != null) &&
+            //            (lockAuthNode.AuthType == AuthenticationType.NIDE8))
+            //        {
+            //            Config.Server nide8Server = new Config.Server() { ShowServerInfo = true };
+            //            var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+            //            if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+            //            {
+            //                string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+            //                if (serverIp.Length == 2)
+            //                {
+            //                    nide8Server.Address = serverIp[0];
+            //                    nide8Server.Port = ushort.Parse(serverIp[1]);
+            //                }
+            //                else
+            //                {
+            //                    nide8Server.Address = nide8ReturnResult.Meta.ServerIP;
+            //                    nide8Server.Port = 25565;
+            //                }
+            //                nide8Server.ServerName = nide8ReturnResult.Meta.ServerName;
+            //                serverInfoControl.SetServerInfo(nide8Server);
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception)
+            //    { }
+            //}
+            //else if (App.Config.MainConfig.Server != null)
+            //{
+            //    serverInfoControl.SetServerInfo(App.Config.MainConfig.Server);
+            //}
+
+            if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
+            {
+                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgmusic_?.mp3");
+                if (files.Count() != 0)
+                {
+                    Random random = new Random();
+                    MediaSource = files[random.Next(files.Count())];
+                    Volume = 0;
+                    await Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            for (int i = 0; i < 50; i++)
+                            {
+                                Volume += 0.01;
+                                Thread.Sleep(50);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            //可忽略的错误
+                        }
+                    });
+                }
+            }
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

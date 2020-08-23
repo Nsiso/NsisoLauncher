@@ -14,7 +14,7 @@ namespace NsisoLauncher.Views.Windows
         {
 
             //THIS IS NOT MVVM
-            ViewModels.Windows.MainWindowViewModel vm = new ViewModels.Windows.MainWindowViewModel(DialogCoordinator.Instance)
+            ViewModels.Windows.MainWindowViewModel vm = new ViewModels.Windows.MainWindowViewModel()
             {
                 CloseWindow = new Action(() => this.Close())
             };
@@ -25,8 +25,6 @@ namespace NsisoLauncher.Views.Windows
             vm.NavigationService = frame.NavigationService;
             vm.InitializeMainPage();
             App.LogHandler.AppendDebug("启动器主窗体已载入");
-
-            App.MainWindowVM = vm;
         }
 
 

@@ -18,8 +18,6 @@ namespace NsisoLauncher.Views.Pages
         public MainPage(ViewModels.Windows.MainWindowViewModel mainWindowVM)
         {
             InitializeComponent();
-            ViewModels.Pages.MainPageViewModel vm = new ViewModels.Pages.MainPageViewModel(mainWindowVM);
-            this.DataContext = vm;
 
             this.navigationServiceEx = new NavigationServiceEx();
             this.navigationServiceEx.Navigated += this.NavigationServiceEx_OnNavigated;
