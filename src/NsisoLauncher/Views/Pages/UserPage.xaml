@@ -5,13 +5,37 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="UserPage" Background="{DynamicResource MahApps.Brushes.Window.Background}">
+      Title="UserPage">
     <Page.DataContext>
         <vm:UserPageViewModel/>
     </Page.DataContext>
     <Grid>
-        <TextBlock/>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
+                <StackPanel>
+                    <TextBlock Text="登录的用户" FontSize="16" Foreground="White"/>
+                    <TextBlock Text="nsisogf@163.com" Foreground="White" FontSize="26"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="Green"/>
+                            <TextBlock Text="在线" Foreground="White"/>
+                        </StackPanel>
+                        <TextBlock Text="正版验证" Foreground="White" Margin="10,0,0,0"/>
+                    </StackPanel>
+                   
+                </StackPanel>
+                <!--<Button Margin="20,0" Content="切换用户" VerticalAlignment="Bottom"/>-->
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+
+        </StackPanel>
     </Grid>
 </Page>

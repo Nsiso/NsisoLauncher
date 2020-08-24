@@ -28,164 +28,18 @@ namespace NsisoLauncher.Views.Pages
     /// </summary>
     public partial class SettingPage : Page
     {
-        private bool _isGameSettingChanged = false;
-
         public SettingPage()
         {
             InitializeComponent();
-            FirstBinding();
-            Refresh();
         }
 
-        private void FirstBinding()
-        {
-            AccentColorComboBox.ItemsSource = ThemeManager.Current.ColorSchemes;
-            appThmeComboBox.ItemsSource = ThemeManager.Current.BaseColors;
-            authModuleCombobox.ItemsSource = App.Config.MainConfig.User.AuthenticationDic;
-            versionTextBlock.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            App.Config.MainConfig.Environment.PropertyChanged += Environment_PropertyChanged;
-            App.Config.MainConfig.Net.PropertyChanged += Download_PropertyChanged;
-        }
+        //public void ShowAddAuthModule()
+        //{
+        //    tabControl.SelectedIndex = 3;
+        //    addAuthModuleExpander.IsExpanded = true;
+        //    addAuthModuleExpander.Focus();
+        //}
 
-        private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "CheckDownloadFileHash")
-            {
-                App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
-            }
-            if (e.PropertyName == "DownloadSource")
-            {
-                if (App.NetHandler.Downloader.MirrorList == null)
-                {
-                    App.NetHandler.Downloader.MirrorList = new List<IDownloadableMirror>();
-                }
-                App.NetHandler.Mirrors.DownloadableMirrorList.Clear();
-                switch (App.Config.MainConfig.Net.DownloadSource)
-                {
-                    case DownloadSource.Auto:
-                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetBmclApi());
-                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetMcbbsApi());
-                        break;
-                    case DownloadSource.Mojang:
-                        break;
-                    case DownloadSource.BMCLAPI:
-                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetBmclApi());
-                        break;
-                    case DownloadSource.MCBBS:
-                        App.NetHandler.Mirrors.DownloadableMirrorList.Add(App.NetHandler.Mirrors.GetMcbbsApi());
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (e.PropertyName == "DownloadThreadsSize")
-            {
-                App.NetHandler.Downloader.ProcessorSize = App.Config.MainConfig.Net.DownloadThreadsSize;
-            }
-        }
-
-        private void Environment_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "GamePathType")
-            {
-                switch (App.Config.MainConfig.Environment.GamePathType)
-                {
-                    case GameDirEnum.ROOT:
-                        App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
-                        break;
-                    case GameDirEnum.APPDATA:
-                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
-                        break;
-                    case GameDirEnum.PROGRAMFILES:
-                        App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
-                        break;
-                    case GameDirEnum.CUSTOM:
-                        App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
-                        break;
-                    default:
-                        throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
-                }
-            }
-            if (e.PropertyName == "VersionIsolation")
-            {
-                App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
-            }
-        }
-
-        private async void Refresh()
-        {
-            //绑定content设置
-            this.DataContext = App.Config.MainConfig;
-
-            #region 元素初始化
-            javaPathComboBox.ItemsSource = App.JavaList;
-            memorySlider.Maximum = SystemTools.GetTotalMemory();
-
-            VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
-
-            #endregion
-
-            if (App.Config.MainConfig.Environment.VersionIsolation)
-            {
-                VersionsComboBox.IsEnabled = true;
-            }
-            else
-            {
-                VersionsComboBox.IsEnabled = false;
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, new NsisoLauncherCore.Modules.Version() { Id = "null" });
-            }
-
-            //debug
-        }
-
-        public void ShowAddAuthModule()
-        {
-            tabControl.SelectedIndex = 3;
-            addAuthModuleExpander.IsExpanded = true;
-            addAuthModuleExpander.Focus();
-        }
-
-        private async void chooseJavaButton_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
-            {
-                Title = "选择Java",
-                Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe",
-            };
-            if (dialog.ShowDialog() == true)
-            {
-                Java java = await Java.GetJavaInfoAsync(dialog.FileName);
-                if (java != null)
-                {
-                    this.javaPathComboBox.Text = java.Path;
-                    this.javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
-                }
-                else
-                {
-                    this.javaPathComboBox.Text = dialog.FileName;
-                    await this.ShowMessageAsync("选择的Java无法正确获取信息", "请确认您选择的是正确的Java应用");
-                }
-            }
-        }
-
-        private void gamedirChooseButton_Click(object sender, RoutedEventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog()
-            {
-                Description = "选择游戏运行根目录",
-                ShowNewFolderButton = true
-            };
-            var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.Cancel)
-            {
-                return;
-            }
-            else
-            {
-                gamedirPathTextBox.Text = dialog.SelectedPath.Trim();
-                App.Config.MainConfig.Environment.GamePath = dialog.SelectedPath.Trim();
-            }
-        }
         //#region 全局设置部分
         //private void memorySlider_UpperValueChanged(object sender, RangeParameterChangedEventArgs e)
         //{
@@ -207,87 +61,56 @@ namespace NsisoLauncher.Views.Pages
 
 
         //保存按钮点击后
-        private async void saveButton_Click(object sender, RoutedEventArgs e)
+        //private async void saveButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    #region 实时修改
+        //    switch (App.Config.MainConfig.Environment.GamePathType)
+        //    {
+        //        case GameDirEnum.ROOT:
+        //            App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
+        //            break;
+        //        case GameDirEnum.APPDATA:
+        //            App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
+        //            break;
+        //        case GameDirEnum.PROGRAMFILES:
+        //            App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
+        //            break;
+        //        case GameDirEnum.CUSTOM:
+        //            App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
+        //            break;
+        //        default:
+        //            throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
+        //    }
+        //    App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
+        //    App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
+        //    #endregion
+
+        //    if (_isGameSettingChanged)
+        //    {
+        //        if (App.Config.MainConfig.Environment.VersionIsolation)
+        //        {
+        //            await GameHelper.SaveOptionsAsync(
+        //            (List<VersionOption>)versionOptionsGrid.ItemsSource,
+        //            App.Handler,
+        //            (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
+        //        }
+        //        else
+        //        {
+        //            await GameHelper.SaveOptionsAsync(
+        //            (List<VersionOption>)versionOptionsGrid.ItemsSource,
+        //            App.Handler,
+        //            new NsisoLauncherCore.Modules.Version() { Id = "null" });
+        //        }
+        //    }
+
+        //    App.Config.Save();
+        //    await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
+        //}
+
+        private void refreshVersionsButton_Click(object sender, RoutedEventArgs e)
         {
-            #region 实时修改
-            switch (App.Config.MainConfig.Environment.GamePathType)
-            {
-                case GameDirEnum.ROOT:
-                    App.Handler.GameRootPath = Path.GetFullPath(".minecraft");
-                    break;
-                case GameDirEnum.APPDATA:
-                    App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\.minecraft";
-                    break;
-                case GameDirEnum.PROGRAMFILES:
-                    App.Handler.GameRootPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + "\\.minecraft";
-                    break;
-                case GameDirEnum.CUSTOM:
-                    App.Handler.GameRootPath = App.Config.MainConfig.Environment.GamePath + "\\.minecraft";
-                    break;
-                default:
-                    throw new ArgumentException("判断游戏目录类型时出现异常，请检查配置文件中GamePathType节点");
-            }
-            App.Handler.VersionIsolation = App.Config.MainConfig.Environment.VersionIsolation;
-            App.NetHandler.Downloader.CheckFileHash = App.Config.MainConfig.Net.CheckDownloadFileHash;
-            #endregion
-
-            if (_isGameSettingChanged)
-            {
-                if (App.Config.MainConfig.Environment.VersionIsolation)
-                {
-                    await GameHelper.SaveOptionsAsync(
-                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                    App.Handler,
-                    (NsisoLauncherCore.Modules.Version)VersionsComboBox.SelectedItem);
-                }
-                else
-                {
-                    await GameHelper.SaveOptionsAsync(
-                    (List<VersionOption>)versionOptionsGrid.ItemsSource,
-                    App.Handler,
-                    new NsisoLauncherCore.Modules.Version() { Id = "null" });
-                }
-            }
-
-            App.Config.Save();
-            await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
-        }
-
-        private async void VersionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            System.Windows.Controls.ComboBox comboBox = (System.Windows.Controls.ComboBox)sender;
-
-            if (comboBox.SelectedItem != null)
-            {
-                versionOptionsGrid.ItemsSource = await GameHelper.GetOptionsAsync(App.Handler, (NsisoLauncherCore.Modules.Version)comboBox.SelectedItem);
-            }
-            else
-            {
-                versionOptionsGrid.ItemsSource = null;
-            }
-        }
-
-        private async void refreshVersionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
-        }
-
-        private void AccentColorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string item = (string)((System.Windows.Controls.ComboBox)sender).SelectedItem;
-            if (!string.IsNullOrWhiteSpace(item))
-            {
-                ThemeManager.Current.ChangeThemeColorScheme(System.Windows.Application.Current, item);
-            }
-        }
-
-        private void appThmeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string item = (string)((System.Windows.Controls.ComboBox)sender).SelectedItem;
-            if (!string.IsNullOrWhiteSpace(item))
-            {
-                ThemeManager.Current.ChangeThemeBaseColor(System.Windows.Application.Current, item);
-            }
+            //todo 恢复版本更新
+            //VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
         }
 
         private void javaPathComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -295,11 +118,14 @@ namespace NsisoLauncher.Views.Pages
             Java java = (Java)(((System.Windows.Controls.ComboBox)sender).SelectedItem);
             if (java != null)
             {
-                this.javaInfoLabel.Content = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
+                if (this.javaInfoTextBlock != null)
+                {
+                    this.javaInfoTextBlock.Text = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
+                }
             }
             else
             {
-                this.javaInfoLabel.Content = null;
+                this.javaInfoTextBlock.Text = null;
             }
         }
 
@@ -406,7 +232,7 @@ namespace NsisoLauncher.Views.Pages
 
         private void VersionOptionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            _isGameSettingChanged = true;
+            //todo 恢复游戏设置
         }
 
         private async Task ShowMessageAsync(string title, string msg)

@@ -42,7 +42,7 @@ namespace NsisoLauncher.ViewModels.Windows
 
         public double Volume { get; set; } = 0.5;
 
-        public string StaticMediaSource { get; set; } = "../../Resource/bg.jpg";
+        public string StaticMediaSource { get; set; } = /*@"C:\Users\nsiso\Desktop\a.jpg"*/"../../Resource/home-hero-1200x600.jpg";
 
         public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
 

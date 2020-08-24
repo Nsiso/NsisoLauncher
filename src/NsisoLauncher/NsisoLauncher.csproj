@@ -105,6 +105,7 @@
     <Compile Include="ViewModels\Pages\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\LaunchPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\SettingPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\UserPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
@@ -371,6 +372,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Dialogs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\minecraft_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\home-hero-1200x600.jpg" />
   </ItemGroup>
   <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

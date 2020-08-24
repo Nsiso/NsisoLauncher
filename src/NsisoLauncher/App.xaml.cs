@@ -53,7 +53,11 @@ namespace NsisoLauncher
         /// <summary>
         /// JAVA本机列表
         /// </summary>
-        public static List<Java> JavaList { get; private set; }
+        public static ObservableCollection<Java> JavaList { get; private set; }
+
+        /// <summary>
+        /// 版本
+        /// </summary>
         public static ObservableCollection<Version> VersionList { get; private set; }
         #endregion
         #endregion
@@ -121,7 +125,7 @@ namespace NsisoLauncher
             #region 数据初始化
             Config.Environment env = Config.MainConfig.Environment;
 
-            JavaList = Java.GetJavaList();
+            JavaList = new ObservableCollection<Java>(Java.GetJavaList());
 
             //设置版本路径
             string gameroot = null;
@@ -152,7 +156,7 @@ namespace NsisoLauncher
             }
             else
             {
-                java = JavaList.Find(x => x.Path == env.JavaPath);
+                java = JavaList.Where(x => x.Path == env.JavaPath).FirstOrDefault();
                 if (java == null)
                 {
                     java = Java.GetJavaInfo(env.JavaPath);

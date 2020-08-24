@@ -56,14 +56,14 @@
                                             <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                                             <SplineDoubleKeyFrame KeyTime="00:00:00.150" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                        <!--<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                    Storyboard.TargetName="CurrentContentPresentationSite"
                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                                             <SplineDoubleKeyFrame KeyTime="00:00:00" Value="200" />
                                             <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1"
                                             KeyTime="00:00:00.300"
                                             Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
+                                        </DoubleAnimationUsingKeyFrames>-->
 
                                         <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                    Storyboard.TargetName="PreviousContentPresentationSite"

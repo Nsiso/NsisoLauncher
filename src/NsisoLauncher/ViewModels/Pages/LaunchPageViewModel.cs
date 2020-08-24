@@ -70,8 +70,6 @@ namespace NsisoLauncher.ViewModels.Pages
         {
             if (App.Handler != null)
             {
-                Versions = App.VersionList;
-
                 //#region 记忆
                 //if (!string.IsNullOrEmpty(App.Config.MainConfig.History.SelectedUserNodeID) &&
                 //    App.Config.MainConfig.User.UserDatabase.ContainsKey(App.Config.MainConfig.History.SelectedUserNodeID))
@@ -93,13 +91,16 @@ namespace NsisoLauncher.ViewModels.Pages
                 //}
                 //#endregion
             }
+            if (App.VersionList != null)
+            {
+                Versions = App.VersionList;
+            }
             if (App.MainWindowVM != null)
             {
                 MainWindowVM = App.MainWindowVM;
             }
-
             User = App.Config?.MainConfig?.User;
-            if (App.Config.MainConfig.User != null)
+            if (App.Config?.MainConfig?.User != null)
             {
                 App.Config.MainConfig.User.PropertyChanged += User_PropertyChanged;
             }
@@ -145,7 +146,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void RefreshUserBinding()
         {
-            UserNode userNode = User.GetSelectedUser();
+            UserNode userNode = User?.GetSelectedUser();
             if (userNode!=null)
             {
                 UserName = userNode.UserName;

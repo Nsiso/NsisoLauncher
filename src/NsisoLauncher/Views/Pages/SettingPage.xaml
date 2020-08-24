@@ -9,7 +9,8 @@
         xmlns:util="clr-namespace:NsisoLauncher.Utils"
         xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
         xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
-        xmlns:net="clr-namespace:NsisoLauncherCore.Net"
+      xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+        xmlns:net="clr-namespace:NsisoLauncherCore.Net" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SettingPage">
@@ -20,6 +21,9 @@
         <util:StringToIntConverter x:Key="StringToIntConverter" />
         <!--#endregion-->
     </Page.Resources>
+    <Page.DataContext>
+        <vm:SettingPageViewModel/>
+    </Page.DataContext>
     <Grid Background="{DynamicResource MahApps.Brushes.Control.Background}">
         <TabControl x:Name="tabControl">
 
@@ -33,20 +37,22 @@
                                 x:Name="isAutoJavaToggle"
                                 OnContent="{StaticResource String.Settingwindow.Env.Java.AutoOn}"
                                 OffContent="{StaticResource String.Settingwindow.Env.Java.AutoOff}"
-                                IsOn="{Binding Path=Environment.AutoJava}"
+                                IsOn="{Binding MainConfig.Environment.AutoJava}"
                                 />
                                 <Label Content="{StaticResource String.Settingwindow.Env.Java.Path}" Margin="0,10,0,0"/>
-                                <ComboBox x:Name="javaPathComboBox"
+                                <ComboBox
                                       IsEditable="True"
                                       IsReadOnly="True"
-                                      IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"
-                                      DisplayMemberPath="Path"
-                                      Text="{Binding Environment.JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
+                                      IsEnabled="{Binding MainConfig.Environment.AutoJava, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                      DisplayMemberPath="Path" ItemsSource="{Binding Javas}"
+                                      Text="{Binding MainConfig.Environment.JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
                                       />
-                                <Label x:Name="javaInfoLabel" IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}"/>
-                                <Button x:Name="chooseJavaButton" Content="{StaticResource String.Settingwindow.Env.Java.Select}" Margin="0,5,0,0"
-                                    IsEnabled="{Binding IsOn, Converter={StaticResource BoolToOppositeBoolConverter}, ElementName=isAutoJavaToggle}" Click="chooseJavaButton_Click"
-                                    />
+                                <TextBlock Margin="2" x:Name="javaInfoTextBlock"
+                                           IsEnabled="{Binding MainConfig.Environment.AutoJava, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                           Text="{Binding SelectedJavaInfo}"/>
+                                <Button Content="{StaticResource String.Settingwindow.Env.Java.Select}" Margin="0,5,0,0"
+                                    IsEnabled="{Binding MainConfig.Environment.AutoJava, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                    Command="{Binding ChooseJavaButtonClickCmd}"/>
                                 <TextBlock TextWrapping="Wrap" Text="*修改java后需重启启动器以生效" Margin="0,10,0,0"/>
                             </StackPanel>
                         </Expander>
@@ -55,29 +61,30 @@
                                 <Controls:ToggleSwitch
                                 OnContent="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOn}"
                                 OffContent="{StaticResource String.Settingwindow.Env.Root.VersionIsolationOff}"
-                                IsOn="{Binding Environment.VersionIsolation}"
+                                IsOn="{Binding MainConfig.Environment.VersionIsolation}"
                                 />
 
                                 <Label Content="{StaticResource String.Settingwindow.Env.Root.TypeTitle}" Margin="0,10,0,0"/>
                                 <RadioButton Margin="0,0,0,5"
-                                             Content="{StaticResource String.Settingwindow.Env.Root.Root}" IsChecked="{Binding Path=Environment.GamePathType,
+                                             Content="{StaticResource String.Settingwindow.Env.Root.Root}" IsChecked="{Binding Path=MainConfig.Environment.GamePathType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.ROOT}}"/>
                                 <RadioButton Margin="0,0,0,5"
                                              Content="{StaticResource String.Settingwindow.Env.Root.AppData}" 
-                                             IsChecked="{Binding Path=Environment.GamePathType,
+                                             IsChecked="{Binding Path=MainConfig.Environment.GamePathType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.APPDATA}}"/>
                                 <RadioButton Margin="0,0,0,5" 
                                              Content="{StaticResource String.Settingwindow.Env.Root.Programe}"
-                                             IsChecked="{Binding Path=Environment.GamePathType,
+                                             IsChecked="{Binding Path=MainConfig.Environment.GamePathType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.PROGRAMFILES}}"/>
                                 <RadioButton x:Name="dir_customRadio" Margin="0,0,0,5" 
                                              Content="{StaticResource String.Settingwindow.Env.Root.Custom}"
-                                             IsChecked="{Binding Path=Environment.GamePathType,
+                                             IsChecked="{Binding Path=MainConfig.Environment.GamePathType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:GameDirEnum.CUSTOM}}"/>
-                                <TextBox x:Name="gamedirPathTextBox"  Margin="0,0,0,5"
-                                         IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Text="{Binding Path=Environment.GamePath}"/>
-                                <Button x:Name="gamedirChooseButton"
-                                        Content="{StaticResource String.Settingwindow.Env.Root.Choose}" IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Click="gamedirChooseButton_Click"/>
+                                <TextBox Margin="0,0,0,5"
+                                         IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}" Text="{Binding MainConfig.Environment.GamePath}"/>
+                                <Button
+                                        Content="{StaticResource String.Settingwindow.Env.Root.Choose}" IsEnabled="{Binding IsChecked, ElementName=dir_customRadio}"
+                                        Command="{Binding ChooseGameDirButtonClickCmd}"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Env.Memory}" Margin="0,0,0,5">
@@ -85,25 +92,26 @@
                                 <Controls:ToggleSwitch 
                                     OnContent="{StaticResource String.Settingwindow.Env.Memory.AutoOn}"
                                     OffContent="{StaticResource String.Settingwindow.Env.Memory.AutoOff}"
-                                    IsOn="{Binding Path=Environment.AutoMemory}"
+                                    IsOn="{Binding Path=MainConfig.Environment.AutoMemory}"
                                     VerticalAlignment="Top" />
                                 <Controls:RangeSlider x:Name="memorySlider"
                                     IsSnapToTickEnabled="True"
-                                    IsEnabled="{Binding Path=Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
-                                    UpperValue="{Binding Environment.MaxMemory, Converter={StaticResource StringToIntConverter}}"
-                                    LowerValue="{Binding Environment.MinMemory, Converter={StaticResource StringToIntConverter}}"
+                                    IsEnabled="{Binding Path=MainConfig.Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                    UpperValue="{Binding MainConfig.Environment.MaxMemory, Converter={StaticResource StringToIntConverter}}"
+                                    LowerValue="{Binding MainConfig.Environment.MinMemory, Converter={StaticResource StringToIntConverter}}"
+                                    Maximum="{Binding MaxMemory}"
                                     Margin="0,30"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Memory.Min}" HorizontalAlignment="Left" Height="25" VerticalAlignment="Bottom"/>
                                 <TextBox x:Name="minMemoryTextBox" HorizontalAlignment="Left" Height="23" Margin="88,0,0,0" TextWrapping="Wrap"
-                                     Text="{Binding Path=Environment.MinMemory}"
-                                     IsEnabled="{Binding Path=Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                     Text="{Binding Path=MainConfig.Environment.MinMemory}"
+                                     IsEnabled="{Binding Path=MainConfig.Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
                                      PreviewTextInput="textBox1_PreviewTextInput"
                                      InputMethod.IsInputMethodEnabled="False"
                                      MaxLength="6"
                                      Width="60" VerticalAlignment="Bottom"/>
                                 <TextBox x:Name="maxMemoryTextBox" Height="23" TextWrapping="Wrap" 
-                                     Text="{Binding Path=Environment.MaxMemory}" 
-                                     IsEnabled="{Binding Path=Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
+                                     Text="{Binding Path=MainConfig.Environment.MaxMemory}" 
+                                     IsEnabled="{Binding Path=MainConfig.Environment.AutoMemory, Converter={StaticResource BoolToOppositeBoolConverter}}"
                                      PreviewTextInput="textBox1_PreviewTextInput"
                                      InputMethod.IsInputMethodEnabled="False"
                                      MaxLength="6"
@@ -116,50 +124,50 @@
                                 <TextBox TextWrapping="Wrap" 
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Text="{Binding Environment.WindowSize.Width}" 
-                                         IsEnabled="{Binding Environment.WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50"/>
+                                         Text="{Binding MainConfig.Environment.WindowSize.Width}" 
+                                         IsEnabled="{Binding MainConfig.Environment.WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Window.WH}"/>
                                 <TextBox TextWrapping="Wrap"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Text="{Binding Environment.WindowSize.Height}"
-                                         IsEnabled="{Binding Environment.WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50"/>
+                                         Text="{Binding MainConfig.Environment.WindowSize.Height}"
+                                         IsEnabled="{Binding MainConfig.Environment.WindowSize.FullScreen, Converter={StaticResource BoolToOppositeBoolConverter}}" Width="50"/>
                                 <Label Content="(填写0为游戏默认)" Margin="0,0,20,0"/>
                                 <CheckBox Content="{StaticResource String.Settingwindow.Env.Window.Full}"
-                                          IsChecked="{Binding Environment.WindowSize.FullScreen}"/>
+                                          IsChecked="{Binding MainConfig.Environment.WindowSize.FullScreen}"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Env.Pro}" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.Agent}"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Environment.JavaAgent}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Environment.JavaAgent}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.GC}" Margin="0,5,0,0"/>
                                 <RadioButton
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.G1}"
-                                    IsChecked="{Binding Environment.GCType,
+                                    IsChecked="{Binding MainConfig.Environment.GCType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.G1GC}}"/>
                                 <RadioButton Margin="0,5,0,0"
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.Serial}"
-                                             IsChecked="{Binding Environment.GCType, 
+                                             IsChecked="{Binding MainConfig.Environment.GCType, 
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.SerialGC}}"/>
                                 <RadioButton Margin="0,5,0,0" 
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.Paralle}"
-                                             IsChecked="{Binding Environment.GCType, 
+                                             IsChecked="{Binding MainConfig.Environment.GCType, 
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.ParallelGC}}"/>
                                 <RadioButton Margin="0,5,0,0" 
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.CMS}"
-                                             IsChecked="{Binding Environment.GCType, 
+                                             IsChecked="{Binding MainConfig.Environment.GCType, 
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.CMSGC}}"/>
                                 <RadioButton Margin="0,5,0,0" 
                                              Content="{StaticResource String.Settingwindow.Env.Pro.GC.NULL}"
-                                             IsChecked="{Binding Environment.GCType, 
+                                             IsChecked="{Binding MainConfig.Environment.GCType, 
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:GCType.NULL}}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.GC.Arg}" Margin="0,5,0,0"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Environment.GCArgument}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Environment.GCArgument}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.JVMArg}" Margin="0,5,0,0"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Environment.AdvencedJvmArguments}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Environment.AdvencedJvmArguments}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.GameArg}" Margin="0,5,0,0"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Environment.AdvencedGameArguments}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Environment.AdvencedGameArguments}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Pro.ArgNote}"/>
 
                             </StackPanel>
@@ -167,13 +175,13 @@
 
                         <Expander Header="{StaticResource String.Settingwindow.Env.AutoFill}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="{StaticResource String.Settingwindow.Env.AutoFill.Lib}" IsChecked="{Binding Environment.DownloadLostDepend}" Margin="0,0,0,5"/>
-                                <CheckBox Content="{StaticResource String.Settingwindow.Env.AutoFill.Assets}" IsChecked="{Binding Environment.DownloadLostAssets}"/>
+                                <CheckBox Content="{StaticResource String.Settingwindow.Env.AutoFill.Lib}" IsChecked="{Binding MainConfig.Environment.DownloadLostDepend}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{StaticResource String.Settingwindow.Env.AutoFill.Assets}" IsChecked="{Binding MainConfig.Environment.DownloadLostAssets}"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Env.Habbit}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Habbit.Exit}" IsChecked="{Binding Environment.ExitAfterLaunch}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Habbit.Exit}" IsChecked="{Binding MainConfig.Environment.ExitAfterLaunch}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
 
@@ -190,16 +198,16 @@
                         <Expander Header="{StaticResource String.Settingwindow.Net.Source}" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Auto}"
-                                             IsChecked="{Binding Net.DownloadSource,
+                                             IsChecked="{Binding MainConfig.Net.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Auto}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Mojang}"
-                                             IsChecked="{Binding Net.DownloadSource,
+                                             IsChecked="{Binding MainConfig.Net.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.Mojang}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
-                                             IsChecked="{Binding Net.DownloadSource,
+                                             IsChecked="{Binding MainConfig.Net.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.BMCLAPI}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
-                                             IsChecked="{Binding Net.DownloadSource,
+                                             IsChecked="{Binding MainConfig.Net.DownloadSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadSource.MCBBS}}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Source.Note}"/>
                             </StackPanel>
@@ -207,43 +215,43 @@
                         <Expander Header="{StaticResource String.Settingwindow.Net.VersionSource}" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.Mojang}"
-                                             IsChecked="{Binding Net.VersionSource,
+                                             IsChecked="{Binding MainConfig.Net.VersionSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MOJANG}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
-                                             IsChecked="{Binding Net.VersionSource,
+                                             IsChecked="{Binding MainConfig.Net.VersionSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.BMCLAPI}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
-                                             IsChecked="{Binding Net.VersionSource,
+                                             IsChecked="{Binding MainConfig.Net.VersionSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:VersionSourceType.MCBBS}}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.FunctionSource}" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.BMCLAPI}"
-                                             IsChecked="{Binding Net.FunctionSource,
+                                             IsChecked="{Binding MainConfig.Net.FunctionSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.BMCLAPI}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="{StaticResource String.Settingwindow.Net.Source.MCBBS}"
-                                             IsChecked="{Binding Net.FunctionSource,
+                                             IsChecked="{Binding MainConfig.Net.FunctionSource,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static mainConfig:FunctionSourceType.MCBBS}}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="下载使用协议" Margin="0,0,0,5">
                             <StackPanel>
                                 <RadioButton Content="原协议（推荐）"
-                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                             IsChecked="{Binding MainConfig.Net.DownloadProtocolType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.ORIGIN}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="Http（兼容性强）"
-                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                             IsChecked="{Binding MainConfig.Net.DownloadProtocolType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.HTTP}}" Margin="0,0,0,5"/>
                                 <RadioButton Content="Https（安全性强）"
-                                             IsChecked="{Binding Net.DownloadProtocolType,
+                                             IsChecked="{Binding MainConfig.Net.DownloadProtocolType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static net:DownloadProtocolType.HTTPS}}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.Thread}" Margin="0,0,0,5">
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{StaticResource String.Settingwindow.Net.Thread.Num}"/>
-                                <TextBox Text="{Binding Net.DownloadThreadsSize}"
+                                <TextBox Text="{Binding MainConfig.Net.DownloadThreadsSize}"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
                                          Width="60" HorizontalAlignment="Left" MaxLength="2"/>
@@ -252,22 +260,22 @@
                         <Expander Header="{StaticResource String.Settingwindow.Net.Proxy}" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Address}"/>
-                                <TextBox Text="{Binding Net.DownloadProxyAddress}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.DownloadProxyAddress}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Port}"/>
                                 <TextBox 
                                     PreviewTextInput="textBox1_PreviewTextInput"
                                     InputMethod.IsInputMethodEnabled="False"
-                                    Text="{Binding Net.DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
+                                    Text="{Binding MainConfig.Net.DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
                                     Margin="0,0,0,5" MaxLength="6"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.User}"/>
-                                <TextBox Text="{Binding Net.ProxyUserName}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.ProxyUserName}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Password}"/>
-                                <TextBox Text="{Binding Net.ProxyUserPassword}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.ProxyUserPassword}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="高级下载设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="校验下载文件哈希值" IsChecked="{Binding Net.CheckDownloadFileHash}"/>
+                                <CheckBox Content="校验下载文件哈希值" IsChecked="{Binding MainConfig.Net.CheckDownloadFileHash}"/>
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -279,11 +287,14 @@
             <TabItem Header="{StaticResource String.Settingwindow.Version}">
                 <Grid>
                     <Label x:Name="label6" Content="{StaticResource String.Settingwindow.Version.ChooseText}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0"/>
-                    <ComboBox x:Name="VersionsComboBox" Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="Id" SelectionChanged="VersionsComboBox_SelectionChanged"/>
+                    <ComboBox ItemsSource="{Binding MinecraftVersions}" SelectedItem="{Binding SelectedSettingVersion}"
+                              Margin="148,0,155,0" VerticalAlignment="Top" DisplayMemberPath="Id"
+                              IsEnabled="{Binding MainConfig.Environment.VersionIsolation}">
+                    </ComboBox>
                     <GroupBox x:Name="groupBox7" Header="{StaticResource String.Settingwindow.Version.Options}" Margin="10,31,10,0">
                         <Grid>
                             <DataGrid x:Name="versionOptionsGrid" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                                      Margin="0,0,0,20" CellEditEnding="VersionOptionsGrid_CellEditEnding">
+                                      Margin="0,0,0,20" CellEditEnding="VersionOptionsGrid_CellEditEnding" ItemsSource="{Binding VersionOptions}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{StaticResource String.Settingwindow.Version.Options.T}" Binding="{Binding Key}" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{StaticResource String.Settingwindow.Version.Options.V}" Binding="{Binding Value}"/>
@@ -314,7 +325,7 @@
                                     <Label Content="选择要管理的验证模型："/>
                                     <ComboBox x:Name="authModuleCombobox" Width="200" Margin="0,0,5,0"
                                     DisplayMemberPath="Value.Name" SelectionChanged="AuthModuleCombobox_SelectionChanged"
-                                    SelectedValuePath="Key" ItemsSource="{Binding User.AuthenticationDic}"/>
+                                    SelectedValuePath="Key" ItemsSource="{Binding MainConfig.User.AuthenticationDic}"/>
                                     <Button x:Name="clearAuthselectButton" Width="100" Margin="0,0,5,0" Content="选择新添加" Click="ClearAuthselectButton_Click"/>
                                 </StackPanel>
                                 <userControl:AuthModuleControl x:Name="authmoduleControl"/>
@@ -325,7 +336,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="要进行设置的用户："/>
                                     <ComboBox x:Name="userComboBox" Width="250"
-                                              SelectedValuePath="Key" ItemsSource="{Binding User.UserDatabase}"
+                                              SelectedValuePath="Key" ItemsSource="{Binding MainConfig.User.UserDatabase}"
                                               DisplayMemberPath="Value.UserName"/>
                                     <Label Content="*在主界面输入要新建的用户名并启动即可新建用户"/>
                                 </StackPanel>
@@ -340,11 +351,11 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <Label Content="全局使用验证模型："/>
                                     <ComboBox x:Name="lockauthCombobox" Width="200" Margin="0,0,5,0"
-                                    DisplayMemberPath="Value.Name" ItemsSource="{Binding User.AuthenticationDic}"
-                                    SelectedValuePath="Key" SelectedValue="{Binding User.LockAuthName}"/>
+                                    DisplayMemberPath="Value.Name" ItemsSource="{Binding MainConfig.User.AuthenticationDic}"
+                                    SelectedValuePath="Key" SelectedValue="{Binding MainConfig.User.LockAuthName}"/>
                                     <Button Width="100" Content="清除全局验证选择" Click="clearAllauthButton_Click"/>
                                 </StackPanel>
-                                <CheckBox Margin="0,0,0,10" Content="统一通行证服务器依赖（仅在全局使用统一通行证验证模型，且统一通行证后台正确设置后生效）" IsChecked="{Binding User.Nide8ServerDependence}"/>
+                                <CheckBox Margin="0,0,0,10" Content="统一通行证服务器依赖（仅在全局使用统一通行证验证模型，且统一通行证后台正确设置后生效）" IsChecked="{Binding MainConfig.User.Nide8ServerDependence}"/>
                                 <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" HorizontalAlignment="Stretch" Content="删除全部验证模型" Background="IndianRed" Foreground="White" Margin="0,0,0,5"/>
                                 <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" HorizontalAlignment="Stretch" Content="删除全部用户" Background="IndianRed" Foreground="White"/>
                             </StackPanel>
@@ -394,18 +405,20 @@
                             <StackPanel>
                                 <Label Content="启动器主题颜色:"/>
 
-                                <ComboBox x:Name="AccentColorComboBox" SelectionChanged="AccentColorComboBox_SelectionChanged"
-                                          Text="{Binding Customize.AccentColor}" HorizontalAlignment="Left" Width="200"/>
+                                <ComboBox x:Name="AccentColorComboBox"
+                                          SelectedItem="{Binding MainConfig.Customize.AccentColor}" HorizontalAlignment="Left" Width="200"
+                                          ItemsSource="{Binding ColorSchemes}"/>
                                 <Label Content="启动器主题:"/>
-                                <ComboBox x:Name="appThmeComboBox" SelectionChanged="appThmeComboBox_SelectionChanged"
-                                          Text="{Binding Customize.AppTheme}" HorizontalAlignment="Left" Width="200"/>
+                                <ComboBox x:Name="appThmeComboBox"
+                                          SelectedItem="{Binding MainConfig.Customize.AppTheme}" HorizontalAlignment="Left" Width="200"
+                                          ItemsSource="{Binding BaseColors}"/>
                             </StackPanel>
                         </Expander>
 
                         <Expander Header="启动器背景元素设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox x:Name="checkBox1" Content="开启自定义背景图片" IsChecked="{Binding Customize.CustomBackGroundPicture}" Margin="0,0,0,2"/>
-                                <CheckBox x:Name="checkBox2" Content="开启自定义背景音乐" IsChecked="{Binding Customize.CustomBackGroundMusic}" Margin="0,0,0,2"/>
+                                <CheckBox x:Name="checkBox1" Content="开启自定义背景图片" IsChecked="{Binding MainConfig.Customize.CustomBackGroundPicture}" Margin="0,0,0,2"/>
+                                <CheckBox x:Name="checkBox2" Content="开启自定义背景音乐" IsChecked="{Binding MainConfig.Customize.CustomBackGroundMusic}" Margin="0,0,0,2"/>
                                 <Label Content="*自定义方法请查看启动器教程文档"/>
                             </StackPanel>
                         </Expander>
@@ -415,13 +428,13 @@
                                 <TextBox TextWrapping="Wrap" 
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Text="{Binding Launcher.LauncherWindowSize.Width}" 
+                                         Text="{Binding MainConfig.Launcher.LauncherWindowSize.Width}" 
                                          Width="50"/>
                                 <Label Content="{StaticResource String.Settingwindow.Env.Window.WH}"/>
                                 <TextBox TextWrapping="Wrap"
                                          PreviewTextInput="textBox1_PreviewTextInput"
                                          InputMethod.IsInputMethodEnabled="False"
-                                         Text="{Binding Launcher.LauncherWindowSize.Height}"
+                                         Text="{Binding MainConfig.Launcher.LauncherWindowSize.Height}"
                                          Width="50"/>
                                 <Label Content="（最小限制750*445，过小将限制）"/>
                             </StackPanel>
@@ -430,24 +443,24 @@
                         <Expander Header="自定义内容设置" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="启动器窗口标题:"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Customize.LauncherTitle}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.LauncherTitle}"/>
                                 <Label Content="游戏窗口标题（需保持启动器在启动后不被关闭的状态）:" Margin="0,10,0,0"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Customize.GameWindowTitle}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.GameWindowTitle}"/>
                                 <Label Content="游戏版本信息（游戏主界面左下角版本信息，高版本才支持）:" Margin="0,10,0,0"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Customize.VersionInfo}"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.VersionInfo}"/>
                             </StackPanel>
                         </Expander>
 
                         <Expander Header="Minecraft服务器设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="在主界面显示服务器信息" IsChecked="{Binding Server.ShowServerInfo}" Margin="0,0,0,5"/>
-                                <CheckBox Content="启动后自动进入服务器" IsChecked="{Binding Server.LaunchToServer}" Margin="0,0,0,5"/>
+                                <CheckBox Content="在主界面显示服务器信息" IsChecked="{Binding MainConfig.Server.ShowServerInfo}" Margin="0,0,0,5"/>
+                                <CheckBox Content="启动后自动进入服务器" IsChecked="{Binding MainConfig.Server.LaunchToServer}" Margin="0,0,0,5"/>
                                 <Label Content="服务器名称:"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Server.ServerName}" HorizontalAlignment="Left" Width="300"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Server.ServerName}" HorizontalAlignment="Left" Width="300"/>
                                 <Label Content="服务器地址:"/>
-                                <TextBox TextWrapping="NoWrap" Text="{Binding Server.Address}" HorizontalAlignment="Left" Width="300"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Server.Address}" HorizontalAlignment="Left" Width="300"/>
                                 <Label Content="服务器端口(SRV填写0):"/>
-                                <TextBox Text="{Binding Server.Port}"
+                                <TextBox Text="{Binding MainConfig.Server.Port}"
                                      PreviewTextInput="textBox1_PreviewTextInput"
                                      InputMethod.IsInputMethodEnabled="False"
                                      MaxLength="6" HorizontalAlignment="Left" Width="80"
@@ -465,9 +478,9 @@
                     <StackPanel Margin="10,0">
                         <Expander Header="{StaticResource String.Settingwindow.Env.Launcher}" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox Content="自动检查启动器更新" IsChecked="{Binding Launcher.CheckUpdate}" Margin="0,0,0,5"/>
-                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Launcher.DebugMode}" IsChecked="{Binding Launcher.Debug}" Margin="0,0,0,5"/>
-                                <CheckBox Content="禁用数据收集" IsChecked="{Binding Launcher.NoTracking}" Margin="0,0,0,5"/>
+                                <CheckBox Content="自动检查启动器更新" IsChecked="{Binding MainConfig.Launcher.CheckUpdate}" Margin="0,0,0,5"/>
+                                <CheckBox Content="{StaticResource String.Settingwindow.Env.Launcher.DebugMode}" IsChecked="{Binding MainConfig.Launcher.Debug}" Margin="0,0,0,5"/>
+                                <CheckBox Content="禁用数据收集" IsChecked="{Binding MainConfig.Launcher.NoTracking}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <TextBlock>
@@ -495,7 +508,7 @@
         </TabControl>
         <StackPanel Orientation="Horizontal" Margin="10,0,0,10" VerticalAlignment="Bottom">
             <TextBlock Opacity="0.5" TextWrapping="Wrap" Text="NsisoLauncher" Height="15" Margin="0,0,10,0"/>
-            <TextBlock x:Name="versionTextBlock" Opacity="0.5" TextWrapping="Wrap" Text="0.0.0.0" Height="15"/>
+            <TextBlock Text="{Binding LauncherVersion}" Opacity="0.5" TextWrapping="Wrap" Height="15"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -137,7 +137,7 @@ namespace NsisoLauncherCore.Util
         /// </summary>
         /// <param name="javalist"></param>
         /// <returns></returns>
-        public static Java GetSuitableJava(List<Java> javalist)
+        public static Java GetSuitableJava(IEnumerable<Java> javalist)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace NsisoLauncherCore.Util
                     { goodjava.AddRange(javalist); }
                 }
                 else
-                { goodjava = javalist; }
+                { goodjava = javalist.ToList(); }
 
                 var java8 = goodjava.Where((x) =>
                 {
