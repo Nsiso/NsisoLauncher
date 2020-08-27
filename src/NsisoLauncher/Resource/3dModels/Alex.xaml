@@ -11,7 +11,7 @@
     </DiffuseMaterial>
     <Model3DGroup x:Key="AlexModel">
         <Model3DGroup.Children>
-            <AmbientLight Color="AntiqueWhite" />
+            <AmbientLight Color="AntiqueWhite"/>
             <GeometryModel3D Material="{StaticResource PlayerSkinMaterial}" BackMaterial="{StaticResource PlayerSkinMaterial}">
                 <GeometryModel3D.Geometry>
                     <MeshGeometry3D                            

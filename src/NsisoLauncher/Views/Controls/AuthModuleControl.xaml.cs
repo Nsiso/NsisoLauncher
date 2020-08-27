@@ -4,6 +4,7 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Modules;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -87,7 +88,7 @@ namespace NsisoLauncher.Views.Controls
             delButton.IsEnabled = false;
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             if (!CheckIsEmpty())
             {
@@ -109,7 +110,14 @@ namespace NsisoLauncher.Views.Controls
                         node.Property.Add("authserver", authData);
                         break;
                 }
-                ((SettingWindow)Window.GetWindow(this)).AddAuthModule(authName, node);
+                if (App.Config.MainConfig.User.AuthenticationDic.Any(x => x.Key == authName))
+                {
+                    await App.MainWindowVM.ShowMessageAsync("添加的验证模型名称已存在", "您可以尝试更换可用的验证模型名称");
+                    return;
+                }
+                var item = new KeyValuePair<string, AuthenticationNode>(authName, node);
+                App.Config.MainConfig.User.AuthenticationDic.Add(authName, node);
+                await App.MainWindowVM.ShowMessageAsync("添加成功", "记得点击应用按钮保存噢");
             }
         }
 
@@ -133,7 +141,7 @@ namespace NsisoLauncher.Views.Controls
             return false;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (!CheckIsEmpty())
             {
@@ -155,13 +163,14 @@ namespace NsisoLauncher.Views.Controls
                         authModule.Value.Property.Add("authserver", authData);
                         break;
                 }
-                ((SettingWindow)Window.GetWindow(this)).SaveAuthModule(authModule);
+                await App.MainWindowVM.ShowMessageAsync("保存成功", "记得点击应用按钮保存噢");
             }
         }
 
-        private void DelButton_Click(object sender, RoutedEventArgs e)
+        private async void DelButton_Click(object sender, RoutedEventArgs e)
         {
-            ((SettingWindow)Window.GetWindow(this)).DeleteAuthModule(authModule);
+            App.Config.MainConfig.User.AuthenticationDic.Remove(authModule.Key);
+            await App.MainWindowVM.ShowMessageAsync("删除成功", "记得点击应用按钮保存噢");
         }
     }
 }

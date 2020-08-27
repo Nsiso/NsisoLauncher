@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <helix:HelixViewport3D ShowViewCube="False" RotateGesture="{StaticResource MouseGesture}"
+        <helix:HelixViewport3D ShowViewCube="False" RotateGesture="{StaticResource MouseGesture}" IsMoveEnabled="False"
                                FixedRotationPoint="0,1,0" FixedRotationPointEnabled="True" ModelUpDirection="0,1,0">
             <ModelVisual3D Content="{StaticResource SteveModel}"/>
             <helix:HelixViewport3D.Camera>

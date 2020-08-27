@@ -47,7 +47,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public DownloadPageViewModel()
         {
             InitChart();
-            SpeedStr = "0Kb/s";
+            SpeedStr = "0KB/s";
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
@@ -119,7 +119,7 @@ namespace NsisoLauncher.ViewModels.Pages
         });
         private async void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
-            SpeedStr = "0Kb/s";
+            SpeedStr = "0KB/s";
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;

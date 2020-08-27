@@ -21,7 +21,7 @@
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
                 <StackPanel>
-                    <TextBlock Text="登录的用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
+                    <TextBlock Text="登录的用户:" FontSize="16" Foreground="White" Margin="0,0,0,5"/>
                     <TextBlock Text="nsisogf@163.com" Foreground="White" FontSize="26"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="LawnGreen"/>
@@ -38,7 +38,7 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-            <userControl:Skin3dViewer Width="200"/>
+            <userControl:Skin3dViewer Width="200" HorizontalAlignment="Right"/>
         </Grid>
     </Grid>
 </Page>
