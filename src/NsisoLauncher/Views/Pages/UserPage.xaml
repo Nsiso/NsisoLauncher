@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
@@ -20,22 +21,24 @@
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
                 <StackPanel>
-                    <TextBlock Text="登录的用户" FontSize="16" Foreground="White"/>
+                    <TextBlock Text="登录的用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
                     <TextBlock Text="nsisogf@163.com" Foreground="White" FontSize="26"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="Green"/>
-                            <TextBlock Text="在线" Foreground="White"/>
-                        </StackPanel>
-                        <TextBlock Text="正版验证" Foreground="White" Margin="10,0,0,0"/>
+                        <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="LawnGreen"/>
+                        <TextBlock Text="在线" Foreground="White"/>
+                        <TextBlock Text="Mojang正版验证" Foreground="White" Margin="10,0,0,0"/>
                     </StackPanel>
                    
                 </StackPanel>
                 <!--<Button Margin="20,0" Content="切换用户" VerticalAlignment="Bottom"/>-->
             </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
+                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="切换用户" Margin="10,0"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="注销"/>
+            </StackPanel>
         </Grid>
-        <StackPanel Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-
-        </StackPanel>
+        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+            <userControl:Skin3dViewer Width="200"/>
+        </Grid>
     </Grid>
 </Page>

@@ -30,6 +30,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public string LauncherVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public ObservableCollection<Java> Javas { get; set; }
+        public Java SelectedJava { get; set; }
         public string SelectedJavaInfo { get; set; }
 
         public ObservableCollection<Version> MinecraftVersions { get; set; }
@@ -46,6 +47,8 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand ChooseGameDirButtonClickCmd { get; set; }
 
         public ICommand SelectedVersionChangeCmd { get; set; }
+
+        public ICommand RefreshVersionListCmd { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -80,6 +83,10 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 ChooseGameDir();
             });
+            RefreshVersionListCmd = new DelegateCommand(async (a) =>
+            {
+                await App.RefreshVersionListAsync();
+            });
             PropertyChanged += SettingPageViewModel_PropertyChanged;
         }
 
@@ -106,6 +113,10 @@ namespace NsisoLauncher.ViewModels.Pages
             if (e.PropertyName == "SelectedSettingVersion")
             {
                 await ChangeSettingVersion();
+            }
+            if (e.PropertyName == "SelectedJava")
+            {
+                ChangeJava();
             }
         }
 
@@ -167,6 +178,18 @@ namespace NsisoLauncher.ViewModels.Pages
             else
             {
                 VersionOptions.Clear();
+            }
+        }
+
+        private void ChangeJava()
+        {
+            if (SelectedJava != null)
+            {
+                SelectedJavaInfo = string.Format("Java版本：{0}，位数：{1}", SelectedJava.Version, SelectedJava.Arch);
+            }
+            else
+            {
+                SelectedJavaInfo = null;
             }
         }
 

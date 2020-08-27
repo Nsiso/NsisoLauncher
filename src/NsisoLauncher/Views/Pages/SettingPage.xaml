@@ -39,15 +39,15 @@
                                 OffContent="{StaticResource String.Settingwindow.Env.Java.AutoOff}"
                                 IsOn="{Binding MainConfig.Environment.AutoJava}"
                                 />
-                                <Label Content="{StaticResource String.Settingwindow.Env.Java.Path}" Margin="0,10,0,0"/>
+                                <Label Content="{StaticResource String.Settingwindow.Env.Java.Path}" Margin="0,5,0,0"/>
                                 <ComboBox
                                       IsEditable="True"
                                       IsReadOnly="True"
+                                      SelectedItem="{Binding SelectedJava}"
                                       IsEnabled="{Binding MainConfig.Environment.AutoJava, Converter={StaticResource BoolToOppositeBoolConverter}}"
                                       DisplayMemberPath="Path" ItemsSource="{Binding Javas}"
-                                      Text="{Binding MainConfig.Environment.JavaPath}" SelectionChanged="javaPathComboBox_SelectionChanged"
-                                      />
-                                <TextBlock Margin="2" x:Name="javaInfoTextBlock"
+                                      Text="{Binding MainConfig.Environment.JavaPath}"/>
+                                <TextBlock Margin="5" x:Name="javaInfoTextBlock"
                                            IsEnabled="{Binding MainConfig.Environment.AutoJava, Converter={StaticResource BoolToOppositeBoolConverter}}"
                                            Text="{Binding SelectedJavaInfo}"/>
                                 <Button Content="{StaticResource String.Settingwindow.Env.Java.Select}" Margin="0,5,0,0"
@@ -303,8 +303,8 @@
                             <TextBlock TextWrapping="Wrap" Text="{StaticResource String.Settingwindow.Version.Options.Note}" VerticalAlignment="Bottom"/>
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="refreshVersionsButton" Content="{StaticResource String.Settingwindow.Version.Refresh}"
-                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Click="refreshVersionsButton_Click" Margin="0,-1,10,0"/>
+                    <Button Content="{StaticResource String.Settingwindow.Version.Refresh}" Command="{Binding RefreshVersionListCmd}"
+                            VerticalAlignment="Top" HorizontalAlignment="Right" Width="140" Margin="0,0,10,0"/>
                     <!--
                     <GroupBox x:Name="groupBox" Header="{StaticResource String.Settingwindow.Version.Control}" Margin="0,31,10,0" HorizontalAlignment="Right" Width="170">
                         <StackPanel/>
@@ -506,7 +506,7 @@
             </TabItem>
             <!--#endregion-->
         </TabControl>
-        <StackPanel Orientation="Horizontal" Margin="10,0,0,10" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right">
             <TextBlock Opacity="0.5" TextWrapping="Wrap" Text="NsisoLauncher" Height="15" Margin="0,0,10,0"/>
             <TextBlock Text="{Binding LauncherVersion}" Opacity="0.5" TextWrapping="Wrap" Height="15"/>
         </StackPanel>

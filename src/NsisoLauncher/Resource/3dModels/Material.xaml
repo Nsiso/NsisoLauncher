@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DiffuseMaterial x:Key="PlayerSkinMaterial">
+        <DiffuseMaterial.Brush>
+            <VisualBrush RenderOptions.CachingHint="Cache" ViewportUnits="Absolute">
+                <VisualBrush.Visual>
+                    <Image RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </DiffuseMaterial.Brush>
+    </DiffuseMaterial>
+</ResourceDictionary>

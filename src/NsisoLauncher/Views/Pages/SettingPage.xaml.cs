@@ -107,28 +107,6 @@ namespace NsisoLauncher.Views.Pages
         //    await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
         //}
 
-        private void refreshVersionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            //todo 恢复版本更新
-            //VersionsComboBox.ItemsSource = await App.Handler.GetVersionsAsync();
-        }
-
-        private void javaPathComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Java java = (Java)(((System.Windows.Controls.ComboBox)sender).SelectedItem);
-            if (java != null)
-            {
-                if (this.javaInfoTextBlock != null)
-                {
-                    this.javaInfoTextBlock.Text = string.Format("Java版本：{0}，位数：{1}", java.Version, java.Arch);
-                }
-            }
-            else
-            {
-                this.javaInfoTextBlock.Text = null;
-            }
-        }
-
         private async void forgetUserButton_Click(object sender, RoutedEventArgs e)
         {
             if (userComboBox.SelectedItem == null)
