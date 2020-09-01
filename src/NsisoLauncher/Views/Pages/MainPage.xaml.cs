@@ -45,16 +45,6 @@ namespace NsisoLauncher.Views.Pages
                                                                 .OptionsItems
                                                                 .OfType<MenuItem>()
                                                                 .FirstOrDefault(x => x.NavigationDestination == e.Uri);
-
-            // or when using the NavigationType on menu item
-            // this.HamburgerMenuControl.SelectedItem = this.HamburgerMenuControl
-            //                                              .Items
-            //                                              .OfType<MenuItem>()
-            //                                              .FirstOrDefault(x => x.NavigationType == e.Content?.GetType());
-            // this.HamburgerMenuControl.SelectedOptionsItem = this.HamburgerMenuControl
-            //                                                     .OptionsItems
-            //                                                     .OfType<MenuItem>()
-            //                                                     .FirstOrDefault(x => x.NavigationType == e.Content?.GetType());
         }
     }
 }

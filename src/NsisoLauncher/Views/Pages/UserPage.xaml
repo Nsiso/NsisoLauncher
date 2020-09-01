@@ -13,32 +13,89 @@
     <Page.DataContext>
         <vm:UserPageViewModel/>
     </Page.DataContext>
+    <Page.Resources>
+        <Style x:Key="radioButtonStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource MahApps.Styles.ListBox}">
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <RadioButton Focusable="False" IsChecked="{Binding Path=IsSelected,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" 
+                                                 Margin="5" HorizontalContentAlignment="Stretch" Background="{x:Null}">
+                                        <Border CornerRadius="5" BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                                                BorderThickness="1" Padding="10,5">
+                                            <ContentPresenter HorizontalAlignment="Center"/>
+                                        </Border>
+                                    </RadioButton>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
-            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
+
+        <!--#region 登录状态-->
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20">
                 <StackPanel>
-                    <TextBlock Text="登录的用户:" FontSize="16" Foreground="White" Margin="0,0,0,5"/>
-                    <TextBlock Text="nsisogf@163.com" Foreground="White" FontSize="26"/>
+                    <TextBlock Text="当前用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
+                    <TextBlock Text="{Binding LoggedInUsername, TargetNullValue='暂未登录'}" Foreground="White" FontSize="26"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="LawnGreen"/>
-                        <TextBlock Text="在线" Foreground="White"/>
-                        <TextBlock Text="Mojang正版验证" Foreground="White" Margin="10,0,0,0"/>
+                        <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="{Binding StateColor}"/>
+                        <TextBlock Text="{Binding State, TargetNullValue='离线'}" Foreground="White"/>
+                        <TextBlock Text="{Binding AuthName, TargetNullValue='验证类型'}" Foreground="White" Margin="10,0,0,0"/>
                     </StackPanel>
-                   
+
                 </StackPanel>
                 <!--<Button Margin="20,0" Content="切换用户" VerticalAlignment="Bottom"/>-->
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
                 <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="切换用户" Margin="10,0"/>
-                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="注销"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="注销" Command="{Binding LogoutCmd}"/>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-            <userControl:Skin3dViewer Width="200" HorizontalAlignment="Right"/>
+
+        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ListBox Style="{StaticResource radioButtonStyle}" ItemsSource="{Binding UUIDList}" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                         DisplayMemberPath="Value.PlayerName" SelectedValuePath="Key" Margin="10" Grid.Column="0"
+                SelectedValue="{Binding LoggedInUser.SelectProfileUUID}"/>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Content="用户信息/换肤 开发中..."/>
         </Grid>
+        <!--#endregion-->
+
+        <!--#region 未登录状态 -->
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Margin="0,60" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label Content="登录后即可畅玩Minecraft" Foreground="White" FontSize="26"/>
+                <Label Content="支持离线/正版/皮肤站/登录站等登录方式" Foreground="White" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
+              Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Content="离线登录" Padding="50,5" Margin="5" Command="{Binding OfflineLoginCmd}"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Content="正版登录" Padding="50,5" Margin="5" Command="{Binding MojangLoginCmd}"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Square}"
+                        Content="外置登录" Padding="50,5" Margin="5" Command="{Binding OtherLoginCmd}"/>
+            </StackPanel>
+
+        </Grid>
+        <!--#endregion-->
+
     </Grid>
 </Page>

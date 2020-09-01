@@ -12,6 +12,7 @@ using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,7 +26,7 @@ namespace NsisoLauncher
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
-    public partial class App : Application
+    public partial class App : Application, INotifyPropertyChanged
     {
         #region 全局属性
         /// <summary>
@@ -70,6 +71,7 @@ namespace NsisoLauncher
         #endregion
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {

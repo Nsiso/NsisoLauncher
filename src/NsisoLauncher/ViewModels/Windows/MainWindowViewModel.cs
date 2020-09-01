@@ -44,7 +44,7 @@ namespace NsisoLauncher.ViewModels.Windows
 
         public string StaticMediaSource { get; set; } = /*@"C:\Users\nsiso\Desktop\a.jpg"*/"../../Resource/home-hero-1200x600.jpg";
 
-        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\miku.mp4";*/
+        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\view.mp4";*/
 
         public bool IsPlaying { get; set; } = true;
         #endregion
@@ -129,6 +129,16 @@ namespace NsisoLauncher.ViewModels.Windows
         public async Task HideMetroDialogAsync(BaseMetroDialog dialog, MetroDialogSettings settings)
         {
             await instance.HideMetroDialogAsync(this, dialog, settings);
+        }
+
+        public async Task<string> ShowInputAsync(string title, string msg)
+        {
+            return await instance.ShowInputAsync(this, title, msg);
+        }
+
+        public async Task<string> ShowInputAsync(string title, string msg, MetroDialogSettings settings)
+        {
+            return await instance.ShowInputAsync(this, title, msg, settings);
         }
 
         private async Task CustomizeRefresh()
