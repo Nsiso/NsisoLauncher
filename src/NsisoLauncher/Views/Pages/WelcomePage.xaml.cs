@@ -7,11 +7,9 @@ namespace NsisoLauncher.Views.Pages
     /// </summary>
     public partial class WelcomePage : Page
     {
-        public WelcomePage(ViewModels.Windows.MainWindowViewModel mainWindowVM)
+        public WelcomePage()
         {
             InitializeComponent();
-            ViewModels.Pages.WelcomePageViewModel vm = new ViewModels.Pages.WelcomePageViewModel(mainWindowVM);
-            this.DataContext = vm;
         }
     }
 }

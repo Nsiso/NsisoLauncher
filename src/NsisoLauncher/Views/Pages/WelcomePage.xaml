@@ -5,11 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="WelcomePage">
+    <Page.DataContext>
+        <vm:WelcomePageViewModel/>
+    </Page.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
@@ -24,6 +28,7 @@
         <!--发布前需要删除-->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/NsisoLauncher;component/Resource/icon.ico" Stretch="None" Margin="20" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding NowState}" Foreground="White" HorizontalAlignment="Center"/>
             <!--<controls:ProgressRing Foreground="White" Width="40" Height="40" HorizontalAlignment="Center"/>-->
         </StackPanel>
     </Grid>

@@ -46,7 +46,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         public class UserData
         {
             /// <summary>
-            /// User UUID
+            /// User ID
             /// </summary>
             [JsonProperty("id")]
             public string ID { get; internal set; }

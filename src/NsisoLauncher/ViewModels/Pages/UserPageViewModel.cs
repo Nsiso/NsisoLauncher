@@ -1,4 +1,5 @@
-﻿using NsisoLauncher.Config;
+﻿using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
@@ -11,14 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
     public class UserPageViewModel : INotifyPropertyChanged
     {
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
-        public bool IsLoggedIn { get; set; } = true;
-        public bool IsNotLoggedIn { get => !IsLoggedIn; }
+        public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
@@ -112,19 +113,40 @@ namespace NsisoLauncher.ViewModels.Pages
         private async Task OfflineLogin()
         {
             string username = await App.MainWindowVM.ShowInputAsync("输入游戏用户名", "游戏中显示的名字将会是此用户名");
-            string uuidValue = Guid.NewGuid().ToString();
-            UserNode userNode = new UserNode()
+            if (string.IsNullOrWhiteSpace(username))
             {
-                UserName = username,
-                AccessToken = Guid.NewGuid().ToString(),
-                AuthModule = "offline",
-                Profiles = new Dictionary<string, Uuid>() { { uuidValue, new Uuid() { PlayerName = username, Value = uuidValue } } },
-                SelectProfileUUID = uuidValue
-            };
-            string userId = Guid.NewGuid().ToString();
-            User.UserDatabase.Add(userId, userNode);
-            this.LoggedInUser = userNode;
-            User.SelectedUser = userId;
+                return;
+            }
+            IEnumerable<UserNode> matchUsers = User.UserDatabase.Values.Where(x => ((x.UserName == username) && (x.AuthModule == "offline")));
+            if (matchUsers?.Count() == 0)
+            {
+                //不存在用户新建用户
+                string uuidValue = Guid.NewGuid().ToString();
+                string userId = Guid.NewGuid().ToString();
+                UserNode userNode = new UserNode()
+                {
+                    UserName = username,
+                    AccessToken = Guid.NewGuid().ToString(),
+                    AuthModule = "offline",
+                    Profiles = new Dictionary<string, Uuid>() { { uuidValue, new Uuid() { PlayerName = username, Value = uuidValue } } },
+                    SelectProfileUUID = uuidValue,
+                    UserData = new UserData() { ID = userId, Username = username}
+                };
+                User.UserDatabase.Add(userId, userNode);
+                Login(userNode);
+            }
+            else
+            {
+                UserNode firstMatchUsrNode = matchUsers.FirstOrDefault();
+                if (firstMatchUsrNode != null)
+                {
+                    var dialogResult = await App.MainWindowVM.ShowMessageAsync("输入的用户名已存在", "是否使用原有的用户登录？");
+                    if (dialogResult == MessageDialogResult.Affirmative)
+                    {
+                        Login(firstMatchUsrNode);
+                    }
+                }
+            }
         }
 
         private void Logout()
@@ -138,6 +160,12 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             User.SelectedUser = null;
             LoggedInUser = null;
+        }
+
+        private void Login(UserNode user)
+        {
+            LoggedInUser = user;
+            User.SelectedUser = user.UserData.ID;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

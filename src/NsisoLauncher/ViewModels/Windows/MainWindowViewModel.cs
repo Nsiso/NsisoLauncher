@@ -64,7 +64,7 @@ namespace NsisoLauncher.ViewModels.Windows
 
         public void InitializeMainPage()
         {
-            this.NavigationService.Navigate(new Views.Pages.WelcomePage(this));
+            this.NavigationService.Navigate(new Views.Pages.WelcomePage());
         }
 
         private async void Handler_GameExit(object sender, GameExitArg arg)

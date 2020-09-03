@@ -15,7 +15,7 @@ namespace NsisoLauncher.Views.Pages
     public partial class MainPage : Page
     {
         private readonly NavigationServiceEx navigationServiceEx;
-        public MainPage(ViewModels.Windows.MainWindowViewModel mainWindowVM)
+        public MainPage()
         {
             InitializeComponent();
 

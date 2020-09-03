@@ -61,36 +61,11 @@ namespace NsisoLauncher.ViewModels.Pages
 
         #region Launch Data
         public Version LaunchVersion { get; set; }
-        //public KeyValuePair<string, UserNode>? LaunchUserPair { get; set; }
-        //public KeyValuePair<string, AuthenticationNode>? LaunchAuthNodePair { get; set; }
-        //public string LaunchUserNameText { get; set; }
+        public string SelectedLaunchVersionId { get; set; }
         #endregion
 
         public LaunchPageViewModel()
         {
-            if (App.Handler != null)
-            {
-                //#region 记忆
-                //if (!string.IsNullOrEmpty(App.Config.MainConfig.History.SelectedUserNodeID) &&
-                //    App.Config.MainConfig.User.UserDatabase.ContainsKey(App.Config.MainConfig.History.SelectedUserNodeID))
-                //{
-                //    KeyValuePair<string, UserNode> userPair = new KeyValuePair<string, UserNode>(App.Config.MainConfig.History.SelectedUserNodeID,
-                //        App.Config.MainConfig.User.UserDatabase[App.Config.MainConfig.History.SelectedUserNodeID]);
-                //    LaunchUserPair = userPair;
-                //    //LaunchUserNameText = userPair.Value.UserName;
-                //    if (!string.IsNullOrEmpty(userPair.Value.AuthModule) &&
-                //        App.Config.MainConfig.User.AuthenticationDic.ContainsKey(userPair.Value.AuthModule))
-                //    {
-                //        LaunchAuthNodePair = new KeyValuePair<string, AuthenticationNode>(userPair.Value.AuthModule,
-                //            App.Config.MainConfig.User.AuthenticationDic[userPair.Value.AuthModule]);
-                //    }
-                //}
-                //if (!string.IsNullOrEmpty(App.Config.MainConfig.History.LastLaunchVersion))
-                //{
-                //    LaunchVersion = App.VersionList.FirstOrDefault((x) => x.Id == App.Config.MainConfig.History.LastLaunchVersion);
-                //}
-                //#endregion
-            }
             if (App.VersionList != null)
             {
                 Versions = App.VersionList;
@@ -100,9 +75,9 @@ namespace NsisoLauncher.ViewModels.Pages
                 MainWindowVM = App.MainWindowVM;
             }
             User = App.Config?.MainConfig?.User;
-            if (App.Config?.MainConfig?.User != null)
+            if (User != null)
             {
-                App.Config.MainConfig.User.PropertyChanged += User_PropertyChanged;
+                User.PropertyChanged += User_PropertyChanged;
             }
 
             RefreshUserBinding();
@@ -134,6 +109,14 @@ namespace NsisoLauncher.ViewModels.Pages
                    }
                });
             #endregion
+
+            if (App.Config != null)
+            {
+                if (!string.IsNullOrWhiteSpace(App.Config?.MainConfig?.History?.LastLaunchVersion))
+                {
+                    SelectedLaunchVersionId = App.Config.MainConfig.History.LastLaunchVersion;
+                }
+            }
         }
 
         private void User_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -151,6 +134,11 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 UserName = userNode.UserName;
                 UserProfileName = userNode.GetSelectProfileUUID()?.PlayerName;
+            }
+            else
+            {
+                UserName = null;
+                UserProfileName = null;
             }
            
         }

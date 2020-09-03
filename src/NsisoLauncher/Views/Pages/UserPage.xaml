@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -14,6 +15,9 @@
         <vm:UserPageViewModel/>
     </Page.DataContext>
     <Page.Resources>
+        <utils:BooleanToVisibilityConverter
+            x:Key="ReverseBooleanToVisibilityConverter"
+            True="Collapsed" False="Visible"/>
         <Style x:Key="radioButtonStyle" TargetType="{x:Type ListBox}" BasedOn="{StaticResource MahApps.Styles.ListBox}">
             <Setter Property="ItemContainerStyle">
                 <Setter.Value>
@@ -77,14 +81,14 @@
         <!--#endregion-->
 
         <!--#region 未登录状态 -->
-        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel Margin="0,60" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label Content="登录后即可畅玩Minecraft" Foreground="White" FontSize="26"/>
                 <Label Content="支持离线/正版/皮肤站/登录站等登录方式" Foreground="White" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
-              Visibility="{Binding IsNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
                         Content="离线登录" Padding="50,5" Margin="5" Command="{Binding OfflineLoginCmd}"/>

@@ -15,9 +15,6 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
-    <Page.DataContext>
-        <vm:MainPageViewModel/>
-    </Page.DataContext>
     <Page.Resources>
         <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
         <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
@@ -78,7 +75,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <vm:MainPageViewModel x:Key="mainpageVM"/>
     </Page.Resources>
+    <Page.DataContext>
+        <StaticResource ResourceKey="mainpageVM"/>
+    </Page.DataContext>
     <Grid>
         <controls:HamburgerMenu x:Name="HamburgerMenuControl" DockPanel.Dock="Left"
                           DisplayMode="CompactInline"
@@ -86,18 +87,25 @@
                           ItemInvoked="HamburgerMenuControl_OnItemInvoked"
                           ItemTemplate="{StaticResource MenuItemTemplate}"
                           OptionsItemTemplate="{StaticResource MenuItemTemplate}">
+
             <controls:HamburgerMenu.ItemsSource>
-                <CompositeCollection>
+                <controls:HamburgerMenuItemCollection>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=HomeSolid}" Label="开始游戏" NavigationDestination="Views/Pages/LaunchPage.xaml"/>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CubesSolid}" Label="仓库"/>
-                </CompositeCollection>
+                </controls:HamburgerMenuItemCollection>
             </controls:HamburgerMenu.ItemsSource>
             <controls:HamburgerMenu.OptionsItemsSource>
-                <CompositeCollection>
-                    <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CloudDownloadAltSolid}" Label="下载" NavigationDestination="Views/Pages/DownloadPage.xaml"/>
+                <controls:HamburgerMenuItemCollection>
+                    <itemUtils:MenuItem  Label="下载" NavigationDestination="Views/Pages/DownloadPage.xaml">
+                        <itemUtils:MenuItem.Icon>
+                            <controls:Badged Badge="{Binding DownloadTaskCount, Source={StaticResource mainpageVM}}" Padding="0,5">
+                                <iconPacks:FontAwesome Kind="CloudDownloadAltSolid"/>
+                            </controls:Badged>
+                        </itemUtils:MenuItem.Icon>
+                    </itemUtils:MenuItem>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CogSolid}" Label="设置" NavigationDestination="Views/Pages/SettingPage.xaml"/>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=UserSolid}" Label="用户" NavigationDestination="Views/Pages/UserPage.xaml"/>
-                </CompositeCollection>
+                </controls:HamburgerMenuItemCollection>
             </controls:HamburgerMenu.OptionsItemsSource>
         </controls:HamburgerMenu>
 

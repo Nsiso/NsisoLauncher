@@ -83,7 +83,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public void InitChart()
         {
-            SpeedValues = new ChartValues<double>(new List<double>(50));
+            SpeedValues = new ChartValues<double>(new double[50]);
             ChartSeries = new SeriesCollection() { new LineSeries()
             { Values = SpeedValues, PointGeometry = null, LineSmoothness = 0, Title = "下载速度" } };
         }
