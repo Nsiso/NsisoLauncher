@@ -52,7 +52,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                 Dictionary<string, string> originalData = Profile.GetData(IsClient);
                 if (originalData.Count != 0)
                 {
-                    Monitor.SetTotalSize(originalData.Count);
+                    Monitor.TotalSize = originalData.Count;
 
                     foreach (var item in originalData)
                     {
@@ -69,7 +69,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                         else
                         {
                             string target = temp + item.Value;
-                            Monitor.SetState(string.Format("Extracting:{0}", item.Value));
+                            Monitor.State = string.Format("Extracting:{0}", item.Value);
                             Data.Add(item.Key, target);
                         }
                     }
@@ -77,9 +77,9 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                 Data.Add("SIDE", IsClient ? "client" : "server");
                 Data.Add("MINECRAFT_JAR", minecraft);
 
-                Monitor.SetTotalSize(Processors.Count);
-                Monitor.SetDoneSize(0);
-                Monitor.SetState("Building Processors");
+                Monitor.TotalSize = Processors.Count;
+                Monitor.DoneSize = 0;
+                Monitor.State = "Building Processors";
 
                 foreach (var proc in Processors)
                 {
@@ -141,7 +141,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                         RedirectStandardOutput = true,
                         UseShellExecute = false
                     };
-                    Monitor.SetState(string.Format("执行安装器{0}", proc.Jar.Name));
+                    Monitor.State = string.Format("执行安装器{0}", proc.Jar.Name);
                     var result = System.Diagnostics.Process.Start(processStartInfo);
                     result.BeginOutputReadLine();
                     result.OutputDataReceived += Result_OutputDataReceived;

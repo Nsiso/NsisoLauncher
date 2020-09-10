@@ -187,9 +187,9 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">所使用的核心</param>
         /// <param name="version">要检查的版本</param>
         /// <returns>返回Key为路径，value为资源文件信息实例的集合</returns>
-        public static Dictionary<string, JAssetsInfo> GetLostAssets(LaunchHandler core, JAssets assets)
+        public static Dictionary<string, JAssetInfo> GetLostAssets(LaunchHandler core, JAssets assets)
         {
-            Dictionary<string, JAssetsInfo> lostAssets = new Dictionary<string, JAssetsInfo>();
+            Dictionary<string, JAssetInfo> lostAssets = new Dictionary<string, JAssetInfo>();
             if (assets == null)
             {
                 return lostAssets;
@@ -339,9 +339,8 @@ namespace NsisoLauncherCore.Util
         /// <param name="core"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public static List<DownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
+        public static IDownloadTask GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
         {
-            List<DownloadTask> tasks = new List<DownloadTask>();
             JAssets assets = null;
 
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
@@ -350,7 +349,7 @@ namespace NsisoLauncherCore.Util
                 if (ver.AssetIndex != null)
                 {
                     string jsonUrl = ver.AssetIndex.Url;
-                    tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
+                    return new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath);
                     //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
                     //string assetsJson = null;
                     //if (jsonRespond.IsSuccessStatusCode)
@@ -365,7 +364,7 @@ namespace NsisoLauncherCore.Util
                 }
                 else
                 {
-                    return tasks;
+                    return null;
                 }
             }
             else
@@ -373,12 +372,12 @@ namespace NsisoLauncherCore.Util
                 assets = core.GetAssets(ver);
             }
             var lostAssets = GetLostAssets(core, assets);
+            List<DownloadObject> downloadObjects = new List<DownloadObject>();
             foreach (var item in lostAssets)
             {
-                DownloadTask task = GetDownloadUri.GetAssetsDownloadTask(item.Value, core);
-                tasks.Add(task);
+                downloadObjects.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
             }
-            return tasks;
+            return new GroupDownloadTask("资源文件", downloadObjects, ver.AssetIndex.TotalSize);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace NsisoLauncher.ViewModels.Windows
 {
     public class DownloadWindowViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<DownloadTask> Tasks { get; private set; }
+        public ObservableCollection<IDownloadTask> Tasks { get; private set; }
 
         public double Percentage { get; set; }
 

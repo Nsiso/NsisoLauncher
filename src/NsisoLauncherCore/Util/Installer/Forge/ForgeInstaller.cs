@@ -63,7 +63,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             }
 
             //Extracting json
-            monitor.SetState("提取json");
+            monitor.State = "提取json";
             string jsonPath = PathManager.GetJsonPath(Options.GameRootPath, profile.Version);
             if (!Directory.Exists(Path.GetDirectoryName(jsonPath)))
             {
@@ -72,7 +72,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             File.Copy(tempPath + profile.Json, jsonPath, true);
 
             //Consider minecraft client jar
-            monitor.SetState("检查游戏文件");
+            monitor.State = "检查游戏文件";
             string clientTarget = PathManager.GetJarPath(Options.GameRootPath, profile.Minecraft);
             if (!File.Exists(PathManager.GetJsonPath(Options.GameRootPath, profile.Minecraft)))
             {

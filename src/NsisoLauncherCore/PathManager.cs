@@ -173,7 +173,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="assetsInfo">资源文件Obj</param>
         /// <returns></returns>
-        public static string GetAssetsPath(string gameRootPath, JAssetsInfo assetsInfo)
+        public static string GetAssetsPath(string gameRootPath, JAssetInfo assetsInfo)
         {
             return string.Format(@"{0}\assets\objects\{1}\{2}", gameRootPath, assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }

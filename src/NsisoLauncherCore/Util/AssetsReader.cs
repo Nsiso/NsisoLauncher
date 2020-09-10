@@ -47,10 +47,10 @@ namespace NsisoLauncherCore.Util
     public class JAssets
     {
         [JsonProperty("objects")]
-        public Dictionary<string, JAssetsInfo> Objects { get; set; }
+        public Dictionary<string, JAssetInfo> Objects { get; set; }
     }
 
-    public class JAssetsInfo : IDownloadable
+    public class JAssetInfo : IDownloadable
     {
         [JsonProperty("hash")]
         public string Hash { get; set; }

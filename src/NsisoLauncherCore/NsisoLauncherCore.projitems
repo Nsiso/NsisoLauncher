@@ -31,7 +31,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadSetting.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\GroupDownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\BmclApiBaseMirror.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\IDownloadableMirror.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\IFunctionalMirror.cs" />
@@ -145,10 +150,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Nide8API\APIModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\PhalAPI\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\PhalAPI\APIModules.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\ProgressCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ForgeInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ProtocolHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ServerInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\DownloadUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\MirrorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />

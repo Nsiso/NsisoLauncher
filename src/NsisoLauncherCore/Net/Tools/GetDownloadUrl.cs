@@ -52,7 +52,7 @@ namespace NsisoLauncherCore.Net.Tools
             }
         }
 
-        private static string GetAssetsBasePath(JAssetsInfo assetsInfo)
+        private static string GetAssetsBasePath(JAssetInfo assetsInfo)
         {
             return string.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
@@ -96,7 +96,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.Sha1))
             {
-                downloadTask.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.Sha1, FilePath = to };
+                downloadTask.DownloadObject.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.Sha1, FilePath = to };
             }
             return downloadTask;
         }
@@ -135,7 +135,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, lib.Value, to);
             if (lib.Value.LibDownloadInfo != null)
             {
-                task.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.Sha1, FilePath = to };
+                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.Sha1, FilePath = to };
             }
             return task;
         }
@@ -169,7 +169,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, native.Value, to);
             if (native.Value.NativeDownloadInfo != null)
             {
-                task.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.Sha1, FilePath = to };
+                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.Sha1, FilePath = to };
             }
             return task;
         }
@@ -179,7 +179,7 @@ namespace NsisoLauncherCore.Net.Tools
         /// </summary>
         /// <param name="assets">assets实例</param>
         /// <returns>下载URL</returns>
-        public static string GetAssetsDownloadURL(JAssetsInfo assets)
+        public static string GetAssetsDownloadURL(JAssetInfo assets)
         {
             return (MojangAssetsBaseUrl + GetAssetsBasePath(assets)).Replace('\\', '/');
         }
@@ -190,10 +190,22 @@ namespace NsisoLauncherCore.Net.Tools
         /// <param name="assets">assets实例</param>
         /// <param name="core">所使用的核心</param>
         /// <returns>下载任务</returns>
-        public static DownloadTask GetAssetsDownloadTask(JAssetsInfo assets, LaunchHandler core)
+        public static DownloadTask GetAssetsDownloadTask(JAssetInfo assets, LaunchHandler core)
         {
             string to = core.GetAssetsPath(assets);
             return new DownloadTask("游戏资源文件" + assets.Hash, assets, to);
+        }
+
+        /// <summary>
+        /// 获取assets下载任务
+        /// </summary>
+        /// <param name="assets">assets实例</param>
+        /// <param name="core">所使用的核心</param>
+        /// <returns>下载任务</returns>
+        public static DownloadObject GetAssetsDownloadObject(JAssetInfo assets, LaunchHandler core)
+        {
+            string to = core.GetAssetsPath(assets);
+            return new DownloadObject(assets, to);
         }
 
         /// <summary>

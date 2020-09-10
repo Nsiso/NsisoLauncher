@@ -37,15 +37,15 @@
                             <controls:MetroProgressBar
                                 VerticalAlignment="Center"
                                 Maximum="{Binding TotalSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                Value="{Binding DownloadSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Value="{Binding DownloadedSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                 Background="LightGray"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskFrom}" Binding="{Binding Path=UIFrom}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskReplaceFrom}" Binding="{Binding Path=UIReplaceFrom}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskOriginFrom}" Binding="{Binding Path=OriginFrom}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskTo}" Binding="{Binding Path=To}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskFrom}" Binding="{Binding Path=DisplayDownloadSourceName}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskReplaceFrom}" Binding="{Binding Path=DisplayFrom}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskOriginFrom}" Binding="{Binding Path=DisplayOriginFrom}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource String.Downloadwindow.TaskTo}" Binding="{Binding Path=DisplayTo}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
         <lvc:CartesianChart x:Name="plotter" LegendLocation="Right" Series="{Binding ChartSeries}" DisableAnimations="True"

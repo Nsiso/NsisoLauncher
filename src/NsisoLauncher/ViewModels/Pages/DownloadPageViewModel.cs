@@ -20,7 +20,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
 
 
-        public ObservableCollection<DownloadTask> Tasks { get; private set; }
+        public ObservableCollection<IDownloadTask> Tasks { get; private set; }
 
         public double Percentage { get; set; }
 

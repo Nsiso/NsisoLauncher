@@ -263,7 +263,7 @@ namespace NsisoLauncher.Views.Windows
                 new StringUrl(string.Format("{0}forge/download/{1}", functionalMirror.BaseUri, forge.Build)),
                 forgePath);
             IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
-            dt.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
+            dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
             {
                 try
                 {

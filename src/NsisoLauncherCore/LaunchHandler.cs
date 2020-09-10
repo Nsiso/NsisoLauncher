@@ -283,7 +283,7 @@ namespace NsisoLauncherCore
             return PathManager.GetAssetsIndexPath(GameRootPath, assetsID);
         }
 
-        public string GetAssetsPath(JAssetsInfo assetsInfo)
+        public string GetAssetsPath(JAssetInfo assetsInfo)
         {
             return PathManager.GetAssetsPath(GameRootPath, assetsInfo);
         }

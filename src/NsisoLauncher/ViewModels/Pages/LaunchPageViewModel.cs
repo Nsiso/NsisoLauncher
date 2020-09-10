@@ -599,7 +599,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 检查游戏完整
-                List<DownloadTask> losts = new List<DownloadTask>();
+                List<IDownloadTask> losts = new List<IDownloadTask>();
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
@@ -670,7 +670,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         case MessageDialogResult.Affirmative:
                             var lostAssets = FileHelper.GetLostAssetsDownloadTaskAsync(
                                 App.Handler, launchSetting.Version);
-                            losts.AddRange(lostAssets);
+                            losts.Add(lostAssets);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
                             App.Config.MainConfig.Environment.DownloadLostAssets = false;
