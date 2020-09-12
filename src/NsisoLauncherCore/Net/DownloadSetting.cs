@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NsisoLauncherCore.Net
+﻿namespace NsisoLauncherCore.Net
 {
     /// <summary>
     /// 下载设置

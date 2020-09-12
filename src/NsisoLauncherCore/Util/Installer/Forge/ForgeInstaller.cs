@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util.Installer.Forge.Actions;
 using NsisoLauncherCore.Util.Installer.Forge.Json;
 using System;

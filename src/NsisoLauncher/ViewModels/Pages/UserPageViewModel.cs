@@ -2,13 +2,10 @@
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;

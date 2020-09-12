@@ -1,11 +1,7 @@
 ﻿using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Net.Tools;
-using NsisoLauncherCore.Util.Checker;
-using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using static NsisoLauncherCore.Net.ProgressCallback;
 
 namespace NsisoLauncherCore.Net
 {

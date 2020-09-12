@@ -2,7 +2,6 @@
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
-using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
@@ -11,9 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;

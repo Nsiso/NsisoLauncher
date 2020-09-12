@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using NsisoLauncher.Utils;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Config;
 using NsisoLauncherCore.Net;

@@ -1,24 +1,12 @@
-﻿using ControlzEx.Theming;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncher.Config;
-using NsisoLauncher.ViewModels.Windows;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Util;
-using System;
+﻿using NsisoLauncher.Config;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace NsisoLauncher.Views.Pages

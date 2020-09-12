@@ -1,5 +1,4 @@
-﻿using NsisoLauncher.Utils;
-using NsisoLauncherCore.Modules;
+﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;

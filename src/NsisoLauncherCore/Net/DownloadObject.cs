@@ -1,8 +1,6 @@
 ﻿using NsisoLauncherCore.Util.Checker;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 
 namespace NsisoLauncherCore.Net

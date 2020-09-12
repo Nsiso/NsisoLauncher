@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using System;
 using System.Linq;
-using System.Windows;
 using System.Windows.Navigation;
 using MahApps.Metro.Controls;
 using MenuItem = MahAppsMetroHamburgerMenuNavigation.ViewModels.MenuItem;

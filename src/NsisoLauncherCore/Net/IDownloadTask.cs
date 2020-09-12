@@ -1,9 +1,5 @@
 ﻿using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Util.Checker;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

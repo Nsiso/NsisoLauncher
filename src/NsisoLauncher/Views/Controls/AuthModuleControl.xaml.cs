@@ -1,7 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
-using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Modules;
 using System.Collections.Generic;
 using System.Linq;

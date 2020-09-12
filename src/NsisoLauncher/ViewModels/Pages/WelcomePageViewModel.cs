@@ -1,6 +1,5 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Utils;
-using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Net;
