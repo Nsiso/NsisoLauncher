@@ -100,11 +100,6 @@ namespace NsisoLauncherCore.Net
         public int ProcessorSize { get; set; } = 3;
 
         /// <summary>
-        /// 网络代理
-        /// </summary>
-        public WebProxy Proxy { get; set; }
-
-        /// <summary>
         /// 是否检查文件HASH（如果可用）
         /// </summary>
         public bool CheckFileHash { get; set; }

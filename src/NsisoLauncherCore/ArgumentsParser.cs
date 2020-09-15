@@ -161,6 +161,25 @@ namespace NsisoLauncherCore
             {
                 otherGamearg.Append(' ' + setting.AdvencedGameArguments);
             }
+            if (setting.GameProxy != null)
+            {
+                if (!string.IsNullOrWhiteSpace(setting.GameProxy.ProxyHost))
+                {
+                    otherGamearg.AppendFormat(" --proxyHost {0}", setting.GameProxy.ProxyHost);
+                }
+                if (setting.GameProxy.ProxyPort != 0)
+                {
+                    otherGamearg.AppendFormat(" --proxyPort {0}", setting.GameProxy.ProxyHost);
+                }
+                if (!string.IsNullOrWhiteSpace(setting.GameProxy.ProxyUsername))
+                {
+                    otherGamearg.AppendFormat(" --proxyUser {0}", setting.GameProxy.ProxyUsername);
+                }
+                if (!string.IsNullOrWhiteSpace(setting.GameProxy.ProxyPassword))
+                {
+                    otherGamearg.AppendFormat(" --proxyPass {0}", setting.GameProxy.ProxyPassword);
+                }
+            }
             string gameArg = (ReplaceByDic(setting.Version.MinecraftArguments, gameArgDic) + otherGamearg.ToString())?.Trim();
 
             #endregion

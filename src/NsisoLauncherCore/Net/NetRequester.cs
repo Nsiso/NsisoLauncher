@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -18,6 +19,21 @@ namespace NsisoLauncherCore.Net
         /// NsisoLauncher目前版本号.
         /// </summary>
         public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
+
+        /// <summary>
+        /// 使用的代理服务
+        /// </summary>
+        public IWebProxy NetProxy
+        {
+            get
+            {
+                return ClientHandler.Proxy;
+            }
+            set
+            {
+                ClientHandler.Proxy = value;
+            }
+        }
 
         private HttpClient _client;
         /// <summary>

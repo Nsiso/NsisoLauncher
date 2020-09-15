@@ -474,22 +474,32 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 代理下载服务器地址
         /// </summary>
-        public string DownloadProxyAddress { get; set; }
+        public string ProxyHost { get; set; }
 
         /// <summary>
         /// 代理下载服务器端口
         /// </summary>
-        public ushort DownloadProxyPort { get; set; }
+        public ushort ProxyPort { get; set; }
 
         /// <summary>
         /// 代理服务器账号
         /// </summary>
-        public string ProxyUserName { get; set; }
+        public string ProxyUsername { get; set; }
 
         /// <summary>
         /// 代理服务器密码
         /// </summary>
-        public string ProxyUserPassword { get; set; }
+        public string ProxyPassword { get; set; }
+
+        /// <summary>
+        /// 游戏是否使用代理
+        /// </summary>
+        public bool IsGameUseProxy { get; set; }
+
+        /// <summary>
+        /// 启动器是否使用代理
+        /// </summary>
+        public bool IsLauncherUseProxy { get; set; }
 
         /// <summary>
         /// 下载后是否检查哈希值（前提为可用）
@@ -669,7 +679,18 @@ namespace NsisoLauncher.Config
 
         public Uuid GetSelectProfileUUID()
         {
-            return Profiles[SelectProfileUUID];
+            if (string.IsNullOrWhiteSpace(SelectProfileUUID))
+            {
+                return null;
+            }
+            if (Profiles.ContainsKey(SelectProfileUUID))
+            {
+                return Profiles[SelectProfileUUID];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void ClearAuthCache()

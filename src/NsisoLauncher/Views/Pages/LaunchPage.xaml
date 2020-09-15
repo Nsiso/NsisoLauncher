@@ -58,5 +58,16 @@
                 </StackPanel>
             </Button>
         </Grid>
+        <Grid  Grid.ColumnSpan="3" Grid.RowSpan="3" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}"
+               Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <controls:ProgressRing IsActive="{Binding IsLaunching}"/>
+                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" TextAlignment="Center"
+                           Margin="0,10,0,20"/>
+                <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding LogLine}" Foreground="White" Background="{DynamicResource MahApps.Brushes.Accent}" TextAlignment="Right"
+                       VerticalAlignment="Bottom" Padding="10,0"/>
+        </Grid>
     </Grid>
 </Page>

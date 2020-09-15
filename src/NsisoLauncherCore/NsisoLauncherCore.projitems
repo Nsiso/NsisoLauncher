@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Proxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />

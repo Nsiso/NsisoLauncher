@@ -259,18 +259,22 @@
                         </Expander>
                         <Expander Header="{StaticResource String.Settingwindow.Net.Proxy}" Margin="0,0,0,5">
                             <StackPanel>
+                                <Controls:ToggleSwitch Header="启动器使用网络代理" OnContent="开启" OffContent="关闭" Margin="0,0,0,5"
+                                                       IsOn="{Binding MainConfig.Net.IsLauncherUseProxy}"/>
+                                <Controls:ToggleSwitch Header="游戏使用网络代理" OnContent="开启" OffContent="关闭" Margin="0,0,0,20"
+                                                       IsOn="{Binding MainConfig.Net.IsGameUseProxy}"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Address}"/>
-                                <TextBox Text="{Binding MainConfig.Net.DownloadProxyAddress}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.ProxyHost}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Port}"/>
                                 <TextBox 
                                     PreviewTextInput="textBox1_PreviewTextInput"
                                     InputMethod.IsInputMethodEnabled="False"
-                                    Text="{Binding MainConfig.Net.DownloadProxyPort}" Width="60" HorizontalAlignment="Left" 
+                                    Text="{Binding MainConfig.Net.ProxyPort}" Width="60" HorizontalAlignment="Left" 
                                     Margin="0,0,0,5" MaxLength="6"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.User}"/>
-                                <TextBox Text="{Binding MainConfig.Net.ProxyUserName}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.ProxyUsername}" Margin="0,0,0,5"/>
                                 <Label Content="{StaticResource String.Settingwindow.Net.Proxy.Password}"/>
-                                <TextBox Text="{Binding MainConfig.Net.ProxyUserPassword}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding MainConfig.Net.ProxyPassword}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
                         <Expander Header="高级下载设置" Margin="0,0,0,5">

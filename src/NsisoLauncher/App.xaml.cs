@@ -193,22 +193,22 @@ namespace NsisoLauncher
             Requester.Client = NetHandler.Requester.Client;
             Requester.ClientName = NetHandler.Requester.ClientName;
             Requester.ClientVersion = NetHandler.Requester.ClientVersion;
+
+            if (Config.MainConfig.Net.IsLauncherUseProxy)
+            {
+                WebProxy proxy = new WebProxy(Config.MainConfig.Net.ProxyHost, Config.MainConfig.Net.ProxyPort);
+                if (!string.IsNullOrWhiteSpace(Config.MainConfig.Net.ProxyUsername))
+                {
+                    proxy.Credentials = new NetworkCredential(Config.MainConfig.Net.ProxyUsername, Config.MainConfig.Net.ProxyPassword);
+                }
+                NetHandler.Requester.NetProxy = proxy;
+            }
             #endregion
 
             #region 下载核心设置
             ServicePointManager.DefaultConnectionLimit = 10;
 
             Net downloadCfg = Config.MainConfig.Net;
-            if (!string.IsNullOrWhiteSpace(downloadCfg.DownloadProxyAddress))
-            {
-                WebProxy proxy = new WebProxy(downloadCfg.DownloadProxyAddress, downloadCfg.DownloadProxyPort);
-                if (!string.IsNullOrWhiteSpace(downloadCfg.ProxyUserName))
-                {
-                    NetworkCredential credential = new NetworkCredential(downloadCfg.ProxyUserName, downloadCfg.ProxyUserPassword);
-                    proxy.Credentials = credential;
-                }
-                NetHandler.Downloader.Proxy = proxy;
-            }
             NetHandler.Downloader.ProtocolType = Config.MainConfig.Net.DownloadProtocolType;
             NetHandler.Downloader.ProcessorSize = Config.MainConfig.Net.DownloadThreadsSize;
             NetHandler.Downloader.CheckFileHash = Config.MainConfig.Net.CheckDownloadFileHash;

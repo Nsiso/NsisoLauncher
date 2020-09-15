@@ -108,46 +108,5 @@
                 </controls:HamburgerMenuItemCollection>
             </controls:HamburgerMenu.OptionsItemsSource>
         </controls:HamburgerMenu>
-
-        <!--<Grid HorizontalAlignment="Right" Width="280" Background="White" Visibility="{Binding IsLaunching, Converter={StaticResource oppositeBooleanToVisibilityConverter}}">
-            <userControl:MainPanelControl Margin="10"
-                                          AuthNodesSource="{Binding AuthNodes, Mode=OneWay}" 
-                                          VersionsSource="{Binding Versions, Mode=OneWay}"
-                                          UsersSource="{Binding Users, Mode=OneWay}"
-                                          SelectedVersion="{Binding LaunchVersion, Mode=TwoWay}"
-                                          SelectedAuthNode="{Binding LaunchAuthNodePair, Mode=TwoWay}"
-                                          UserNameText="{Binding LaunchUserNameText, Mode=TwoWay}"
-                                          SelectedUserNode="{Binding LaunchUserPair, Mode=TwoWay}"
-                                          LaunchCommand="{Binding LaunchCmd}"
-                                          OpenDownloadingCommand="{Binding OpenDownloadingCmd}"
-                                          OpenSettingCommand="{Binding OpenSettingCmd}"
-                                          DownloadTaskCount="{Binding DownloadTaskCount}"
-                                          />
-        </Grid>-->
-        <!--<ToggleButton Width="40" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                      IsChecked="{Binding IsPlaying}"
-                      Visibility="{Binding HasAudio, ElementName=mediaElement, Converter={StaticResource BooleanToVisibilityConverter}}"
-                >
-            <iconPacks:FontAwesome Kind="VolumeUpSolid"/>
-        </ToggleButton>-->
-
-        <!--<Grid Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Rectangle>
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{Binding ElementName=bgGrid}"/>
-                </Rectangle.Fill>
-                <Rectangle.Effect>
-                    <BlurEffect Radius="20"/>
-                </Rectangle.Effect>
-            </Rectangle>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <controls:ProgressRing IsActive="{Binding IsLaunching}"/>
-                <TextBlock Text="{StaticResource String.Mainwindow.Launching}" Foreground="White" TextAlignment="Center"
-                           Margin="0,10,0,20"/>
-                <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}"/>
-            </StackPanel>
-            <TextBlock Text="{Binding LogLine}" Foreground="White" Background="{DynamicResource MahApps.Brushes.Accent}" TextAlignment="Right"
-                       VerticalAlignment="Bottom" Padding="10,0"/>
-        </Grid>-->
     </Grid>
 </Page>

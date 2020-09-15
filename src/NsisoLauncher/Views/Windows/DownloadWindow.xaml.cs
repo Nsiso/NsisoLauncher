@@ -91,7 +91,7 @@ namespace NsisoLauncher.Views.Windows
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (App.NetHandler.Downloader.Proxy != null)
+            if (App.NetHandler.Requester.NetProxy != null)
             {
                 this.ShowMessageAsync("您开启了下载代理", "请注意您现在正在使用代理进行下载，若代理设置异常可能会导致下载错误。");
             }

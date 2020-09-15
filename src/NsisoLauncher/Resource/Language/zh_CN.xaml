@@ -175,7 +175,7 @@
     <sys:String x:Key="String.Settingwindow.Net.FunctionSource">功能源</sys:String>
     <sys:String x:Key="String.Settingwindow.Net.Thread">下载线程设置</sys:String>
     <sys:String x:Key="String.Settingwindow.Net.Thread.Num">下载线程数量(最大10):</sys:String>
-    <sys:String x:Key="String.Settingwindow.Net.Proxy">下载代理</sys:String>
+    <sys:String x:Key="String.Settingwindow.Net.Proxy">网络代理</sys:String>
     <sys:String x:Key="String.Settingwindow.Net.Proxy.Address">代理服务器地址:</sys:String>
     <sys:String x:Key="String.Settingwindow.Net.Proxy.Port">代理服务器端口:</sys:String>
     <sys:String x:Key="String.Settingwindow.Net.Proxy.User">代理服务器账号:</sys:String>

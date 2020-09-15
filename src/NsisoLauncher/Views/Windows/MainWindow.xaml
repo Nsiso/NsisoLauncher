@@ -23,6 +23,7 @@
         </VisualBrush>
     </controls:MetroWindow.Background>
     <Frame NavigationUIVisibility="Hidden" x:Name="frame"/>
+    
 </controls:MetroWindow>
     
  

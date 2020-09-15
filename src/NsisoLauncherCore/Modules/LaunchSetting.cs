@@ -73,5 +73,10 @@ namespace NsisoLauncherCore.Modules
         /// 左下角信息
         /// </summary>
         public string VersionType { get; set; }
+
+        /// <summary>
+        /// 游戏使用的代理服务器
+        /// </summary>
+        public Proxy GameProxy { get; set; }
     }
 }

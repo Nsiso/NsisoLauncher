@@ -180,22 +180,6 @@ namespace NsisoLauncher.ViewModels.Pages
                 App.Config.MainConfig.History.LastLaunchTime = DateTime.Now;
                 #endregion
 
-                //#region 用户处理
-                //bool isNewUser = false;
-                //UserNode launchUser = null;
-                //if (LaunchUserPair != null)
-                //{
-                //    isNewUser = false;
-                //    launchUser = LaunchUserPair?.Value;
-                //}
-                //else
-                //{
-                //    isNewUser = true;
-                //    launchUser = new UserNode() { UserName = LaunchUserNameText };
-                //    //undo: to add new user support
-                //}
-                //#endregion
-
                 LaunchSetting launchSetting = new LaunchSetting()
                 {
                     Version = LaunchVersion,
@@ -708,6 +692,16 @@ namespace NsisoLauncher.ViewModels.Pages
                 launchSetting.GCEnabled = App.Config.MainConfig.Environment.GCEnabled;
                 launchSetting.GCType = App.Config.MainConfig.Environment.GCType;
                 launchSetting.JavaAgent += App.Config.MainConfig.Environment.JavaAgent;
+                if (App.Config.MainConfig.Net.IsGameUseProxy)
+                {
+                    launchSetting.GameProxy = new Proxy()
+                    {
+                        ProxyHost = App.Config.MainConfig.Net.ProxyHost,
+                        ProxyPort = App.Config.MainConfig.Net.ProxyPort,
+                        ProxyUsername = App.Config.MainConfig.Net.ProxyUsername,
+                        ProxyPassword = App.Config.MainConfig.Net.ProxyPassword
+                    };
+                }
                 if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
                 {
                     launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(), launchAuthNode.Property["nide8ID"]);
