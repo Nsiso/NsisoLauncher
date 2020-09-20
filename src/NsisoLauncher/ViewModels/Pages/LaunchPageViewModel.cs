@@ -51,10 +51,10 @@ namespace NsisoLauncher.ViewModels.Pages
         /// </summary>	
         public string LogLine { get; set; }
 
-        /// <summary>	
-        /// 是否在启动	
-        /// </summary>	
-        public bool IsLaunching { get; set; } = false;
+        /// <summary>
+        /// 游戏是否在启动
+        /// </summary>
+        public bool IsLaunching { get; set; }
 
         public ObservableCollection<Version> Versions { get; }
 
@@ -72,6 +72,11 @@ namespace NsisoLauncher.ViewModels.Pages
             if (App.MainWindowVM != null)
             {
                 MainWindowVM = App.MainWindowVM;
+            }
+            if (App.LaunchSignal != null)
+            {
+                App.LaunchSignal.PropertyChanged += LaunchSignal_PropertyChanged;
+                this.IsLaunching = App.LaunchSignal.IsLaunching;
             }
             User = App.Config?.MainConfig?.User;
             if (User != null)
@@ -115,6 +120,14 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     SelectedLaunchVersionId = App.Config.MainConfig.History.LastLaunchVersion;
                 }
+            }
+        }
+
+        private void LaunchSignal_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsLaunching")
+            {
+                this.IsLaunching = App.LaunchSignal.IsLaunching;
             }
         }
 
@@ -187,7 +200,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 };
 
                 //标记控件状态启动中
-                IsLaunching = true;
+                App.LaunchSignal.IsLaunching = true;
 
                 #region 验证
                 AuthenticationNode launchAuthNode = null;
@@ -838,7 +851,7 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             finally
             {
-                IsLaunching = false;
+                App.LaunchSignal.IsLaunching = false;
             }
         }
 

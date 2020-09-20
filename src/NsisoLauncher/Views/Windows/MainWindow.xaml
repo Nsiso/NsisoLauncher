@@ -22,6 +22,16 @@
             </VisualBrush.Visual>
         </VisualBrush>
     </controls:MetroWindow.Background>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <controls:Flyout IsOpen="{Binding IsLaunching}" Position="Top" CloseButtonVisibility="Collapsed" Margin="200,0" Height="50">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                    <controls:ProgressRing Width="30" IsActive="{Binding IsLaunching}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="游戏正在启动中..." VerticalAlignment="Center"/>
+                </StackPanel>
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
     <Frame NavigationUIVisibility="Hidden" x:Name="frame"/>
     
 </controls:MetroWindow>

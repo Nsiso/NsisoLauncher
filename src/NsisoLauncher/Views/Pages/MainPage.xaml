@@ -82,7 +82,6 @@
     </Page.DataContext>
     <Grid>
         <controls:HamburgerMenu x:Name="HamburgerMenuControl" DockPanel.Dock="Left"
-                          DisplayMode="CompactInline"
                           IsPaneOpen="False"
                           ItemInvoked="HamburgerMenuControl_OnItemInvoked"
                           ItemTemplate="{StaticResource MenuItemTemplate}"

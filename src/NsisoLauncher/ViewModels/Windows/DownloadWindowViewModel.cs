@@ -41,7 +41,7 @@ namespace NsisoLauncher.ViewModels.Windows
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
-            if (App.NetHandler.Downloader != null)
+            if (App.NetHandler?.Downloader != null)
             {
                 Tasks = App.NetHandler.Downloader.ViewDownloadTasks;
                 App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;

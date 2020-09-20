@@ -49,6 +49,11 @@ namespace NsisoLauncher
         /// </summary>
         public static NetHandler NetHandler { get; set; }
 
+        /// <summary>
+        /// 游戏启动信号
+        /// </summary>
+        public static LaunchSignal LaunchSignal { get; set; }
+
         #region 全局数据属性
 
         /// <summary>
@@ -266,6 +271,8 @@ namespace NsisoLauncher
             }
             #endregion
             #endregion
+
+            LaunchSignal = new LaunchSignal();
 
             MainWindow mainwindow = new MainWindow();
             if (Config.MainConfig.Launcher.LauncherWindowSize != null)

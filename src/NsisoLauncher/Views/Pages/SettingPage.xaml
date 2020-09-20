@@ -20,6 +20,14 @@
         <util:ComparisonConverter x:Key="comparisonConverter"/>
         <util:StringToIntConverter x:Key="StringToIntConverter" />
         <!--#endregion-->
+
+        <Ellipse x:Key="AppThemeIcon"
+                     Width="16"
+                     Height="16"
+                     x:Shared="False"
+                     Fill="{Binding ColorBrush, Mode=OneWay}"
+                     Stroke="{Binding BorderColorBrush, Mode=OneWay}"
+                     StrokeThickness="1" />
     </Page.Resources>
     <Page.DataContext>
         <vm:SettingPageViewModel/>
@@ -410,12 +418,38 @@
                                 <Label Content="启动器主题颜色:"/>
 
                                 <ComboBox x:Name="AccentColorComboBox"
-                                          SelectedItem="{Binding MainConfig.Customize.AccentColor}" HorizontalAlignment="Left" Width="200"
-                                          ItemsSource="{Binding ColorSchemes}"/>
+                                          SelectedValue="{Binding MainConfig.Customize.AccentColor}" HorizontalAlignment="Left" Width="200"
+                                          SelectedValuePath="Name"
+                                          ItemsSource="{Binding ColorSchemes}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="5,3">
+                                                <Ellipse
+                                                    Width="16"
+                                                    Height="16"
+                                                    Fill="{Binding ColorBrush, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding Name}" Margin="5,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                                 <Label Content="启动器主题:"/>
                                 <ComboBox x:Name="appThmeComboBox"
-                                          SelectedItem="{Binding MainConfig.Customize.AppTheme}" HorizontalAlignment="Left" Width="200"
-                                          ItemsSource="{Binding BaseColors}"/>
+                                          SelectedValue="{Binding MainConfig.Customize.AppTheme}" HorizontalAlignment="Left" Width="200"
+                                          SelectedValuePath="Name"
+                                          ItemsSource="{Binding BaseColors}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="5,3">
+                                                <Ellipse
+                                                    Width="16"
+                                                    Height="16"
+                                                    Fill="{Binding ColorBrush, Mode=OneWay}" />
+                                                <TextBlock Text="{Binding Name}" Margin="5,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                             </StackPanel>
                         </Expander>
 

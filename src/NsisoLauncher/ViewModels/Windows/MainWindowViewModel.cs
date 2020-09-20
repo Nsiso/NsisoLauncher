@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncherCore;
+using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -38,6 +39,11 @@ namespace NsisoLauncher.ViewModels.Windows
         /// </summary>
         private readonly IDialogCoordinator instance;
 
+        /// <summary>
+        /// 启动中信号
+        /// </summary>
+        public bool IsLaunching { get; set; }
+
         #region ElementsState
 
         public double Volume { get; set; } = 0.5;
@@ -59,6 +65,19 @@ namespace NsisoLauncher.ViewModels.Windows
             {
                 App.Handler.GameExit += Handler_GameExit;
                 _ = CustomizeRefresh();
+            }
+            if (App.LaunchSignal != null)
+            {
+                App.LaunchSignal.PropertyChanged += LaunchSignal_PropertyChanged;
+                this.IsLaunching = App.LaunchSignal.IsLaunching;
+            }
+        }
+
+        private void LaunchSignal_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsLaunching")
+            {
+                this.IsLaunching = App.LaunchSignal.IsLaunching;
             }
         }
 

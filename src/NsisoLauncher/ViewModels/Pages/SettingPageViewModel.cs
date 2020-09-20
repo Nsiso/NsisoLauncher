@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.ViewModels.Pages
@@ -22,8 +24,14 @@ namespace NsisoLauncher.ViewModels.Pages
     {
         MainWindowViewModel mainWindowVM;
 
-        public ReadOnlyObservableCollection<string> ColorSchemes { get; set; } = ThemeManager.Current.ColorSchemes;
-        public ReadOnlyObservableCollection<string> BaseColors { get; set; } = ThemeManager.Current.BaseColors;
+        public IEnumerable<AccentColorData> ColorSchemes { get; set; } = ThemeManager.Current.Themes
+                                            .GroupBy(x => x.ColorScheme)
+                                            .OrderBy(a => a.Key)
+                                            .Select(a => new AccentColorData { Name = a.Key, ColorBrush = a.First().ShowcaseBrush });
+        public IEnumerable<AppThemeData> BaseColors { get; set; } = ThemeManager.Current.Themes
+                                         .GroupBy(x => x.BaseColorScheme)
+                                         .Select(x => x.First())
+                                         .Select(a => new AppThemeData() { Name = a.BaseColorScheme, BorderColorBrush = a.Resources["MahApps.Brushes.ThemeForeground"] as Brush, ColorBrush = a.Resources["MahApps.Brushes.ThemeBackground"] as Brush });
         public string LauncherVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public ObservableCollection<Java> Javas { get; set; }
@@ -257,4 +265,16 @@ namespace NsisoLauncher.ViewModels.Pages
 
 
     }
+
+    public class AccentColorData
+    {
+        public string Name { get; set; }
+
+        public Brush BorderColorBrush { get; set; }
+
+        public Brush ColorBrush { get; set; }
+    }
+
+    public class AppThemeData : AccentColorData
+    { }
 }
