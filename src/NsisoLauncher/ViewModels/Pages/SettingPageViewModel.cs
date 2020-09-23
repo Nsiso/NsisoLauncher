@@ -2,6 +2,7 @@
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -55,6 +57,10 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ICommand RefreshVersionListCmd { get; set; }
 
+        public ICommand OpenImageDirCmd { get; set; }
+        public ICommand OpenMusicDirCmd { get; set; }
+        public ICommand OpenVideoDirCmd { get; set; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -91,6 +97,18 @@ namespace NsisoLauncher.ViewModels.Pages
             RefreshVersionListCmd = new DelegateCommand(async (a) =>
             {
                 await App.RefreshVersionListAsync();
+            });
+            OpenImageDirCmd = new DelegateCommand((a) =>
+            {
+                Process.Start(PathManager.ImageDirectory);
+            });
+            OpenMusicDirCmd = new DelegateCommand((a) =>
+            {
+                Process.Start(PathManager.MusicDirectory);
+            });
+            OpenVideoDirCmd = new DelegateCommand((a) =>
+            {
+                Process.Start(PathManager.VideoDirectory);
             });
             PropertyChanged += SettingPageViewModel_PropertyChanged;
         }

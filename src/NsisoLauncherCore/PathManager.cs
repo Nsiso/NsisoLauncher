@@ -1,6 +1,7 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
+using System.IO;
 
 namespace NsisoLauncherCore
 {
@@ -39,7 +40,39 @@ namespace NsisoLauncherCore
             }
         }
 
+        public static string ConfigDirectory { get => BaseStorageDirectory + "\\Config"; }
+
         public static string TempDirectory { get => BaseStorageDirectory + "\\temp"; }
+
+        public static string ImageDirectory { get => BaseStorageDirectory + "\\Image"; }
+
+        public static string MusicDirectory { get => BaseStorageDirectory + "\\Music"; }
+
+        public static string VideoDirectory { get => BaseStorageDirectory + "\\Video"; }
+
+        public static void InitLauncherDirectory()
+        {
+            if (!Directory.Exists(BaseStorageDirectory))
+            {
+                Directory.CreateDirectory(BaseStorageDirectory);
+            }
+            if (!Directory.Exists(ConfigDirectory))
+            {
+                Directory.CreateDirectory(ConfigDirectory);
+            }
+            if (!Directory.Exists(ImageDirectory))
+            {
+                Directory.CreateDirectory(ImageDirectory);
+            }
+            if (!Directory.Exists(MusicDirectory))
+            {
+                Directory.CreateDirectory(MusicDirectory);
+            }
+            if (!Directory.Exists(VideoDirectory))
+            {
+                Directory.CreateDirectory(VideoDirectory);
+            }
+        }
 
         #region 启动器路径处理
         /// <summary>

@@ -48,9 +48,9 @@ namespace NsisoLauncher.ViewModels.Windows
 
         public double Volume { get; set; } = 0.5;
 
-        public string StaticMediaSource { get; set; } = /*@"C:\Users\nsiso\Desktop\a.jpg"*/"../../Resource/home-hero-1200x600.jpg";
+        public string ImageSource { get; set; } = "../../Resource/home-hero-1200x600.jpg";
 
-        public string MediaSource { get; set; }/* = @"C:\Users\nsiso\Desktop\ME\mp4\view.mp4";*/
+        public string MediaSource { get; set; }
 
         public bool IsPlaying { get; set; } = true;
         #endregion
@@ -64,7 +64,11 @@ namespace NsisoLauncher.ViewModels.Windows
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;
-                _ = CustomizeRefresh();
+                
+            }
+            if (App.Config?.MainConfig?.Customize != null)
+            {
+                CustomizeRefresh();
             }
             if (App.LaunchSignal != null)
             {
@@ -160,22 +164,70 @@ namespace NsisoLauncher.ViewModels.Windows
             return await instance.ShowInputAsync(this, title, msg, settings);
         }
 
-        private async Task CustomizeRefresh()
+        private void CustomizeRefresh()
         {
+            //自定义窗口标题
             if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.LauncherTitle))
             {
                 this.WindowTitle = App.Config.MainConfig.Customize.LauncherTitle;
             }
+
+            //自定义窗口背景图片
             if (App.Config.MainConfig.Customize.CustomBackGroundPicture)
             {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgpic_?.png");
-                if (files.Count() != 0)
+                if (Directory.Exists(PathManager.ImageDirectory))
                 {
-                    Random random = new Random();
-                    MediaSource = files[random.Next(files.Count())];
-                    //ImageBrush brush = new ImageBrush(new BitmapImage(new Uri()))
-                    //{ TileMode = TileMode.FlipXY, AlignmentX = AlignmentX.Right, Stretch = Stretch.UniformToFill };
-                    //this.Background = brush;
+                    string[] files = Directory.GetFiles(PathManager.ImageDirectory);
+                    if (files.Count() != 0)
+                    {
+                        Random random = new Random();
+                        ImageSource = files[random.Next(files.Count())];
+                    }
+                }
+            }
+
+            //自定义背景视频（覆盖音乐设置）
+            if (App.Config.MainConfig.Customize.CustomBackGroundVideo)
+            {
+                if (Directory.Exists(PathManager.VideoDirectory))
+                {
+                    string[] files = Directory.GetFiles(PathManager.VideoDirectory);
+                    if (files.Count() != 0)
+                    {
+                        Random random = new Random();
+                        MediaSource = files[random.Next(files.Count())];
+                        Volume = 0.5;
+                    }
+                }
+            }
+            //自定义背景音乐
+            else if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
+            {
+                if (Directory.Exists(PathManager.MusicDirectory))
+                {
+                    string[] files = Directory.GetFiles(PathManager.MusicDirectory);
+                    if (files.Count() != 0)
+                    {
+                        Random random = new Random();
+                        MediaSource = files[random.Next(files.Count())];
+                        Volume = 0.5;
+                        //Volume = 0;
+                        //await Task.Factory.StartNew(() =>
+                        //{
+                        //    try
+                        //    {
+                        //        for (int i = 0; i < 10; i++)
+                        //        {
+                        //            Volume += 0.05;
+                        //            Thread.Sleep(50);
+                        //        }
+                        //    }
+                        //    catch (Exception)
+                        //    {
+                        //        //可忽略的错误
+                        //    }
+                        //});
+                    }
                 }
             }
 
@@ -217,31 +269,6 @@ namespace NsisoLauncher.ViewModels.Windows
             //    serverInfoControl.SetServerInfo(App.Config.MainConfig.Server);
             //}
 
-            if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
-            {
-                string[] files = Directory.GetFiles(Path.GetDirectoryName(App.Config.MainConfigPath), "bgmusic_?.mp3");
-                if (files.Count() != 0)
-                {
-                    Random random = new Random();
-                    MediaSource = files[random.Next(files.Count())];
-                    Volume = 0;
-                    await Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            for (int i = 0; i < 50; i++)
-                            {
-                                Volume += 0.01;
-                                Thread.Sleep(50);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            //可忽略的错误
-                        }
-                    });
-                }
-            }
 
         }
 

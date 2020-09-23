@@ -581,6 +581,11 @@ namespace NsisoLauncher.Config
         public bool CustomBackGroundMusic { get; set; }
 
         /// <summary>
+        /// 是否使用自定义背景视频
+        /// </summary>
+        public bool CustomBackGroundVideo { get; set; }
+
+        /// <summary>
         /// 主题颜色
         /// </summary>
         public string AccentColor { get; set; }

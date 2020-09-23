@@ -62,6 +62,10 @@ namespace NsisoLauncher.Config
             {
                 NoAccessWarning(e);
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "启动器配置文件读写错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
         }
 
@@ -87,6 +91,10 @@ namespace NsisoLauncher.Config
             catch (System.Security.SecurityException e)
             {
                 NoAccessWarning(e);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "启动器文件读写错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -122,6 +130,10 @@ namespace NsisoLauncher.Config
             {
                 NoAccessWarning(e);
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "启动器文件读写错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             finally
             {
                 mainconfigLock.ExitReadLock();
@@ -150,6 +162,10 @@ namespace NsisoLauncher.Config
             catch (System.Security.SecurityException e)
             {
                 NoAccessWarning(e);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "启动器文件读写错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

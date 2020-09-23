@@ -102,7 +102,28 @@ namespace NsisoLauncher
             }
             #endregion
 
-            Config = new ConfigHandler();
+            #region 路径/配置文件初始化
+            try
+            {
+                //启动器运行时文件夹初始化
+                PathManager.InitLauncherDirectory();
+
+                //启动器配置文件初始化
+                Config = new ConfigHandler();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                NoAccessWarning(ex);
+            }
+            catch (System.Security.SecurityException ex)
+            {
+                NoAccessWarning(ex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "启动器路径/配置文件初始化错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            #endregion
 
             #region DEBUG初始化（基于配置文件）
             if (Config.MainConfig.Launcher.Debug && !e.Args.Contains("-debug"))
@@ -353,6 +374,21 @@ namespace NsisoLauncher
             foreach (var item in list)
             {
                 VersionList.Add(item);
+            }
+        }
+
+        private static void NoAccessWarning(Exception e)
+        {
+            var result = MessageBox.Show("启动器无法正常读/写配置文件。\n" +
+                    "这可能是由于您将启动器放置在系统敏感目录（如C盘，桌面等系统关键位置）\n" +
+                    "或您没有足够的系统操作权限而导致系统自我保护机制，禁止启动器读写文件。\n" +
+                    "是否以管理员模式运行启动器？若拒绝则请自行移动到有权限的路径运行。\n" +
+                    "详细信息:\n" +
+                    e.ToString(),
+                    "启动器权限不足", MessageBoxButton.YesNo, MessageBoxImage.Error);
+            if (result == MessageBoxResult.Yes)
+            {
+                App.Reboot(true);
             }
         }
     }

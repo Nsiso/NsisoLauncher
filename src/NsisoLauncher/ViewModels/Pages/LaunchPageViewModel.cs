@@ -831,15 +831,6 @@ namespace NsisoLauncher.ViewModels.Pages
                     }
                     if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
                     {
-                        App.MainWindowVM.Volume = 0.5;
-                        await Task.Run(() =>
-                        {
-                            for (int i = 0; i < 50; i++)
-                            {
-                                App.MainWindowVM.Volume -= 0.01;
-                                Thread.Sleep(50);
-                            }
-                        });
                         App.MainWindowVM.MediaSource = null;
                     }
                 }

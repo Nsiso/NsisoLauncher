@@ -5,10 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
-        xmlns:util="clr-namespace:NsisoLauncher.Utils"
-        xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
-        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+       xmlns:util="clr-namespace:NsisoLauncher.Utils"
+       xmlns:mainConfig="clr-namespace:NsisoLauncher.Config"
+       xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
         xmlns:net="clr-namespace:NsisoLauncherCore.Net" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
@@ -455,10 +455,31 @@
 
                         <Expander Header="启动器背景元素设置" Margin="0,0,0,5">
                             <StackPanel>
-                                <CheckBox x:Name="checkBox1" Content="开启自定义背景图片" IsChecked="{Binding MainConfig.Customize.CustomBackGroundPicture}" Margin="0,0,0,2"/>
-                                <CheckBox x:Name="checkBox2" Content="开启自定义背景音乐" IsChecked="{Binding MainConfig.Customize.CustomBackGroundMusic}" Margin="0,0,0,2"/>
+                                <StackPanel>
+                                    <Controls:ToggleSwitch Header="自定义背景图片"
+                                                           OnContent="开" OffContent="关"
+                                                           IsOn="{Binding MainConfig.Customize.CustomBackGroundPicture}"/>
+                                    <Button Content="打开自定义背景图片文件夹" Command="{Binding OpenImageDirCmd}"/>
+                                    <Label Content="*自定义背景图片文件夹为启动器目录下的NsisoLauncher/Image（支持的图片格式：.jpg .png .bmp .gif）"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,10,0,0">
+                                    <Controls:ToggleSwitch Header="自定义背景音乐"
+                                                           OnContent="开" OffContent="关"
+                                                           IsOn="{Binding MainConfig.Customize.CustomBackGroundMusic}"/>
+                                    <Button Content="打开自定义背景音乐文件夹" Command="{Binding OpenMusicDirCmd}"/>
+                                    <Label Content="*自定义背景音乐文件夹为启动器目录下的NsisoLauncher/Music（支持的音乐格式：.mp3）"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,10,0,0">
+                                    <Controls:ToggleSwitch Header="自定义背景视频"
+                                                           OnContent="开" OffContent="关"
+                                                           IsOn="{Binding MainConfig.Customize.CustomBackGroundVideo}"/>
+                                    <Button Content="打开自定义背景视频文件夹" Command="{Binding OpenVideoDirCmd}"/>
+                                    <Label Content="*自定义背景视频文件夹为启动器目录下的NsisoLauncher/Video（支持大部分windows支持的视频格式）"/>
+                                    <Label Content="*因为视频自带图像和音频，所以背景视频设置大部分情况将会覆盖背景音乐和背景图片设置"/>
+                                </StackPanel>
                                 <Label Content="*自定义方法请查看启动器教程文档"/>
                             </StackPanel>
+
                         </Expander>
 
                         <Expander Header="启动器初始窗口大小" Margin="0,0,0,5">

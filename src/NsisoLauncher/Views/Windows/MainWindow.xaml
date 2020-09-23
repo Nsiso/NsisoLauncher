@@ -16,7 +16,7 @@
         <VisualBrush Stretch="UniformToFill">
             <VisualBrush.Visual>
                 <Grid>
-                    <Image Source="{Binding StaticMediaSource}"/>
+                    <Image Source="{Binding ImageSource}"/>
                     <MediaElement Volume="{Binding Volume}" Source="{Binding MediaSource}" Stretch="UniformToFill"/>
                 </Grid>
             </VisualBrush.Visual>
