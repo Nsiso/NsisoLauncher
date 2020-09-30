@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.ViewModels.Windows;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,9 +20,9 @@ namespace NsisoLauncher.Views.Dialogs
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<Uuid> Profiles { get; set; }
-        public Uuid SelectedProfile { get; set; }
-        public ChooseProfileDialog(MainWindowViewModel vm, List<Uuid> profiles)
+        public List<PlayerProfile> Profiles { get; set; }
+        public PlayerProfile SelectedProfile { get; set; }
+        public ChooseProfileDialog(MainWindowViewModel vm, List<PlayerProfile> profiles)
         {
             instance = vm;
             Profiles = profiles;

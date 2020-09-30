@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net.MojangApi;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,9 +20,9 @@ namespace NsisoLauncherCore.Auth
 
         public string AccessToken { get; set; }
 
-        public List<Uuid> Profiles { get; set; }
+        public List<PlayerProfile> Profiles { get; set; }
 
-        public Uuid SelectedProfileUUID { get; set; }
+        public PlayerProfile SelectedProfile { get; set; }
 
         public UserData UserData { get; set; }
 

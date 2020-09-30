@@ -37,7 +37,7 @@ namespace NsisoLauncherCore.Auth
                     return new AuthenticateResult(AuthState.SUCCESS)
                     {
                         AccessToken = result.AccessToken,
-                        SelectedProfileUUID = result.SelectedProfile,
+                        SelectedProfile = result.SelectedProfile,
                         UserData = result.User,
                         Profiles = result.AvailableProfiles
                     };
@@ -84,10 +84,6 @@ namespace NsisoLauncherCore.Auth
 
         public List<string> AuthArgs { get; set; }
 
-        public Uuid SelectedProfileUUID { get; set; }
-
-        public UserData UserData { get; set; }
-
         public async Task<AuthenticateResult> DoAuthenticateAsync()
         {
             try
@@ -104,7 +100,9 @@ namespace NsisoLauncherCore.Auth
                 var result = await validate.PerformRequestAsync();
                 if (result.IsSuccess)
                 {
-                    return new AuthenticateResult(AuthState.SUCCESS) { AccessToken = this.AccessToken, UserData = this.UserData, SelectedProfileUUID = this.SelectedProfileUUID };
+                    return new AuthenticateResult(AuthState.SUCCESS) { 
+                        AccessToken = this.AccessToken
+                    };
                 }
                 else
                 {
@@ -130,9 +128,7 @@ namespace NsisoLauncherCore.Auth
                     }
                     return new AuthenticateResult(state)
                     {
-                        AccessToken = AccessToken = this.AccessToken,
-                        UserData = this.UserData,
-                        SelectedProfileUUID = this.SelectedProfileUUID,
+                        AccessToken = this.AccessToken,
                         Error = refreshResult.Error
                     };
                 }
@@ -142,18 +138,18 @@ namespace NsisoLauncherCore.Auth
                 return new AuthenticateResult(AuthState.ERR_INSIDE)
                 {
                     Error = new Net.MojangApi.Error() { ErrorMessage = ex.Message, Exception = ex },
-                    AccessToken = AccessToken = this.AccessToken,
-                    UserData = this.UserData,
-                    SelectedProfileUUID = this.SelectedProfileUUID
+                    AccessToken = this.AccessToken
                 };
             }
         }
 
-        public YggdrasilTokenAuthenticator(string token, Uuid selectedProfileUUID, UserData userData)
+        public YggdrasilTokenAuthenticator(string token)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException("The YggTokenAuthcator's ctor accesstoken argument is null");
+            }
             this.AccessToken = token;
-            this.SelectedProfileUUID = selectedProfileUUID;
-            this.UserData = userData;
         }
     }
 }

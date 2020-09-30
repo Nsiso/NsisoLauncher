@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
@@ -9,12 +10,12 @@ namespace NsisoLauncherCore.Auth
     {
         public string Displayname { get; set; }
         public UserData UserData { get; set; }
-        public Uuid ProfileUUID { get; set; }
+        public PlayerProfile ProfileUUID { get; set; }
 
         public OfflineAuthenticator(string displayname)
         {
             this.Displayname = displayname;
-            this.ProfileUUID = new Uuid()
+            this.ProfileUUID = new PlayerProfile()
             {
                 PlayerName = Displayname,
                 Value = Guid.NewGuid().ToString("N")
@@ -29,7 +30,7 @@ namespace NsisoLauncherCore.Auth
         {
             this.Displayname = displayname;
             this.UserData = userData;
-            this.ProfileUUID = new Uuid()
+            this.ProfileUUID = new PlayerProfile()
             {
                 PlayerName = Displayname,
                 Value = profileUUID
@@ -40,7 +41,7 @@ namespace NsisoLauncherCore.Auth
         {
             string accessToken = Guid.NewGuid().ToString("N");
 
-            return new AuthenticateResult(AuthState.SUCCESS) { AccessToken = accessToken, SelectedProfileUUID = this.ProfileUUID, UserData = this.UserData };
+            return new AuthenticateResult(AuthState.SUCCESS) { AccessToken = accessToken, SelectedProfile = this.ProfileUUID, UserData = this.UserData };
         }
 
         public async Task<AuthenticateResult> DoAuthenticateAsync()

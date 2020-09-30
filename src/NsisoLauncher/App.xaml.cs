@@ -47,12 +47,12 @@ namespace NsisoLauncher
         /// <summary>
         /// 网络处理类
         /// </summary>
-        public static NetHandler NetHandler { get; set; }
+        public static NetHandler NetHandler { get; private set; }
 
         /// <summary>
         /// 游戏启动信号
         /// </summary>
-        public static LaunchSignal LaunchSignal { get; set; }
+        public static LaunchSignal LaunchSignal { get; private set; }
 
         #region 全局数据属性
 
@@ -65,6 +65,12 @@ namespace NsisoLauncher
         /// 版本
         /// </summary>
         public static ObservableCollection<Version> VersionList { get; private set; }
+
+        /// <summary>
+        /// 登录的用户
+        /// </summary>
+        public static UserNode LogedInUser { get; set; }
+
         #endregion
         #endregion
 

@@ -12,7 +12,7 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 验证器
         /// </summary>
-        public AuthenticateResult AuthenticateResult { get; set; }
+        public User LaunchUser { get; set; }
 
         /// <summary>
         /// 是否启动垃圾回收，默认开启

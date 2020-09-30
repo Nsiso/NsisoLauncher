@@ -123,7 +123,7 @@ namespace NsisoLauncher.Views.Pages
             node.AccessToken = null;
             node.Profiles = null;
             node.UserData = null;
-            node.SelectProfileUUID = null;
+            node.SelectedProfileUuid = null;
             await this.ShowMessageAsync("重置用户成功", "请保存以生效");
         }
 

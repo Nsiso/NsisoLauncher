@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 
@@ -15,7 +16,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         /// <summary>
         /// 玩家UUID.
         /// </summary>
-        public Uuid Uuid { get; internal set; }
+        public PlayerProfile Uuid { get; internal set; }
 
         /// <summary>
         /// 玩家的profile属性

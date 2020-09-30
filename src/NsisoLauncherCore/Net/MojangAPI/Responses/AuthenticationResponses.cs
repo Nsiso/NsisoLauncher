@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 
@@ -28,96 +29,17 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         /// <summary>
         /// 可用profile的列表
         /// </summary>
-        public List<Uuid> AvailableProfiles { get; internal set; }
+        public List<PlayerProfile> AvailableProfiles { get; internal set; }
 
         /// <summary>
         /// 用户选择的最后一个profile
         /// </summary>
-        public Uuid SelectedProfile { get; internal set; }
+        public PlayerProfile SelectedProfile { get; internal set; }
 
         /// <summary>
         /// 由requestUser发送的用户数据
         /// </summary>
         public UserData User { get; internal set; }
-
-        /// <summary>
-        /// 表示由requestUser选项发送的数据
-        /// </summary>
-        public class UserData
-        {
-            /// <summary>
-            /// User ID
-            /// </summary>
-            [JsonProperty("id")]
-            public string ID { get; internal set; }
-
-            [JsonProperty("email")]
-            public string Email { get; set; }
-
-            [JsonProperty("username")]
-            public string Username { get; set; }
-
-            //[JsonProperty("registerIp")]
-            //public string RegisterIp { get; set; }
-
-            //[JsonProperty("registeredAt")]
-            //[JsonConverter(typeof(UnixDateTimeConverter))]
-            //public DateTime? RegisteredAt { get; set; }
-
-            //[JsonProperty("passwordChangedAt")]
-            //[JsonConverter(typeof(UnixDateTimeConverter))]
-            //public DateTime? PasswordChangedAt { get; set; }
-
-            //[JsonProperty("dateOfBirth")]
-            //[JsonConverter(typeof(UnixDateTimeConverter))]
-            //public DateTime? DateOfBirth { get; set; }
-
-            //[JsonProperty("suspended")]
-            //public bool? Suspended { get; set; }
-
-            //[JsonProperty("blocked")]
-            //public bool? Blocked { get; set; }
-
-            //[JsonProperty("secured")]
-            //public bool? Secured { get; set; }
-
-            //[JsonProperty("migrated")]
-            //public bool? Migrated { get; set; }
-
-            //[JsonProperty("emailVerified")]
-            //public bool? EmailVerified { get; set; }
-
-            //[JsonProperty("legacyUser")]
-            //public bool? LegacyUser { get; set; }
-
-            //[JsonProperty("verifiedByParent")]
-            //public bool? VerifiedByParent { get; set; }
-
-            /// <summary>
-            /// 此用户的属性
-            /// </summary>
-            [JsonProperty("properties")]
-            public List<Property> Properties { get; internal set; }
-
-            /// <summary>
-            /// 代表一个用户属性
-            /// </summary>
-            public class Property
-            {
-                /// <summary>
-                /// Property name
-                /// </summary>
-                [JsonProperty("name")]
-                public string Name { get; internal set; }
-
-                /// <summary>
-                /// Property value
-                /// </summary>
-                [JsonProperty("value")]
-                public string Value { get; internal set; }
-            }
-
-        }
 
     }
 

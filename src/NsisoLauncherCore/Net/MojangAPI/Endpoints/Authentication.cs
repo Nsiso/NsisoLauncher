@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Responses;
 using System;
@@ -68,14 +69,14 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                 {
                     JObject user = JObject.Parse(this.Response.RawMessage);
 
-                    List<Uuid> availableProfiles = new List<Uuid>();
+                    List<PlayerProfile> availableProfiles = new List<PlayerProfile>();
                     #region 处理可用Profiles
                     foreach (JObject profile in user["availableProfiles"])
                     {
                         var playerName = profile["name"].ToObject<string>();
                         var value = profile["id"].ToObject<string>();
                         var legacy = (profile.ContainsKey("legacyProfile") ? profile["legacyProfile"].ToObject<bool>() : false);
-                        availableProfiles.Add(new Uuid()
+                        availableProfiles.Add(new PlayerProfile()
                         {
                             PlayerName = playerName,
                             Value = value,
@@ -85,11 +86,11 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
                     }
                     #endregion
 
-                    Uuid selectedProfile = null;
+                    PlayerProfile selectedProfile = null;
                     #region 处理选中Profrile
                     if (user["selectedProfile"] != null)
                     {
-                        selectedProfile = new Uuid()
+                        selectedProfile = new PlayerProfile()
                         {
                             PlayerName = user["selectedProfile"]["name"]?.ToObject<string>(),
                             Value = user["selectedProfile"]["id"]?.ToObject<string>(),

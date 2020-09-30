@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Responses;
 using System;
@@ -58,7 +59,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
 
                 return new ProfileResponse(this.Response)
                 {
-                    Uuid = new Uuid()
+                    Uuid = new PlayerProfile()
                     {
                         PlayerName = profile["name"].ToObject<string>(),
                         Value = profile["id"].ToObject<string>()

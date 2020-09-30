@@ -28,9 +28,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\PlayerProfile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Proxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadSetting.cs" />
@@ -121,7 +123,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\APIModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\FunctionAPIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Api\Requester.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Api\Uuid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\ApiStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\Authentication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\BlockedServers.cs" />

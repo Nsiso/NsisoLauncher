@@ -75,7 +75,7 @@
             </Grid.ColumnDefinitions>
             <ListBox Style="{StaticResource radioButtonStyle}" ItemsSource="{Binding UUIDList}" ScrollViewer.VerticalScrollBarVisibility="Visible"
                          DisplayMemberPath="Value.PlayerName" SelectedValuePath="Key" Margin="10" Grid.Column="0"
-                SelectedValue="{Binding LoggedInUser.SelectProfileUUID}"/>
+                SelectedValue="{Binding LoggedInUser.SelectedProfileUuid}"/>
             <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Content="用户信息/换肤 开发中..."/>
         </Grid>
         <!--#endregion-->

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Responses;
 using System;
@@ -49,11 +50,11 @@ namespace NsisoLauncherCore.Net.MojangApi.Endpoints
             if (this.Response.IsSuccess)
             {
                 JArray uuids = JArray.Parse(this.Response.RawMessage);
-                List<Uuid> uuidList = new List<Uuid>() { };
+                List<PlayerProfile> uuidList = new List<PlayerProfile>() { };
 
                 foreach (JObject uuid in uuids)
                 {
-                    uuidList.Add(uuid.ToObject<Uuid>());
+                    uuidList.Add(uuid.ToObject<PlayerProfile>());
                 }
 
                 return new UuidByNamesResponse(this.Response)

@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using System;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
@@ -16,7 +17,7 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         /// <summary>
         /// Uuid
         /// </summary>
-        public Uuid Uuid { get; internal set; }
+        public PlayerProfile Uuid { get; internal set; }
 
         /// <summary>
         /// UUID对应的日期

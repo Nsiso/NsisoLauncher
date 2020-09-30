@@ -1,8 +1,12 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore.Auth;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
@@ -72,9 +76,12 @@ namespace NsisoLauncher.ViewModels.Pages
             #region 检查更新
             if (App.Config.MainConfig.Launcher.CheckUpdate)
             {
-                NowState = "正在检查更新...";
                 await CheckUpdate();
             }
+            #endregion
+
+            #region 处理用户
+            await RefreshUser();
             #endregion
         }
 
@@ -82,6 +89,7 @@ namespace NsisoLauncher.ViewModels.Pages
         {
             try
             {
+                NowState = "正在检查更新...";
                 var ver = await App.NetHandler.NsisoAPIHandler.GetLatestLauncherVersion();
                 if (ver != null)
                 {
@@ -95,6 +103,44 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             catch (Exception e)
             { App.LogHandler.AppendError(e); }
+        }
+
+        private async Task RefreshUser()
+        {
+            NowState = "正在登录用户";
+            UserNode selectedUser = App.Config.MainConfig.User.GetSelectedUser();
+            if (selectedUser != null)
+            {
+                PlayerProfile selectedProfile = selectedUser.SelectedProfile;
+                AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
+                if (authenticationNode.AuthType == AuthenticationType.OFFLINE)
+                {
+                    App.LogedInUser = selectedUser;
+                }
+                else if (authenticationNode.AuthType == AuthenticationType.NIDE8)
+                {
+                    Nide8TokenAuthenticator nideTokenAuthenticator = new Nide8TokenAuthenticator(
+                            authenticationNode.Property["Nide8ID"], selectedUser.AccessToken);
+                    NowState = "正在进行统一通行证登录";
+                    var nide8Result = await nideTokenAuthenticator.DoAuthenticateAsync();
+                    if (nide8Result.State == AuthState.SUCCESS)
+                    {
+                        selectedUser.AccessToken = nide8Result.AccessToken;
+                        App.LogedInUser = selectedUser;
+                    }
+                }
+                else
+                {
+                    YggdrasilTokenAuthenticator tokenAuthenticator = new YggdrasilTokenAuthenticator(selectedUser.AccessToken);
+                    NowState = "正在进行正版登录";
+                    var mojangResult = await tokenAuthenticator.DoAuthenticateAsync();
+                    if (mojangResult.State == AuthState.SUCCESS)
+                    {
+                        selectedUser.AccessToken = mojangResult.AccessToken;
+                        App.LogedInUser = selectedUser;
+                    }
+                }
+            }
         }
     }
 }

@@ -97,20 +97,24 @@ namespace NsisoLauncherCore
 
             #region 处理游戏参数
             string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
-            string legacy = setting.AuthenticateResult.SelectedProfileUUID.Legacy ? "Legacy" : "Mojang";
+            string legacy = "Mojang";
+            if (setting.LaunchUser.SelectedProfile.Legacy.HasValue)
+            {
+                legacy = setting.LaunchUser.SelectedProfile.Legacy.Value ? "Legacy" : "Mojang";
+            }
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(setting.Version));
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",string.Format("\"{0}\"", setting.AuthenticateResult.SelectedProfileUUID.PlayerName) },
-                {"${auth_session}",setting.AuthenticateResult.AccessToken },
+                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.SelectedProfile.PlayerName) },
+                {"${auth_session}",setting.LaunchUser.AccessToken },
                 {"${version_name}",string.Format("\"{0}\"", setting.Version.Id) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",setting.Version.Assets },
-                {"${auth_uuid}",setting.AuthenticateResult.SelectedProfileUUID.Value },
-                {"${auth_access_token}",setting.AuthenticateResult.AccessToken },
-                {"${user_properties}",ToList(setting.AuthenticateResult.UserData?.Properties) },
+                {"${auth_uuid}",setting.LaunchUser.SelectedProfile.Value },
+                {"${auth_access_token}",setting.LaunchUser.AccessToken },
+                {"${user_properties}",ToList(setting.LaunchUser.UserData?.Properties) },
                 {"${user_type}",legacy },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) }
             };
@@ -193,7 +197,7 @@ namespace NsisoLauncherCore
             return allArg.Trim();
         }
 
-        private static string ToList(List<Net.MojangApi.Responses.AuthenticateResponse.UserData.Property> properties)
+        private static string ToList(List<UserData.Property> properties)
         {
             if (properties == null)
             {

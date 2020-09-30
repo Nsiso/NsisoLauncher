@@ -111,9 +111,9 @@ namespace NsisoLauncherCore
                     {
                         return new LaunchResult(new NullJavaException());
                     }
-                    if (setting.AuthenticateResult == null)
+                    if (setting.LaunchUser == null)
                     {
-                        return new LaunchResult(new ArgumentException("启动所需必要的验证参数为空"));
+                        return new LaunchResult(new ArgumentException("启动所需必要的用户参数为空"));
                     }
                     if (setting.Version == null)
                     {

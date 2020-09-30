@@ -220,6 +220,24 @@ namespace NsisoLauncher.Config
             }
         }
 
+        public AuthenticationNode GetUserAuthenticationNode(UserNode userNode)
+        {
+            if (userNode == null)
+            {
+                throw new Exception("The Usernode argument is null");
+            }
+            string authNodeName = userNode.AuthModule;
+            if (string.IsNullOrEmpty(authNodeName))
+            {
+                return null;
+            }
+            if (!AuthenticationDic.ContainsKey(authNodeName))
+            {
+                return null;
+            }
+            return AuthenticationDic[authNodeName];
+        }
+
         /// <summary> 
         /// 验证节点
         /// </summary>
@@ -616,39 +634,24 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 用户验证节点设置
     /// </summary>
-    public class UserNode : INotifyPropertyChanged
+    public class UserNode : NsisoLauncherCore.Modules.User ,INotifyPropertyChanged
     {
         /// <summary>
         /// 所使用的验证模型
         /// </summary>
         public string AuthModule { get; set; }
 
-        /// <summary>
-        /// 用户名/账号
-        /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// 验证令牌
-        /// </summary>
-        public string AccessToken { get; set; }
-
-        /// <summary>
-        /// 选中的profile UUID
-        /// </summary>
-        public string SelectProfileUUID { get; set; }
-
-        private Dictionary<string, Uuid> profiles = new Dictionary<string, Uuid>();
+        private Dictionary<string, PlayerProfile> profiles = new Dictionary<string, PlayerProfile>();
         /// <summary>
         /// 用户profile字典
         /// </summary>
-        public Dictionary<string, Uuid> Profiles
+        public override Dictionary<string, PlayerProfile> Profiles
         {
             get
             {
                 if (profiles == null)
                 {
-                    profiles = new Dictionary<string, Uuid>();
+                    profiles = new Dictionary<string, PlayerProfile>();
                 }
                 return profiles;
             }
@@ -663,7 +666,7 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 用户资料
         /// </summary>
-        public UserData UserData
+        public override UserData UserData
         {
             get
             {
@@ -682,26 +685,10 @@ namespace NsisoLauncher.Config
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Uuid GetSelectProfileUUID()
-        {
-            if (string.IsNullOrWhiteSpace(SelectProfileUUID))
-            {
-                return null;
-            }
-            if (Profiles.ContainsKey(SelectProfileUUID))
-            {
-                return Profiles[SelectProfileUUID];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public void ClearAuthCache()
         {
             AccessToken = null;
-            SelectProfileUUID = null;
+            SelectedProfileUuid = null;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net.MojangApi.Api;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses
@@ -15,6 +16,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Responses
         /// <summary>
         /// 与名称对应的UUID列表
         /// </summary>
-        public List<Uuid> UuidList { get; internal set; }
+        public List<PlayerProfile> UuidList { get; internal set; }
     }
 }
