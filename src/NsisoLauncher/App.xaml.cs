@@ -26,7 +26,7 @@ namespace NsisoLauncher
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
-    public partial class App : Application, INotifyPropertyChanged
+    public partial class App : Application
     {
         #region 全局属性
         /// <summary>
@@ -65,12 +65,6 @@ namespace NsisoLauncher
         /// 版本
         /// </summary>
         public static ObservableCollection<Version> VersionList { get; private set; }
-
-        /// <summary>
-        /// 登录的用户
-        /// </summary>
-        public static UserNode LogedInUser { get; set; }
-
         #endregion
         #endregion
 
@@ -82,7 +76,6 @@ namespace NsisoLauncher
         #endregion
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public static void CatchAggregateException(object sender, AggregateExceptionArgs arg)
         {
@@ -222,9 +215,6 @@ namespace NsisoLauncher
             #region 网络功能初始化
             #region 网络核心初始化
             NetHandler = new NetHandler();
-            Requester.Client = NetHandler.Requester.Client;
-            Requester.ClientName = NetHandler.Requester.ClientName;
-            Requester.ClientVersion = NetHandler.Requester.ClientVersion;
 
             if (Config.MainConfig.Net.IsLauncherUseProxy)
             {
@@ -297,6 +287,16 @@ namespace NsisoLauncher
                     break;
             }
             #endregion
+            #endregion
+
+            #region 验证器初始化
+            Requester.Client = NetHandler.Requester.Client;
+            Requester.ClientName = NetHandler.Requester.ClientName;
+            Requester.ClientVersion = NetHandler.Requester.ClientVersion;
+            if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
+            {
+                Requester.ClientToken = App.Config.MainConfig.User.ClientToken;
+            }
             #endregion
 
             LaunchSignal = new LaunchSignal();

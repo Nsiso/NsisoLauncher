@@ -30,6 +30,7 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 获得选中的用户角色
         /// <summary>
+        [JsonIgnore]
         public PlayerProfile SelectedProfile { get => GetSelectProfile(); }
 
         /// <summary>

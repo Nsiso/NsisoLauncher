@@ -108,14 +108,13 @@ namespace NsisoLauncher.ViewModels.Pages
         private async Task RefreshUser()
         {
             NowState = "正在登录用户";
-            UserNode selectedUser = App.Config.MainConfig.User.GetSelectedUser();
+            UserNode selectedUser = App.Config.MainConfig.User.SelectedUser;
             if (selectedUser != null)
             {
-                PlayerProfile selectedProfile = selectedUser.SelectedProfile;
                 AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
                 if (authenticationNode.AuthType == AuthenticationType.OFFLINE)
                 {
-                    App.LogedInUser = selectedUser;
+                    return;
                 }
                 else if (authenticationNode.AuthType == AuthenticationType.NIDE8)
                 {
@@ -126,8 +125,8 @@ namespace NsisoLauncher.ViewModels.Pages
                     if (nide8Result.State == AuthState.SUCCESS)
                     {
                         selectedUser.AccessToken = nide8Result.AccessToken;
-                        App.LogedInUser = selectedUser;
                     }
+                    return;
                 }
                 else
                 {
@@ -137,8 +136,13 @@ namespace NsisoLauncher.ViewModels.Pages
                     if (mojangResult.State == AuthState.SUCCESS)
                     {
                         selectedUser.AccessToken = mojangResult.AccessToken;
-                        App.LogedInUser = selectedUser;
                     }
+                    else if (mojangResult.State == AuthState.REQ_LOGIN)
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("当前登录用户信息已过期", "请在用户页面重新登录");
+                        App.Config.MainConfig.User.SelectedUserUuid = null;
+                    }
+                    return;
                 }
             }
         }

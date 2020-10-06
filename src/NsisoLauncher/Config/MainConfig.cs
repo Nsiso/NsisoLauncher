@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
@@ -196,27 +197,27 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 选中的用户
         /// </summary>
-        public string SelectedUser { get; set; }
+        public string SelectedUserUuid { get; set; }
 
         private ObservableDictionary<string, AuthenticationNode> authenticationDic;
 
-        /// <summary>
-        /// 获得选中的用户实例
-        /// </summary>
-        /// <returns>用户实例</returns>
-        public UserNode GetSelectedUser()
+        [JsonIgnore]
+        public UserNode SelectedUser
         {
-            if (string.IsNullOrEmpty(SelectedUser))
+            get
             {
-                return null;
-            }
-            if (UserDatabase.ContainsKey(SelectedUser))
-            {
-                return UserDatabase[SelectedUser];
-            }
-            else
-            {
-                return null;
+                if (string.IsNullOrEmpty(SelectedUserUuid))
+                {
+                    return null;
+                }
+                if (UserDatabase.ContainsKey(SelectedUserUuid))
+                {
+                    return UserDatabase[SelectedUserUuid];
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -634,7 +635,7 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 用户验证节点设置
     /// </summary>
-    public class UserNode : NsisoLauncherCore.Modules.User ,INotifyPropertyChanged
+    public class UserNode : NsisoLauncherCore.Modules.User, INotifyPropertyChanged
     {
         /// <summary>
         /// 所使用的验证模型
@@ -681,6 +682,16 @@ namespace NsisoLauncher.Config
                 userData = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserData"));
             }
+        }
+
+        public UserNode(string uuid)
+        {
+            this.UserData.ID = uuid;
+        }
+
+        public UserNode()
+        {
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

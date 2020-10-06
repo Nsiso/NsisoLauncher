@@ -64,9 +64,9 @@ namespace NsisoLauncher.ViewModels.Pages
 
             if (User != null)
             {
-                if (!string.IsNullOrEmpty(User.SelectedUser))
+                if (!string.IsNullOrEmpty(User.SelectedUserUuid))
                 {
-                    this.LoggedInUser = User.GetSelectedUser();
+                    this.LoggedInUser = User.SelectedUser;
                 }
             }
 
@@ -151,9 +151,8 @@ namespace NsisoLauncher.ViewModels.Pages
                     AuthModule = "offline",
                     Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Value = uuidValue } } },
                     SelectedProfileUuid = uuidValue,
-                    UserData = new UserData() { ID = userId, Username = username}
+                    UserData = new UserData() { ID = userId, Username = username }
                 };
-                User.UserDatabase.Add(userId, userNode);
                 Login(userNode);
             }
             else
@@ -191,18 +190,87 @@ namespace NsisoLauncher.ViewModels.Pages
                 var authResult = await mYggAuthenticator.DoAuthenticateAsync();
                 await loader.CloseAsync();
 
-                UserNode userNode = new UserNode()
+                switch (authResult.State)
                 {
-                    SelectedProfileUuid = authResult.SelectedProfile.Value,
-                    AccessToken = authResult.AccessToken,
-                    UserData = authResult.UserData,
-                    AuthModule = "Mojang",
-                    Username = mojangLoginDResult.Username
-                };
-                userNode.Profiles = new Dictionary<string, PlayerProfile>();
-                foreach (var item in authResult.Profiles)
-                {
-                    userNode.Profiles.Add(item.Value, item);
+                    case AuthState.SUCCESS:
+                        #region 验证成功
+
+                        #region 无选中角色处理
+                        if (authResult.Profiles == null || authResult.Profiles.Count == 0)
+                        {
+                            await MainWindowVM.ShowMessageAsync("警告：您没有可用的游戏角色（Profile）",
+                            "您可能还未购买游戏本体，请联系Mojang客服");
+                            return;
+                        }
+                        #endregion
+
+                        UserNode userNode = new UserNode()
+                        {
+                            SelectedProfileUuid = authResult.SelectedProfile?.Value,
+                            AccessToken = authResult.AccessToken,
+                            UserData = authResult.UserData,
+                            AuthModule = "online",
+                            Username = mojangLoginDResult.Username
+                        };
+                        foreach (var item in authResult.Profiles)
+                        {
+                            userNode.Profiles.Add(item.Value, item);
+                        }
+                        Login(userNode);
+                        #endregion
+                        break;
+
+                    case AuthState.ERR_INVALID_CRDL:
+                        #region 错误的验证信息/禁止访问
+                        await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
+                            string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
+                        #endregion
+                        break;
+
+                    case AuthState.ERR_NOTFOUND:
+                        #region 页面未找到
+                        await MainWindowVM.ShowMessageAsync("验证失败：Mojang验证Uri不存在",
+                        string.Format("Mojang的验证URI返回404，请联系Mojang客服或启动器开发者寻求帮助，开发者请检查验证URI是否可用。具体信息：{0}",
+                        authResult.Error.ErrorMessage));
+                        #endregion
+                        break;
+
+                    case AuthState.ERR_METHOD_NOT_ALLOW:
+                        #region 错误的验证信息/禁止访问
+                        await MainWindowVM.ShowMessageAsync("验证失败：方法不允许",
+                            string.Format("可能使用了错误的验证Uri或提交了post之外的内容，也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
+                            authResult.Error.ErrorMessage));
+                        #endregion
+                        break;
+
+                    case AuthState.ERR_OTHER:
+                        #region 其他错误
+                        await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
+                            string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
+                        #endregion
+                        break;
+
+                    case AuthState.ERR_INSIDE:
+                        #region 内部错误
+                        if (authResult.Error.Exception != null)
+                        {
+                            App.LogHandler.AppendFatal(authResult.Error.Exception);
+                        }
+                        else
+                        {
+                            await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
+                                string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
+                                authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
+                        }
+                        #endregion
+                        break;
+
+                    default:
+                        #region default
+                        await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
+                            "建议您联系启动器开发者进行解决。");
+                        #endregion
+                        break;
                 }
             }
             else
@@ -221,14 +289,26 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 //todo 线上注销
             }
-            User.SelectedUser = null;
+            User.SelectedUserUuid = null;
             LoggedInUser = null;
         }
 
         private void Login(UserNode user)
         {
+            if (user.UserData == null || string.IsNullOrWhiteSpace(user.UserData.ID))
+            {
+                throw new ArgumentNullException("User's UserData is null or empty");
+            }
+            if (!User.UserDatabase.ContainsKey(user.UserData.ID))
+            {
+                User.UserDatabase.Add(user.UserData.ID, user);
+            }
+            else
+            {
+                User.UserDatabase[user.UserData.ID] = user;
+            }
             LoggedInUser = user;
-            User.SelectedUser = user.UserData.ID;
+            User.SelectedUserUuid = user.UserData.ID;
         }
 
         private bool IsValidateLoginData(LoginDialogData data)

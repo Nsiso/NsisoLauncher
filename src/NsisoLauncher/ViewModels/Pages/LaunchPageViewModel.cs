@@ -19,7 +19,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using User = NsisoLauncher.Config.User;
 using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.ViewModels.Pages
@@ -28,7 +27,9 @@ namespace NsisoLauncher.ViewModels.Pages
     {
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
 
-        public User User { get; set; }
+        public Config.User UserSetting { get; set; }
+
+        public UserNode LoggedInUser { get; set; }
 
         #region Commands
         /// <summary>
@@ -79,10 +80,10 @@ namespace NsisoLauncher.ViewModels.Pages
                 App.LaunchSignal.PropertyChanged += LaunchSignal_PropertyChanged;
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
             }
-            User = App.Config?.MainConfig?.User;
-            if (User != null)
+            UserSetting = App.Config?.MainConfig?.User;
+            if (UserSetting != null)
             {
-                User.PropertyChanged += User_PropertyChanged;
+                UserSetting.PropertyChanged += User_PropertyChanged;
             }
 
             RefreshUserBinding();
@@ -142,7 +143,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void RefreshUserBinding()
         {
-            UserNode userNode = User?.GetSelectedUser();
+            UserNode userNode = UserSetting?.SelectedUser;
             if (userNode != null)
             {
                 UserName = userNode.Username;
@@ -169,7 +170,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
-                UserNode launchUser = User.GetSelectedUser();
+                UserNode launchUser = UserSetting.SelectedUser;
                 if (launchUser == null)
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
@@ -218,9 +219,9 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 #region 验证
                 AuthenticationNode launchAuthNode = null;
-                if (User.AuthenticationDic.ContainsKey(launchUser.AuthModule))
+                if (UserSetting.AuthenticationDic.ContainsKey(launchUser.AuthModule))
                 {
-                    launchAuthNode = User.AuthenticationDic[launchUser.AuthModule];
+                    launchAuthNode = UserSetting.AuthenticationDic[launchUser.AuthModule];
                 }
                 if (launchAuthNode == null)
                 {
