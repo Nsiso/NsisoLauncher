@@ -544,19 +544,19 @@
                         </Expander>
                         <TextBlock>
                         启动器开源
-                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher">
+                        <Hyperlink Command="{Binding OpenUriCmd}" CommandParameter="https://github.com/Nsiso/NsisoLauncher">
                             https://github.com/Nsiso/NsisoLauncher
                         </Hyperlink>
                         </TextBlock>
                         <TextBlock>
                         启动器声明
-                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/blob/master/README.md">
+                        <Hyperlink Command="{Binding OpenUriCmd}" CommandParameter="https://github.com/Nsiso/NsisoLauncher/blob/master/README.md">
                             https://github.com/Nsiso/NsisoLauncher/blob/master/README.md
                         </Hyperlink>
                         </TextBlock>
                         <TextBlock>
                         启动器文档
-                        <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/Nsiso/NsisoLauncher/wiki">
+                        <Hyperlink Command="{Binding OpenUriCmd}" CommandParameter="https://github.com/Nsiso/NsisoLauncher/wiki">
                             https://github.com/Nsiso/NsisoLauncher/wiki
                         </Hyperlink>
                         </TextBlock>

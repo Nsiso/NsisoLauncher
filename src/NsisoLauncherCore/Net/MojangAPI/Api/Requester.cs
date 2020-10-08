@@ -147,7 +147,6 @@ namespace NsisoLauncherCore.Net.MojangApi.Api
             {
                 return new Response()
                 {
-                    Code = httpResponse.StatusCode,
                     RawMessage = rawMessage,
                     IsSuccess = false,
                     Error = new Error()

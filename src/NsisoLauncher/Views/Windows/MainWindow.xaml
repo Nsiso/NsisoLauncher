@@ -11,6 +11,7 @@
         Dialog:DialogParticipation.Register="{Binding}"
         Title="{Binding WindowTitle}" MinHeight="445" MinWidth="750"
         WindowState="{Binding WindowState}" WindowTransitionsEnabled="False"
+        Width="{Binding Width}" Height="{Binding Height}"
         Closing="mainWindow_Closing">
     <controls:MetroWindow.Background>
         <VisualBrush Stretch="UniformToFill">
@@ -33,7 +34,7 @@
         </controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
     <Frame NavigationUIVisibility="Hidden" x:Name="frame"/>
-    
+
 </controls:MetroWindow>
     
  

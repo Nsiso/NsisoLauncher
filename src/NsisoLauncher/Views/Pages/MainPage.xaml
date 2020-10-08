@@ -38,7 +38,8 @@
 
         <Style BasedOn="{StaticResource {x:Type Frame}}" TargetType="{x:Type Frame}">
             <Setter Property="ClipToBounds" Value="True" />
-            <Setter Property="ContentTemplate">
+            <!--#region 动画-->
+            <!--<Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate>
                         <controls:TransitioningContentControl Content="{Binding}"
@@ -53,7 +54,8 @@
                                             <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                                             <SplineDoubleKeyFrame KeyTime="00:00:00.150" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <!--<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                        -->
+            <!--<DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                    Storyboard.TargetName="CurrentContentPresentationSite"
                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                                             <SplineDoubleKeyFrame KeyTime="00:00:00" Value="200" />
@@ -61,6 +63,7 @@
                                             KeyTime="00:00:00.300"
                                             Value="0" />
                                         </DoubleAnimationUsingKeyFrames>-->
+            <!--
 
                                         <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                    Storyboard.TargetName="PreviousContentPresentationSite"
@@ -73,7 +76,8 @@
                         </controls:TransitioningContentControl>
                     </DataTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
+            <!--#endregion-->
         </Style>
         <vm:MainPageViewModel x:Key="mainpageVM"/>
     </Page.Resources>

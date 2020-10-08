@@ -44,6 +44,16 @@ namespace NsisoLauncher.ViewModels.Windows
         /// </summary>
         public bool IsLaunching { get; set; }
 
+        /// <summary>
+        /// 窗口高
+        /// </summary>
+        public double Height { get; set; }
+
+        /// <summary>
+        /// 窗口宽
+        /// </summary>
+        public double Width { get; set; }
+
         #region ElementsState
 
         public double Volume { get; set; } = 0.5;
@@ -64,11 +74,17 @@ namespace NsisoLauncher.ViewModels.Windows
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;
-                
+
             }
-            if (App.Config?.MainConfig?.Customize != null)
+            if (App.Config?.MainConfig != null)
             {
                 CustomizeRefresh();
+
+                if (App.Config.MainConfig.Launcher?.LauncherWindowSize != null)
+                {
+                    Height = App.Config.MainConfig.Launcher.LauncherWindowSize.Height;
+                    Width = App.Config.MainConfig.Launcher.LauncherWindowSize.Width;
+                }
             }
             if (App.LaunchSignal != null)
             {

@@ -140,12 +140,6 @@ namespace NsisoLauncher.Views.Pages
             await this.ShowMessageAsync("删除用户成功", "请保存以生效");
         }
 
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            Hyperlink link = sender as Hyperlink;
-            // 激活的是当前默认的浏览器
-            Process.Start(new ProcessStartInfo(link.NavigateUri.AbsoluteUri));
-        }
         #region 自定义验证模型
 
         private void AuthModuleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)

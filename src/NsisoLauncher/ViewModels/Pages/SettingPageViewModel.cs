@@ -49,7 +49,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ulong MaxMemory { get; set; } = SystemTools.GetTotalMemory();
 
-
+        #region 命令
         public ICommand ChooseJavaButtonClickCmd { get; set; }
         public ICommand ChooseGameDirButtonClickCmd { get; set; }
 
@@ -61,6 +61,8 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand OpenMusicDirCmd { get; set; }
         public ICommand OpenVideoDirCmd { get; set; }
 
+        public ICommand OpenUriCmd { get; set; }
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -86,6 +88,8 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 mainWindowVM = App.MainWindowVM;
             }
+
+            #region 命令定义
             ChooseJavaButtonClickCmd = new DelegateCommand(async (a) =>
             {
                 await ChooseJava();
@@ -110,6 +114,12 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 Process.Start(PathManager.VideoDirectory);
             });
+            OpenUriCmd = new DelegateCommand((a) =>
+            {
+                Process.Start(new ProcessStartInfo(a.ToString()));
+            });
+            #endregion
+
             PropertyChanged += SettingPageViewModel_PropertyChanged;
         }
 

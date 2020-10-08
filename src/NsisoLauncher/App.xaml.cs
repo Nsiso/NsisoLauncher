@@ -302,11 +302,6 @@ namespace NsisoLauncher
             LaunchSignal = new LaunchSignal();
 
             MainWindow mainwindow = new MainWindow();
-            if (Config.MainConfig.Launcher.LauncherWindowSize != null)
-            {
-                mainwindow.Height = Config.MainConfig.Launcher.LauncherWindowSize.Height;
-                mainwindow.Width = Config.MainConfig.Launcher.LauncherWindowSize.Width;
-            }
             this.MainWindow = mainwindow;
             mainwindow.Show();
         }
