@@ -19,6 +19,21 @@ namespace NsisoLauncher.ViewModels.Pages
     {
         public DelegateCommand LoadedCommand { get; set; }
 
+        /// <summary>
+        /// 欢迎Image源
+        /// </summary>
+        public string WelcomeImageSource { get; set; }
+
+        /// <summary>
+        /// 欢迎页面标题
+        /// </summary>
+        public string WelcomeTitle { get; set; }
+
+        /// <summary>
+        /// Icon源
+        /// </summary>
+        public string IconImageSource { get; set; } = "/NsisoLauncher;component/Resource/icon.ico";
+
         public string NowState { get; set; }
 
         public WelcomePageViewModel()

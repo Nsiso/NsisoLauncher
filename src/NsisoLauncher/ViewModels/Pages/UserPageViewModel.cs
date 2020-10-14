@@ -174,6 +174,10 @@ namespace NsisoLauncher.ViewModels.Pages
             var mojangLoginDResult = await App.MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
                                 App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
                                 loginDialogSettings);
+            if (mojangLoginDResult == null)
+            {
+                return;
+            }
             if (IsValidateLoginData(mojangLoginDResult))
             {
                 var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials()

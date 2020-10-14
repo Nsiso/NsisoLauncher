@@ -114,7 +114,8 @@ namespace NsisoLauncherCore.Net.Tools
             }
             else if (!string.IsNullOrWhiteSpace(lib.Url))
             {
-                return lib.Url;
+                string libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
+                return lib.Url + libUrlPath;
             }
             else
             {

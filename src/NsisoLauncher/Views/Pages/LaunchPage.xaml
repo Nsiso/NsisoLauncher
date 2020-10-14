@@ -33,16 +33,28 @@
             <Image Source="/NsisoLauncher;component/Resource/minecraft_logo.png"
                        VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-20,0,0" Width="300"/>
             <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="50">
-                <StackPanel>
+                <!--<StackPanel Margin="0,20,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="启动使用用户:" Foreground="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseHigh}"/>
+                        <TextBlock Text="{Binding UserName,TargetNullValue='未登录，请先登录'}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="启动使用角色:" Foreground="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseHigh}"/>
+                        <TextBlock Text="{Binding UserProfileName,TargetNullValue='未选择角色'}"/>
+                    </StackPanel>
+                </StackPanel>-->
+                <controls:Tile Height="auto" Width="auto" Title="启动使用的用户和角色名" TitleFontSize="12">
+                    <StackPanel Margin="0,30">
+                        <TextBlock Text="{Binding UserName,TargetNullValue='未登录，请先登录'}" FontSize="20"/>
+                        <TextBlock Text="{Binding UserProfileName,TargetNullValue='未选择角色'}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </controls:Tile>
+                <StackPanel Margin="0,10,0,0">
                     <ComboBox x:Name="launchVersionCombobox" Background="{x:Null}"
                               controls:TextBoxHelper.Watermark="选择启动的游戏版本"  controls:TextBoxHelper.UseFloatingWatermark="True"
                           BorderBrush="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseLow}"
                   ItemsSource="{Binding Versions}" SelectedItem="{Binding LaunchVersion}" DisplayMemberPath="Id"
                               SelectedValuePath="Id" SelectedValue="{Binding SelectedLaunchVersionId}"/>
-                </StackPanel>
-                <StackPanel Margin="0,20,0,0">
-                    <TextBlock Text="启动使用角色:" VerticalAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseHigh}"/>
-                    <TextBlock Text="{Binding UserProfileName,TargetNullValue='未登录，请先登录'}"/>
                 </StackPanel>
             </StackPanel>
             <Button VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Command="{Binding LaunchCmd}"
@@ -53,8 +65,8 @@
                         <iconPacks:PackIconFontAwesome Kind="RocketSolid" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock FontSize="16" Text="{StaticResource String.Base.Launch}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <!--<TextBlock FontWeight="Light" HorizontalAlignment="Center" Visibility="{Binding Text, ElementName=launchVersionCombobox, Converter={StaticResource strEmptyToVis}}"
-                               Text="{Binding Text, ElementName=launchVersionCombobox}" FontSize="10"/>-->
+                    <TextBlock FontWeight="Light" HorizontalAlignment="Center" Visibility="{Binding Text, ElementName=launchVersionCombobox, Converter={StaticResource strEmptyToVis}}"
+                               Text="{Binding Text, ElementName=launchVersionCombobox}" FontSize="10"/>
                 </StackPanel>
             </Button>
         </Grid>
