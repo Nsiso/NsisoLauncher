@@ -629,6 +629,21 @@ namespace NsisoLauncher.Config
         /// </summary>
         public string VersionInfo { get; set; }
 
+        /// <summary>
+        /// 欢迎界面标题
+        /// </summary>
+        public string WelcomeTitle { get; set; }
+
+        /// <summary>
+        /// 欢迎界面Icon源
+        /// </summary>
+        public string WelcomeIconSource { get; set; }
+
+        /// <summary>
+        /// 欢迎界面自定背景图片
+        /// </summary>
+        public string WelcomeImageSource { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 

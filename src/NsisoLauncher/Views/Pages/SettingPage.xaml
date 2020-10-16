@@ -499,11 +499,29 @@
                             </StackPanel>
                         </Expander>
 
-                        <Expander Header="自定义内容设置" Margin="0,0,0,5">
+                        <Expander Header="启动器内容设置" Margin="0,0,0,5">
                             <StackPanel>
                                 <Label Content="启动器窗口标题:"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.LauncherTitle}"/>
-                                <Label Content="游戏窗口标题（需保持启动器在启动后不被关闭的状态）:" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="欢迎界面设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="欢迎标题:"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.WelcomeTitle}"/>
+
+                                <Label Content="欢迎Icon源:" Margin="0,10,0,0"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.WelcomeIconSource}"/>
+
+                                <Label Content="欢迎图片源:" Margin="0,10,0,0"/>
+                                <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.WelcomeImageSource}"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Expander Header="游戏内容设置" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="游戏窗口标题（需保持启动器在启动后不被关闭的状态）:"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.GameWindowTitle}"/>
                                 <Label Content="游戏版本信息（游戏主界面左下角版本信息，高版本才支持）:" Margin="0,10,0,0"/>
                                 <TextBox TextWrapping="NoWrap" Text="{Binding MainConfig.Customize.VersionInfo}"/>

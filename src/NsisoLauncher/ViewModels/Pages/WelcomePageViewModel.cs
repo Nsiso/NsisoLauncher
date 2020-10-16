@@ -38,6 +38,22 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public WelcomePageViewModel()
         {
+            if (App.Config != null)
+            {
+                if (!string.IsNullOrWhiteSpace(App.Config.MainConfig?.Customize?.WelcomeTitle))
+                {
+                    this.WelcomeTitle = App.Config.MainConfig.Customize.WelcomeTitle;
+                }
+                if (!string.IsNullOrWhiteSpace(App.Config.MainConfig?.Customize?.WelcomeImageSource))
+                {
+                    this.WelcomeImageSource = App.Config.MainConfig.Customize.WelcomeImageSource;
+                }
+                if (!string.IsNullOrWhiteSpace(App.Config.MainConfig?.Customize?.WelcomeIconSource))
+                {
+                    this.IconImageSource = App.Config.MainConfig.Customize.WelcomeIconSource;
+                }
+            }
+
             LoadedCommand = new DelegateCommand(async (a) =>
             {
                 await App.RefreshVersionListAsync();

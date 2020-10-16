@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -51,7 +52,7 @@ namespace NsisoLauncher.Views.Windows
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             List<Version> vers = await App.Handler.GetVersionsAsync();
-            verToInstallForgeComboBox.ItemsSource = vers;
+            verToInstallForgeComboBox.ItemsSource = vers.Where(x => string.IsNullOrWhiteSpace(x.InheritsFrom));
         }
 
         private async void RefreshVersion()

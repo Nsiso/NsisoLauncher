@@ -35,7 +35,7 @@
             <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Forge}" >
                 <Grid >
                     <Label Content="要安装Forge的版本：" Margin="10,10,0,0" HorizontalAlignment="Left" Width="130" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="verToInstallForgeComboBox" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="300" DisplayMemberPath="ID" SelectionChanged="VerToInstallForgeComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="verToInstallForgeComboBox" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="300" DisplayMemberPath="Id" SelectionChanged="VerToInstallForgeComboBox_SelectionChanged"/>
                     <DataGrid x:Name="forgeListDataGrid" Margin="10,42,10,43" 
                               AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                               SelectionMode="Single">
