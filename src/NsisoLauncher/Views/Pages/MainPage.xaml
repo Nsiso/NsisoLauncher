@@ -89,12 +89,13 @@
                           IsPaneOpen="False"
                           ItemInvoked="HamburgerMenuControl_OnItemInvoked"
                           ItemTemplate="{StaticResource MenuItemTemplate}"
-                          OptionsItemTemplate="{StaticResource MenuItemTemplate}">
+                          OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                          Style="{StaticResource MahApps.Styles.HamburgerMenu}">
 
             <controls:HamburgerMenu.ItemsSource>
                 <controls:HamburgerMenuItemCollection>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=HomeSolid}" Label="开始游戏" NavigationDestination="Views/Pages/LaunchPage.xaml"/>
-                    <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CubesSolid}" Label="仓库"/>
+                    <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CubesSolid}" Label="仓库" NavigationDestination="Views/Pages/ExtendPage.xaml"/>
                 </controls:HamburgerMenuItemCollection>
             </controls:HamburgerMenu.ItemsSource>
             <controls:HamburgerMenu.OptionsItemsSource>

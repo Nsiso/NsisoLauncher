@@ -54,7 +54,7 @@ namespace NsisoLauncher
         /// </summary>
         public static LaunchSignal LaunchSignal { get; private set; }
 
-        #region 全局数据属性
+        #region 全局数据集合属性
 
         /// <summary>
         /// JAVA本机列表
@@ -65,6 +65,13 @@ namespace NsisoLauncher
         /// 版本
         /// </summary>
         public static ObservableCollection<Version> VersionList { get; private set; }
+        #endregion
+
+        #region 全局数据属性
+        /// <summary>
+        /// 启动器数据
+        /// </summary>
+        public static ObservableLauncherData LauncherData { get; set; }
         #endregion
         #endregion
 
@@ -153,6 +160,9 @@ namespace NsisoLauncher
             Config.Environment env = Config.MainConfig.Environment;
 
             JavaList = new ObservableCollection<Java>(Java.GetJavaList());
+
+            //设置启动器数据
+            LauncherData = new ObservableLauncherData();
 
             //设置版本路径
             string gameroot = null;

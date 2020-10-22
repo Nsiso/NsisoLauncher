@@ -103,6 +103,7 @@
     <Compile Include="Utils\MenuItem.cs" />
     <Compile Include="Utils\NavigationServiceEx.cs" />
     <Compile Include="ViewModels\Pages\DownloadPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ExtendPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\LaunchPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\MainPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\SettingPageViewModel.cs" />
@@ -135,6 +136,9 @@
     </Compile>
     <Compile Include="Views\Pages\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ExtendPage.xaml.cs">
+      <DependentUpon>ExtendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\LaunchPage.xaml.cs">
       <DependentUpon>LaunchPage.xaml</DependentUpon>
@@ -199,6 +203,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\DownloadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\ExtendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

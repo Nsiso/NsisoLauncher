@@ -114,8 +114,8 @@ namespace NsisoLauncher.Views.Windows
             }
             var loading = await this.ShowProgressAsync("获取Forge列表中", "请稍后");
             loading.SetIndeterminate();
-            List<JWForge> result = null;
             forgeList.Clear();
+            List<JWForge> result;
             try
             {
                 result = await apiHandler.GetForgeList(ver);

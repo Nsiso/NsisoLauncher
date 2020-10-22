@@ -61,7 +61,14 @@ namespace NsisoLauncher.ViewModels.Pages
         public ObservableCollection<Version> Versions { get; }
 
         #region Launch Data
+        /// <summary>
+        /// 启动的版本
+        /// </summary>
         public Version LaunchVersion { get; set; }
+
+        /// <summary>
+        /// 选中版本id
+        /// </summary>
         public string SelectedLaunchVersionId { get; set; }
         #endregion
 
@@ -79,6 +86,10 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 App.LaunchSignal.PropertyChanged += LaunchSignal_PropertyChanged;
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
+            }
+            if (App.LauncherData != null)
+            {
+                App.LauncherData.PropertyChanged += LauncherData_PropertyChanged;
             }
             UserSetting = App.Config?.MainConfig?.User;
             if (UserSetting != null)
@@ -122,6 +133,24 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     SelectedLaunchVersionId = App.Config.MainConfig.History.LastLaunchVersion;
                 }
+            }
+
+            this.PropertyChanged += LaunchPageViewModel_PropertyChanged;
+        }
+
+        private void LaunchPageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LaunchVersion")
+            {
+                App.LauncherData.SelectedVersion = this.LaunchVersion;
+            }
+        }
+
+        private void LauncherData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedVersion")
+            {
+                this.LaunchVersion = App.LauncherData.SelectedVersion;
             }
         }
 
