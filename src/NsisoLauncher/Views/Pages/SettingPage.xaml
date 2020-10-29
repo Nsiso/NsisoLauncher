@@ -444,7 +444,8 @@
                                                 <Ellipse
                                                     Width="16"
                                                     Height="16"
-                                                    Fill="{Binding ColorBrush, Mode=OneWay}" />
+                                                    Fill="{Binding ColorBrush, Mode=OneWay}"
+                                                    Stroke="Black"/>
                                                 <TextBlock Text="{Binding Name}" Margin="5,0"/>
                                             </StackPanel>
                                         </DataTemplate>

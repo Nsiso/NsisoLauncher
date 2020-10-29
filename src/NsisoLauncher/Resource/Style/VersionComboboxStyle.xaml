@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:v="clr-namespace:NsisoLauncherCore.Modules">
+    <DataTemplate x:Key="VersionComboboxStyle" DataType="{x:Type v:Version}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Id}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="版本类型:" Foreground="{DynamicResource MahApps.Brushes.Gray}"/>
+                <TextBlock Text="{Binding Type}" Foreground="{DynamicResource MahApps.Brushes.Gray}"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

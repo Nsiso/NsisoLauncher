@@ -89,14 +89,16 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             if (App.LauncherData != null)
             {
+                this.LaunchVersion = App.LauncherData.SelectedVersion;
+                this.SelectedLaunchVersionId = App.LauncherData.SelectedVersion?.Id;
                 App.LauncherData.PropertyChanged += LauncherData_PropertyChanged;
             }
             UserSetting = App.Config?.MainConfig?.User;
             if (UserSetting != null)
             {
+
                 UserSetting.PropertyChanged += User_PropertyChanged;
             }
-
             RefreshUserBinding();
 
             #region 命令初始化
@@ -127,7 +129,7 @@ namespace NsisoLauncher.ViewModels.Pages
                });
             #endregion
 
-            if (App.Config != null)
+            if (string.IsNullOrWhiteSpace(SelectedLaunchVersionId) && App.Config != null)
             {
                 if (!string.IsNullOrWhiteSpace(App.Config?.MainConfig?.History?.LastLaunchVersion))
                 {
@@ -151,6 +153,7 @@ namespace NsisoLauncher.ViewModels.Pages
             if (e.PropertyName == "SelectedVersion")
             {
                 this.LaunchVersion = App.LauncherData.SelectedVersion;
+                this.SelectedLaunchVersionId = App.LauncherData.SelectedVersion?.Id;
             }
         }
 
