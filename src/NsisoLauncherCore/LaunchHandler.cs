@@ -302,6 +302,11 @@ namespace NsisoLauncherCore
         {
             return PathManager.GetVersionOptionsPath(VersionIsolation, GameRootPath, version);
         }
+
+        public string GetVersionSavesDir(Modules.Version version)
+        {
+            return PathManager.GetVersionSavesDir(VersionIsolation, GameRootPath, version);
+        }
         #endregion
 
         #region DEBUG方法

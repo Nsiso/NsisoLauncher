@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       mc:Ignorable="d" 
@@ -44,37 +45,35 @@
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="版本操作" Margin="0,10,0,0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <Button Content="校验文件完整性" Margin="5"
+                        <WrapPanel>
+                            <Button Content="校验文件完整性" Margin="5" Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <Button Content="清除dll缓存" Margin="5" 
+                            <Button Content="清除dll缓存" Margin="5"  Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <Button Content="清除日志缓存" Margin="5" 
+                            <Button Content="清除日志缓存" Margin="5"  Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="3">
-                                <Button Content="卸载该版本" Margin="5" Background="DarkRed"
+                            <Button Content="卸载该版本" Margin="5" Background="DarkRed" Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square.Accent}"/>
-                            </StackPanel>
-                        </Grid>
+                        </WrapPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>
             <TabItem Header="游戏内容">
                 <StackPanel>
-                    <GroupBox Header="存档">
-                        
+                    <GroupBox Header="存档" Margin="0,0,0,10">
+                        <ListBox ItemsSource="{Binding VerSaves}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type modules:SaveInfo}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="64" Width="64" Source="{Binding IconPath}" Margin="0,5"/>
+                                        <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                            <TextBlock Text="{Binding LevelName}" FontSize="16"/>
+                                            <TextBlock Text="{Binding Time}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </GroupBox>
                     <GroupBox Header="资源包">
 
