@@ -155,12 +155,12 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task ChooseJava()
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
+            OpenFileDialog dialog = new OpenFileDialog()
             {
                 Title = "选择Java",
                 Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe",
             };
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Java java = await Java.GetJavaInfoAsync(dialog.FileName);
                 if (java != null)

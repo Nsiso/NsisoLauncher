@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+      xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       mc:Ignorable="d" 
@@ -13,6 +14,9 @@
     <Page.DataContext>
         <vm:ExtendPageViewModel/>
     </Page.DataContext>
+    <Page.Resources>
+        <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotEmptyToBooleanConverter"/>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -58,14 +62,18 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="游戏内容">
-                <StackPanel>
-                    <GroupBox Header="存档" Margin="0,0,0,10">
-                        <ListBox ItemsSource="{Binding VerSaves}">
+            <TabItem Header="存档">
+                <Grid Margin="5">
+                    <StackPanel>
+                        <ListBox ItemsSource="{Binding VerSaves}" SelectedItem="{Binding SelectedSave}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type modules:SaveInfo}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Image Height="64" Width="64" Source="{Binding IconPath}" Margin="0,5"/>
+                                        <Image Height="64" Width="64" Source="{Binding IconPath}" Margin="0,5">
+                                            <Image.CacheMode>
+                                                <BitmapCache/>
+                                            </Image.CacheMode>
+                                        </Image>
                                         <StackPanel VerticalAlignment="Center" Margin="10,0">
                                             <TextBlock Text="{Binding LevelName}" FontSize="16"/>
                                             <TextBlock Text="{Binding Time}"/>
@@ -74,13 +82,21 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </GroupBox>
-                    <GroupBox Header="资源包">
-
-                    </GroupBox>
-                </StackPanel>
+                        <WrapPanel Margin="0,5,0,0">
+                            <Button Content="添加" Padding="20,0" Margin="0,0,10,0" Command="{Binding AddSaveCmd}"
+                                    IsEnabled="{Binding SelectedVersion, Converter={StaticResource objectNotEmptyToBooleanConverter}}"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square}"/>
+                            <Button Content="删除" Padding="20,0" Margin="0,0,10,0" Command="{Binding DeleteSaveCmd}"
+                                        IsEnabled="{Binding SelectedSave, Converter={StaticResource objectNotEmptyToBooleanConverter}}"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square}"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
             </TabItem>
-            <TabItem Header="扩展内容">
+            <TabItem Header="资源包">
+
+            </TabItem>
+            <TabItem Header="模组">
 
             </TabItem>
         </TabControl>

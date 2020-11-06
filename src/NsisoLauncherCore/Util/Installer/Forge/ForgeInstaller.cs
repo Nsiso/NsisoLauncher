@@ -92,7 +92,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             foreach (var item in mavenFolders)
             {
                 DirectoryInfo info = new DirectoryInfo(item);
-                FileHelper.CopyDirectory(item, librariesDir + '\\' + info.Name, true);
+                FileHelper.DirectoryCopy(item, librariesDir + '\\' + info.Name, true, true);
             }
 
             PostProcessors postProcessors = new PostProcessors(profile, Options.IsClient, monitor);

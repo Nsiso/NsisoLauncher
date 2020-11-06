@@ -15,42 +15,40 @@ namespace NsisoLauncherCore.Util
     public static class FileHelper
     {
         #region 文件工具
-        public static bool CopyDirectory(string SourcePath, string DestinationPath, bool overwriteexisting)
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs, bool overWrite)
         {
-            bool ret;
-            try
-            {
-                SourcePath = SourcePath.EndsWith(@"\") ? SourcePath : SourcePath + @"\";
-                DestinationPath = DestinationPath.EndsWith(@"\") ? DestinationPath : DestinationPath + @"\";
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
 
-                if (Directory.Exists(SourcePath))
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // If the destination directory doesn't exist, create it.       
+            Directory.CreateDirectory(destDirName);
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, overWrite);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
                 {
-                    if (Directory.Exists(DestinationPath) == false)
-                    {
-                        Directory.CreateDirectory(DestinationPath);
-                    }
-
-                    foreach (string fls in Directory.GetFiles(SourcePath))
-                    {
-                        FileInfo flinfo = new FileInfo(fls);
-                        flinfo.CopyTo(DestinationPath + flinfo.Name, overwriteexisting);
-                    }
-                    foreach (string drs in Directory.GetDirectories(SourcePath))
-                    {
-                        DirectoryInfo drinfo = new DirectoryInfo(drs);
-                        if (CopyDirectory(drs, DestinationPath + drinfo.Name, overwriteexisting) == false)
-                        {
-                            ret = false;
-                        }
-                    }
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, tempPath, copySubDirs, overWrite);
                 }
-                ret = true;
             }
-            catch (Exception)
-            {
-                ret = false;
-            }
-            return ret;
         }
         #endregion
 
@@ -244,29 +242,14 @@ namespace NsisoLauncherCore.Util
             var lostNatives = GetLostNatives(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
             IVersionListMirror mirror = null;
-            if (mirrors == null)
+            if ((mirrors != null) && (mirrors.Count != 0))
             {
-                throw new ArgumentNullException("IList<IVersionListMirror> mirrors is null");
+                mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors);
             }
             if (IsLostJarCore(core, version))
             {
                 if (version.Jar == null)
                 {
-                    if (mirror == null)
-                    {
-                        if (mirrors.Count == 0)
-                        {
-                            throw new Exception("no Version List Mirror");
-                        }
-                        else if (mirrors.Count == 1)
-                        {
-                            mirror = mirrors.First();
-                        }
-                        else
-                        {
-                            mirror = ((IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors));
-                        }
-                    }
                     tasks.Add(GetDownloadUri.GetCoreJarDownloadTask(version, core, mirror));
                 }
             }

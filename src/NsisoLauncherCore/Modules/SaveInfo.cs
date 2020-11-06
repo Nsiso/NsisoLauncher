@@ -75,6 +75,19 @@ namespace NsisoLauncherCore.Modules
             }
         }
 
+        public void DeleteSave()
+        {
+            try
+            {
+                Directory.Delete(SaveBasePath, true);
+            }
+            catch (Exception)
+            {
+                //icon img?
+            }
+
+        }
+
         private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch

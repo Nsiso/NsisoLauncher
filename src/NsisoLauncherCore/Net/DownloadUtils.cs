@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,7 +72,7 @@ namespace NsisoLauncherCore.Net
                 progressCallback.ChangeMirror(mirror);
             }
             else
-            { 
+            {
                 progressCallback.DownloadSourceName = "Origin";
             }
 
@@ -129,10 +130,12 @@ namespace NsisoLauncherCore.Net
                     #endregion
 
                     #region 下载流程
-                    progressCallback.State = "下载中";
-                    using (var getResult = await requester.Client.GetAsync(fromUriBuilder.Uri, cancellationToken).ConfigureAwait(false))
+                    progressCallback.State = "下载中（等待Get回应）";
+                    using (var getResult = await requester.Client.GetAsync(fromUriBuilder.Uri,
+                        HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
                     {
                         getResult.EnsureSuccessStatusCode();
+                        progressCallback.State = "下载中";
                         progressCallback.TotalSize = getResult.Content.Headers.ContentLength.GetValueOrDefault();
                         using (Stream responseStream = await getResult.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
@@ -179,6 +182,7 @@ namespace NsisoLauncherCore.Net
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        downloadResult.IsSuccess = true;
                         break;
                     }
                     exception = e;
@@ -240,7 +244,12 @@ namespace NsisoLauncherCore.Net
                     {
                         try
                         {
-                            string from = mirror.DoDownloadUriReplace(item.Downloads.Artifact.Url);
+
+                            string from = item.Downloads.Artifact.Url;
+                            if (mirror != null)
+                            {
+                                from = mirror.DoDownloadUriReplace(from);
+                            }
                             string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
                             string buffFilename = to + ".downloadtask";
 

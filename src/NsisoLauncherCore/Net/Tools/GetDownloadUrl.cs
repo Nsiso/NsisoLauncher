@@ -71,22 +71,23 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static string GetCoreJarDownloadURL(Modules.Version ver, IVersionListMirror mirror)
         {
+            string url;
             if (ver.Downloads?.Client != null)
             {
-                return ver.Downloads.Client.Url;
+                url = ver.Downloads.Client.Url;
 
             }
             else
             {
-                if (mirror == null)
-                {
-                    throw new Exception("Version List Mirror is null");
-                }
-                else
-                {
-                    return string.Format("{0}version/{1}/client", mirror.BaseUri, ver.Id);
-                }
+                url = string.Format("{0}version/{1}/client", MojangMainUrl, ver.Id);
             }
+
+            if (mirror != null)
+            {
+                url.Replace(MojangMainUrl, mirror.BaseUri.AbsoluteUri);
+            }
+
+            return url;
         }
 
         public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core, IVersionListMirror mirror)

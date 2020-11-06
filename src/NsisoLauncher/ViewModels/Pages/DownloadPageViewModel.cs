@@ -131,7 +131,7 @@ namespace NsisoLauncher.ViewModels.Pages
             else
             {
                 await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
+                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value?.Message));
             }
         }
 

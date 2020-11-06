@@ -33,6 +33,11 @@ namespace NsisoLauncherCore
         /// </summary>
         public bool IsBusyLaunching { get; private set; } = false;
 
+        /// <summary>
+        /// 存档处理器
+        /// </summary>
+        public SaveHandler SaveHandler { get; set; }
+
         public event GameLogHandler GameLog;
         public event GameExitHandler GameExit;
         public event LaunchLogHandler LaunchLog;
@@ -59,6 +64,8 @@ namespace NsisoLauncherCore
             argumentsParser.ArgumentsParserLog += (s, l) => LaunchLog?.Invoke(s, l);
 
             assetsReader = new AssetsReader(this);
+
+            SaveHandler = new SaveHandler(this);
         }
 
         public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)

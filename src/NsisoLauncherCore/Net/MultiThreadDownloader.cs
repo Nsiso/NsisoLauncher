@@ -335,7 +335,13 @@ namespace NsisoLauncherCore.Net
                     {
                         item.ProgressCallback.IncreasedDoneSize += ProgressCallback_IncreasedDoneSize;
 
-                        await item.DownloadAsync(_requester,cancelToken,mirror,downloadSetting).ConfigureAwait(false);
+                        var result = await item.DownloadAsync(_requester, cancelToken, mirror, downloadSetting).ConfigureAwait(false);
+
+                        if (!result.IsSuccess)
+                        {
+                            _errorList.Add(item, result.DownloadException);
+                            SendDownloadErrLog(item, result.DownloadException);
+                        }
 
                         item.ProgressCallback.IncreasedDoneSize -= ProgressCallback_IncreasedDoneSize;
 
@@ -344,8 +350,20 @@ namespace NsisoLauncherCore.Net
                         if (cancelToken.IsCancellationRequested)
                         {
                             CompleteDownload();
+                            break;
                         }
                     }
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
+                else
+                {
+                    throw ex;
                 }
             }
             catch (Exception ex)
@@ -392,7 +410,7 @@ namespace NsisoLauncherCore.Net
                 Exception = ex,
                 LogLevel = LogLevel.ERROR,
                 Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
-                task.TaskName, task.DisplayFrom, ex.ToString())
+                task.TaskName, task.DisplayFrom, ex?.ToString())
             });
         }
         protected virtual void OnPropertyChanged(string propertyName)
