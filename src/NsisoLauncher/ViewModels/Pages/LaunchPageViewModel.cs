@@ -692,7 +692,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         case MessageDialogResult.Affirmative:
                             var lostAssets = FileHelper.GetLostAssetsDownloadTaskAsync(
                                 App.Handler, launchSetting.Version);
-                            losts.Add(lostAssets);
+                            losts.AddRange(lostAssets);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
                             App.Config.MainConfig.Environment.DownloadLostAssets = false;

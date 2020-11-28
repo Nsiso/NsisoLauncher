@@ -106,7 +106,7 @@ namespace NsisoLauncher.ViewModels.Windows
             else
             {
                 await Instance.ShowMessageAsync(this, App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value.Message));
+                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value?.Message));
             }
         }
 

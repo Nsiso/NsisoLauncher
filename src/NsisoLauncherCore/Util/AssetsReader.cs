@@ -58,6 +58,8 @@ namespace NsisoLauncherCore.Util
         [JsonProperty("size")]
         public int Size { get; set; }
 
+        public char FirstHashChar { get => Hash[0]; }
+
         public string GetDownloadSourceURL()
         {
             return GetDownloadUri.GetAssetsDownloadURL(this);

@@ -322,17 +322,18 @@ namespace NsisoLauncherCore.Util
         /// <param name="core"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public static IDownloadTask GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
+        public static List<IDownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
         {
-            JAssets assets = null;
-
+            List<IDownloadTask> tasks = new List<IDownloadTask>();
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
+            JAssets assets;
             if (!File.Exists(assetsPath))
             {
                 if (ver.AssetIndex != null)
                 {
                     string jsonUrl = ver.AssetIndex.Url;
-                    return new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath);
+                    tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
+                    return tasks;
                     //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
                     //string assetsJson = null;
                     //if (jsonRespond.IsSuccessStatusCode)
@@ -355,12 +356,17 @@ namespace NsisoLauncherCore.Util
                 assets = core.GetAssets(ver);
             }
             var lostAssets = GetLostAssets(core, assets);
-            List<DownloadObject> downloadObjects = new List<DownloadObject>();
-            foreach (var item in lostAssets)
+            var groupResult = lostAssets.GroupBy(x => x.Value.FirstHashChar);
+            foreach (var group in groupResult)
             {
-                downloadObjects.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
+                List<DownloadObject> downloads = new List<DownloadObject>();
+                foreach (var item in group)
+                {
+                    downloads.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
+                }
+                tasks.Add(new GroupDownloadTask(string.Format("资源文件-{0}", group.Key), downloads, ver.AssetIndex.TotalSize));
             }
-            return new GroupDownloadTask("资源文件", downloadObjects, ver.AssetIndex.TotalSize);
+            return tasks;
         }
     }
 }
