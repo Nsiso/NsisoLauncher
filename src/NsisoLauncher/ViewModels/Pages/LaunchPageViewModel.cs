@@ -708,8 +708,10 @@ namespace NsisoLauncher.ViewModels.Pages
                     if (!App.NetHandler.Downloader.IsBusy)
                     {
                         App.NetHandler.Downloader.AddDownloadTask(losts);
-                        await App.NetHandler.Downloader.StartDownload();
-                        var downloadResult = await new DownloadWindow().ShowWhenDownloading();
+                        DownloadWindow downloadWindow = new DownloadWindow();
+                        downloadWindow.Show();
+                        var downloadResult = await App.NetHandler.Downloader.StartDownloadAndWaitDone();
+                        downloadWindow.Close();
                         if (downloadResult?.ErrorList?.Count != 0)
                         {
                             await MainWindowVM.ShowMessageAsync(string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),

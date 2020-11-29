@@ -1,4 +1,5 @@
 ﻿using NsisoLauncherCore.Net.Mirrors;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -35,6 +36,7 @@ namespace NsisoLauncherCore.Net
             ProgressCallback.PropertyChanged += ProgressCallback_PropertyChanged;
             ProgressCallback.IncreasedDoneSize += ProgressCallback_IncreasedDoneSize;
             DownloadResult downloadResult = new DownloadResult();
+            bool all_success = true;
             foreach (var item in DownloadObjectsGroup)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -44,11 +46,13 @@ namespace NsisoLauncherCore.Net
                 var itemResult = await DownloadUtils.DownloadAsync(item, requester, cancellationToken, ProgressCallback, mirror, downloadSetting);
                 if (!itemResult.IsSuccess)
                 {
-                    downloadResult.IsSuccess = false;
-                    downloadResult.DownloadException = itemResult.DownloadException;
-                    downloadResult.ObjectToDownload = item;
+                    all_success = false;
+                    downloadResult = itemResult;
                 }
             }
+
+            downloadResult.IsSuccess = all_success;
+
             ProgressCallback.SetDone();
             ProgressCallback.PropertyChanged -= ProgressCallback_PropertyChanged;
             ProgressCallback.IncreasedDoneSize -= ProgressCallback_IncreasedDoneSize;

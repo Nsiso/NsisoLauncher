@@ -323,6 +323,34 @@ namespace NsisoLauncherCore.Net
             }
         }
 
+        public async Task<DownloadCompletedArg> StartDownloadAndWaitDone()
+        {
+            EventWaitHandle _waitHandle = new AutoResetEvent(false);
+            DownloadCompletedArg completedArg = null;
+            await Task.Run(() =>
+            {
+                this.DownloadCompleted += (a, b) =>
+                {
+                    _waitHandle.Set();
+                    completedArg = b;
+                };
+            });
+
+            //start download
+            await StartDownload();
+
+            await Task.Run(() => _waitHandle.WaitOne());
+
+            if (completedArg != null)
+            {
+                return completedArg;
+            }
+            else
+            {
+                throw new Exception("Can't await the result of download completed arg!");
+            }
+        }
+
         private async Task ThreadDownloadWork(CancellationToken cancelToken)
         {
             try
