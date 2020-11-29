@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\ModInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\SaveInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\PlayerProfile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Proxy.cs" />
@@ -215,7 +216,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\Java.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\JsonTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\LaunchSignal.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Util\SaveHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Mod\ModHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Save\SaveHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ObservableDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ObservableLauncherData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\SystemTools.cs" />
@@ -224,5 +226,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Net\Dns\Records\totla.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Util\Save\" />
   </ItemGroup>
 </Project>

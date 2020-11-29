@@ -6,7 +6,7 @@ using Cyotek.Data.Nbt;
 using Cyotek.Data.Nbt.Serialization;
 using NsisoLauncherCore.Modules;
 
-namespace NsisoLauncherCore.Util
+namespace NsisoLauncherCore.Util.Save
 {
     public class SaveHandler
     {

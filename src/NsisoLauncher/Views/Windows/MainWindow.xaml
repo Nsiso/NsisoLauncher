@@ -18,7 +18,7 @@
             <VisualBrush.Visual>
                 <Grid>
                     <Image Source="{Binding ImageSource}"/>
-                    <MediaElement Volume="{Binding Volume}" Source="{Binding MediaSource}" Stretch="UniformToFill"/>
+                    <MediaElement Volume="{Binding Volume}" Source="{Binding MediaSource, TargetNullValue={x:Null}}" Stretch="UniformToFill"/>
                 </Grid>
             </VisualBrush.Visual>
         </VisualBrush>

@@ -45,10 +45,18 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand AddSaveCmd { get; set; }
         #endregion
 
+        #region Mod数据
+        /// <summary>
+        /// 版本mod
+        /// </summary>
+        public ObservableCollection<ModInfo> VerMods { get; set; }
+        #endregion
+
 
         public ExtendPageViewModel()
         {
             VerSaves = new ObservableCollection<SaveInfo>();
+            VerMods = new ObservableCollection<ModInfo>();
             if (App.VersionList != null)
             {
                 this.VersionList = App.VersionList;
@@ -57,7 +65,7 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 App.LauncherData.PropertyChanged += LauncherData_PropertyChanged;
                 this.SelectedVersion = App.LauncherData.SelectedVersion;
-                UpdateVersionSaves();
+                UpdateVersion();
             }
 
             DeleteSaveCmd = new DelegateCommand(new Action<object>(DeleteSave));
@@ -141,8 +149,14 @@ namespace NsisoLauncher.ViewModels.Pages
             if (e.PropertyName == "SelectedVersion")
             {
                 App.LauncherData.SelectedVersion = this.SelectedVersion;
-                UpdateVersionSaves();
+                UpdateVersion();
             }
+        }
+
+        private void UpdateVersion()
+        {
+            UpdateVersionMods();
+            UpdateVersionSaves();
         }
 
         private void UpdateVersionSaves()
@@ -156,6 +170,22 @@ namespace NsisoLauncher.ViewModels.Pages
                     foreach (var item in saves)
                     {
                         VerSaves.Add(item);
+                    }
+                }
+            }
+        }
+
+        private void UpdateVersionMods()
+        {
+            VerMods.Clear();
+            if (this.SelectedVersion != null)
+            {
+                List<ModInfo> saves = App.Handler.ModHandler.GetMods(this.SelectedVersion);
+                if (saves != null)
+                {
+                    foreach (var item in saves)
+                    {
+                        VerMods.Add(item);
                     }
                 }
             }

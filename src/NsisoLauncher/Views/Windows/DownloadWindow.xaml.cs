@@ -19,39 +19,6 @@ namespace NsisoLauncher.Views.Windows
             InitializeComponent();
         }
 
-        public async Task<DownloadCompletedArg> ShowWhenDownloading()
-        {
-            this.Topmost = true;
-            this.Show();
-            return await Task.Run(() =>
-            {
-                DownloadCompletedArg completedArg = null;
-                try
-                {
-                    EventWaitHandle _waitHandle = new AutoResetEvent(false);
-                    App.NetHandler.Downloader.DownloadCompleted += (a, b) =>
-                    {
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            this.Close();
-                        }));
-                        _waitHandle.Set();
-                        completedArg = b;
-                    };
-                    _waitHandle.WaitOne();
-                }
-                catch (Exception ex)
-                {
-                    AggregateExceptionArgs args = new AggregateExceptionArgs()
-                    {
-                        AggregateException = new AggregateException(ex)
-                    };
-                    App.CatchAggregateException(this, args);
-                }
-                return completedArg;
-            });
-        }
-
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (App.NetHandler.Downloader.IsBusy)

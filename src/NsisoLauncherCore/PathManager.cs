@@ -256,6 +256,20 @@ namespace NsisoLauncherCore
             string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\saves";
         }
+
+
+        /// <summary>
+        /// 获取版本存档路径
+        /// </summary>
+        /// <param name="versionIsolation">版本是否隔离</param>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <param name="version">版本</param>
+        /// <returns>版本mod文件夹路径</returns>
+        public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, Modules.Version version)
+        {
+            string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
+            return verRoot + "\\mods";
+        }
         #endregion
     }
 }

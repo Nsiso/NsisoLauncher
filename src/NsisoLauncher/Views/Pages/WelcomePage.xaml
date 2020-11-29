@@ -33,7 +33,7 @@
         -->
         <!--发布前需要删除-->
         <StackPanel Grid.Row="0">
-            <Image HorizontalAlignment="Stretch" VerticalAlignment="Center" Source="{Binding WelcomeImageSource}"/>
+            <Image HorizontalAlignment="Stretch" VerticalAlignment="Center" Source="{Binding WelcomeImageSource, TargetNullValue={x:Null}}"/>
         </StackPanel>
         <StackPanel Grid.Row="1"  Background="{DynamicResource MahApps.Brushes.AccentBase}">
             <StackPanel Margin="0,20">

@@ -1,6 +1,8 @@
 ﻿using NsisoLauncherCore.LaunchException;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
+using NsisoLauncherCore.Util.Mod;
+using NsisoLauncherCore.Util.Save;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +40,11 @@ namespace NsisoLauncherCore
         /// </summary>
         public SaveHandler SaveHandler { get; set; }
 
+        /// <summary>
+        /// Mod处理器
+        /// </summary>
+        public ModHandler ModHandler { get; set; }
+
         public event GameLogHandler GameLog;
         public event GameExitHandler GameExit;
         public event LaunchLogHandler LaunchLog;
@@ -66,6 +73,7 @@ namespace NsisoLauncherCore
             assetsReader = new AssetsReader(this);
 
             SaveHandler = new SaveHandler(this);
+            ModHandler = new ModHandler(this);
         }
 
         public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
@@ -314,6 +322,11 @@ namespace NsisoLauncherCore
         {
             return PathManager.GetVersionSavesDir(VersionIsolation, GameRootPath, version);
         }
+
+        public string GetVersionModsDir(Modules.Version version)
+        {
+            return PathManager.GetVersionModsDir(VersionIsolation, GameRootPath, version);
+        }
         #endregion
 
         #region DEBUG方法
@@ -355,18 +368,7 @@ namespace NsisoLauncherCore
 
         public bool IsNormalExit()
         {
-            if (ExitCode == 0)
-            {
-                return true;
-            }
-            else if (ExitCode == -1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return ExitCode == 0;
         }
     }
 }

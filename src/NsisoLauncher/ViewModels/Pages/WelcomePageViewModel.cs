@@ -83,18 +83,21 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (result == MessageDialogResult.Affirmative)
                 {
                     var arch = SystemTools.GetSystemArch();
+                    DownloadWindow downloadWindow = new DownloadWindow();
                     switch (arch)
                     {
                         case ArchEnum.x32:
                             App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
-                            await App.NetHandler.Downloader.StartDownload();
-                            await new DownloadWindow().ShowWhenDownloading();
+                            downloadWindow.Show();
+                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
+                            downloadWindow.Close();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
                             break;
                         case ArchEnum.x64:
                             App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
-                            await App.NetHandler.Downloader.StartDownload();
-                            await new DownloadWindow().ShowWhenDownloading();
+                            downloadWindow.Show();
+                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
+                            downloadWindow.Close();
                             System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
                             break;
                         default:
