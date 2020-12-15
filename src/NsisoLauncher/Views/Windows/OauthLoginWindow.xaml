@@ -1,0 +1,15 @@
+﻿<Window x:Class="NsisoLauncher.Views.Windows.OauthLoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
+        xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Windows"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:utils="clr-namespace:NsisoLauncher.Utils"
+        mc:Ignorable="d"
+        Title="OauthLoginWindow" Height="500" Width="400">
+    <Grid>
+        <WebBrowser x:Name="wb"/>
+    </Grid>
+</Window>

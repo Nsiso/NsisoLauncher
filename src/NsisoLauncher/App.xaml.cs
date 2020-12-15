@@ -6,6 +6,7 @@ using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
@@ -96,6 +97,10 @@ namespace NsisoLauncher
 
         private void InitializeApplication(StartupEventArgs e)
         {
+            OauthLoginWindow oauthLogin = new OauthLoginWindow();
+            oauthLogin.Show();
+
+
             #region DEBUG初始化
             //debug
             LogHandler = new LogHandler();

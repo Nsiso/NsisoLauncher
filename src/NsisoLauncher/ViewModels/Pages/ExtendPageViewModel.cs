@@ -155,7 +155,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void UpdateVersion()
         {
-            UpdateVersionMods();
+            //UpdateVersionMods();
             UpdateVersionSaves();
         }
 
