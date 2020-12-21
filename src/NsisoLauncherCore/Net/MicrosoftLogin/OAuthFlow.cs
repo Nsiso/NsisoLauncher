@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Net.MicrosoftLogin.Modules;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +12,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
 {
     public class OAuthFlow
     {
-        private HttpClient client;
+        private NetRequester requester;
 
         public Uri OAuthAuthorizeUri { get; set; } = new Uri("https://login.live.com/oauth20_authorize.srf");
 
@@ -45,9 +48,9 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         /// </summary>
         public string AuthCode { get; set; }
 
-        public OAuthFlow(HttpClient arg_client)
+        public OAuthFlow(NetRequester arg_requester)
         {
-            this.client = arg_client;
+            this.requester = arg_requester;
         }
 
         public Uri GetAuthorizeUri()
@@ -66,10 +69,9 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             return uriBuilder.Uri;
         }
 
-        private void RedirectUrlToAuthCode(Uri uri)
+        public string RedirectUrlToAuthCode(Uri uri)
         {
-            string query = uri.Query;
-            query.TrimStart('?');
+            string query = uri.Query.TrimStart('?');
             string[] queries = query.Split('&');
             foreach (var item in queries)
             {
@@ -86,28 +88,47 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
                 }
                 if (key == "code")
                 {
-                    this.AuthCode = value;
-                }
-                else if (key == "state")
-                {
-                    this.State = value;
+                    return value;
                 }
             }
+            return null;
         }
 
-        public async Task<string> MicrosoftCodeToAccessToken(string code, CancellationToken cancellation)
+        public async Task<MicrosoftToken> MicrosoftCodeToAccessToken(string code, CancellationToken cancellation = default)
         {
             Dictionary<string, string> args = new Dictionary<string, string>();
             args.Add("client_id", ClientId);
-            args.Add("code", AuthCode);
+            args.Add("code", code);
             args.Add("grant_type", "authorization_code");
             args.Add("redirect_uri", RedirectUri.AbsoluteUri);
             args.Add("scope", Scope);
-            HttpContent content = new FormUrlEncodedContent(args);
-            var result = await client.PostAsync(OAuthTokenUri, content, cancellation);
+            FormUrlEncodedContent content = new FormUrlEncodedContent(args);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
             result.EnsureSuccessStatusCode();
 
-            return null;
+            string jsonStr = await result.Content.ReadAsStringAsync();
+            MicrosoftToken token = JsonConvert.DeserializeObject<MicrosoftToken>(jsonStr);
+
+            return token;
+        }
+
+        public async Task<MicrosoftToken> RefreshMicrosoftAccessToken(MicrosoftToken token, CancellationToken cancellation = default)
+        {
+            Dictionary<string, string> args = new Dictionary<string, string>();
+            args.Add("client_id", ClientId);
+            args.Add("refresh_token", token.Refresh_token);
+            args.Add("grant_type", "refresh_token");
+            args.Add("redirect_uri", RedirectUri.AbsoluteUri);
+            FormUrlEncodedContent content = new FormUrlEncodedContent(args);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
+            result.EnsureSuccessStatusCode();
+
+            string jsonStr = await result.Content.ReadAsStringAsync();
+            MicrosoftToken re_token = JsonConvert.DeserializeObject<MicrosoftToken>(jsonStr);
+
+            return re_token;
         }
     }
 }

@@ -80,7 +80,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\GroupDownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\IDownloadTask.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\MinecraftAuth.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\Modules\MicrosoftToken.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\Modules\XboxAuthenticateRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\Modules\XboxLiveToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\OAuthFlow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\XboxliveAuth.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\BmclApiBaseMirror.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\IDownloadableMirror.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Mirrors\IFunctionalMirror.cs" />
@@ -229,7 +234,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Net\Dns\Records\totla.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Net\MicrosoftLogin\Modules\" />
     <Folder Include="$(MSBuildThisFileDirectory)Util\Save\" />
   </ItemGroup>
 </Project>
