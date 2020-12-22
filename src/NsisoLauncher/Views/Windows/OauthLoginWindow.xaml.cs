@@ -21,18 +21,23 @@ namespace NsisoLauncher.Views.Windows
     /// </summary>
     public partial class OauthLoginWindow : Window
     {
+        public Visibility WebBrowserVisibility { get; set; }
+
         public OAuthFlow OAuthFlower { get; set; }
         public XboxliveAuth XboxliveAuther { get; set; }
+        public MinecraftServices McServices { get; set; }
 
         public CancellationToken CancelToken { get; set; } = default;
 
         public OauthLoginWindow()
         {
             InitializeComponent();
+            this.DataContext = this;
 
             wb.Navigating += Wb_Navigating;
             OAuthFlower = new OAuthFlow(App.NetHandler.Requester);
             XboxliveAuther = new XboxliveAuth(App.NetHandler.Requester);
+            McServices = new MinecraftServices(App.NetHandler.Requester);
             wb.Source = OAuthFlower.GetAuthorizeUri();
         }
 
@@ -42,9 +47,16 @@ namespace NsisoLauncher.Views.Windows
             if (uri.Host == OAuthFlower.RedirectUri.Host && uri.AbsolutePath == OAuthFlower.RedirectUri.AbsolutePath)
             {
                 string code = OAuthFlower.RedirectUrlToAuthCode(uri);
-                var result = await OAuthFlower.MicrosoftCodeToAccessToken(code, CancelToken);
-                //var xbox_result = await XboxliveAuther.Authenticate(result.Access_token, CancelToken);
+                await Authenticate(code);
             }
+        }
+
+        private async Task Authenticate(string code)
+        {
+            var result = await OAuthFlower.MicrosoftCodeToAccessToken(code, CancelToken);
+            var xbox_result = await XboxliveAuther.Authenticate(result.Access_token, CancelToken);
+            var mc_result = await McServices.Authenticate(xbox_result, CancelToken);
+            var owner_result = await McServices.CheckHaveGameOwnership(mc_result, CancelToken);
         }
     }
 }

@@ -317,8 +317,8 @@ namespace NsisoLauncher
             mainwindow.Show();
 
             //debug
-            //OauthLoginWindow oauthLogin = new OauthLoginWindow();
-            //oauthLogin.Show();
+            OauthLoginWindow oauthLogin = new OauthLoginWindow();
+            oauthLogin.Show();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

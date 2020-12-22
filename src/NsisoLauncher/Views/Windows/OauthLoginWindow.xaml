@@ -10,6 +10,13 @@
         mc:Ignorable="d"
         Title="OauthLoginWindow" Height="500" Width="400">
     <Grid>
-        <WebBrowser x:Name="wb"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5">
+            <TextBlock Text="{Binding ElementName=wb, Path=Source}"/>
+        </Grid>
+        <WebBrowser x:Name="wb" Grid.Row="1"/>
     </Grid>
 </Window>
