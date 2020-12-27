@@ -30,6 +30,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public Dictionary<string, PlayerProfile> UUIDList { get; set; }
 
         public ICommand OfflineLoginCmd { get; set; }
+        public ICommand MicrosoftLoginCmd { get; set; }
         public ICommand MojangLoginCmd { get; set; }
         public ICommand OtherLoginCmd { get; set; }
 
@@ -73,6 +74,11 @@ namespace NsisoLauncher.ViewModels.Pages
             OfflineLoginCmd = new DelegateCommand(async (a) =>
             {
                 await OfflineLogin();
+            });
+
+            MicrosoftLoginCmd = new DelegateCommand((a) =>
+            {
+                MicrosoftLogin();
             });
 
             MojangLoginCmd = new DelegateCommand(async (a) =>
@@ -167,6 +173,12 @@ namespace NsisoLauncher.ViewModels.Pages
                     }
                 }
             }
+        }
+
+        private void MicrosoftLogin()
+        {
+            Views.Windows.OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
+            loginWindow.ShowLogin();
         }
 
         private async Task MojangLogin()

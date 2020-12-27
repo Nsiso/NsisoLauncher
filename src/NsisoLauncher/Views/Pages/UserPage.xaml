@@ -93,7 +93,9 @@
                 <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
                         Content="离线登录" Padding="50,5" Margin="5" Command="{Binding OfflineLoginCmd}"/>
                 <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                        Content="正版登录" Padding="50,5" Margin="5" Command="{Binding MojangLoginCmd}"/>
+                        Content="微软账号登录" Padding="50,5" Margin="5" Command="{Binding MicrosoftLoginCmd}"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Content="Mojang账号登录" Padding="50,5" Margin="5" Command="{Binding MojangLoginCmd}"/>
                 <Button Style="{StaticResource MahApps.Styles.Button.Square}"
                         Content="外置登录" Padding="50,5" Margin="5" Command="{Binding OtherLoginCmd}"/>
             </StackPanel>

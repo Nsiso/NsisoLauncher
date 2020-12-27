@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,15 @@ namespace NsisoLauncher.ViewModels.Pages
         /// 版本mod
         /// </summary>
         public ObservableCollection<ModInfo> VerMods { get; set; }
+
+        /// <summary>
+        /// 选中的mod实例
+        /// </summary>
+        public ModInfo SelectedMod { get; set; }
+
+        public ICommand AddModCmd { get; set; }
+
+        public ICommand DeleteModCmd { get; set; }
         #endregion
 
 
@@ -68,13 +78,30 @@ namespace NsisoLauncher.ViewModels.Pages
                 UpdateVersion();
             }
 
-            DeleteSaveCmd = new DelegateCommand(new Action<object>(DeleteSave));
-            AddSaveCmd = new DelegateCommand(new Action<object>(AddSave));
+            DeleteSaveCmd = new DelegateCommand(async (a) =>
+            {
+                await DeleteSave(a);
+            });
+
+            AddSaveCmd = new DelegateCommand(async (a) =>
+            {
+                await AddSave(a);
+            });
+
+            DeleteModCmd = new DelegateCommand(async (a) =>
+            {
+                await DeleteMod(a);
+            });
+
+            AddModCmd = new DelegateCommand(async (a) =>
+            {
+                await AddMod(a);
+            });
 
             this.PropertyChanged += ExtendPageViewModel_PropertyChanged;
         }
 
-        private async void DeleteSave(object obj)
+        private async Task DeleteSave(object obj)
         {
             if (SelectedSave == null)
             {
@@ -94,13 +121,14 @@ namespace NsisoLauncher.ViewModels.Pages
                     SaveInfo save = SelectedSave;
                     VerSaves.Remove(save);
                     save.DeleteSave();
+                    await App.MainWindowVM.ShowMessageAsync("删除成功", "成功删除所选的存档");
                     break;
                 default:
                     break;
             }
         }
 
-        private async void AddSave(object obj)
+        private async Task AddSave(object obj)
         {
             if (SelectedVersion == null)
             {
@@ -136,6 +164,70 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
+        private async Task DeleteMod(object obj)
+        {
+            if (SelectedMod == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("未选择版本", "选择的版本为空");
+                return;
+            }
+
+            var result = await App.MainWindowVM.ShowMessageAsync(string.Format("确定删除Mod:{0}？", SelectedMod.Name),
+                "这个Mod会彻底消失且无法找回！", MessageDialogStyle.AffirmativeAndNegative, null);
+            switch (result)
+            {
+                case MessageDialogResult.Canceled:
+                    break;
+                case MessageDialogResult.Negative:
+                    break;
+                case MessageDialogResult.Affirmative:
+                    ModInfo mod = SelectedMod;
+                    VerMods.Remove(mod);
+                    File.Delete(mod.ModPath);
+                    await App.MainWindowVM.ShowMessageAsync("删除成功", "成功删除所选的Mod");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async Task AddMod(object obj)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = "选择Mod路径";
+                dialog.Filter = "JarMod(*.jar)|*.jar|ZipMod(*.zip)|*.zip";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    string modPath = dialog.FileName;
+                    if (string.IsNullOrWhiteSpace(modPath))
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("选择了空路径", "无法将空路径Mod添加至版本Mod中");
+                        return;
+                    }
+
+                    string dest_path = string.Format("{0}\\{1}", App.Handler.GetVersionModsDir(SelectedVersion), Path.GetFileName(modPath));
+                    if (File.Exists(dest_path))
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("添加Mod失败", "Mod列表中已经存在这个Mod");
+                        return;
+                    }
+                    try
+                    {
+                        File.Copy(modPath, dest_path, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("添加Mod失败", string.Format("添加Mod时出现意外：{0}", ex.ToString()));
+                        return;
+                    }
+
+                    UpdateVersionMods();
+                    await App.MainWindowVM.ShowMessageAsync("添加Mod成功", "快去看看吧");
+                }
+            }
+        }
+
         private void LauncherData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "SelectedVersion")
@@ -155,7 +247,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void UpdateVersion()
         {
-            //UpdateVersionMods();
+            UpdateVersionMods();
             UpdateVersionSaves();
         }
 

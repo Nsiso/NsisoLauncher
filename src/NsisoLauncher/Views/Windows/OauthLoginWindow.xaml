@@ -3,20 +3,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
         xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Windows"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:utils="clr-namespace:NsisoLauncher.Utils"
-        mc:Ignorable="d"
-        Title="OauthLoginWindow" Height="500" Width="400">
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="OauthLoginWindow" Height="600" Width="650">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Margin="5">
-            <TextBlock Text="{Binding ElementName=wb, Path=Source}"/>
+            <TextBlock Text="正在进行微软账号登录" HorizontalAlignment="Center"/>
         </Grid>
-        <WebBrowser x:Name="wb" Grid.Row="1"/>
+        <WebBrowser x:Name="wb" Grid.Row="1" Navigating="wb_Navigating" Navigated="wb_Navigated"/>
+        <StackPanel x:Name="loadingPanel" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <controls:ProgressRing x:Name="progress" Margin="0,0,0,10"/>
+            <TextBlock Text="请稍后..." HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <StackPanel>
+                <TextBlock Text="微软登录服务器位于境外，加载可能需要耐心等待一段时间" TextAlignment="Center" Foreground="Gray"/>
+                <TextBlock Text="若长时间仍未加载成功，建议重新打开此登录界面" TextAlignment="Center" Foreground="Gray"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

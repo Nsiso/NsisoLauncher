@@ -315,10 +315,6 @@ namespace NsisoLauncher
             MainWindow mainwindow = new MainWindow();
             this.MainWindow = mainwindow;
             mainwindow.Show();
-
-            //debug
-            OauthLoginWindow oauthLogin = new OauthLoginWindow();
-            oauthLogin.Show();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

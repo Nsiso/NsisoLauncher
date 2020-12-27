@@ -18,8 +18,9 @@ namespace NsisoLauncher.Views.Windows
             {
                 CloseWindow = new Action(() => this.Close())
             };
-            InitializeComponent();
             this.DataContext = vm;
+
+            InitializeComponent();
 
             //THIS IS NOT MVVM
             vm.NavigationService = frame.NavigationService;

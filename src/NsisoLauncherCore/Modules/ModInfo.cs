@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace NsisoLauncherCore.Modules
 {
@@ -10,7 +11,9 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// Mod file name
         /// </summary>
-        public string FileName { get; set; }
+        public string ModPath { get; set; }
+
+        public string Name { get => Path.GetFileNameWithoutExtension(ModPath); }
 
         ///// <summary>
         ///// Mod ID
