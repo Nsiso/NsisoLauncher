@@ -17,8 +17,8 @@ jobs:
     runs-on: windows-latest
     
     env:
-      working_dir: src\NsisoLauncher
-      test_dir: src\NsisoLauncher.Test
+      working_dir: src
+      launcher_dir: src\NsisoLauncher
       Configuration: ${{ matrix.configuration }}
 
     steps:
@@ -32,15 +32,11 @@ jobs:
 
     - name: Restore
       run: msbuild -t:restore
-      working-directory: src
-
-    - name: Restore Test
-      run: msbuild -t:restore
-      working-directory: $env:test_dir
+      working-directory: $env:working_dir
 
     - name: Build
       run: msbuild -p:Configuration=$env:Configuration
-      working-directory: $env:working_dir
+      working-directory: $env:launcher_dir
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
