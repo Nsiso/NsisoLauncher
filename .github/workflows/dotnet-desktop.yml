@@ -39,5 +39,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: Build Result
+        name: ${{ env.Configuration }} Build Result
         path: src\NsisoLauncher\bin\${{ env.Configuration }}
