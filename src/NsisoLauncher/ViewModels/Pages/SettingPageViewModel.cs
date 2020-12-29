@@ -158,7 +158,7 @@ namespace NsisoLauncher.ViewModels.Pages
             OpenFileDialog dialog = new OpenFileDialog()
             {
                 Title = "选择Java",
-                Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe",
+                Filter = "Java应用程序(无窗口)|javaw.exe|Java应用程序(含窗口)|java.exe|Windows可执行文件|*.exe",
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
