@@ -9,7 +9,17 @@ on:
 jobs:
 
   build:
+    
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    
     runs-on: windows-latest
+    
+    env:
+      working_dir: src\NsisoLauncher
+      test_dir: src\NsisoLauncher.Test
+      Configuration: ${{ matrix.configuration }}
 
     steps:
     - name: Checkout
@@ -26,14 +36,14 @@ jobs:
 
     - name: Restore Test
       run: msbuild -t:restore
-      working-directory: src\NsisoLauncher.Test
+      working-directory: $env:test_dir
 
     - name: Build
-      run: msbuild -p:Configuration=Release
-      working-directory: src\NsisoLauncher
+      run: msbuild -p:Configuration=$env:Configuration
+      working-directory: $env:working_dir
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: Build Result
-        path: src\NsisoLauncher\bin\Release
+        path: src\NsisoLauncher\bin\$env:Configuration
