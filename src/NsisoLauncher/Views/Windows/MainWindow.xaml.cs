@@ -23,6 +23,7 @@ namespace NsisoLauncher.Views.Windows
             InitializeComponent();
 
             //THIS IS NOT MVVM
+            //Hello world!
             vm.NavigationService = frame.NavigationService;
             vm.InitializeMainPage();
             App.LogHandler.AppendDebug("启动器主窗体已载入");
