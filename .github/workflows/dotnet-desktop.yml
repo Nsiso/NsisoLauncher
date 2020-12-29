@@ -31,12 +31,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1
 
     - name: Restore
-      run: msbuild -t:restore
-      working-directory: $env:working_dir
+      run: msbuild $env:working_dir -t:restore
 
     - name: Build
-      run: msbuild -p:Configuration=$env:Configuration
-      working-directory: $env:launcher_dir
+      run: msbuild $env:launcher_dir -p:Configuration=$env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
