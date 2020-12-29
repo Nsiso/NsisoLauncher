@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [ master,dev ]
+  pull_request:
+    branches: [ master,dev ]
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Restore
+      run: msbuild -t:restore
+      working-directory: src
+
+    - name: Restore Test
+      run: msbuild -t:restore
+      working-directory: src\NsisoLauncher.Test
+
+    - name: Build
+      run: msbuild -p:Configuration=Release
+      working-directory: src\NsisoLauncher
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Build Result
+        path: src\NsisoLauncher\bin\Release
