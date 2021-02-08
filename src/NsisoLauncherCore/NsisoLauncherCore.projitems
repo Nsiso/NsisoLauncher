@@ -71,6 +71,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagIntArray.generated.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagLong.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagLongArray.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagLongArray.generated.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagShort.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagString.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\TagType.generated.cs" />

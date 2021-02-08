@@ -38,20 +38,29 @@ namespace NsisoLauncherCore.Util.Save
             List<SaveInfo> maps = new List<SaveInfo>();
             foreach (var item in allSaves)
             {
-                string levelPath = item + "\\level.dat";
-                if ((!string.IsNullOrWhiteSpace(item)) && File.Exists(levelPath))
+                try
                 {
-                    TagDictionary tagDic;
-                    using (FileStream fileStream = new FileStream(levelPath, FileMode.Open))
+                    string levelPath = item + "\\level.dat";
+                    if ((!string.IsNullOrWhiteSpace(item)) && File.Exists(levelPath))
                     {
-                        TagReader reader = new BinaryTagReader(fileStream);
-                        tagDic = (TagDictionary)reader.ReadDocument().Value[0].GetValue();
+                        TagDictionary tagDic;
+                        using (FileStream fileStream = new FileStream(levelPath, FileMode.Open))
+                        {
+                            TagReader reader = new BinaryTagReader(fileStream);
+                            var doc = reader.ReadDocument();
+                            tagDic = (TagDictionary)doc.Value[0].GetValue();
+                        }
+                        if (tagDic != null)
+                        {
+                            SaveInfo map = new SaveInfo(item, tagDic);
+                            maps.Add(map);
+                        }
                     }
-                    if (tagDic != null)
-                    {
-                        SaveInfo map = new SaveInfo(item, tagDic);
-                        maps.Add(map);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    continue;
                 }
             }
             return maps;

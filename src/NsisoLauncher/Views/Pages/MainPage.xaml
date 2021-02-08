@@ -90,7 +90,9 @@
                           ItemInvoked="HamburgerMenuControl_OnItemInvoked"
                           ItemTemplate="{StaticResource MenuItemTemplate}"
                           OptionsItemTemplate="{StaticResource MenuItemTemplate}"
-                          Style="{StaticResource MahApps.Styles.HamburgerMenu}">
+                          Style="{StaticResource MahApps.Styles.HamburgerMenu}"
+                          PaneBackground="{DynamicResource MahApps.Brushes.SystemControlBackgroundChromeMedium}"
+                          PaneForeground="{DynamicResource MahApps.Brushes.SystemControlForegroundBaseMediumHigh}">
 
             <controls:HamburgerMenu.ItemsSource>
                 <controls:HamburgerMenuItemCollection>

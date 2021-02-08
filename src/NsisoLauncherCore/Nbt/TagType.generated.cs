@@ -10,75 +10,79 @@
 
 namespace Cyotek.Data.Nbt
 {
-  /// <summary>
-  /// Values that represent tag types.
-  /// </summary>
-  public enum TagType
-  {
     /// <summary>
-    /// Not set
+    /// Values that represent tag types.
     /// </summary>
-    None = -1,
+    public enum TagType
+    {
+        /// <summary>
+        /// Not set
+        /// </summary>
+        None = -1,
 
-    /// <summary>
-    /// Used to mark the end of a list
-    /// </summary>
-    End = 0,
+        /// <summary>
+        /// Used to mark the end of a list
+        /// </summary>
+        End = 0,
 
-    /// <summary>
-    /// A single signed byte
-    /// </summary>
-    Byte = 1,
+        /// <summary>
+        /// A single signed byte
+        /// </summary>
+        Byte = 1,
 
-    /// <summary>
-    /// A signed 16bit short
-    /// </summary>
-    Short = 2,
+        /// <summary>
+        /// A signed 16bit short
+        /// </summary>
+        Short = 2,
 
-    /// <summary>
-    /// A signed 32bit integer
-    /// </summary>
-    Int = 3,
+        /// <summary>
+        /// A signed 32bit integer
+        /// </summary>
+        Int = 3,
 
-    /// <summary>
-    /// A signed 64bit long
-    /// </summary>
-    Long = 4,
+        /// <summary>
+        /// A signed 64bit long
+        /// </summary>
+        Long = 4,
 
-    /// <summary>
-    /// A 32bit floating point value
-    /// </summary>
-    Float = 5,
+        /// <summary>
+        /// A 32bit floating point value
+        /// </summary>
+        Float = 5,
 
-    /// <summary>
-    /// A 64bit floating point value
-    /// </summary>
-    Double = 6,
+        /// <summary>
+        /// A 64bit floating point value
+        /// </summary>
+        Double = 6,
 
-    /// <summary>
-    /// An array of bytes of unspecified format
-    /// </summary>
-    ByteArray = 7,
+        /// <summary>
+        /// An array of bytes of unspecified format
+        /// </summary>
+        ByteArray = 7,
 
-    /// <summary>
-    /// An array of bytes defining a string in UTF-8 format
-    /// </summary>
-    String = 8,
+        /// <summary>
+        /// An array of bytes defining a string in UTF-8 format
+        /// </summary>
+        String = 8,
 
-    /// <summary>
-    /// A sequential list of unnamed tags of a specific type
-    /// </summary>
-    List = 9,
+        /// <summary>
+        /// A sequential list of unnamed tags of a specific type
+        /// </summary>
+        List = 9,
 
-    /// <summary>
-    /// A sequential list of named tags of variable types
-    /// </summary>
-    Compound = 10,
+        /// <summary>
+        /// A sequential list of named tags of variable types
+        /// </summary>
+        Compound = 10,
 
-    /// <summary>
-    /// An array of integers of unspecified format
-    /// </summary>
-    IntArray = 11
+        /// <summary>
+        /// An array of integers of unspecified format
+        /// </summary>
+        IntArray = 11,
 
-  }
+        /// <summary>
+        /// An array of long integers of unspecified format
+        /// </summary>
+        LongArray = 12
+    }
 }

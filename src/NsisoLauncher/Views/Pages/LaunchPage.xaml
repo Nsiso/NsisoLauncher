@@ -19,46 +19,38 @@
         <utils:StringNotEmptyToVisibilityConverter x:Key="strEmptyToVis"/>
     </Page.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="80"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid  Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}" Grid.Column="1" Grid.Row="1">
-            <Image Source="/NsisoLauncher;component/Resource/minecraft_logo.png"
-                       VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-20,0,0" Width="300"/>
-            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="50">
-                <!--<StackPanel Margin="0,20,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Image Source="/NsisoLauncher;component/Resource/minecraft_logo.png" Grid.Column="0"
+                       VerticalAlignment="Center" HorizontalAlignment="Center" Width="300"/>
+        <Grid  Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="10">
+                <controls:Tile Width="auto" Title="游戏使用的用户和角色" TitleFontSize="12" HorizontalAlignment="Stretch" Height="120">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="启动使用用户:" Foreground="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseHigh}"/>
-                        <TextBlock Text="{Binding UserName,TargetNullValue='未登录，请先登录'}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="启动使用角色:" Foreground="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseHigh}"/>
-                        <TextBlock Text="{Binding UserProfileName,TargetNullValue='未选择角色'}"/>
-                    </StackPanel>
-                </StackPanel>-->
-                <controls:Tile Height="auto" Width="auto" Title="启动使用的用户和角色名" TitleFontSize="12">
-                    <StackPanel Margin="0,30">
-                        <TextBlock Text="{Binding UserName,TargetNullValue='未登录，请先登录'}" FontSize="20"/>
-                        <TextBlock Text="{Binding UserProfileName,TargetNullValue='未选择角色'}" HorizontalAlignment="Center"/>
+                        <Image Width="40" Height="40" Source="/NsisoLauncher;component/Resource/Steve.jpg" Stretch="UniformToFill" Margin="10"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding UserProfileName,TargetNullValue='未选择角色'}" FontSize="20"/>
+                            <TextBlock Text="{Binding UserName,TargetNullValue='未登录，请先登录'}"/>
+                        </StackPanel>
                     </StackPanel>
                 </controls:Tile>
-                <StackPanel Margin="0,10,0,0">
-                    <ComboBox x:Name="launchVersionCombobox" Background="{x:Null}" ItemTemplate="{StaticResource VersionComboboxStyle}"
+                <ComboBox x:Name="launchVersionCombobox"  ItemTemplate="{StaticResource VersionComboboxStyle}"
                               controls:TextBoxHelper.Watermark="选择启动的游戏版本"  controls:TextBoxHelper.UseFloatingWatermark="True"
-                          BorderBrush="{DynamicResource MahApps.Brushes.SystemControlBackgroundBaseLow}"
-                  ItemsSource="{Binding Versions}" SelectedItem="{Binding LaunchVersion}"
+                              ItemsSource="{Binding Versions}" SelectedItem="{Binding LaunchVersion}" VerticalAlignment="Top" Grid.Column="1" Margin="0,10"
                               SelectedValuePath="Id" SelectedValue="{Binding SelectedLaunchVersionId}"/>
-                </StackPanel>
             </StackPanel>
-            <Button VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Command="{Binding LaunchCmd}"
-                FontSize="20" FontWeight="Light" BorderThickness="0" Padding="0,15"
+            <Button VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Command="{Binding LaunchCmd}"
+                FontSize="20" FontWeight="Light" BorderThickness="0" Grid.Row="1"
                 Style="{StaticResource MahApps.Styles.Button.MetroSquare.Accent}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -70,6 +62,30 @@
                 </StackPanel>
             </Button>
         </Grid>
+
+        <!--<Grid Grid.Row="1" Grid.Column="0" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Background="#CCFFFFFF" Margin="0,0,0,10" Grid.Row="0">
+
+            </Grid>
+            <Grid Margin="0,10,0,0" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" Background="#CCFFFFFF" Margin="0,0,10,0">
+
+                </Grid>
+                <Grid Grid.Column="1" Background="#CCFFFFFF" Margin="10,0,0,0">
+
+                </Grid>
+            </Grid>
+        </Grid>-->
+        
+
         <Grid  Grid.ColumnSpan="3" Grid.RowSpan="3" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}"
                Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
