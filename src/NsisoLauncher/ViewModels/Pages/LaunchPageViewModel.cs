@@ -8,6 +8,7 @@ using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Net.Server;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace NsisoLauncher.ViewModels.Pages
         /// 取消启动命令	
         /// </summary>	
         public ICommand CancelLaunchingCmd { get; set; }
+
+        /// <summary>
+        /// 窗口加载完毕命令
+        /// </summary>
+        public ICommand LoadedCmd { get; set; }
         #endregion
 
         #region ElementsProp
@@ -59,6 +65,14 @@ namespace NsisoLauncher.ViewModels.Pages
         public bool IsLaunching { get; set; }
 
         public ObservableCollection<Version> Versions { get; }
+
+
+        #region 服务器
+        public ServerInfo Server { get; set; }
+
+        public bool ServerIsLoading { get; set; } = true;
+        #endregion
+
 
         #region Launch Data
         /// <summary>
@@ -102,6 +116,13 @@ namespace NsisoLauncher.ViewModels.Pages
             RefreshUserBinding();
 
             #region 命令初始化
+            LoadedCmd = new DelegateCommand(
+               //launch
+               async (obj) =>
+               {
+                   await Loaded();
+               });
+
             LaunchCmd = new DelegateCommand(
                //launch
                async (obj) =>
@@ -137,7 +158,26 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
             }
 
+
+
             this.PropertyChanged += LaunchPageViewModel_PropertyChanged;
+        }
+
+        private async Task Loaded()
+        {
+            #region 自定义
+            if (App.Config?.MainConfig != null)
+            {
+                if (App.Config.MainConfig.Server?.ShowServerInfo == true)
+                {
+                    ServerIsLoading = true;
+                    Server = new ServerInfo(App.Config.MainConfig.Server.Address, App.Config.MainConfig.Server.Port);
+                    Server.ServerName = App.Config.MainConfig.Server.ServerName;
+                    await Server.StartGetServerInfoAsync();
+                    ServerIsLoading = false;
+                }
+            }
+            #endregion
         }
 
         private void LaunchPageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

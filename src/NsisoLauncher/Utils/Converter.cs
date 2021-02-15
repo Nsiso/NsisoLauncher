@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Utils
 {
@@ -189,6 +192,89 @@ namespace NsisoLauncher.Utils
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value?.Equals(true) == true ? parameter : Binding.DoNothing;
+        }
+    }
+
+    [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(SolidColorBrush))]
+    public class ServerStateToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
+            switch (type)
+            {
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.GOOD:
+                    return new SolidColorBrush(Colors.Green);
+                default:
+                    return new SolidColorBrush(Colors.Red);
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(MahApps.Metro.IconPacks.PackIconFontAwesomeKind))]
+    public class ServerStateToIconTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
+            switch (type)
+            {
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.GOOD:
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CircleRegular;
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.NO_RESPONSE:
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.BAD_CONNECT:
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.EXCEPTION:
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+                default:
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(byte[]), typeof(BitmapImage))]
+    public class ByteArrayToBitmapImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            byte[] byteArray = (byte[])value;
+
+            BitmapImage bmp = null;
+
+            try
+            {
+                bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.StreamSource = new MemoryStream(byteArray);
+                bmp.EndInit();
+            }
+            catch
+            {
+                bmp = null;
+            }
+
+            return bmp;
+
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Server
 {
-    class ServerInfo
+    public class ServerInfo : INotifyPropertyChanged
     {
         /// <summary>
         /// 服务器IP地址
@@ -85,7 +86,25 @@ namespace NsisoLauncherCore.Net.Server
         /// <summary>
         /// 获取与特定格式代码相关联的颜色代码
         /// </summary>
-        public static Dictionary<char, string> MinecraftColors { get { return new Dictionary<char, string>() { { '0', "#000000" }, { '1', "#0000AA" }, { '2', "#00AA00" }, { '3', "#00AAAA" }, { '4', "#AA0000" }, { '5', "#AA00AA" }, { '6', "#FFAA00" }, { '7', "#AAAAAA" }, { '8', "#555555" }, { '9', "#5555FF" }, { 'a', "#55FF55" }, { 'b', "#55FFFF" }, { 'c', "#FF5555" }, { 'd', "#FF55FF" }, { 'e', "#FFFF55" }, { 'f', "#FFFFFF" } }; } }
+        public static Dictionary<char, string> MinecraftColors { get; private set; } = new Dictionary<char, string>()
+        {
+                    { '0', "#000000" },
+                    { '1', "#0000AA" },
+                    { '2', "#00AA00" },
+                    { '3', "#00AAAA" },
+                    { '4', "#AA0000" },
+                    { '5', "#AA00AA" },
+                    { '6', "#FFAA00" },
+                    { '7', "#AAAAAA" },
+                    { '8', "#555555" },
+                    { '9', "#5555FF" },
+                    { 'a', "#55FF55" },
+                    { 'b', "#55FFFF" },
+                    { 'c', "#FF5555" },
+                    { 'd', "#FF55FF" },
+                    { 'e', "#FFFF55" },
+                    { 'f', "#FFFFFF" }
+        };
 
         public enum StateType
         {
@@ -97,15 +116,18 @@ namespace NsisoLauncherCore.Net.Server
 
         public ServerInfo(string ip, ushort port)
         {
+            if (string.IsNullOrWhiteSpace(ip))
+            {
+                throw new ArgumentNullException("The server info ip is null");
+            }
             this.ServerAddress = ip;
             this.ServerPort = port;
         }
 
-        public ServerInfo(Modules.Server info)
-        {
-            this.ServerAddress = info.Address;
-            this.ServerPort = info.Port;
-        }
+        public ServerInfo(Modules.Server info) : this(info.Address, info.Port)
+        { }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void StartGetServerInfo()
         {
@@ -141,11 +163,17 @@ namespace NsisoLauncherCore.Net.Server
                 {
                     tcp.ReceiveBufferSize = 1024 * 1024;
 
+                    //Packet ID: 0x00
                     byte[] packet_id = ProtocolHandler.getVarInt(0);
+
+                    //See protocol version numbers. The version that the client plans on using to connect to the server (which is not important for the ping).
+                    //If the client is pinging to determine what version to use, by convention should be set. -1
                     byte[] protocol_version = ProtocolHandler.getVarInt(-1);
+
+
                     byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerAddress);
                     byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
-                    byte[] server_port = BitConverter.GetBytes((ushort)this.ServerPort); Array.Reverse(server_port);
+                    byte[] server_port = BitConverter.GetBytes(this.ServerPort); Array.Reverse(server_port);
                     byte[] next_state = ProtocolHandler.getVarInt(1);
                     byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
                     byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
@@ -289,26 +317,6 @@ namespace NsisoLauncherCore.Net.Server
                                 this.MOTD = descriptionDataObj["text"].ToString();
                             }
                         }
-                        //if (descriptionData.ContainsKey("extra"))
-                        //{
-                        //    //Json.JSONData extraData = jsonData.DataArray;
-                        //    foreach (JToken item in descriptionData["extra"])
-                        //    {
-                        //        string text = item["text"].ToString();
-                        //        if (!string.IsNullOrWhiteSpace(text))
-                        //        {
-                        //            this.MOTD += text;
-                        //        }
-                        //    }
-                        //}
-                        //else if (descriptionData.ContainsKey("text"))
-                        //{
-                        //    this.MOTD = descriptionData["text"].ToString();
-                        //}
-                        //else
-                        //{
-
-                        //}
                     }
 
                     // Check for forge on the server.
@@ -354,12 +362,12 @@ namespace NsisoLauncherCore.Net.Server
 
         private string ClearColor(string str)
         {
-            str = str.Replace(@"\n", "");
+            str = str.Replace(@"\n", "\n");
             while (str.Contains('§'))
             {
                 str = str.Remove(str.IndexOf('§'), 2);
             }
-            return str;
+            return str.Trim();
         }
 
         //[DllImport("gdi32.dll", SetLastError = true)]

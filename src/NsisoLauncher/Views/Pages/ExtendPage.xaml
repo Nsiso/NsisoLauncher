@@ -81,7 +81,9 @@
                                     </Image>
                                     <StackPanel VerticalAlignment="Center" Margin="10,0">
                                         <TextBlock Text="{Binding LevelName}" FontSize="16"/>
-                                        <TextBlock Text="{Binding Time}"/>
+                                        <TextBlock Text="{Binding GameType}"/>
+                                        <TextBlock Text="{Binding Time}" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding SaveBasePath}" Foreground="Gray"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

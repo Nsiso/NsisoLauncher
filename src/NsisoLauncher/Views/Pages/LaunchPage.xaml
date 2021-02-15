@@ -9,14 +9,21 @@
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LaunchPage">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCmd}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Page.DataContext>
         <vm:LaunchPageViewModel/>
     </Page.DataContext>
     <Page.Resources>
         <utils:StringNotEmptyToVisibilityConverter x:Key="strEmptyToVis"/>
+        <utils:ObjectNotEmptyToVisibilityConverter x:Key="objEmptyToVis"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -29,10 +36,13 @@
         </Grid.ColumnDefinitions>
         <Image Source="/NsisoLauncher;component/Resource/minecraft_logo.png" Grid.Column="0"
                        VerticalAlignment="Center" HorizontalAlignment="Center" Width="300"/>
+        <userControl:ServerInfoControl Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Margin="20" Height="auto" 
+                                       Visibility="{Binding Server, Converter={StaticResource objEmptyToVis}}"
+                                       IsLoading="{Binding ServerIsLoading}" ServerInf="{Binding Server}"/>
         <Grid  Grid.Column="1" Grid.RowSpan="2" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="6*"/>
                 <RowDefinition/>
+                <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
             <StackPanel Margin="10">
                 <controls:Tile Width="auto" Title="游戏使用的用户和角色" TitleFontSize="12" HorizontalAlignment="Stretch" Height="120">
@@ -84,7 +94,7 @@
                 </Grid>
             </Grid>
         </Grid>-->
-        
+
 
         <Grid  Grid.ColumnSpan="3" Grid.RowSpan="3" Background="{DynamicResource MahApps.Brushes.SystemControlBackgroundAltMediumHigh}"
                Visibility="{Binding IsLaunching, Converter={StaticResource BooleanToVisibilityConverter}}">
