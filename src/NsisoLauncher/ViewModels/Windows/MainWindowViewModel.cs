@@ -85,6 +85,9 @@ namespace NsisoLauncher.ViewModels.Windows
                     Height = App.Config.MainConfig.Launcher.LauncherWindowSize.Height;
                     Width = App.Config.MainConfig.Launcher.LauncherWindowSize.Width;
                 }
+
+
+                App.Config.MainConfig.Customize.PropertyChanged += Customize_PropertyChanged;
             }
             if (App.LaunchSignal != null)
             {
@@ -99,6 +102,11 @@ namespace NsisoLauncher.ViewModels.Windows
             {
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
             }
+        }
+
+        private void Customize_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            CustomizeRefresh();
         }
 
         public void InitializeMainPage()
@@ -201,6 +209,10 @@ namespace NsisoLauncher.ViewModels.Windows
                     }
                 }
             }
+            else
+            {
+                ImageSource = "../../Resource/home-hero-1200x600.jpg";
+            }
 
             //自定义背景视频（覆盖音乐设置）
             if (App.Config.MainConfig.Customize.CustomBackGroundVideo)
@@ -245,6 +257,10 @@ namespace NsisoLauncher.ViewModels.Windows
                         //});
                     }
                 }
+            }
+            else
+            {
+                MediaSource = null;
             }
 
             //undo app back server info control

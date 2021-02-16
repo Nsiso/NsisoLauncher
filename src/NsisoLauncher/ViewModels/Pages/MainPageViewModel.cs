@@ -12,7 +12,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public MainPageViewModel()
         {
-            if (App.Handler != null)
+            if (App.NetHandler != null)
             {
                 App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
                 App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
