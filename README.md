@@ -131,5 +131,7 @@ Licensed under the CDDL-1.0 License;
 Copyright (c) 2012-2021 Cyotek Ltd. All Rights Reserved.  
 NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data.  
 This is currently the format that Minecraft uses for player and region data.  
+Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft.  
+However, the format is versatile enough to use for many other applications and purposes.  
 Licensed under the  GNU Lesser General Public License, version 2.1;  
 <https://github.com/cyotek/Cyotek.Data.Nbt/blob/master/COPYING.txt>  
