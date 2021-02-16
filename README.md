@@ -3,6 +3,7 @@
 A New Minecraft Launcher (unofficial) from Nsiso (DEV)  
 [![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f/branch/dev?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher/branch/dev)
 [![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=dev)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=dev)
+![Build](https://github.com/Nsiso/NsisoLauncher/workflows/Build/badge.svg?branch=dev)
 
 感谢您关注到我们Nsiso启动器的开源项目  
 此项目开源目的在于学习，错误排查，公开安全策略  
