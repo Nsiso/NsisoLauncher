@@ -1,4 +1,5 @@
 # NsisoLauncher(DEV)
+
 A New Minecraft Launcher (unofficial) from Nsiso (DEV)  
 [![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f/branch/dev?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher/branch/dev)
 [![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=dev)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=dev)
@@ -8,11 +9,12 @@ A New Minecraft Launcher (unofficial) from Nsiso (DEV)
 作者：Nsiso工作室-siso  
 请注意该项目遵循GNU GPL3.0开源协议  
   
-## 使用组件（由名字字母排序）：
+## 使用组件（由名字字母排序）
 
-#### BMCLAPI
+### BMCLAPI
+
 bangbang93's minecraft launcher api  
-https://bmclapidoc.bangbang93.com/  
+<https://bmclapidoc.bangbang93.com/>  
 > 关于  
 BMCLAPI是@bangbang93开发的BMCL的一部分，用于解决国内线路对Forge和Minecraft官方使用的Amazon S3 速度缓慢的问题。BMCLAPI是对外开放的，所有需要Minecraft资源的启动器均可调用。  
 协议  
@@ -26,97 +28,108 @@ BMCLAPI和BMCL不同，属于非开源项目
 
 ------------
 
-#### okayapi
+### okayapi
+
 启动器检查更新，上传报告API接口
 小白接口，小接口做大事情
 小白接口，是免费，免开发，直接可用的云端数据接口！我们致力于为客户端开发同学提供便利的云端接口，实现快速开发！
-https://www.okayapi.com/  
+<https://www.okayapi.com/>  
 
 ------------
 
-#### 老腊肉提供的Steve,Alex 3D XAML
+### 老腊肉提供的Steve,Alex 3D XAML
+
 3D建模来自老腊肉（代表作LauncherX）热情提供  
   
-# NsisoLauncher开源代码许可  
+## NsisoLauncher开源代码许可
 
-## MahApps.Metro  
+## MahApps.Metro
 
-https://github.com/MahApps/MahApps.Metro  
+<https://github.com/MahApps/MahApps.Metro>  
 Copyright (c) 2018 MahApps  
 The goal of MahApps.Metro is to allow devs to quickly and easily cobble together a "Metro" or "Modern UI" for their WPF4+ apps, with minimal effort.  
 Licensed under the MIT License(MIT);  
-https://github.com/MahApps/MahApps.Metro/blob/master-net40/LICENSE  
+<https://github.com/MahApps/MahApps.Metro/blob/master-net40/LICENSE>  
 
-## MahApps.Metro.IconPacks  
+## MahApps.Metro.IconPacks
 
-https://github.com/MahApps/MahApps.Metro.IconPacks  
+<https://github.com/MahApps/MahApps.Metro.IconPacks>  
 Copyright (c) 2016-2018 MahApps, Jan Karger  
 IconPacks for stylish awesome WPF or UWP apps.  
 Licensed under the MIT License(MIT);  
-https://github.com/MahApps/MahApps.Metro.IconPacks/blob/master/LICENSE  
+<https://github.com/MahApps/MahApps.Metro.IconPacks/blob/master/LICENSE>  
 
-## Newtonsoft.Json  
+## Newtonsoft.Json
 
-https://www.newtonsoft.com/json  
-https://github.com/JamesNK/Newtonsoft.Json  
+<https://www.newtonsoft.com/json>  
+<https://github.com/JamesNK/Newtonsoft.Json>  
 Copyright (c) 2007 James Newton-King  
 Json.NET is a popular high-performance JSON framework for .NET  
 Licensed under the MIT License(MIT);  
-https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md  
+<https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md>  
 
-## Fody  
+## Fody
 
-https://github.com/Fody/Fody  
+<https://github.com/Fody/Fody>  
 Copyright (c) Simon Cropp and contributors  
 Extensible tool for weaving .net assemblies.  
 Licensed under the MIT License(MIT);  
-https://github.com/Fody/Fody/blob/master/License.txt  
+<https://github.com/Fody/Fody/blob/master/License.txt>  
 
-## Costura.Fody  
+## Costura.Fody
 
-https://github.com/Fody/Costura  
+<https://github.com/Fody/Costura>  
 Copyright (c) 2012 Simon Cropp and contributors  
 Fody add-in for embedding references as resources.  
 Licensed under the MIT License(MIT);  
-https://github.com/Fody/Costura/blob/master/license.txt  
+<https://github.com/Fody/Costura/blob/master/license.txt>  
 
-## LiveCharts.Wpf  
+## LiveCharts.Wpf
 
-https://lvcharts.net  
-https://github.com/Live-Charts/Live-Charts  
+<https://lvcharts.net>  
+<https://github.com/Live-Charts/Live-Charts>  
 Copyright (c) 2016 Alberto Rodriguez & LiveCharts contributors  
 Simple, flexible, interactive and powerful data visualization for Wpf  
 Licensed under the MIT License(MIT);  
-https://github.com/Live-Charts/Live-Charts/blob/master/LICENSE.TXT  
+<https://github.com/Live-Charts/Live-Charts/blob/master/LICENSE.TXT>  
 
-## SharpZipLib  
+## SharpZipLib
 
-https://github.com/icsharpcode/SharpZipLib  
+<https://github.com/icsharpcode/SharpZipLib>  
 Copyright © 2000-2018 SharpZipLib Contributors  
 SharpZipLib (#ziplib, formerly NZipLib) is a compression library for Zip, GZip, BZip2, and Tar written entirely in C# for .NET. It is implemented as an assembly (installable in the GAC), and thus can easily be incorporated into other projects (in any .NET language)  
 Licensed under the MIT License(MIT);  
-https://github.com/icsharpcode/SharpZipLib/blob/master/LICENSE.txt  
+<https://github.com/icsharpcode/SharpZipLib/blob/master/LICENSE.txt>  
 
-## MojangSharp  
+## MojangSharp
 
-https://github.com/hawezo/MojangSharp  
+<https://github.com/hawezo/MojangSharp>  
 Copyright 2017 Enzo Innocenzi  
 MojangSharp is a C# wrapper for the Mojang API and Mojang Authentication API.  
 Licensed under the Apache License, Version 2.0;  
-https://github.com/hawezo/MojangSharp/blob/master/LICENSE  
+<https://github.com/hawezo/MojangSharp/blob/master/LICENSE>  
 
-## Heijden.Dns  
+## Heijden.Dns
 
-https://github.com/ghuntley/Heijden.Dns  
+<https://github.com/ghuntley/Heijden.Dns>  
 Copyright (c) 2008-2013 Alphons van der Heijden avanderheijden@moneywise.nl Copyright (c) 2014 Geoffrey Huntley ghuntley@ghuntley.com  
 A reusable DNS resolver for .NET  
 Licensed under the MIT License(MIT);  
-https://github.com/ghuntley/Heijden.Dns/blob/master/LICENSE.md  
+<https://github.com/ghuntley/Heijden.Dns/blob/master/LICENSE.md>  
 
 ## Minecraft-Console-Client
 
-https://github.com/ORelio/Minecraft-Console-Client  
+<https://github.com/ORelio/Minecraft-Console-Client>  
 Copyright (c) ORelio  
 Lightweight console for Minecraft chat and automated scripts  
 Licensed under the CDDL-1.0 License;  
-https://opensource.org/licenses/CDDL-1.0  
+<https://opensource.org/licenses/CDDL-1.0>  
+
+## Cyotek.Data.Nbt
+
+<https://github.com/cyotek/Cyotek.Data.Nbt>  
+Copyright (c) 2012-2021 Cyotek Ltd. All Rights Reserved.  
+NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data.  
+This is currently the format that Minecraft uses for player and region data.  
+Licensed under the  GNU Lesser General Public License, version 2.1;  
+<https://github.com/cyotek/Cyotek.Data.Nbt/blob/master/COPYING.txt>  
