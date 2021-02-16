@@ -45,10 +45,10 @@ namespace Cyotek.Data.Nbt.Serialization
       XmlWriterSettings settings;
 
       settings = new XmlWriterSettings
-                 {
-                   Indent = true,
-                   Encoding = Encoding.UTF8
-                 };
+      {
+        Indent = true,
+        Encoding = Encoding.UTF8
+      };
 
       _state = new TagState(FileAccess.Write);
       _writer = XmlWriter.Create(stream, settings);
@@ -91,6 +91,16 @@ namespace Cyotek.Data.Nbt.Serialization
       _arraySb.Append(value);
     }
 
+    public override void WriteArrayValue(long value)
+    {
+      if (_arraySb.Length != 0)
+      {
+        _arraySb.Append(' ');
+      }
+
+      _arraySb.Append(value);
+    }
+
     public override void WriteEndDocument()
     {
       _state.SetComplete();
@@ -105,7 +115,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       currentTag = _state.CurrentTag;
 
-      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray) && _arraySb != null && _arraySb.Length != 0)
+      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray || currentTag == TagType.LongArray) && _arraySb != null && _arraySb.Length != 0)
       {
         _writer.WriteValue(_arraySb.ToString());
         _arraySb.Length = 0;
@@ -127,9 +137,13 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         type = TagType.IntArray;
       }
-      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      else if (type == TagType.Long)
       {
-        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+        type = TagType.LongArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray && type != TagType.Long)
+      {
+        throw new ArgumentException("Only byte, 32bit integer or 64bit integer types are supported.", nameof(type));
       }
 
       if (_arraySb == null)
@@ -215,6 +229,25 @@ namespace Cyotek.Data.Nbt.Serialization
       output = new StringBuilder();
 
       foreach (int i in value)
+      {
+        if (output.Length != 0)
+        {
+          output.Append(' ');
+        }
+
+        output.Append(i);
+      }
+
+      _writer.WriteValue(output.ToString());
+    }
+
+    protected override void WriteValue(long[] value)
+    {
+      StringBuilder output;
+
+      output = new StringBuilder();
+
+      foreach (long i in value)
       {
         if (output.Length != 0)
         {

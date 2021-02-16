@@ -13,6 +13,8 @@ namespace Cyotek.Data.Nbt
 
     private static readonly int[] _emptyIntArray = new int[0];
 
+    private static readonly long[] _emptyLongArray = new long[0];
+
     private static readonly string[] _emptyStringArray = new string[0];
 
     private static readonly char[] _queryDelimiters =
@@ -349,6 +351,25 @@ namespace Cyotek.Data.Nbt
       return value != null ? value.Value : defaultValue;
     }
 
+    public TagLongArray GetLongArray(string name)
+    {
+      return this.GetTag<TagLongArray>(name);
+    }
+
+    public long[] GetLongArrayValue(string name)
+    {
+      return this.GetLongArrayValue(name, _emptyLongArray);
+    }
+
+    public long[] GetLongArrayValue(string name, long[] defaultValue)
+    {
+      TagLongArray value;
+
+      value = this.GetTag<TagLongArray>(name);
+
+      return value != null ? value.Value : defaultValue;
+    }
+
     public int GetIntValue(string name)
     {
       return this.GetIntValue(name, 0);
@@ -556,7 +577,7 @@ namespace Cyotek.Data.Nbt
 
             if (int.TryParse(part, out index) && index < container.Values.Count)
             {
-              element = container.Values[Convert.ToInt32(part)];
+              element = container.Values[index];
             }
             else
             {
@@ -567,7 +588,7 @@ namespace Cyotek.Data.Nbt
           }
           else
           {
-            // compoound
+            // compound
             TagCompound compound;
 
             compound = (TagCompound)element;

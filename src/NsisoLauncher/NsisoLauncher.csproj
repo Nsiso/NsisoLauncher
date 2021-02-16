@@ -341,7 +341,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\defaultIcon.png" />
     <Resource Include="Resource\icon.ico" />
   </ItemGroup>
   <ItemGroup>

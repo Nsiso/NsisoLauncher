@@ -80,15 +80,24 @@ namespace Cyotek.Data.Nbt
 
       position = stream.Position;
 
-      if (new BinaryTagReader(stream).IsNbtDocument())
+      try
       {
-        format = NbtFormat.Binary;
-      }
-      else
-      {
-        stream.Position = position;
+        if (new BinaryTagReader(stream).IsNbtDocument())
+        {
+          format = NbtFormat.Binary;
+        }
+        else
+        {
+          stream.Position = position;
 
-        format = new XmlTagReader(stream).IsNbtDocument() ? NbtFormat.Xml : NbtFormat.Unknown;
+          format = new XmlTagReader(stream).IsNbtDocument()
+            ? NbtFormat.Xml
+            : NbtFormat.Unknown;
+        }
+      }
+      catch
+      {
+        format = NbtFormat.Unknown;
       }
 
       stream.Position = position;

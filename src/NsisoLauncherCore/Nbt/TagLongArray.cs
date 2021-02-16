@@ -1,31 +1,31 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-    public sealed partial class TagLongArray
+  public sealed partial class TagLongArray
+  {
+    #region Methods
+
+    public override string ToValueString()
     {
-        #region Methods
+      StringBuilder sb;
 
-        public override string ToValueString()
+      sb = new StringBuilder();
+
+      // ReSharper disable once ForCanBeConvertedToForeach
+      for (int i = 0; i < _value.Length; i++)
+      {
+        if (sb.Length != 0)
         {
-            StringBuilder sb;
-
-            sb = new StringBuilder();
-
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (int i = 0; i < _value.Length; i++)
-            {
-                if (sb.Length != 0)
-                {
-                    sb.Append(", ");
-                }
-
-                sb.Append(_value[i].ToString());
-            }
-
-            return sb.ToString();
+          sb.Append(", ");
         }
 
-        #endregion
+        sb.Append(_value[i].ToString());
+      }
+
+      return sb.ToString();
     }
+
+    #endregion
+  }
 }

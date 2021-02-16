@@ -212,5 +212,23 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
+    /// <summary>
+    /// Creates and adds a new unnamed <see cref="TagLongArray"/> with the specified value.
+    /// </summary>
+    /// <param name="value">The value of the tag.</param>
+    /// <returns>
+    /// A <see cref="TagLongArray"/> containing the specified name and value.
+    /// </returns>
+    public TagLongArray Add(long[] value)
+    {
+      TagLongArray tag;
+
+      tag = TagFactory.CreateTag(value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
   }
 }

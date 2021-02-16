@@ -79,56 +79,58 @@ namespace Cyotek.Data.Nbt
     {
       Tag result;
 
-      // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
-      if (value is byte)
+      if (value is byte byteValue)
       {
-        result = this.Add((byte)value);
+        result = this.Add(byteValue);
       }
-      else if (value is byte[])
+      else if (value is int intValue)
       {
-        result = this.Add((byte[])value);
+        result = this.Add(intValue);
       }
-      else if (value is int)
+      else if (value is float floatValue)
       {
-        result = this.Add((int)value);
+        result = this.Add(floatValue);
       }
-      else if (value is int[])
+      else if (value is double doubleValue)
       {
-        result = this.Add((int[])value);
+        result = this.Add(doubleValue);
       }
-      else if (value is float)
+      else if (value is long longValue)
       {
-        result = this.Add((float)value);
+        result = this.Add(longValue);
       }
-      else if (value is double)
+      else if (value is short shortValue)
       {
-        result = this.Add((double)value);
+        result = this.Add(shortValue);
       }
-      else if (value is long)
+      else if (value is string stringValue)
       {
-        result = this.Add((long)value);
+        result = this.Add(stringValue);
       }
-      else if (value is short)
+      else if (value is TagDictionary tagDictionary)
       {
-        result = this.Add((short)value);
+        result = this.Add(tagDictionary);
       }
-      else if (value is string)
+      else if (value is TagCollection tagCollection)
       {
-        result = this.Add((string)value);
+        result = this.Add(tagCollection);
       }
-      else if (value is TagDictionary)
+      else if (value is byte[] byteArrayValue)
       {
-        result = this.Add((TagDictionary)value);
+        result = this.Add(byteArrayValue);
       }
-      else if (value is TagCollection)
+      else if (value is int[] intArrayValue)
       {
-        result = this.Add((TagCollection)value);
+        result = this.Add(intArrayValue);
+      }
+      else if (value is long[] longArrayValue)
+      {
+        result = this.Add(longArrayValue);
       }
       else
       {
         throw new ArgumentException("Invalid value type.", nameof(value));
       }
-      // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 
       return result;
     }

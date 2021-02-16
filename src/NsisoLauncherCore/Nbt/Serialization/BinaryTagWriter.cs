@@ -47,6 +47,11 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteValue(value);
     }
 
+    public override void WriteArrayValue(long value)
+    {
+      this.WriteValue(value);
+    }
+
     public override void WriteEndDocument()
     {
       _state.SetComplete();
@@ -68,9 +73,13 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         type = TagType.IntArray;
       }
-      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      else if (type == TagType.Long)
       {
-        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+        type = TagType.LongArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray && type != TagType.LongArray)
+      {
+        throw new ArgumentException("Only byte, 32bit integer or 64bit integer types are supported.", nameof(type));
       }
 
       this.WriteStartTag(name, type);
@@ -163,6 +172,22 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         this.WriteValue(value.Length);
         foreach (int item in value)
+        {
+          this.WriteValue(item);
+        }
+      }
+      else
+      {
+        this.WriteValue(0);
+      }
+    }
+
+    protected override void WriteValue(long[] value)
+    {
+      if (value != null && value.Length != 0)
+      {
+        this.WriteValue(value.Length);
+        foreach (long item in value)
         {
           this.WriteValue(item);
         }

@@ -144,6 +144,10 @@ namespace Cyotek.Data.Nbt
             {
                 result = this.Add(name, intArrayValue);
             }
+            else if (value is long[] longArrayValue)
+            {
+                result = this.Add(name, longArrayValue);
+            }
             else if (value is Guid guidValue)
             {
                 result = this.Add(name, guidValue);

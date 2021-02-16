@@ -33,6 +33,7 @@ namespace Cyotek.Data.Nbt.Serialization
         { "List", TagType.List },
         { "Compound", TagType.Compound },
         { "IntArray", TagType.IntArray },
+        { "LongArray", TagType.LongArray },
       };
     }
   }
