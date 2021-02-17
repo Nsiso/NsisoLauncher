@@ -86,10 +86,10 @@ namespace NsisoLauncher.ViewModels.Pages
                 await MojangLogin();
             });
 
-            LogoutCmd = new DelegateCommand((a) =>
-            {
-                Logout();
-            });
+            LogoutCmd = new DelegateCommand(async (a) =>
+           {
+               await Logout();
+           });
 
             //LoggedInUser = new UserNode()
             //{
@@ -296,14 +296,21 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private void Logout()
+        private async Task Logout()
         {
             if (LoggedInUser.AuthModule == "offline")
             {
             }
-            else
+            else if (LoggedInUser.AuthModule == "online")
             {
-                //todo 线上注销
+                var mYggAuthenticator = new Invalidate(this.LoggedInUser.AccessToken);
+                string currentLoginType = string.Format("正在注销中...");
+                string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
+                var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
+
+                loader.SetIndeterminate();
+                await mYggAuthenticator.PerformRequestAsync();
+                await loader.CloseAsync();
             }
             User.SelectedUserUuid = null;
             LoggedInUser = null;

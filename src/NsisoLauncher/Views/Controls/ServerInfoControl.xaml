@@ -40,17 +40,20 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <!--<Image Source="{Binding Icon, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='/NsisoLauncher;component/Resource/defaultIcon.png'}"/>-->
-            <Image Margin="10" Grid.Column="0" Width="80" Height="80" Source="{Binding ServerInf.IconData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
+            <Image Margin="10" Grid.Column="0" Width="80" Height="80"
+                   Source="{Binding ServerInf.IconData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
             <controls:ProgressRing Grid.Column="0" Margin="10"
                                Visibility="{Binding IsLoading, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                IsActive="{Binding IsLoading, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
             <StackPanel Grid.Column="1" Margin="10" HorizontalAlignment="Left">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="TagSolid" Opacity="0.8" Margin="0,0,10,0"/>
+                    <TextBlock Text="服务器名称: " Opacity="0.8"/>
                     <TextBlock Text="{Binding ServerInf.ServerName, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Opacity="0.8" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="UsersSolid" Opacity="0.8" Margin="0,0,10,0"/>
+                    <TextBlock Text="当前人数: " Opacity="0.8"/>
                     <TextBlock Text="{Binding ServerInf.CurrentPlayerCount, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='当前人数'}"
                            Opacity="0.8"/>
                     <TextBlock Text="/" Opacity="0.8"/>
@@ -59,11 +62,13 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="RocketSolid" Opacity="0.8" Margin="0,0,10,0"/>
+                    <TextBlock Text="游戏版本: " Opacity="0.8"/>
                     <TextBlock TextWrapping="Wrap" Text="{Binding ServerInf.GameVersion, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                            Opacity="0.8"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="RssSolid" Opacity="0.8" Margin="0,0,10,0"/>
+                    <TextBlock Text="服务器延迟: " Opacity="0.8"/>
                     <TextBlock TextWrapping="Wrap" Text="{Binding ServerInf.Ping, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" Opacity="0.8"/>
                     <TextBlock TextWrapping="Wrap" Text="ms" Opacity="0.8"/>
                 </StackPanel>

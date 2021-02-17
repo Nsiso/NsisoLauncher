@@ -122,6 +122,7 @@ namespace NsisoLauncherCore.Net.Server
             }
             this.ServerAddress = ip;
             this.ServerPort = port;
+            this.IconData = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
         }
 
         public ServerInfo(Modules.Server info) : this(info.Address, info.Port)

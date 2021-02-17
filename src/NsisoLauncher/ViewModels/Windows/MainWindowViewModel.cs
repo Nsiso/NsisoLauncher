@@ -239,22 +239,6 @@ namespace NsisoLauncher.ViewModels.Windows
                         Random random = new Random();
                         MediaSource = files[random.Next(files.Count())];
                         Volume = 0.5;
-                        //Volume = 0;
-                        //await Task.Factory.StartNew(() =>
-                        //{
-                        //    try
-                        //    {
-                        //        for (int i = 0; i < 10; i++)
-                        //        {
-                        //            Volume += 0.05;
-                        //            Thread.Sleep(50);
-                        //        }
-                        //    }
-                        //    catch (Exception)
-                        //    {
-                        //        //可忽略的错误
-                        //    }
-                        //});
                     }
                 }
             }
