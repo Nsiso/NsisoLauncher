@@ -1,0 +1,114 @@
+﻿using NsisoLauncherCore.Modules;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using Version = NsisoLauncherCore.Modules.Version;
+using NsisoLauncherCore.Util;
+using System.Threading.Tasks;
+
+namespace NsisoLauncherCore
+{
+    public class LaunchInstance
+    {
+        public LaunchSetting InstanceSetting { get; private set; }
+
+        public Version InstanceVersion { get; private set; }
+
+        public Process InstanceProcess { get; private set; }
+
+        public bool HasExited { get => InstanceProcess.HasExited; }
+
+        public Queue<string> LatestLogQueue { get; set; }
+
+
+        public event EventHandler<string> Log;
+        public event EventHandler<GameExitArg> Exit;
+
+        public LaunchInstance(LaunchSetting setting, ProcessStartInfo processStartInfo)
+        {
+            this.InstanceSetting = setting;
+            this.InstanceVersion = setting.Version;
+            this.InstanceProcess = new Process();
+
+            this.InstanceProcess.StartInfo = processStartInfo;
+
+            //设置输出流
+            this.InstanceProcess.StartInfo.RedirectStandardError = true;
+            this.InstanceProcess.StartInfo.RedirectStandardOutput = true;
+
+            //不使用shell execut
+            this.InstanceProcess.StartInfo.UseShellExecute = false;
+
+            //输出流事件订阅
+            InstanceProcess.OutputDataReceived += Process_OutputDataReceived;
+            InstanceProcess.ErrorDataReceived += Process_ErrorDataReceived;
+            this.Log += LaunchInstance_Log;
+
+            LatestLogQueue = new Queue<string>(3);
+        }
+
+        private void LaunchInstance_Log(object sender, string e)
+        {
+            if (LatestLogQueue.Count >= 3)
+            {
+                LatestLogQueue.Dequeue();
+            }
+            LatestLogQueue.Enqueue(e);
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.Log?.Invoke(this, e.Data);
+        }
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.Log?.Invoke(this, e.Data);
+        }
+
+        public void Start()
+        {
+            InstanceProcess.Start();
+            InstanceProcess.BeginErrorReadLine();
+            InstanceProcess.BeginOutputReadLine();
+
+            Task.Factory.StartNew(() =>
+            {
+                InstanceProcess.WaitForExit();
+                Exit?.Invoke(this, new GameExitArg()
+                {
+                    Instance = this,
+                    Version = InstanceSetting.Version,
+                    ExitCode = InstanceProcess.ExitCode,
+                    Duration = (InstanceProcess.StartTime - InstanceProcess.ExitTime)
+                });
+
+            });
+        }
+
+        public async Task WaitForInputIdleAsync()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                InstanceProcess.WaitForInputIdle();
+            });
+        }
+
+        public void WaitForInputIdle()
+        {
+            InstanceProcess.WaitForInputIdle();
+        }
+
+
+        public void Kill()
+        {
+            InstanceProcess.Kill();
+        }
+
+        public void SetWindowTitle(string title)
+        {
+            GameHelper.SetGameTitle(InstanceProcess, title);
+        }
+    }
+}

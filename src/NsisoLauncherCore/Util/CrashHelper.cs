@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Modules;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,9 +10,25 @@ namespace NsisoLauncherCore.Util
 {
     public class CrashHelper
     {
-        public string GetCrashInfo(LaunchHandler handler, GameExitArg exitArg)
+        public Queue<Log> LogQueue { get; set; }
+
+        public CrashHelper()
         {
-            if (!exitArg.Process.HasExited)
+            LogQueue = new Queue<Log>(3);
+        }
+
+        public void AppendLog(Log log)
+        {
+            if (LogQueue.Count >= 3)
+            {
+                LogQueue.Dequeue();
+            }
+            LogQueue.Enqueue(log);
+        }
+
+        private string GetCrashInfo(LaunchHandler handler, GameExitArg exitArg)
+        {
+            if (!exitArg.Instance.HasExited)
             {
                 throw new Exception("The game is running.");
             }
@@ -19,7 +36,7 @@ namespace NsisoLauncherCore.Util
             {
                 throw new ArgumentException("It seems that the game is safe exit.Exit code equal zero");
             }
-            Process process = exitArg.Process;
+            Process process = exitArg.Instance.InstanceProcess;
             DateTime launchTime = process.StartTime;
             DateTime exitTime = process.ExitTime;
             string verRootDir = handler.GetGameVersionRootDir(exitArg.Version);

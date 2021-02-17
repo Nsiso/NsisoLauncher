@@ -842,9 +842,9 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 #region 启动
 
-                App.LogHandler.OnLog += (a, b) => { LogLine = b.Message; };
+                App.LogHandler.OnLog += OnLog;
                 var result = await App.Handler.LaunchAsync(launchSetting);
-                App.LogHandler.OnLog -= (a, b) => { LogLine = b.Message; };
+                App.LogHandler.OnLog -= OnLog;
 
                 //程序猿是找不到女朋友的了 :) 
                 if (!result.IsSuccess)
@@ -859,10 +859,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     #region 等待游戏响应
                     try
                     {
-                        await Task.Factory.StartNew(() =>
-                        {
-                            result.Process.WaitForInputIdle();
-                        });
+                        await result.Instance.WaitForInputIdleAsync();
                     }
                     catch (Exception ex)
                     {
@@ -874,7 +871,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     CancelLaunchingCmd = null;
 
-                    if (!result.Process.HasExited)
+                    if (!result.Instance.HasExited)
                     {
                         MainWindowVM.WindowState = WindowState.Minimized;
                     }
@@ -895,7 +892,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     //自定义处理
                     if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
                     {
-                        GameHelper.SetGameTitle(result, App.Config.MainConfig.Customize.GameWindowTitle);
+                        result.Instance.SetWindowTitle(App.Config.MainConfig.Customize.GameWindowTitle);
                     }
                     if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
                     {
@@ -916,11 +913,16 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task CancelLaunching(LaunchResult result)
         {
-            if (!result.Process.HasExited)
+            if (!result.Instance.HasExited)
             {
-                result.Process.Kill();
+                result.Instance.Kill();
             }
             await MainWindowVM.ShowMessageAsync("已取消启动", "已取消启动");
+        }
+
+        private void OnLog(object obj, Log l)
+        {
+            LogLine = l.Message;
         }
     }
 }

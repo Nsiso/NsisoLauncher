@@ -1,6 +1,7 @@
 ﻿using NsisoLauncherCore.Modules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -72,14 +73,14 @@ namespace NsisoLauncherCore.Util
         [DllImport("User32.dll")]
         private static extern int SetWindowText(IntPtr winHandle, string title);
 
-        public static void SetGameTitle(LaunchResult result, string title)
+        public static void SetGameTitle(Process pr, string title)
         {
             Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    var handle = result.Process.MainWindowHandle;
-                    while (!result.Process.HasExited)
+                    var handle = pr.MainWindowHandle;
+                    while (!pr.HasExited)
                     {
                         SetWindowText(handle, title);
                         Thread.Sleep(1000);

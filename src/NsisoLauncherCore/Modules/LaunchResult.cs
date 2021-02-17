@@ -8,7 +8,7 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 游戏进程
         /// </summary>
-        public Process Process { get; set; }
+        public LaunchInstance Instance { get; set; }
 
         /// <summary>
         /// 启动参数
@@ -35,7 +35,7 @@ namespace NsisoLauncherCore.Modules
 
         public LaunchResult(LaunchException.LaunchException ex)
         {
-            Process = null;
+            Instance = null;
             LaunchArguments = null;
             this.IsSuccess = false;
             this.LaunchException = ex;
@@ -43,7 +43,7 @@ namespace NsisoLauncherCore.Modules
 
         public LaunchResult(Exception ex)
         {
-            Process = null;
+            Instance = null;
             LaunchArguments = null;
             this.IsSuccess = false;
             this.LaunchException = new LaunchException.LaunchException(ex);

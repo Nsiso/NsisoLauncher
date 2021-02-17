@@ -45,12 +45,9 @@ namespace NsisoLauncherCore
         /// </summary>
         public ModHandler ModHandler { get; set; }
 
-        public event GameLogHandler GameLog;
-        public event GameExitHandler GameExit;
-        public event LaunchLogHandler LaunchLog;
-        public delegate void GameLogHandler(object sender, string e);
-        public delegate void GameExitHandler(object sender, GameExitArg arg);
-        public delegate void LaunchLogHandler(object sender, Log log);
+        public event EventHandler<string> GameLog;
+        public event EventHandler<GameExitArg> GameExit;
+        public event EventHandler<Log> LaunchLog;
 
         private ArgumentsParser argumentsParser;
         private VersionReader versionReader;
@@ -83,16 +80,6 @@ namespace NsisoLauncherCore
                 return Launch(setting);
             });
             return result;
-        }
-
-        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            this.GameLog?.Invoke(this, e.Data);
-        }
-
-        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            this.GameLog?.Invoke(this, e.Data);
         }
 
         public JAssets GetAssets(Modules.Version version)
@@ -177,33 +164,22 @@ namespace NsisoLauncherCore
                     #endregion
 
                     AppendLaunchInfoLog(string.Format("开始启动游戏进程，使用JAVA路径:{0}", this.Java.Path));
+
                     ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                     { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
-                    var process = Process.Start(startInfo);
+
+                    LaunchInstance instance = new LaunchInstance(setting, startInfo);
+                    instance.Exit += Instance_Exit;
+                    instance.Log += Instance_Log;
+
+                    instance.Start();
+
                     sw.Stop();
                     long launchUsingMsTime = sw.ElapsedMilliseconds;
                     AppendLaunchInfoLog(string.Format("成功启动游戏进程,总共用时:{0}ms", launchUsingMsTime));
 
-                    Task.Factory.StartNew(() =>
-                    {
-                        process.WaitForExit();
-                        AppendLaunchInfoLog("游戏进程退出，代码:" + process.ExitCode);
-                        GameExit?.Invoke(this, new GameExitArg()
-                        {
-                            Process = process,
-                            Version = setting.Version,
-                            ExitCode = process.ExitCode,
-                            Duration = (process.StartTime - process.ExitTime)
-                        });
 
-                    });
-
-                    process.OutputDataReceived += Process_OutputDataReceived;
-                    process.ErrorDataReceived += Process_ErrorDataReceived;
-                    process.BeginErrorReadLine();
-                    process.BeginOutputReadLine();
-
-                    return new LaunchResult() { Process = process, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime };
+                    return new LaunchResult() { Instance = instance, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime };
                 }
             }
             catch (LaunchException.LaunchException ex)
@@ -218,6 +194,17 @@ namespace NsisoLauncherCore
             {
                 IsBusyLaunching = false;
             }
+        }
+
+        private void Instance_Log(object sender, string e)
+        {
+            this.GameLog?.Invoke(this, e);
+        }
+
+
+        private void Instance_Exit(object sender, GameExitArg e)
+        {
+            GameExit?.Invoke(this, e);
         }
         #endregion
 
@@ -354,7 +341,7 @@ namespace NsisoLauncherCore
         /// <summary>
         /// Process obj
         /// </summary>
-        public Process Process { get; set; }
+        public LaunchInstance Instance { get; set; }
 
         /// <summary>
         /// Exited Version
