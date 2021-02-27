@@ -225,7 +225,7 @@ namespace NsisoLauncher.Utils
             switch (type)
             {
                 case NsisoLauncherCore.Net.Server.ServerInfo.StateType.GOOD:
-                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CircleRegular;
+                    return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.CircleSolid;
                 case NsisoLauncherCore.Net.Server.ServerInfo.StateType.NO_RESPONSE:
                     return MahApps.Metro.IconPacks.PackIconFontAwesomeKind.ExclamationCircleSolid;
                 case NsisoLauncherCore.Net.Server.ServerInfo.StateType.BAD_CONNECT:
@@ -243,33 +243,34 @@ namespace NsisoLauncher.Utils
         }
     }
 
-    [ValueConversion(typeof(byte[]), typeof(BitmapImage))]
-    public class ByteArrayToBitmapImageConverter : IValueConverter
+    [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(Visibility))]
+    public class ServerStateToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null)
+            NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
+            string mode = (string)parameter;
+            switch (type)
             {
-                return null;
+                case NsisoLauncherCore.Net.Server.ServerInfo.StateType.GOOD:
+                    if (mode == "reverse")
+                    {
+                        return Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        return Visibility.Visible;
+                    }
+                default:
+                    if (mode == "reverse")
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
             }
-            byte[] byteArray = (byte[])value;
-
-            BitmapImage bmp = null;
-
-            try
-            {
-                bmp = new BitmapImage();
-                bmp.BeginInit();
-                bmp.StreamSource = new MemoryStream(byteArray);
-                bmp.EndInit();
-            }
-            catch
-            {
-                bmp = null;
-            }
-
-            return bmp;
-
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

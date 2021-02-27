@@ -154,6 +154,7 @@ namespace NsisoLauncher
             {
                 LogHandler.AppendInfo("自定义->更改主题:" + custom.AppTheme);
                 ThemeManager.Current.ChangeThemeBaseColor(Current, custom.AppTheme);
+
             }
             #endregion    
 

@@ -84,6 +84,11 @@ namespace NsisoLauncherCore.Net.Server
         public StateType State { get; set; }
 
         /// <summary>
+        /// 信息
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
         /// 获取与特定格式代码相关联的颜色代码
         /// </summary>
         public static Dictionary<char, string> MinecraftColors { get; private set; } = new Dictionary<char, string>()
@@ -144,7 +149,7 @@ namespace NsisoLauncherCore.Net.Server
                 {
                     tcp = new TcpClient(this.ServerAddress, this.ServerPort);
                 }
-                catch (SocketException)
+                catch (SocketException ex)
                 {
                     RecordSRV result = (RecordSRV)new Resolver().Query("_minecraft._tcp." + this.ServerAddress, QType.SRV).Answers?.FirstOrDefault()?.RECORD;
                     if (result != null)
@@ -156,6 +161,7 @@ namespace NsisoLauncherCore.Net.Server
                     else
                     {
                         this.State = StateType.BAD_CONNECT;
+                        this.Message = ex.Message;
                         return;
                     }
                 }
@@ -239,13 +245,15 @@ namespace NsisoLauncherCore.Net.Server
                 }
                 tcp.Close();
             }
-            catch (SocketException)
+            catch (SocketException ex)
             {
                 this.State = StateType.BAD_CONNECT;
+                this.Message = ex.Message;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 this.State = StateType.EXCEPTION;
+                this.Message = ex.Message;
             }
         }
 
