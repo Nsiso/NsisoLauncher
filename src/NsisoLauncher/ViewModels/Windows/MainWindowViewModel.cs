@@ -1,10 +1,12 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -119,9 +121,27 @@ namespace NsisoLauncher.ViewModels.Windows
             this.WindowState = WindowState.Normal;
             if (!arg.IsNormalExit())
             {
-                await ShowMessageAsync("游戏非正常退出",
-                    string.Format("这很有可能是因为游戏崩溃导致的，退出代码:{0}，游戏持续时间:{1}",
-                    arg.ExitCode, arg.Duration));
+                var result = await ShowMessageAsync("游戏非正常退出",
+                    string.Format("这很有可能是因为游戏崩溃导致的，退出代码:{0}，游戏持续时间:{1}，查看崩溃前最后日志？",
+                    arg.ExitCode, arg.Duration), MessageDialogStyle.AffirmativeAndNegative, null);
+                switch (result)
+                {
+                    case MessageDialogResult.Negative:
+                        break;
+                    case MessageDialogResult.Affirmative:
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            DebugWindow debugWindow = new DebugWindow();
+                            debugWindow.Show();
+                            while (arg.Instance.LatestLogQueue.Count > 0)
+                            {
+                                debugWindow.AppendGameLog(this, arg.Instance.LatestLogQueue.Dequeue());
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

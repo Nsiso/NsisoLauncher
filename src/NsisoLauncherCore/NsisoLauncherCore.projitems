@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherProfiles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSkins.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LaunchException\GameValidateFailedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\LaunchException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NativeNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NullJavaExceptioncs.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\CrashHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\FileHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\GameHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\GameValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\CommonInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Fabric\FabricInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\Forge\Actions\PostProcessors.cs" />

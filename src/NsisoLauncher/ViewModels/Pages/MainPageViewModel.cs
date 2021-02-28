@@ -10,8 +10,13 @@ namespace NsisoLauncher.ViewModels.Pages
         /// </summary>
         public int DownloadTaskCount { get; set; }
 
+        public int SelectedIndex { get; set; }
+
+        public int SelectedOptionsIndex { get; set; }
+
         public MainPageViewModel()
         {
+            App.MainPageVM = this;
             if (App.NetHandler != null)
             {
                 App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;

@@ -219,6 +219,60 @@ namespace NsisoLauncherCore.Util
                 });
             }
         }
+
+        /// <summary>
+        /// 获取丢失的资源文件下载任务
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="core"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public static List<IDownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
+        {
+            List<IDownloadTask> tasks = new List<IDownloadTask>();
+            string assetsPath = core.GetAssetsIndexPath(ver.Assets);
+            JAssets assets;
+            if (!File.Exists(assetsPath))
+            {
+                if (ver.AssetIndex != null)
+                {
+                    string jsonUrl = ver.AssetIndex.Url;
+                    tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
+                    return tasks;
+                    //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
+                    //string assetsJson = null;
+                    //if (jsonRespond.IsSuccessStatusCode)
+                    //{
+                    //    assetsJson = await jsonRespond.Content.ReadAsStringAsync();
+                    //}
+                    //if (!string.IsNullOrWhiteSpace(assetsJson))
+                    //{
+                    //    assets = core.GetAssetsByJson(assetsJson);
+                    //    tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
+                    //}
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                assets = core.GetAssets(ver);
+            }
+            var lostAssets = GetLostAssets(core, assets);
+            var groupResult = lostAssets.GroupBy(x => x.Value.FirstHashChar);
+            foreach (var group in groupResult)
+            {
+                List<DownloadObject> downloads = new List<DownloadObject>();
+                foreach (var item in group)
+                {
+                    downloads.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
+                }
+                tasks.Add(new GroupDownloadTask(string.Format("资源文件-{0}", group.Key), downloads, ver.AssetIndex.TotalSize));
+            }
+            return tasks;
+        }
         #endregion
 
         #region 丢失依赖文件帮助
@@ -313,60 +367,5 @@ namespace NsisoLauncherCore.Util
             return tasks;
         }
         #endregion
-
-
-        /// <summary>
-        /// 获取丢失的资源文件下载任务
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="core"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public static List<IDownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
-        {
-            List<IDownloadTask> tasks = new List<IDownloadTask>();
-            string assetsPath = core.GetAssetsIndexPath(ver.Assets);
-            JAssets assets;
-            if (!File.Exists(assetsPath))
-            {
-                if (ver.AssetIndex != null)
-                {
-                    string jsonUrl = ver.AssetIndex.Url;
-                    tasks.Add(new DownloadTask("资源文件引导", new StringUrl(jsonUrl), assetsPath));
-                    return tasks;
-                    //HttpResponseMessage jsonRespond = await NetRequester.Client.GetAsync(jsonUrl);
-                    //string assetsJson = null;
-                    //if (jsonRespond.IsSuccessStatusCode)
-                    //{
-                    //    assetsJson = await jsonRespond.Content.ReadAsStringAsync();
-                    //}
-                    //if (!string.IsNullOrWhiteSpace(assetsJson))
-                    //{
-                    //    assets = core.GetAssetsByJson(assetsJson);
-                    //    tasks.Add(new DownloadTask("资源文件引导", jsonUrl, assetsPath));
-                    //}
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                assets = core.GetAssets(ver);
-            }
-            var lostAssets = GetLostAssets(core, assets);
-            var groupResult = lostAssets.GroupBy(x => x.Value.FirstHashChar);
-            foreach (var group in groupResult)
-            {
-                List<DownloadObject> downloads = new List<DownloadObject>();
-                foreach (var item in group)
-                {
-                    downloads.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
-                }
-                tasks.Add(new GroupDownloadTask(string.Format("资源文件-{0}", group.Key), downloads, ver.AssetIndex.TotalSize));
-            }
-            return tasks;
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ControlzEx.Theming;
 using NsisoLauncher.Config;
 using NsisoLauncher.Core.Util;
+using NsisoLauncher.ViewModels.Pages;
 using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
@@ -81,6 +82,8 @@ namespace NsisoLauncher
         /// 主窗口VM
         /// </summary>
         public static MainWindowViewModel MainWindowVM { get; set; }
+
+        public static MainPageViewModel MainPageVM { get; set; }
         #endregion
 
         public static event EventHandler<AggregateExceptionArgs> AggregateExceptionCatched;

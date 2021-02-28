@@ -51,7 +51,9 @@
                     </GroupBox>
                     <GroupBox Header="版本操作" Margin="0,10,0,0">
                         <WrapPanel>
-                            <Button Content="校验文件完整性" Margin="5" Padding="20,0"
+                            <Button Content="校验游戏依赖库完整性" Margin="5" Padding="20,0" Command="{Binding ValidateDependCmd}"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square}"/>
+                            <Button Content="校验游戏资源完整性" Margin="5" Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>
                             <Button Content="清除dll缓存" Margin="5"  Padding="20,0"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>

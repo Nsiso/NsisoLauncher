@@ -92,7 +92,8 @@
                           OptionsItemTemplate="{StaticResource MenuItemTemplate}"
                           Style="{StaticResource MahApps.Styles.HamburgerMenu}"
                           PaneBackground="{DynamicResource MahApps.Brushes.SystemControlBackgroundChromeMedium}"
-                          PaneForeground="{DynamicResource MahApps.Brushes.SystemControlForegroundBaseMediumHigh}">
+                          PaneForeground="{DynamicResource MahApps.Brushes.SystemControlForegroundBaseMediumHigh}"
+                          SelectedIndex="{Binding SelectedIndex}" SelectedOptionsIndex="{Binding SelectedOptionsIndex}">
 
             <controls:HamburgerMenu.ItemsSource>
                 <controls:HamburgerMenuItemCollection>

@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="DebugWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBox x:Name="textBox" Margin="10,10,10,41" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible"/>
+        <TextBox x:Name="textBox" Margin="10,10,10,41" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"/>
         <TextBox x:Name="keyWordTextBox" VerticalAlignment="Bottom" Margin="10,0,0,10" HorizontalAlignment="Left" Width="180"/>
         <Button x:Name="findKeyWord" VerticalAlignment="Bottom" Margin="195,0,0,10" Height="26" HorizontalAlignment="Left" Width="60" Content="{iconPacks:FontAwesome Kind=SearchSolid, Height=12}" Click="findKeyWord_Click"/>
     </Grid>

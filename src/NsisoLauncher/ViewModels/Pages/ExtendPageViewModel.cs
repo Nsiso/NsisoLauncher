@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,10 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand DeleteModCmd { get; set; }
         #endregion
 
+        public ICommand ValidateDependCmd { get; set; }
+
+        public ICommand ValidateAssetsCmd { get; set; }
+
 
         public ExtendPageViewModel()
         {
@@ -98,7 +103,68 @@ namespace NsisoLauncher.ViewModels.Pages
                 await AddMod(a);
             });
 
+            ValidateDependCmd = new DelegateCommand(async (a) =>
+            {
+                await ValidateDepend(a);
+            });
+
             this.PropertyChanged += ExtendPageViewModel_PropertyChanged;
+        }
+
+        private async Task ValidateDepend(object obj)
+        {
+            if (SelectedVersion == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("未选择版本", "选择的版本为空");
+                return;
+            }
+            var progress = await App.MainWindowVM.ShowProgressAsync("正在检查游戏依赖文件完整性...", "这不需要太长的时间");
+            progress.SetIndeterminate();
+            var result = await GameValidator.ValidateAsync(App.Handler, SelectedVersion, ValidateType.DEPEND);
+            await progress.CloseAsync();
+
+            if (result.IsPass)
+            {
+                await App.MainWindowVM.ShowMessageAsync("游戏依赖文件检查通过", "所有的文件都存在且完整");
+            }
+            else
+            {
+                var choose = await App.MainWindowVM.ShowMessageAsync("游戏依赖文件检查未通过", string.Format("存在{0}个文件缺失或不完整，是否进行修复？", result.FailedFiles.Count),
+                    MessageDialogStyle.AffirmativeAndNegative, null);
+                switch (choose)
+                {
+                    case MessageDialogResult.Negative:
+                        break;
+                    case MessageDialogResult.Affirmative:
+                        foreach (var item in result.FailedFiles)
+                        {
+                            if (item.Value == FileFailedState.WRONG_HASH)
+                            {
+                                File.Delete(item.Key);
+                            }
+                        }
+                        App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
+                        var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
+                            App.Handler,
+                            SelectedVersion, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
+                        if (lostDepend.Count != 0)
+                        {
+                            if (!App.NetHandler.Downloader.IsBusy)
+                            {
+                                App.NetHandler.Downloader.AddDownloadTask(lostDepend);
+                                App.MainPageVM.SelectedOptionsIndex = 0;
+                                await App.NetHandler.Downloader.StartDownload();
+                            }
+                            else
+                            {
+                                await App.MainWindowVM.ShowMessageAsync("无法下载补全：当前有正在下载中的任务", "请等待其下载完毕或取消下载");
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private async Task DeleteSave(object obj)

@@ -4,6 +4,7 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Dialogs;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Auth;
+using NsisoLauncherCore.LaunchException;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
@@ -14,8 +15,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -820,6 +823,10 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
                 }
+                if (App.Config.MainConfig.Environment.AutoJava)
+                {
+                    App.Handler.Java = Java.GetSuitableJava(App.JavaList);
+                }
 
                 //自动内存设置
                 if (App.Config.MainConfig.Environment.AutoMemory)
@@ -834,6 +841,21 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 launchSetting.VersionType = App.Config.MainConfig.Customize.VersionInfo;
                 launchSetting.WindowSize = App.Config.MainConfig.Environment.WindowSize;
+
+                #endregion
+
+                #region 性能警告
+                if (App.Handler.Java.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
+                {
+                    await MainWindowVM.ShowMessageAsync("性能优化提示",
+                        "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
+                }
+
+                if (App.Handler.Java.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
+                {
+                    await MainWindowVM.ShowMessageAsync("内存分配警告",
+                        "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
+                }
                 #endregion
 
                 #region 配置文件处理
@@ -841,63 +863,116 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 启动
-
-                App.LogHandler.OnLog += OnLog;
-                var result = await App.Handler.LaunchAsync(launchSetting);
-                App.LogHandler.OnLog -= OnLog;
-
-                //程序猿是找不到女朋友的了 :) 
-                if (!result.IsSuccess)
+                try
                 {
-                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
-                    App.LogHandler.AppendError(result.LaunchException);
-                }
-                else
-                {
-                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
+                    App.LogHandler.OnLog += OnLog;
 
-                    #region 等待游戏响应
-                    try
+                    //启动
+                    var result = await App.Handler.LaunchAsync(launchSetting);
+
+                    #region Debug
+                    if (launchType == LaunchType.DEBUG)
                     {
-                        await result.Instance.WaitForInputIdleAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        await MainWindowVM.ShowMessageAsync("启动后等待游戏窗口响应异常",
-                            "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
-                        return;
+                        DebugWindow debugWindow = new DebugWindow();
+                        debugWindow.Show();
+                        debugWindow.Title = launchSetting.Version.Id;
+
+                        result.Instance.Log += debugWindow.AppendGameLog;
                     }
                     #endregion
 
-                    CancelLaunchingCmd = null;
-
-                    if (!result.Instance.HasExited)
+                    //程序猿是找不到女朋友的了 :) 
+                    if (!result.IsSuccess)
                     {
-                        MainWindowVM.WindowState = WindowState.Minimized;
+                        if (result.LaunchException != null)
+                        {
+                            if (result.LaunchException is GameValidateFailedException)
+                            {
+                                StringBuilder validate_str_builder = new StringBuilder();
+                                foreach (var item in ((GameValidateFailedException)result.LaunchException).FailedFiles)
+                                {
+                                    validate_str_builder.AppendLine(item.Key);
+                                }
+                                await MainWindowVM.ShowMessageAsync("游戏文件缺失或破损，无法安全启动",
+                                    string.Format("游戏文件存在缺失或破损的情况，请检查游戏完整性\n{0}", validate_str_builder.ToString()));
+                            }
+                            else
+                            {
+                                await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
+                            }
+                            App.LogHandler.AppendError(result.LaunchException);
+                        }
+                        else
+                        {
+                            await MainWindowVM.ShowMessageAsync("启动失败", "但启动核心并没有返回任何异常实例，这可能是因为内部原因导致的，请联系开发者");
+                        }
                     }
+                    else
+                    {
+                        if (launchType == LaunchType.CREATE_SHORT)
+                        {
+                            await MainWindowVM.ShowMessageAsync("创建快捷启动脚本成功",
+                                "建立的快捷脚本启动器处于同一目录中，文件名：LaunchMinecraft.bat，将为您打开文件夹并选中该文件");
+                            Process.Start("explorer", "/select,\"LaunchMinecraft.bat\"");
+                            return;
+                        }
+                        CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
 
-                    #region 数据反馈
+                        #region 等待游戏响应
+                        try
+                        {
+                            await result.Instance.WaitForInputIdleAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            await MainWindowVM.ShowMessageAsync("启动后等待游戏窗口响应异常",
+                                "这可能是由于游戏进程发生意外（闪退）导致的。具体原因:" + ex.Message);
+                            return;
+                        }
+                        #endregion
+
+                        CancelLaunchingCmd = null;
+
+                        if (!result.Instance.HasExited)
+                        {
+                            MainWindowVM.WindowState = WindowState.Minimized;
+                        }
+
+                        #region 启动结束后
+
+                        #region 数据反馈
 #if !DEBUG
                     //API使用次数计数器+1
                     await App.NetHandler.NsisoAPIHandler.RefreshUsingTimesCounter();
 #endif
-                    #endregion
+                        #endregion
 
-                    App.Config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
-                    if (App.Config.MainConfig.Environment.ExitAfterLaunch)
-                    {
-                        Application.Current.Shutdown();
-                    }
+                        App.Config.MainConfig.History.LastLaunchUsingMs = result.LaunchUsingMs;
+                        if (App.Config.MainConfig.Environment.ExitAfterLaunch)
+                        {
+                            Application.Current.Shutdown();
+                        }
 
-                    //自定义处理
-                    if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
-                    {
-                        result.Instance.SetWindowTitle(App.Config.MainConfig.Customize.GameWindowTitle);
+                        //自定义处理
+                        if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Customize.GameWindowTitle))
+                        {
+                            result.Instance.SetWindowTitle(App.Config.MainConfig.Customize.GameWindowTitle);
+                        }
+                        if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
+                        {
+                            App.MainWindowVM.MediaSource = null;
+                        }
+
+                        #endregion
                     }
-                    if (App.Config.MainConfig.Customize.CustomBackGroundMusic)
-                    {
-                        App.MainWindowVM.MediaSource = null;
-                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                finally
+                {
+                    App.LogHandler.OnLog -= OnLog;
                 }
                 #endregion
             }

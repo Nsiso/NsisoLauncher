@@ -137,6 +137,28 @@ namespace NsisoLauncherCore
                         setting.AdvencedJvmArguments = null;
                         setting.GCArgument = null;
                         setting.JavaAgent = null;
+
+                        AppendLaunchInfoLog("正在检查游戏依赖文件完整性");
+                        var validate_result = GameValidator.Validate(this, setting.Version, ValidateType.DEPEND);
+                        if (!validate_result.IsPass)
+                        {
+                            foreach (var item in validate_result.FailedFiles)
+                            {
+                                switch (item.Value)
+                                {
+                                    case FileFailedState.NOT_EXIST:
+                                        AppendLaunchInfoLog(string.Format("文件缺失:{0}", item.Key));
+                                        break;
+                                    case FileFailedState.WRONG_HASH:
+                                        AppendLaunchInfoLog(string.Format("文件损坏（hash不一致）:{0}", item.Key));
+                                        break;
+                                    default:
+                                        AppendLaunchInfoLog(string.Format("文件异常:{0}", item.Key));
+                                        break;
+                                }
+                            }
+                            throw new GameValidateFailedException(validate_result.FailedFiles);
+                        }
                     }
 
                     string arg = argumentsParser.Parse(setting);
@@ -270,6 +292,11 @@ namespace NsisoLauncherCore
             return PathManager.GetJsonPath(GameRootPath, ID);
         }
 
+        public string GetJsonPath(Modules.Version ver)
+        {
+            return PathManager.GetJsonPath(GameRootPath, ver.Id);
+        }
+
         public string GetJarPath(Modules.Version ver)
         {
             return PathManager.GetJarPath(GameRootPath, ver);
@@ -355,7 +382,14 @@ namespace NsisoLauncherCore
 
         public bool IsNormalExit()
         {
-            return ExitCode == 0;
+            if (ExitCode == 0 || Instance.IsBeenKilled)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

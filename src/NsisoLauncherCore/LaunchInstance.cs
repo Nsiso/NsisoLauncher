@@ -19,7 +19,11 @@ namespace NsisoLauncherCore
 
         public bool HasExited { get => InstanceProcess.HasExited; }
 
-        public Queue<string> LatestLogQueue { get; set; }
+        public bool IsBeenKilled { get; private set; } = false;
+
+        public int SaveLogSize { get; set; } = 25;
+
+        public Queue<string> LatestLogQueue { get; private set; }
 
 
         public event EventHandler<string> Log;
@@ -50,7 +54,7 @@ namespace NsisoLauncherCore
 
         private void LaunchInstance_Log(object sender, string e)
         {
-            if (LatestLogQueue.Count >= 3)
+            if (LatestLogQueue.Count >= SaveLogSize)
             {
                 LatestLogQueue.Dequeue();
             }
@@ -104,6 +108,7 @@ namespace NsisoLauncherCore
         public void Kill()
         {
             InstanceProcess.Kill();
+            this.IsBeenKilled = true;
         }
 
         public void SetWindowTitle(string title)

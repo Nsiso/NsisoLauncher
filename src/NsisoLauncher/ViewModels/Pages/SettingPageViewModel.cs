@@ -219,6 +219,7 @@ namespace NsisoLauncher.ViewModels.Pages
             if (SelectedJava != null)
             {
                 SelectedJavaInfo = string.Format("Java版本：{0}，位数：{1}", SelectedJava.Version, SelectedJava.Arch);
+                App.Handler.Java = SelectedJava;
             }
             else
             {
