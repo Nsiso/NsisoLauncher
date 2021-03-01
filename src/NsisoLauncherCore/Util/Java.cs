@@ -50,6 +50,11 @@ namespace NsisoLauncherCore.Util
         public string Version { get; private set; }
 
         /// <summary>
+        /// Java类型（OracleJDK or OpenJDK...）
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
         /// java位数
         /// </summary>
         public ArchEnum Arch { get; private set; }
@@ -100,11 +105,16 @@ namespace NsisoLauncherCore.Util
                     p.StartInfo.CreateNoWindow = true;
                     p.Start();
                     string result = p.StandardError.ReadToEnd();
-                    string version = result.Replace("java version \"", "");
-                    version = version.Remove(version.IndexOf("\""));
+                    string[] lines = result.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                    //first line contain version and type.
+                    string[] firstL = lines[0].Split(' ');
+                    string type = firstL[0];
+                    string version = firstL[2].Trim('\"');
                     bool is64 = result.Contains("64-Bit");
-                    Java info;
-                    if (is64) { info = new Java(javaPath, version, ArchEnum.x64); } else { info = new Java(javaPath, version, ArchEnum.x32); }
+                    ArchEnum arch = is64 ? ArchEnum.x64 : ArchEnum.x32;
+                    Java info = new Java(javaPath, version, arch);
+                    info.Type = type;
                     p.Dispose();
                     return info;
                 }
@@ -192,7 +202,7 @@ namespace NsisoLauncherCore.Util
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
+                        string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
                         if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
@@ -208,7 +218,7 @@ namespace NsisoLauncherCore.Util
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\bin\javaw.exe";
+                        string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
                         if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
@@ -224,7 +234,7 @@ namespace NsisoLauncherCore.Util
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString() + @"\jre\bin\javaw.exe";
+                        string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\jre\bin\javaw.exe";
                         if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
@@ -316,5 +326,18 @@ namespace NsisoLauncherCore.Util
         //        return new string[0];
         //    }
         //}
+    }
+
+    public enum JavaImageType
+    {
+        /// <summary>
+        /// Java runtime environment
+        /// </summary>
+        JRE,
+
+        /// <summary>
+        /// java develop kit
+        /// </summary>
+        JDK
     }
 }

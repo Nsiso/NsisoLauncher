@@ -144,7 +144,8 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 return;
             }
-            IEnumerable<UserNode> matchUsers = User.UserDatabase.Values.Where(x => ((x.Username == username) && (x.AuthModule == "offline")));
+            string real_username = username + "@offline";
+            IEnumerable<UserNode> matchUsers = User.UserDatabase.Values.Where(x => ((x.Username == real_username) && (x.AuthModule == "offline")));
             if (matchUsers?.Count() == 0)
             {
                 //不存在用户新建用户
@@ -152,7 +153,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 string userId = Guid.NewGuid().ToString();
                 UserNode userNode = new UserNode()
                 {
-                    Username = username,
+                    Username = real_username,
                     AccessToken = Guid.NewGuid().ToString(),
                     AuthModule = "offline",
                     Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Value = uuidValue } } },

@@ -3,10 +3,12 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MojangApi.Api;
+using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
@@ -69,7 +71,7 @@ namespace NsisoLauncher.ViewModels.Pages
         private async Task CheckEnvironment()
         {
             #region 无JAVA提示
-            if (App.Handler.Java == null)
+            if ((App.JavaList == null || App.JavaList.Count == 0) && App.Handler.Java == null)
             {
                 var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
                     App.GetResourceString("String.Message.NoJava2"),
@@ -84,25 +86,9 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     var arch = SystemTools.GetSystemArch();
                     DownloadWindow downloadWindow = new DownloadWindow();
-                    switch (arch)
-                    {
-                        case ArchEnum.x32:
-                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("32位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x86.exe"), "jre_x86.exe"));
-                            downloadWindow.Show();
-                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
-                            downloadWindow.Close();
-                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x86.exe");
-                            break;
-                        case ArchEnum.x64:
-                            App.NetHandler.Downloader.AddDownloadTask(new DownloadTask("64位JAVA安装包", new StringUrl(@"https://bmclapi.bangbang93.com/java/jre_x64.exe"), "jre_x64.exe"));
-                            downloadWindow.Show();
-                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
-                            downloadWindow.Close();
-                            System.Diagnostics.Process.Start("Explorer.exe", "jre_x64.exe");
-                            break;
-                        default:
-                            break;
-                    }
+                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE));
+                    downloadWindow.Show();
+                    await App.NetHandler.Downloader.StartDownload();
                 }
             }
             #endregion

@@ -208,6 +208,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ProtocolHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Server\ServerInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetJavaInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\MirrorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\AssetsReader.cs" />

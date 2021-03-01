@@ -121,10 +121,6 @@ namespace NsisoLauncherCore.Net.Server
 
         public ServerInfo(string ip, ushort port)
         {
-            if (string.IsNullOrWhiteSpace(ip))
-            {
-                throw new ArgumentNullException("The server info ip is null");
-            }
             this.ServerAddress = ip;
             this.ServerPort = port;
             this.IconData = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
