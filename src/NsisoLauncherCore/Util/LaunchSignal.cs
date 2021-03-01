@@ -25,6 +25,21 @@ namespace NsisoLauncherCore.Util
             }
         }
 
+        private LaunchInstance launchingInstance = null;
+
+        public LaunchInstance LaunchingInstance
+        {
+            get
+            {
+                return launchingInstance;
+            }
+            set
+            {
+                launchingInstance = value;
+                RaisePropertyChangedEvent("LaunchingInstance");
+            }
+        }
+
         private void RaisePropertyChangedEvent(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

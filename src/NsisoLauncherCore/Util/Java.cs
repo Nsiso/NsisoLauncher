@@ -191,18 +191,19 @@ namespace NsisoLauncherCore.Util
         {
             Dictionary<string, string> jres = new Dictionary<string, string>();
 
-            var oldKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Runtime Environment");
-            var newKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JRE");
-            var jdkKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Development Kit");
+            var oldJreKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Runtime Environment");
+            var newJreKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JRE");
+            var oldJdkKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("Java Development Kit");
+            var newJdkKey = key?.OpenSubKey("JavaSoft")?.OpenSubKey("JDK");
 
-            //oldJre
-            if (oldKey != null)
+            //old Jre
+            if (oldJreKey != null)
             {
-                foreach (var verStr in oldKey.GetSubKeyNames())
+                foreach (var verStr in oldJreKey.GetSubKeyNames())
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = oldKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
+                        string path = oldJreKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
                         if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
@@ -211,14 +212,14 @@ namespace NsisoLauncherCore.Util
                 }
             }
 
-            //newJre
-            if (newKey != null)
+            //new Jre
+            if (newJreKey != null)
             {
-                foreach (var verStr in newKey.GetSubKeyNames())
+                foreach (var verStr in newJreKey.GetSubKeyNames())
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = newKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
+                        string path = newJreKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
                         if (File.Exists(path) && !jres.ContainsKey(verStr))
                         {
                             jres.Add(verStr, path);
@@ -227,17 +228,47 @@ namespace NsisoLauncherCore.Util
                 }
             }
 
-            //jdk
-            if (jdkKey != null)
+            //old jdk
+            if (oldJdkKey != null)
             {
-                foreach (var verStr in jdkKey.GetSubKeyNames())
+                foreach (var verStr in oldJdkKey.GetSubKeyNames())
                 {
                     if (verStr.Length > 3)
                     {
-                        string path = jdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\jre\bin\javaw.exe";
-                        if (File.Exists(path) && !jres.ContainsKey(verStr))
+                        string jre_javaw_path = oldJdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\jre\bin\javaw.exe";
+                        string jdk_javaw_path = oldJdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
+                        if (File.Exists(jre_javaw_path) && !jres.ContainsKey(verStr))
                         {
-                            jres.Add(verStr, path);
+                            jres.Add(verStr, jre_javaw_path);
+
+                        }
+                        else if (File.Exists(jdk_javaw_path) && !jres.ContainsKey(verStr))
+                        {
+                            jres.Add(verStr, jdk_javaw_path);
+
+                        }
+                    }
+                }
+            }
+
+            //new jdk
+            if (newJdkKey != null)
+            {
+                foreach (var verStr in newJdkKey.GetSubKeyNames())
+                {
+                    if (verStr.Length > 3)
+                    {
+                        string jre_javaw_path = newJdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\jre\bin\javaw.exe";
+                        string jdk_javaw_path = newJdkKey.OpenSubKey(verStr).GetValue("JavaHome")?.ToString().TrimEnd('\\') + @"\bin\javaw.exe";
+                        if (File.Exists(jre_javaw_path) && !jres.ContainsKey(verStr))
+                        {
+                            jres.Add(verStr, jre_javaw_path);
+
+                        }
+                        else if (File.Exists(jdk_javaw_path) && !jres.ContainsKey(verStr))
+                        {
+                            jres.Add(verStr, jdk_javaw_path);
+
                         }
                     }
                 }

@@ -12,7 +12,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public int SelectedIndex { get; set; }
 
-        public int SelectedOptionsIndex { get; set; }
+        public int SelectedOptionsIndex { get; set; } = -1;
 
         public MainPageViewModel()
         {
@@ -34,6 +34,31 @@ namespace NsisoLauncher.ViewModels.Pages
             DownloadTaskCount = 0;
         }
         #endregion
+
+        public void NavigateToLaunchPage()
+        {
+            SelectedIndex = 0;
+        }
+
+        public void NavigateToExtendPage()
+        {
+            SelectedIndex = 1;
+        }
+
+        public void NavigateToDownloadPage()
+        {
+            SelectedOptionsIndex = 0;
+        }
+
+        public void NavigateToSettingPage()
+        {
+            SelectedOptionsIndex = 1;
+        }
+
+        public void NavigateToUserPage()
+        {
+            SelectedOptionsIndex = 2;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

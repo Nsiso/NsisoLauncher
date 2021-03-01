@@ -164,7 +164,7 @@ namespace NsisoLauncher
             #region 数据初始化
             Config.Environment env = Config.MainConfig.Environment;
 
-            JavaList = new ObservableCollection<Java>(Java.GetJavaList());
+            RefreshJavaList();
 
             //设置启动器数据
             LauncherData = new ObservableLauncherData();
@@ -362,6 +362,23 @@ namespace NsisoLauncher
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public static void RefreshJavaList()
+        {
+            if (JavaList == null)
+            {
+                JavaList = new ObservableCollection<Java>(Java.GetJavaList());
+            }
+            else
+            {
+                JavaList.Clear();
+                List<Java> javas = Java.GetJavaList();
+                foreach (var item in javas)
+                {
+                    JavaList.Add(item);
+                }
             }
         }
 

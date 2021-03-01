@@ -152,7 +152,7 @@ namespace NsisoLauncher.ViewModels.Pages
                             if (!App.NetHandler.Downloader.IsBusy)
                             {
                                 App.NetHandler.Downloader.AddDownloadTask(lostDepend);
-                                App.MainPageVM.SelectedOptionsIndex = 0;
+                                App.MainPageVM.NavigateToDownloadPage();
                                 await App.NetHandler.Downloader.StartDownload();
                             }
                             else

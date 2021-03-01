@@ -3,6 +3,7 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Dialogs;
 using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.LaunchException;
 using NsisoLauncherCore.Modules;
@@ -24,6 +25,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Version = NsisoLauncherCore.Modules.Version;
+using NsisoLauncherCore.Net.Tools;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -89,6 +91,8 @@ namespace NsisoLauncher.ViewModels.Pages
         public string SelectedLaunchVersionId { get; set; }
         #endregion
 
+        private bool page_cutback = false;
+
         public LaunchPageViewModel()
         {
             if (App.VersionList != null)
@@ -103,6 +107,10 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 App.LaunchSignal.PropertyChanged += LaunchSignal_PropertyChanged;
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
+                if (App.LaunchSignal.IsLaunching)
+                {
+                    this.page_cutback = true;
+                }
             }
             if (App.LauncherData != null)
             {
@@ -113,7 +121,6 @@ namespace NsisoLauncher.ViewModels.Pages
             UserSetting = App.Config?.MainConfig?.User;
             if (UserSetting != null)
             {
-
                 UserSetting.PropertyChanged += User_PropertyChanged;
             }
             RefreshUserBinding();
@@ -139,17 +146,6 @@ namespace NsisoLauncher.ViewModels.Pages
                    {
                        await LaunchFromVM(LaunchType.NORMAL);
                    }
-               },
-               (obj) =>
-               {
-                   if (App.Handler == null)
-                   {
-                       return false;
-                   }
-                   else
-                   {
-                       return !App.Handler.IsBusyLaunching;
-                   }
                });
             #endregion
 
@@ -160,8 +156,6 @@ namespace NsisoLauncher.ViewModels.Pages
                     SelectedLaunchVersionId = App.Config.MainConfig.History.LastLaunchVersion;
                 }
             }
-
-
 
             this.PropertyChanged += LaunchPageViewModel_PropertyChanged;
         }
@@ -205,6 +199,21 @@ namespace NsisoLauncher.ViewModels.Pages
             if (e.PropertyName == "IsLaunching")
             {
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
+            }
+            if (e.PropertyName == "LaunchingInstance")
+            {
+                if (page_cutback && App.LaunchSignal.LaunchingInstance != null)
+                {
+                    this.LogLine = "等待游戏响应";
+                    App.LogHandler.OnLog += OnLog;
+                    CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(App.LaunchSignal.LaunchingInstance));
+                }
+
+                if (page_cutback && App.LaunchSignal.LaunchingInstance == null)
+                {
+                    App.LogHandler.OnLog -= OnLog;
+                    CancelLaunchingCmd = null;
+                }
             }
         }
 
@@ -273,7 +282,37 @@ namespace NsisoLauncher.ViewModels.Pages
                 //}
                 if (App.Handler.Java == null)
                 {
-                    await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"), App.GetResourceString("String.Message.NoJava2"));
+                    if ((App.JavaList == null || App.JavaList.Count == 0))
+                    {
+                        var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
+                            App.GetResourceString("String.Message.NoJava2"),
+                            MessageDialogStyle.AffirmativeAndNegative,
+                            new MetroDialogSettings()
+                            {
+                                AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                                NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                                DefaultButtonFocus = MessageDialogResult.Affirmative
+                            });
+                        if (result == MessageDialogResult.Affirmative)
+                        {
+                            var arch = SystemTools.GetSystemArch();
+                            App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
+                                () =>
+                                {
+                                    App.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        App.RefreshJavaList();
+                                    });
+                                }));
+                            App.MainPageVM.NavigateToDownloadPage();
+                            await App.NetHandler.Downloader.StartDownload();
+                        }
+                    }
+                    else
+                    {
+                        await MainWindowVM.ShowMessageAsync("没有设置启动所使用的java",
+                            "您的电脑安装了java，但您没有设置启动所使用的java，请转移至设置中的：环境设置-java设置 以设置启动使用的java");
+                    }
                     return;
                 }
                 #endregion
@@ -303,353 +342,6 @@ namespace NsisoLauncher.ViewModels.Pages
                     throw new Exception("所使用用户没有验证器类型");
                 }
                 launchSetting.LaunchUser = launchUser;
-
-                ////主验证器接口
-                //IAuthenticator authenticator = null;
-                //bool shouldRemember = false;
-
-                ////bool isSameAuthType = (authNode.AuthenticationType == auth);
-                //bool isRemember = (!string.IsNullOrWhiteSpace(launchUser.AccessToken)) && ((launchUser.SelectProfileUUID != null));
-                ////bool isSameName = userName == App.config.MainConfig.User.UserName;
-
-                //switch (launchAuthNode.AuthType)
-                //{
-                //    #region 离线验证
-                //    case AuthenticationType.OFFLINE:
-                //        //if (isNewUser)
-                //        //{
-                //        //    authenticator = new OfflineAuthenticator(launchUser.UserName);
-                //        //}
-                //        //else
-                //        //{
-                //        //    authenticator = new OfflineAuthenticator(launchUser.UserName, launchUser.UserData, launchUser.SelectProfileUUID);
-                //        //}
-                //        authenticator = new OfflineAuthenticator(launchUser.UserName, launchUser.UserData, launchUser.SelectProfileUUID);
-                //        break;
-                //    #endregion
-
-                //    #region MOJANG验证
-                //    case AuthenticationType.MOJANG:
-                //        if (isRemember)
-                //        {
-                //            var mYggTokenAuthenticator = new YggdrasilTokenAuthenticator(launchUser.AccessToken,
-                //                launchUser.GetSelectProfile(), launchUser.UserData);
-                //            mYggTokenAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
-                //            authenticator = mYggTokenAuthenticator;
-                //        }
-                //        else
-                //        {
-                //            var mojangLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
-                //                App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
-                //                loginDialogSettings);
-                //            if (IsValidateLoginData(mojangLoginDResult))
-                //            {
-                //                var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
-                //                {
-                //                    Username = mojangLoginDResult.Username,
-                //                    Password = mojangLoginDResult.Password
-                //                });
-                //                mYggAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
-                //                authenticator = mYggAuthenticator;
-                //                shouldRemember = mojangLoginDResult.ShouldRemember;
-                //            }
-                //            else
-                //            {
-                //                await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
-                //                return;
-                //            }
-                //        }
-                //        break;
-                //    #endregion
-
-                //    #region NIDE8验证
-                //    case AuthenticationType.NIDE8:
-                //        string nide8ID = launchAuthNode.Property["nide8ID"];
-                //        if (string.IsNullOrWhiteSpace(nide8ID))
-                //        {
-                //            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID"),
-                //                App.GetResourceString("String.Mainwindow.Auth.Nide8.NoID2"));
-                //            return;
-                //        }
-                //        var nide8ChooseResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
-                //            App.GetResourceString("String.Base.Choose"),
-                //            MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
-                //            new MetroDialogSettings()
-                //            {
-                //                AffirmativeButtonText = App.GetResourceString("String.Base.Login"),
-                //                NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
-                //                FirstAuxiliaryButtonText = App.GetResourceString("String.Base.Register"),
-                //                DefaultButtonFocus = MessageDialogResult.Affirmative
-                //            });
-                //        switch (nide8ChooseResult)
-                //        {
-                //            case MessageDialogResult.Canceled:
-                //                return;
-                //            case MessageDialogResult.Negative:
-                //                return;
-                //            case MessageDialogResult.FirstAuxiliary:
-                //                System.Diagnostics.Process.Start(string.Format("https://login2.nide8.com:233/{0}/register", nide8ID));
-                //                return;
-                //            case MessageDialogResult.Affirmative:
-                //                if (isRemember)
-                //                {
-                //                    var nYggTokenCator = new Nide8TokenAuthenticator(nide8ID, launchUser.AccessToken,
-                //                        launchUser.GetSelectProfile(),
-                //                        launchUser.UserData);
-                //                    authenticator = nYggTokenCator;
-                //                }
-                //                else
-                //                {
-                //                    var nide8LoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Nide8.Login"),
-                //                        App.GetResourceString("String.Mainwindow.Auth.Nide8.Login2"),
-                //                        loginDialogSettings);
-                //                    if (IsValidateLoginData(nide8LoginDResult))
-                //                    {
-                //                        var nYggCator = new Nide8Authenticator(
-                //                            nide8ID,
-                //                            new Credentials()
-                //                            {
-                //                                Username = nide8LoginDResult.Username,
-                //                                Password = nide8LoginDResult.Password
-                //                            });
-                //                        authenticator = nYggCator;
-                //                        shouldRemember = nide8LoginDResult.ShouldRemember;
-                //                    }
-                //                    else
-                //                    {
-                //                        await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
-                //                        return;
-                //                    }
-                //                }
-                //                break;
-                //            default:
-                //                break;
-                //        }
-                //        break;
-                //    #endregion
-
-                //    #region AUTHLIB验证
-                //    case AuthenticationType.AUTHLIB_INJECTOR:
-                //        string aiRootAddr = launchAuthNode.Property["authserver"];
-                //        if (string.IsNullOrWhiteSpace(aiRootAddr))
-                //        {
-                //            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
-                //                App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
-                //            return;
-                //        }
-                //        else
-                //        {
-                //            if (isRemember)
-                //            {
-                //                var cYggTokenCator = new AuthlibInjectorTokenAuthenticator(aiRootAddr,
-                //                    launchUser.AccessToken,
-                //                    launchUser.GetSelectProfile(),
-                //                    launchUser.UserData);
-                //                authenticator = cYggTokenCator;
-                //            }
-                //            else
-                //            {
-                //                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
-                //               App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
-                //               loginDialogSettings);
-                //                if (IsValidateLoginData(customLoginDResult))
-                //                {
-                //                    var cYggAuthenticator = new AuthlibInjectorAuthenticator(
-                //                        aiRootAddr,
-                //                        new Credentials()
-                //                        {
-                //                            Username = customLoginDResult.Username,
-                //                            Password = customLoginDResult.Password
-                //                        });
-                //                    authenticator = cYggAuthenticator;
-                //                    shouldRemember = customLoginDResult.ShouldRemember;
-                //                }
-                //                else
-                //                {
-                //                    await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
-                //                    return;
-                //                }
-                //            }
-                //        }
-                //        break;
-                //    #endregion
-
-                //    #region 自定义验证
-                //    case AuthenticationType.CUSTOM_SERVER:
-                //        string customAuthServer = launchAuthNode.Property["authserver"];
-                //        if (string.IsNullOrWhiteSpace(customAuthServer))
-                //        {
-                //            await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress"),
-                //                App.GetResourceString("String.Mainwindow.Auth.Custom.NoAdrress2"));
-                //            return;
-                //        }
-                //        else
-                //        {
-                //            if (isRemember)
-                //            {
-                //                var cYggTokenCator = new YggdrasilTokenAuthenticator(launchUser.AccessToken,
-                //                launchUser.GetSelectProfile(),
-                //                launchUser.UserData);
-                //                cYggTokenCator.ProxyAuthServerAddress = customAuthServer;
-                //            }
-                //            else
-                //            {
-                //                var customLoginDResult = await MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Custom.Login"),
-                //               App.GetResourceString("String.Mainwindow.Auth.Custom.Login2"),
-                //               loginDialogSettings);
-                //                if (IsValidateLoginData(customLoginDResult))
-                //                {
-                //                    var cYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
-                //                    {
-                //                        Username = customLoginDResult.Username,
-                //                        Password = customLoginDResult.Password
-                //                    });
-                //                    cYggAuthenticator.ProxyAuthServerAddress = customAuthServer;
-                //                    authenticator = cYggAuthenticator;
-                //                    shouldRemember = customLoginDResult.ShouldRemember;
-                //                }
-                //                else
-                //                {
-                //                    await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
-                //                    return;
-                //                }
-                //            }
-                //        }
-                //        break;
-                //    #endregion
-
-                //    #region 意外情况
-                //    default:
-                //        authenticator = new OfflineAuthenticator(launchUser.UserName,
-                //                launchUser.UserData,
-                //                launchUser.SelectProfileUUID);
-                //        break;
-                //        #endregion
-                //}
-
-                ////如果验证方式不是离线验证
-                //if (launchAuthNode.AuthType != AuthenticationType.OFFLINE)
-                //{
-
-                //    string currentLoginType = string.Format("正在进行{0}中...", launchAuthNode.Name);
-                //    string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                //    var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
-
-                //    loader.SetIndeterminate();
-                //    var authResult = await authenticator.DoAuthenticateAsync();
-                //    await loader.CloseAsync();
-
-                //    #region 错误处日志
-                //    if (authResult.State != AuthState.SUCCESS)
-                //    {
-                //        App.LogHandler.AppendInfo(string.Format("验证失败：{0}", authResult.State));
-                //    }
-                //    #endregion
-
-                //    switch (authResult.State)
-                //    {
-                //        case AuthState.SUCCESS:
-                //            #region 成功登陆
-                //            #region 无选中角色处理
-                //            if (authResult.SelectedProfile == null)
-                //            {
-                //                if (authResult.Profiles == null || authResult.Profiles.Count == 0)
-                //                {
-                //                    await MainWindowVM.ShowMessageAsync("验证失败：您没有可用的游戏角色（Profile）",
-                //                    "如果您是正版验证，则您可能还未购买游戏本体。如果您是外置登录，则您可能未设置或添加可用角色");
-                //                    return;
-                //                }
-                //                ChooseProfileDialog chooseProfileDialog = new ChooseProfileDialog(MainWindowVM, authResult.Profiles);
-                //                await MainWindowVM.ShowMetroDialogAsync(chooseProfileDialog);
-                //                await chooseProfileDialog.WaitUntilUnloadedAsync();
-                //                if (chooseProfileDialog.SelectedProfile == null)
-                //                {
-                //                    await MainWindowVM.ShowMessageAsync("验证失败：您没有选中任何游戏角色（Profile）",
-                //               "请选中您要进行游戏的角色");
-                //                    return;
-                //                }
-                //                else
-                //                {
-                //                    authResult.SelectedProfile = chooseProfileDialog.SelectedProfile;
-                //                }
-                //            }
-                //            #endregion
-                //            launchUser.SelectProfileUUID = authResult.SelectedProfile.Value;
-                //            launchUser.UserData = authResult.UserData;
-                //            if (authResult.Profiles != null)
-                //            {
-                //                launchUser.Profiles.Clear();
-                //                authResult.Profiles.ForEach(x => launchUser.Profiles.Add(x.Value, x));
-                //            }
-                //            if (shouldRemember)
-                //            {
-                //                launchUser.AccessToken = authResult.AccessToken;
-                //            }
-                //            launchSetting.AuthenticateResult = authResult;
-                //            #endregion
-                //            break;
-
-                //        case AuthState.REQ_LOGIN:
-                //            #region 要求再次登陆
-                //            //todo 添加更好的注销服务
-                //            launchUser.ClearAuthCache();
-                //            await MainWindowVM.ShowMessageAsync("验证失败：您的登录信息已过期",
-                //                string.Format("请您重新进行登录。具体信息：{0}", authResult.Error.ErrorMessage));
-                //            #endregion
-                //            return;
-
-                //        case AuthState.ERR_INVALID_CRDL:
-                //            #region 错误的验证信息/禁止访问
-                //            await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
-                //                string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
-                //            #endregion
-                //            return;
-
-                //        case AuthState.ERR_NOTFOUND:
-                //            #region 页面未找到
-                //            if (launchAuthNode.AuthType == AuthenticationType.CUSTOM_SERVER || launchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
-                //            {
-                //                await MainWindowVM.ShowMessageAsync("验证失败：代理验证服务器地址有误或账号未找到",
-                //                string.Format("请确认您的Authlib-Injector验证服务器（Authlib-Injector验证）或自定义验证服务器（自定义验证）地址正确或确认账号和游戏角色存在。具体信息：{0}",
-                //                authResult.Error.ErrorMessage));
-                //            }
-                //            else
-                //            {
-                //                await MainWindowVM.ShowMessageAsync("验证失败：您的账号未找到",
-                //                string.Format("请确认您的账号和游戏角色存在。具体信息：{0}", authResult.Error.ErrorMessage));
-                //            }
-                //            #endregion
-                //            return;
-
-                //        case AuthState.ERR_OTHER:
-                //            await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
-                //                string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
-                //            return;
-                //        case AuthState.ERR_INSIDE:
-                //            if (authResult.Error.Exception != null)
-                //            {
-                //                App.LogHandler.AppendFatal(authResult.Error.Exception);
-                //            }
-                //            else
-                //            {
-                //                await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
-                //                    string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
-                //                    authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
-                //            }
-                //            return;
-                //        default:
-                //            await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
-                //                "建议您联系启动器开发者进行解决。");
-                //            return;
-                //    }
-                //}
-                //else
-                //{
-                //    var authResult = await authenticator.DoAuthenticateAsync();
-                //    launchSetting.AuthenticateResult = authResult;
-                //    launchUser.UserData = authResult.UserData;
-                //    launchUser.SelectProfileUUID = authResult.SelectedProfile.Value;
-                //}
                 #endregion
 
                 #region 验证后用户处理
@@ -671,6 +363,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     App.Handler,
                     launchSetting.Version, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
 
+                #region 检查验证核心
                 if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
                 {
                     string nideJarPath = App.Handler.GetNide8JarPath();
@@ -692,7 +385,9 @@ namespace NsisoLauncher.ViewModels.Pages
                         }
                     }
                 }
+                #endregion
 
+                #region 检查依赖库
                 if (App.Config.MainConfig.Environment.DownloadLostDepend && lostDepend.Count() != 0)
                 {
                     MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadDepend"),
@@ -717,7 +412,9 @@ namespace NsisoLauncher.ViewModels.Pages
                     }
 
                 }
+                #endregion
 
+                #region 检查资源文件
                 App.LogHandler.AppendInfo("检查丢失的资源文件中...");
                 if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Handler, launchSetting.Version)))
                 {
@@ -745,16 +442,17 @@ namespace NsisoLauncher.ViewModels.Pages
                     }
 
                 }
+                #endregion
+
 
                 if (losts.Count != 0)
                 {
                     if (!App.NetHandler.Downloader.IsBusy)
                     {
                         App.NetHandler.Downloader.AddDownloadTask(losts);
-                        DownloadWindow downloadWindow = new DownloadWindow();
-                        downloadWindow.Show();
+                        App.MainPageVM.NavigateToDownloadPage();
                         var downloadResult = await App.NetHandler.Downloader.StartDownloadAndWaitDone();
-                        downloadWindow.Close();
+                        App.MainPageVM.NavigateToLaunchPage();
                         if (downloadResult?.ErrorList?.Count != 0)
                         {
                             await MainWindowVM.ShowMessageAsync(string.Format("有{0}个文件下载补全失败", downloadResult.ErrorList.Count),
@@ -870,6 +568,9 @@ namespace NsisoLauncher.ViewModels.Pages
                     //启动
                     var result = await App.Handler.LaunchAsync(launchSetting);
 
+                    //标记启动中的实例
+                    App.LaunchSignal.LaunchingInstance = result.Instance;
+
                     #region Debug
                     if (launchType == LaunchType.DEBUG)
                     {
@@ -916,7 +617,7 @@ namespace NsisoLauncher.ViewModels.Pages
                             Process.Start("explorer", "/select,\"LaunchMinecraft.bat\"");
                             return;
                         }
-                        CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result));
+                        CancelLaunchingCmd = new DelegateCommand(async (obj) => await CancelLaunching(result.Instance));
 
                         #region 等待游戏响应
                         try
@@ -983,14 +684,15 @@ namespace NsisoLauncher.ViewModels.Pages
             finally
             {
                 App.LaunchSignal.IsLaunching = false;
+                App.LaunchSignal.LaunchingInstance = null;
             }
         }
 
-        private async Task CancelLaunching(LaunchResult result)
+        private async Task CancelLaunching(LaunchInstance instance)
         {
-            if (!result.Instance.HasExited)
+            if (!instance.HasExited)
             {
-                result.Instance.Kill();
+                instance.Kill();
             }
             await MainWindowVM.ShowMessageAsync("已取消启动", "已取消启动");
         }

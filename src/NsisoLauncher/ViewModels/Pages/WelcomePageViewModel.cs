@@ -86,7 +86,14 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     var arch = SystemTools.GetSystemArch();
                     DownloadWindow downloadWindow = new DownloadWindow();
-                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE));
+                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
+                               () =>
+                               {
+                                   App.Current.Dispatcher.Invoke(() =>
+                                   {
+                                       App.RefreshJavaList();
+                                   });
+                               }));
                     downloadWindow.Show();
                     await App.NetHandler.Downloader.StartDownload();
                 }

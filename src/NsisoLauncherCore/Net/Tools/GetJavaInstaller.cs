@@ -1,6 +1,7 @@
 ﻿using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace NsisoLauncherCore.Net.Tools
     /// </summary>
     public static class GetJavaInstaller
     {
-        public static DownloadTask GetDownloadTask(string feature_version, ArchEnum arch, JavaImageType image_type)
+        public static DownloadTask GetDownloadTask(string feature_version, ArchEnum arch, JavaImageType image_type, Action closed_todo)
         {
             string arch_str;
             switch (arch)
@@ -50,7 +51,16 @@ namespace NsisoLauncherCore.Net.Tools
 
             task.DownloadObject.Todo = new Func<ProgressCallback, System.Threading.CancellationToken, Exception>((a, b) =>
             {
-                System.Diagnostics.Process.Start(to);
+                try
+                {
+                    Process process = Process.Start(to);
+                    process.WaitForExit();
+                    closed_todo();
+                }
+                catch (Exception ex)
+                {
+                    return ex;
+                }
                 return null;
             });
 
