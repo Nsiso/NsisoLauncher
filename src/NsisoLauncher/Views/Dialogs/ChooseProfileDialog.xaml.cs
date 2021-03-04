@@ -1,7 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;

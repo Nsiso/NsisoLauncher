@@ -1,7 +1,5 @@
 ﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using NsisoLauncherCore.Net.MojangApi.Responses;
 
 namespace NsisoLauncherCore.Auth
 {

@@ -7,14 +7,12 @@ using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -159,7 +157,7 @@ namespace NsisoLauncher
                 ThemeManager.Current.ChangeThemeBaseColor(Current, custom.AppTheme);
 
             }
-            #endregion    
+            #endregion
 
             #region 数据初始化
             Config.Environment env = Config.MainConfig.Environment;

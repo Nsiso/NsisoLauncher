@@ -1,7 +1,5 @@
 ﻿using NsisoLauncherCore.Net.MicrosoftLogin.Modules;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http;

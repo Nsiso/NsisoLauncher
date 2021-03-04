@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using NsisoLauncherCore.Modules;
 using Version = NsisoLauncherCore.Modules.Version;
-using Newtonsoft.Json;
 using System.IO;
-using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Util.Checker;
 
 namespace NsisoLauncherCore.Util

@@ -1,6 +1,4 @@
-﻿using NsisoLauncherCore.Auth;
-
-namespace NsisoLauncherCore.Modules
+﻿namespace NsisoLauncherCore.Modules
 {
     public class LaunchSetting
     {

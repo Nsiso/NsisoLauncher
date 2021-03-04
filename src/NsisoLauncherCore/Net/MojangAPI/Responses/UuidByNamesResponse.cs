@@ -1,5 +1,4 @@
 ﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Net.MojangApi.Responses

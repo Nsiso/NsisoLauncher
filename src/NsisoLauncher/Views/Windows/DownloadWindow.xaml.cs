@@ -1,9 +1,5 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using NsisoLauncherCore.Net;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace NsisoLauncher.Views.Windows

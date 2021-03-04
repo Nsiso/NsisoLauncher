@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 
 namespace NsisoLauncher.Config
 {

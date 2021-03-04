@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Cyotek.Data.Nbt;
 using Cyotek.Data.Nbt.Serialization;
 using NsisoLauncherCore.Modules;

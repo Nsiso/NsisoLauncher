@@ -1,12 +1,7 @@
-﻿using ICSharpCode.SharpZipLib.Zip;
-using NsisoLauncherCore.Modules;
+﻿using NsisoLauncherCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Newtonsoft.Json;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace NsisoLauncherCore.Util.Mod
 {

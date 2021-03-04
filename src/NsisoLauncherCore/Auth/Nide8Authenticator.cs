@@ -1,7 +1,4 @@
-﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
+﻿using NsisoLauncherCore.Net.MojangApi.Endpoints;
 
 namespace NsisoLauncherCore.Auth
 {

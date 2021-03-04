@@ -3,7 +3,6 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static NsisoLauncherCore.Net.MojangApi.Responses.AuthenticateResponse;
 using User = NsisoLauncher.Config.User;
 
 namespace NsisoLauncher.ViewModels.Pages

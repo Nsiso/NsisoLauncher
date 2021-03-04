@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Version = NsisoLauncherCore.Modules.Version;
 using NsisoLauncherCore.Util;
 using System.Threading.Tasks;

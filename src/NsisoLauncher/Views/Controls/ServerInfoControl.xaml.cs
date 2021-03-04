@@ -1,13 +1,6 @@
-﻿using NsisoLauncher.Config;
-using NsisoLauncherCore.Net.Server;
-using System;
-using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
+﻿using NsisoLauncherCore.Net.Server;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Views.Controls
 {

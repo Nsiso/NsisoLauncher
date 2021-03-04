@@ -2,7 +2,6 @@
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
