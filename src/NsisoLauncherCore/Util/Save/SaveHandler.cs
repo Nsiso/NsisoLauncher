@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Cyotek.Data.Nbt;
 using Cyotek.Data.Nbt.Serialization;
 using NsisoLauncherCore.Modules;
@@ -63,6 +64,14 @@ namespace NsisoLauncherCore.Util.Save
                 }
             }
             return maps;
+        }
+
+        public Task<List<SaveInfo>> GetSavesAsync(Modules.Version version)
+        {
+            return Task.Run(() =>
+            {
+                return GetSaves(version);
+            });
         }
 
         public void DeleteSave(SaveInfo save)

@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Proxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\BitHelper.cs" />

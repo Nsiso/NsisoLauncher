@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.PhalAPI
@@ -23,7 +24,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
             _netRequester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
-        public async Task<NsisoLauncherVersionResponse> GetLatestLauncherVersion()
+        public async Task<NsisoLauncherVersionResponse> GetLatestLauncherVersion(CancellationToken cancellation)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
                 args.Add("where", "[[\"id\", \">\", \"0\"]]");
                 //仅返回一条（即ID最高的最新版本）
                 args.Add("perpage", "1");
-                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args);
+                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args, cancellation);
                 if (!resultRespond.IsSuccessStatusCode)
                 {
                     return null;

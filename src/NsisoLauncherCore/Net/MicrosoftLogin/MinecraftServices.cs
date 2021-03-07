@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading;
 using System.Net.Http.Headers;
+using NsisoLauncherCore.Modules;
 
 namespace NsisoLauncherCore.Net.MicrosoftLogin
 {
@@ -17,6 +18,8 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         public Uri AuthenticateUri { get; set; } = new Uri("https://api.minecraftservices.com/authentication/login_with_xbox");
 
         public Uri CheckGameOwnershipUri { get; set; } = new Uri("https://api.minecraftservices.com/entitlements/mcstore");
+
+        public Uri ProfileUri { get; set; } = new Uri("https://api.minecraftservices.com/minecraft/profile");
 
         public MinecraftServices(NetRequester reqstr)
         {
@@ -59,6 +62,20 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             {
                 return true;
             }
+        }
+
+        public async Task<NewProfile> GetProfile(MinecraftToken token, CancellationToken cancellation)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, ProfileUri);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+            var result = await requester.Client.SendAsync(request, cancellation);
+            result.EnsureSuccessStatusCode();
+
+            var respond_str = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(respond_str);
+            NewProfile profile = JsonConvert.DeserializeObject<NewProfile>(respond_str);
+
+            return profile;
         }
     }
 }

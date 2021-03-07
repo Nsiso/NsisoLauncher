@@ -57,11 +57,13 @@ namespace NsisoLauncher.ViewModels.Pages
                 App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
             }
 
-            CancelButtonCommand = new DelegateCommand(async (a)=> {
+            CancelButtonCommand = new DelegateCommand(async (a) =>
+            {
                 await CancelDownload();
             });
 
-            PauseBeginButtonCommand = new DelegateCommand((a) => {
+            PauseBeginButtonCommand = new DelegateCommand((a) =>
+            {
                 if (App.NetHandler.Downloader.IsBusy)
                 {
                     App.NetHandler.Downloader.RequestPause();
@@ -72,7 +74,8 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
             });
 
-            NewDownloadButtonCommand = new DelegateCommand((a) => {
+            NewDownloadButtonCommand = new DelegateCommand((a) =>
+            {
                 new NewDownloadTaskWindow().ShowDialog();
             });
 

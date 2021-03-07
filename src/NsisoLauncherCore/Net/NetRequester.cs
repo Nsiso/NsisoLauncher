@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net
@@ -76,11 +77,6 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        ///// <summary>
-        ///// 定义http请求的超时时间.
-        ///// </summary>
-        //public static TimeSpan Timeout = TimeSpan.FromSeconds(10);
-
         public async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
             try
@@ -89,7 +85,19 @@ namespace NsisoLauncherCore.Net
             }
             catch (TaskCanceledException)
             {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.PostAsync(uri, new FormUrlEncodedContent(arg), cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
         }
 

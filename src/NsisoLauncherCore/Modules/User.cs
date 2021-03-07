@@ -3,6 +3,29 @@ using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Modules
 {
+    public class NewProfile
+    {
+        /// <summary>
+        /// 用户id
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 皮肤列表
+        /// </summary>
+        public List<Skin> Skins { get; set; }
+
+        /// <summary>
+        /// 披风列表
+        /// </summary>
+        public List<string> Capes { get; set; }
+    }
+
     public class User
     {
         /// <summary>

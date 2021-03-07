@@ -35,14 +35,16 @@
         <StackPanel Grid.Row="0">
             <Image HorizontalAlignment="Stretch" VerticalAlignment="Center" Source="{Binding WelcomeImageSource, TargetNullValue={x:Null}}"/>
         </StackPanel>
-        <StackPanel Grid.Row="1"  Background="{DynamicResource MahApps.Brushes.AccentBase}">
-            <StackPanel Margin="0,20">
+        <Grid Grid.Row="1"  Background="{DynamicResource MahApps.Brushes.AccentBase}">
+            <StackPanel Margin="0,20" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Image Source="{Binding IconImageSource}" Width="40" Height="40" Margin="0,0,10,0"/>
                     <TextBlock Text="{Binding WelcomeTitle, TargetNullValue='Nsiso启动器'}" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
                 </StackPanel>
                 <TextBlock Text="{Binding NowState, TargetNullValue='正在初始化'}" Foreground="White" HorizontalAlignment="Center" Margin="0,5,0,0"/>
             </StackPanel>
-        </StackPanel>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" Foreground="White"
+                    Margin="10" Content="取消" Command="{Binding CancelCmd}"/>
+        </Grid>
     </Grid>
 </Page>

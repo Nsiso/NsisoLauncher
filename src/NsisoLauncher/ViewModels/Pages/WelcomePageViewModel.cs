@@ -9,8 +9,10 @@ using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -34,6 +36,10 @@ namespace NsisoLauncher.ViewModels.Pages
         public string IconImageSource { get; set; } = "/NsisoLauncher;component/Resource/icon.ico";
 
         public string NowState { get; set; }
+
+        public CancellationTokenSource CancellationSource { get; set; }
+
+        public ICommand CancelCmd { get; set; }
 
         public WelcomePageViewModel()
         {
@@ -59,6 +65,13 @@ namespace NsisoLauncher.ViewModels.Pages
                 await CheckEnvironment();
                 MainPage mainPage = new MainPage();
                 App.MainWindowVM.NavigationService.Navigate(mainPage);
+            });
+
+            this.CancellationSource = new CancellationTokenSource();
+
+            CancelCmd = new DelegateCommand((a) =>
+            {
+                this.CancellationSource.Cancel();
             });
         }
 
@@ -114,7 +127,7 @@ namespace NsisoLauncher.ViewModels.Pages
             try
             {
                 NowState = "正在检查更新...";
-                var ver = await App.NetHandler.NsisoAPIHandler.GetLatestLauncherVersion();
+                var ver = await App.NetHandler.NsisoAPIHandler.GetLatestLauncherVersion(CancellationSource.Token);
                 if (ver != null)
                 {
                     System.Version currentVersion = Application.ResourceAssembly.GetName().Version;

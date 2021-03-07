@@ -314,12 +314,12 @@ namespace NsisoLauncher.ViewModels.Pages
             UpdateVersionSaves();
         }
 
-        private void UpdateVersionSaves()
+        private async void UpdateVersionSaves()
         {
             VerSaves.Clear();
             if (this.SelectedVersion != null)
             {
-                List<SaveInfo> saves = App.Handler.SaveHandler.GetSaves(this.SelectedVersion);
+                List<SaveInfo> saves = await App.Handler.SaveHandler.GetSavesAsync(this.SelectedVersion);
                 if (saves != null)
                 {
                     foreach (var item in saves)
@@ -330,12 +330,12 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private void UpdateVersionMods()
+        private async void UpdateVersionMods()
         {
             VerMods.Clear();
             if (this.SelectedVersion != null)
             {
-                List<ModInfo> saves = App.Handler.ModHandler.GetMods(this.SelectedVersion);
+                List<ModInfo> saves = await App.Handler.ModHandler.GetModsAsync(this.SelectedVersion);
                 if (saves != null)
                 {
                     foreach (var item in saves)

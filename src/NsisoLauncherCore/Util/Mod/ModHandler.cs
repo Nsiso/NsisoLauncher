@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Util.Mod
 {
@@ -38,56 +39,15 @@ namespace NsisoLauncherCore.Util.Mod
             {
                 mods.Add(new ModInfo() { ModPath = item });
             }
-
-            //foreach (var item in modsPath)
-            //{
-            //    try
-            //    {
-            //        if (string.IsNullOrWhiteSpace(item))
-            //        {
-            //            continue;
-            //        }
-            //        ZipFile zipFile = new ZipFile(item);
-            //        ZipEntry infoEntry = zipFile.GetEntry("mcmod.info");
-            //        if (infoEntry != null)
-            //        {
-            //            string json;
-            //            using (Stream zipStream = zipFile.GetInputStream(infoEntry))
-            //            {
-            //                using (StreamReader reader = new StreamReader(zipStream))
-            //                {
-            //                    json = reader.ReadToEnd();
-            //                }
-            //            }
-
-            //            JToken jobj = JToken.Parse(json);
-            //            ModInfo info;
-            //            if (jobj.Type == JTokenType.Array)
-            //            {
-            //                info = jobj.ToObject<ModInfo[]>()[0];
-            //            }
-            //            else
-            //            {
-            //                info = jobj["modList"].ToObject<ModInfo[]>()[0];
-            //            }
-
-            //            if (info != null)
-            //            {
-            //                mods.Add(info);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            continue;
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex);
-            //        continue;
-            //    }
-            //}
             return mods;
+        }
+
+        public Task<List<ModInfo>> GetModsAsync(Modules.Version version)
+        {
+            return Task.Run(() =>
+            {
+                return GetMods(version);
+            });
         }
     }
 }
