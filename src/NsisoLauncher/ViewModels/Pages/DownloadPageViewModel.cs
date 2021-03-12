@@ -52,9 +52,7 @@ namespace NsisoLauncher.ViewModels.Pages
             if (App.NetHandler.Downloader != null)
             {
                 Tasks = App.NetHandler.Downloader.ViewDownloadTasks;
-                App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
-                App.NetHandler.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
-                App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
+                SubscribeEvent();
             }
 
             CancelButtonCommand = new DelegateCommand(async (a) =>
@@ -80,6 +78,13 @@ namespace NsisoLauncher.ViewModels.Pages
             });
 
             MainWindowVM = App.MainWindowVM;
+        }
+
+        public void SubscribeEvent()
+        {
+            App.NetHandler.Downloader.DownloadProgressChanged += Downloader_DownloadProgressChanged;
+            App.NetHandler.Downloader.DownloadSpeedChanged += Downloader_DownloadSpeedChanged;
+            App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
         }
 
         public void InitChart()
@@ -118,24 +123,13 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             return string.Format("{0}{1}", speedValue, speedUnit);
         });
-        private async void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
+        private void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
         {
             SpeedStr = "0KB/s";
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
             ClearSpeedValues();
-            if (e.ErrorList == null || e.ErrorList.Count == 0)
-            {
-                await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
-                    App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
-                //undo close window
-            }
-            else
-            {
-                await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
-                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value?.Message));
-            }
         }
 
         private void Downloader_DownloadSpeedChanged(object sender, DownloadSpeedChangedArg e)

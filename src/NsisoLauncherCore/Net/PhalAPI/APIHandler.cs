@@ -11,7 +11,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
 {
     public class APIHandler
     {
-        const string APIUrl = "http://hn2.api.okayapi.com/";
+        const string APIUrl = "https://hn2.api.yesapi.cn/";
         const string App_key = "7B27B7B6A3C10158C28E3DE0B13785CD";
 
         public bool NoTracking { get; set; }
@@ -38,7 +38,10 @@ namespace NsisoLauncherCore.Net.PhalAPI
                 args.Add("where", "[[\"id\", \">\", \"0\"]]");
                 //仅返回一条（即ID最高的最新版本）
                 args.Add("perpage", "1");
-                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Table.FreeQuery", args, cancellation);
+
+                string query_url = APIUrl + "?s=App.Table.FreeQuery";
+
+                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(query_url, args, cancellation);
                 if (!resultRespond.IsSuccessStatusCode)
                 {
                     return null;

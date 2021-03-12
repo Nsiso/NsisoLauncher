@@ -68,8 +68,6 @@ namespace NsisoLauncher.ViewModels.Windows
         {
             this.instance = DialogCoordinator.Instance;
 
-            App.MainWindowVM = this;
-
             if (App.Handler != null)
             {
                 App.Handler.GameExit += Handler_GameExit;

@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncher.ViewModels.Windows;
 using System;
 using System.ComponentModel;
 
@@ -10,23 +11,19 @@ namespace NsisoLauncher.Views.Windows
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public MainWindow()
+        public MainWindow(MainWindowViewModel viewModel)
         {
-
-            //THIS IS NOT MVVM
-            ViewModels.Windows.MainWindowViewModel vm = new ViewModels.Windows.MainWindowViewModel()
-            {
-                CloseWindow = new Action(() => this.Close())
-            };
-            this.DataContext = vm;
+            this.DataContext = viewModel;
+            viewModel.CloseWindow = new Action(() => this.Close());
+            App.LogHandler.AppendDebug("启动器主窗体view model加载并初始化完成");
 
             InitializeComponent();
+            viewModel.NavigationService = frame.NavigationService;
+            viewModel.InitializeMainPage();
 
-            //THIS IS NOT MVVM
-            vm.NavigationService = frame.NavigationService;
-            vm.InitializeMainPage();
             App.LogHandler.AppendDebug("启动器主窗体已载入");
         }
+
 
 
         #region MainWindow event

@@ -314,9 +314,33 @@ namespace NsisoLauncher
 
             LaunchSignal = new LaunchSignal();
 
-            MainWindow mainwindow = new MainWindow();
+            #region 初始化主窗体
+            MainWindowViewModel window_vm = new MainWindowViewModel();
+            MainWindow mainwindow = new MainWindow(window_vm);
+
+            MainWindowVM = window_vm;
             this.MainWindow = mainwindow;
+
             mainwindow.Show();
+            #endregion
+
+            #region 窗口提示事件绑定
+            App.NetHandler.Downloader.DownloadCompleted += Downloader_DownloadCompleted;
+            #endregion
+        }
+
+        private async void Downloader_DownloadCompleted(object sender, DownloadCompletedArg e)
+        {
+            if (e.ErrorList == null || e.ErrorList.Count == 0)
+            {
+                await MainWindowVM?.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadComplete"),
+                    App.GetResourceString("String.Downloadwindow.DownloadComplete2"));
+            }
+            else
+            {
+                await MainWindowVM?.ShowMessageAsync(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError"),
+                    string.Format(App.GetResourceString("String.Downloadwindow.DownloadCompleteWithError2"), e.ErrorList.Count, e.ErrorList.First().Value?.Message));
+            }
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
