@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
+      
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
@@ -14,6 +15,7 @@
     <Page.DataContext>
         <vm:UserPageViewModel/>
     </Page.DataContext>
+
     <Page.Resources>
         <utils:BooleanToVisibilityConverter
             x:Key="ReverseBooleanToVisibilityConverter"
@@ -40,6 +42,7 @@
             </Setter>
         </Style>
     </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -47,7 +50,8 @@
         </Grid.RowDefinitions>
 
         <!--#region 登录状态-->
-        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}"
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20">
                 <StackPanel>
                     <TextBlock Text="当前用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
@@ -67,7 +71,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
+        <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
               Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
@@ -76,12 +80,13 @@
             <ListBox Style="{StaticResource radioButtonStyle}" ItemsSource="{Binding UUIDList}" ScrollViewer.VerticalScrollBarVisibility="Visible"
                          DisplayMemberPath="Value.PlayerName" SelectedValuePath="Key" Margin="10" Grid.Column="0"
                 SelectedValue="{Binding LoggedInUser.SelectedProfileUuid}"/>
-            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Content="用户信息/换肤 开发中..."/>
+            <userControl:Skin3dViewer Width="200" Grid.Column="1" HorizontalAlignment="Left"/>
         </Grid>
         <!--#endregion-->
 
         <!--#region 未登录状态 -->
-        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
+        <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" 
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel Margin="0,60" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label Content="登录后即可畅玩Minecraft" Foreground="White" FontSize="26"/>
                 <Label Content="支持离线/正版/皮肤站/登录站等登录方式" Foreground="White" HorizontalAlignment="Center"/>
