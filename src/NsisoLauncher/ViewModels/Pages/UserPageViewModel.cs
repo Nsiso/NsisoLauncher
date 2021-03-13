@@ -19,7 +19,7 @@ namespace NsisoLauncher.ViewModels.Pages
     public class UserPageViewModel : INotifyPropertyChanged
     {
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
-        public bool IsLoggedIn { get; set; } = true;
+        public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));

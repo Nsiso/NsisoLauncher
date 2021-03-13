@@ -22,7 +22,7 @@
                             <DiffuseMaterial.Brush>
                                 <VisualBrush TileMode="Tile" ViewportUnits="Absolute" Viewport="0 0 1 1" AlignmentX="Left" AlignmentY="Top">
                                     <VisualBrush.Visual>
-                                        <Image Source="/NsisoLauncher;component/Resource/PlayerSkins/steve.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.ClearTypeHint="Enabled"/>
+                                        <Image Source="/NsisoLauncher;component/Resource/PlayerSkins/test.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.ClearTypeHint="Enabled"/>
                                     </VisualBrush.Visual>
                                 </VisualBrush>
                             </DiffuseMaterial.Brush>
