@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using AuthenticationNode = NsisoLauncher.Config.AuthenticationNode;
 
 namespace NsisoLauncher.Views.Controls
 {

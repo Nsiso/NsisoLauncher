@@ -80,7 +80,7 @@
             <ListBox Style="{StaticResource radioButtonStyle}" ItemsSource="{Binding UUIDList}" ScrollViewer.VerticalScrollBarVisibility="Visible"
                          DisplayMemberPath="Value.PlayerName" SelectedValuePath="Key" Margin="10" Grid.Column="0"
                 SelectedValue="{Binding LoggedInUser.SelectedProfileUuid}"/>
-            <userControl:Skin3dViewer Width="200" Grid.Column="1" HorizontalAlignment="Left"/>
+            <userControl:Skin3dViewer Width="200" Grid.Column="1" HorizontalAlignment="Left" SkinUrl="{Binding SkinUrl}"/>
         </Grid>
         <!--#endregion-->
 

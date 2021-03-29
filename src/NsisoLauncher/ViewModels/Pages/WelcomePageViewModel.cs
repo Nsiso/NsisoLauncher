@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AuthenticationNode = NsisoLauncher.Config.AuthenticationNode;
 
 namespace NsisoLauncher.ViewModels.Pages
 {

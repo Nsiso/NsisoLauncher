@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LaunchException\NullJavaExceptioncs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LaunchInstance.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\GCType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />

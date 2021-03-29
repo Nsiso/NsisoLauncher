@@ -22,6 +22,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
+        public Uri SkinUrl { get; set; } = new Uri("/NsisoLauncher;component/Resource/PlayerSkins/steve.png", UriKind.Relative);
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         public string State { get; set; }
         public string AuthName { get; set; }

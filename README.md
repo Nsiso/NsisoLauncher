@@ -26,21 +26,6 @@ BMCLAPI和BMCL不同，属于非开源项目
 禁止在BMCLAPI上二次封装其他协议  
 捐助  
 服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com服务器的开销是有费用的，若你觉得BMCLAPI对你有帮助，欢迎捐助，支付宝：bangbang93@bangbang93.com  
-
-------------
-
-### okayapi
-
-启动器检查更新，上传报告API接口
-小白接口，小接口做大事情
-小白接口，是免费，免开发，直接可用的云端数据接口！我们致力于为客户端开发同学提供便利的云端接口，实现快速开发！
-<https://www.okayapi.com/>  
-
-------------
-
-### 老腊肉提供的Steve,Alex 3D XAML
-
-3D建模来自老腊肉（代表作LauncherX）热情提供  
   
 ## NsisoLauncher开源代码许可
 
