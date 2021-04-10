@@ -4,6 +4,7 @@ using NsisoLauncher.Utils;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,9 @@ namespace NsisoLauncher.ViewModels.Pages
     public class UserPageViewModel : INotifyPropertyChanged
     {
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
+
+        public ObservableDictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
+
         public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
@@ -61,6 +65,7 @@ namespace NsisoLauncher.ViewModels.Pages
             this.PropertyChanged += UserPageViewModel_PropertyChanged;
 
             User = App.Config?.MainConfig?.User;
+            AuthenticationDic = App.Config?.MainConfig?.User?.AuthenticationDic;
 
             if (User != null)
             {

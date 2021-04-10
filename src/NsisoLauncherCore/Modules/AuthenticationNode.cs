@@ -1,29 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace NsisoLauncherCore.Modules
 {
-    public class AuthenticationNode
+    /// <summary>
+    /// 验证节点设置
+    /// </summary>
+    public class AuthenticationNode : INotifyPropertyChanged
     {
-        /// <summary>
-        /// The name of this node.
-        /// </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// Is need password.
-        /// </summary>
-        public bool NeedPassword { get; set; }
+        public AuthenticationType AuthType { get; set; }
 
         /// <summary>
-        /// The base url of auth api.
+        /// authserver:验证服务器地址
+        /// nide8ID:NIDE8的验证ID
         /// </summary>
-        public string ApiBase { get; set; }
+        public Dictionary<string, string> Property { get; set; } = new Dictionary<string, string>();
 
-        /// <summary>
-        /// The depens of auth.
-        /// </summary>
-        public List<string> Depends { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NsisoLauncher.Config;
+using NsisoLauncherCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Windows;

@@ -21,7 +21,6 @@ using System.Windows;
 using System.Windows.Input;
 using Version = NsisoLauncherCore.Modules.Version;
 using NsisoLauncherCore.Net.Tools;
-using AuthenticationNode = NsisoLauncher.Config.AuthenticationNode;
 
 namespace NsisoLauncher.ViewModels.Pages
 {

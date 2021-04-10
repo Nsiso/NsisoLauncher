@@ -8,7 +8,7 @@
         OFFLINE,
 
         /// <summary> 
-        /// 官方正版验证
+        /// MOJANG登录
         /// </summary>
         MOJANG,
 
@@ -25,6 +25,11 @@
         /// <summary>
         /// 自定义服务器验证
         /// </summary>
-        CUSTOM_SERVER
+        CUSTOM_SERVER,
+
+        /// <summary>
+        /// 微软登录
+        /// </summary>
+        MICROSOFT,
     }
 }

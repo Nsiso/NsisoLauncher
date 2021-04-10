@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Config;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Util;
 using System;
@@ -207,8 +208,9 @@ namespace NsisoLauncher.Config
                     UserDatabase = new ObservableDictionary<string, UserNode>(),
                     AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
                     {
-                        {"offline", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.OFFLINE, Name="离线验证"} },
-                        {"online", new AuthenticationNode(){AuthType = NsisoLauncherCore.Modules.AuthenticationType.MOJANG, Name="正版验证"} }
+                        {"offline", new AuthenticationNode(){AuthType = AuthenticationType.OFFLINE, Name="离线登录"} },
+                        {"mojang", new AuthenticationNode(){AuthType = AuthenticationType.MOJANG, Name="Mojang正版登录"} },
+                        {"microsoft", new AuthenticationNode(){AuthType = AuthenticationType.MICROSOFT, Name="微软正版登录"} },
                     }
                 },
                 History = new History(),
@@ -220,9 +222,9 @@ namespace NsisoLauncher.Config
                     DownloadLostAssets = true,
                     DownloadLostDepend = true,
                     GCEnabled = true,
-                    GCType = NsisoLauncherCore.Modules.GCType.G1GC,
+                    GCType = GCType.G1GC,
                     AutoJava = true,
-                    WindowSize = new NsisoLauncherCore.Modules.Resolution() { FullScreen = false },
+                    WindowSize = new Resolution() { FullScreen = false },
                     ExitAfterLaunch = false
                 },
                 Net = new Net()

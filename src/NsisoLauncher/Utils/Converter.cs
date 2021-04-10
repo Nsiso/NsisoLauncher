@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Modules;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
@@ -182,12 +183,12 @@ namespace NsisoLauncher.Utils
 
     public class ComparisonConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value?.Equals(parameter);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value?.Equals(true) == true ? parameter : Binding.DoNothing;
         }
@@ -196,7 +197,7 @@ namespace NsisoLauncher.Utils
     [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(SolidColorBrush))]
     public class ServerStateToColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
             switch (type)
@@ -217,7 +218,7 @@ namespace NsisoLauncher.Utils
     [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(MahApps.Metro.IconPacks.PackIconFontAwesomeKind))]
     public class ServerStateToIconTypeConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
             switch (type)
@@ -244,7 +245,7 @@ namespace NsisoLauncher.Utils
     [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(Visibility))]
     public class ServerStateToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             NsisoLauncherCore.Net.Server.ServerInfo.StateType type = (NsisoLauncherCore.Net.Server.ServerInfo.StateType)value;
             string mode = (string)parameter;
@@ -268,6 +269,46 @@ namespace NsisoLauncher.Utils
                     {
                         return Visibility.Collapsed;
                     }
+            }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(AuthenticationType), typeof(Visibility))]
+    public class UsernamePasswordVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            AuthenticationType type = (AuthenticationType)value;
+            string mode = (string)parameter;
+            if (mode == "username")
+            {
+                switch (type)
+                {
+                    case AuthenticationType.MICROSOFT:
+                        return Visibility.Collapsed;
+
+                    default:
+                        return Visibility.Visible;
+                }
+            }
+            else
+            {
+                switch (type)
+                {
+                    case AuthenticationType.OFFLINE:
+                        return Visibility.Collapsed;
+
+                    case AuthenticationType.MICROSOFT:
+                        return Visibility.Collapsed;
+
+                    default:
+                        return Visibility.Visible;
+                }
             }
         }
 
