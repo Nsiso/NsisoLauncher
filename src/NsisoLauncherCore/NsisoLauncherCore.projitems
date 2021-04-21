@@ -10,11 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ArgumentsParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Auth\AuthlibInjectorAuthenticator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Auth\IAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\Nide8Authenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\OfflineAuthenticator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Auth\YggdrasilAuthenticator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Auth\MojangAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherProfiles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config\LauncherSkins.cs" />
@@ -40,6 +38,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\AccessClientTokenPair.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Requests\AuthenticateRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Requests\RefreshRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Responses\Response.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Responses\AuthenticateResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Responses\TokenResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\UsernamePasswordPair.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\BitHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\ICollectionTag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nbt\NbtDocument.cs" />
@@ -175,31 +180,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\DownloadTask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\APIModules.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\FunctionAPI\FunctionAPIHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Api\Requester.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\ApiStatus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\Authentication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\BlockedServers.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\Challenges.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\ChangeSkin.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\IEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\NameHistory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\Profile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\ResetSkin.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\SecureIP.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\Statistics.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\UploadSkin.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\UuidAtTime.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Endpoints\UuidByNames.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\ApiStatusResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\AuthenticationResponses.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\BlockedServersResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\ChallengesResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\NameHistoryResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\ProfileResponses.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\Response.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\StatisticsResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\UuidAtTimeResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Net\MojangAPI\Responses\UuidByNamesResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\MultiThreadDownloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Nide8API\APIHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Nide8API\APIModules.cs" />
@@ -212,6 +192,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\GetJavaInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Net\Tools\MirrorHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Yggdrasil\IAuthenticator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Net\Yggdrasil\YggdrasilAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\AssetsReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Checker\IChecker.cs" />

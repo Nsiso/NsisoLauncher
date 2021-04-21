@@ -5,7 +5,10 @@ using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Modules.Yggdrasil;
+using NsisoLauncherCore.Modules.Yggdrasil.Requests;
 using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
 using System.ComponentModel;
@@ -146,40 +149,63 @@ namespace NsisoLauncher.ViewModels.Pages
         {
             NowState = "正在登录用户";
             UserNode selectedUser = App.Config.MainConfig.User.SelectedUser;
+            string clientToken = App.Config.MainConfig.User.ClientToken;
             if (selectedUser != null)
             {
                 AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
-                if (authenticationNode.AuthType == AuthenticationType.OFFLINE)
+                IAuthenticator authenticator;
+                switch (authenticationNode.AuthType)
                 {
-                    return;
+                    case AuthenticationType.OFFLINE:
+                        return;
+                    case AuthenticationType.MOJANG:
+                        authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                        NowState = "正在进行正版登录";
+                        break;
+                    case AuthenticationType.NIDE8:
+                        authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["Nide8ID"]);
+                        NowState = "正在进行统一通行证登录";
+                        break;
+                    case AuthenticationType.AUTHLIB_INJECTOR:
+                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        NowState = "正在进行Authlib_injector登录";
+                        break;
+                    case AuthenticationType.CUSTOM_SERVER:
+                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
+                        break;
+                    case AuthenticationType.MICROSOFT:
+                        return;
+                    default:
+                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
+                        break;
                 }
-                else if (authenticationNode.AuthType == AuthenticationType.NIDE8)
+
+                AccessClientTokenPair tokens = new AccessClientTokenPair()
                 {
-                    Nide8TokenAuthenticator nideTokenAuthenticator = new Nide8TokenAuthenticator(
-                            authenticationNode.Property["Nide8ID"], selectedUser.AccessToken);
-                    NowState = "正在进行统一通行证登录";
-                    var nide8Result = await nideTokenAuthenticator.DoAuthenticateAsync();
-                    if (nide8Result.State == AuthState.SUCCESS)
-                    {
-                        selectedUser.AccessToken = nide8Result.AccessToken;
-                    }
+                    AccessToken = selectedUser.AccessToken,
+                    ClientToken = clientToken
+                };
+
+                var result = await authenticator.Validate(tokens);
+
+                if (result.IsSuccess)
+                {
                     return;
                 }
                 else
                 {
-                    YggdrasilTokenAuthenticator tokenAuthenticator = new YggdrasilTokenAuthenticator(selectedUser.AccessToken);
-                    NowState = "正在进行正版登录";
-                    var mojangResult = await tokenAuthenticator.DoAuthenticateAsync();
-                    if (mojangResult.State == AuthState.SUCCESS)
+                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens));
+                    if (refresh_result.IsSuccess)
                     {
-                        selectedUser.AccessToken = mojangResult.AccessToken;
+                        selectedUser.AccessToken = refresh_result.Data.AccessToken;
                     }
-                    else if (mojangResult.State == AuthState.REQ_LOGIN)
+                    else
                     {
                         await App.MainWindowVM.ShowMessageAsync("当前登录用户信息已过期", "请在用户页面重新登录");
                         App.Config.MainConfig.User.SelectedUserUuid = null;
                     }
-                    return;
                 }
             }
         }

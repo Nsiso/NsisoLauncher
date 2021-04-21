@@ -494,7 +494,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     (lockAuthNode != null) &&
                         (lockAuthNode.AuthType == AuthenticationType.NIDE8))
                 {
-                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(App.NetHandler.Requester, lockAuthNode.Property["nide8ID"])).GetInfoAsync();
                     if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
                     {
                         NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();

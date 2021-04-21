@@ -8,7 +8,6 @@ using NsisoLauncherCore;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
-using NsisoLauncherCore.Net.MojangApi.Api;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -300,16 +299,6 @@ namespace NsisoLauncher
                     break;
             }
             #endregion
-            #endregion
-
-            #region 验证器初始化
-            Requester.Client = NetHandler.Requester.Client;
-            Requester.ClientName = NetHandler.Requester.ClientName;
-            Requester.ClientVersion = NetHandler.Requester.ClientVersion;
-            if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.User.ClientToken))
-            {
-                Requester.ClientToken = App.Config.MainConfig.User.ClientToken;
-            }
             #endregion
 
             LaunchSignal = new LaunchSignal();

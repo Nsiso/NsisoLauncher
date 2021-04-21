@@ -3,12 +3,16 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Net.MojangApi.Endpoints;
+using NsisoLauncherCore.Modules.Yggdrasil;
+using NsisoLauncherCore.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Modules.Yggdrasil.Responses;
+using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,6 +27,31 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ObservableDictionary<string, AuthenticationNode> AuthenticationDic { get; set; }
 
+        /// <summary>
+        /// 选中的验证模型节点
+        /// </summary>
+        public AuthenticationNode SelectedAuthenticationNode { get; set; }
+
+        /// <summary>
+        /// 输入的用户名
+        /// </summary>
+        public string InputUsername { get; set; }
+
+        /// <summary>
+        /// 输入的密码
+        /// </summary>
+        public string InputPassword { get; set; }
+
+        /// <summary>
+        /// 选中记住密码
+        /// </summary>
+        public bool SelectedRememberPassword { get; set; }
+
+        /// <summary>
+        /// 选中是否自动登录
+        /// </summary>
+        public bool SelectedAutoLogin { get; set; }
+
         public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
@@ -32,10 +61,8 @@ namespace NsisoLauncher.ViewModels.Pages
         public string AuthName { get; set; }
         public Dictionary<string, PlayerProfile> UUIDList { get; set; }
 
-        public ICommand OfflineLoginCmd { get; set; }
-        public ICommand MicrosoftLoginCmd { get; set; }
-        public ICommand MojangLoginCmd { get; set; }
-        public ICommand OtherLoginCmd { get; set; }
+
+        public ICommand LoginCmd { get; set; }
 
         public ICommand LogoutCmd { get; set; }
 
@@ -75,19 +102,9 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
             }
 
-            OfflineLoginCmd = new DelegateCommand(async (a) =>
+            LoginCmd = new DelegateCommand(async (a) =>
             {
-                await OfflineLogin();
-            });
-
-            MicrosoftLoginCmd = new DelegateCommand((a) =>
-            {
-                MicrosoftLogin();
-            });
-
-            MojangLoginCmd = new DelegateCommand(async (a) =>
-            {
-                await MojangLogin();
+                await Login();
             });
 
             LogoutCmd = new DelegateCommand(async (a) =>
@@ -141,9 +158,41 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
+        private async Task Login()
+        {
+            if (SelectedAuthenticationNode == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("您没有选择登录类型", "请在登录类型选择框中选择你要进行登录的版本。");
+                return;
+            }
+            switch (SelectedAuthenticationNode.AuthType)
+            {
+                case AuthenticationType.OFFLINE:
+                    await OfflineLogin();
+                    break;
+                case AuthenticationType.MOJANG:
+                    await MojangLogin();
+                    break;
+                case AuthenticationType.NIDE8:
+                    await App.MainWindowVM.ShowMessageAsync("Nide8登录暂未开发", "敬请期待");
+                    break;
+                case AuthenticationType.AUTHLIB_INJECTOR:
+                    await App.MainWindowVM.ShowMessageAsync("AAuthlib登录暂未开发", "敬请期待");
+                    break;
+                case AuthenticationType.CUSTOM_SERVER:
+                    await App.MainWindowVM.ShowMessageAsync("自定义登录暂未开发", "敬请期待");
+                    break;
+                case AuthenticationType.MICROSOFT:
+                    MicrosoftLogin();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private async Task OfflineLogin()
         {
-            string username = await App.MainWindowVM.ShowInputAsync("输入游戏用户名", "游戏中显示的名字将会是此用户名");
+            string username = InputUsername;
             if (string.IsNullOrWhiteSpace(username))
             {
                 return;
@@ -164,7 +213,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     SelectedProfileUuid = uuidValue,
                     UserData = new UserData() { ID = userId, Username = username }
                 };
-                Login(userNode);
+                LoginNode(userNode);
             }
             else
             {
@@ -174,7 +223,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     var dialogResult = await App.MainWindowVM.ShowMessageAsync("输入的用户名已存在", "是否使用原有的用户登录？");
                     if (dialogResult == MessageDialogResult.Affirmative)
                     {
-                        Login(firstMatchUsrNode);
+                        LoginNode(firstMatchUsrNode);
                     }
                 }
             }
@@ -188,140 +237,165 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task MojangLogin()
         {
-            var mojangLoginDResult = await App.MainWindowVM.ShowLoginAsync(App.GetResourceString("String.Mainwindow.Auth.Mojang.Login"),
-                                App.GetResourceString("String.Mainwindow.Auth.Mojang.Login2"),
-                                loginDialogSettings);
-            if (mojangLoginDResult == null)
-            {
-                return;
-            }
-            if (IsValidateLoginData(mojangLoginDResult))
-            {
-                var mYggAuthenticator = new YggdrasilAuthenticator(new Credentials()
-                {
-                    Username = mojangLoginDResult.Username,
-                    Password = mojangLoginDResult.Password
-                });
-                mYggAuthenticator.ProxyAuthServerAddress = "https://authserver.mojang.com";
-                string currentLoginType = string.Format("正在进行Mojang正版登录中...");
-                string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
-
-                loader.SetIndeterminate();
-                var authResult = await mYggAuthenticator.DoAuthenticateAsync();
-                await loader.CloseAsync();
-
-                switch (authResult.State)
-                {
-                    case AuthState.SUCCESS:
-                        #region 验证成功
-
-                        #region 无选中角色处理
-                        if (authResult.Profiles == null || authResult.Profiles.Count == 0)
-                        {
-                            await MainWindowVM.ShowMessageAsync("警告：您没有可用的游戏角色（Profile）",
-                            "您可能还未购买游戏本体，请联系Mojang客服");
-                            return;
-                        }
-                        #endregion
-
-                        UserNode userNode = new UserNode()
-                        {
-                            SelectedProfileUuid = authResult.SelectedProfile?.Value,
-                            AccessToken = authResult.AccessToken,
-                            UserData = authResult.UserData,
-                            AuthModule = "online",
-                            Username = mojangLoginDResult.Username
-                        };
-                        foreach (var item in authResult.Profiles)
-                        {
-                            userNode.Profiles.Add(item.Value, item);
-                        }
-                        Login(userNode);
-                        #endregion
-                        break;
-
-                    case AuthState.ERR_INVALID_CRDL:
-                        #region 错误的验证信息/禁止访问
-                        await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
-                            string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
-                        #endregion
-                        break;
-
-                    case AuthState.ERR_NOTFOUND:
-                        #region 页面未找到
-                        await MainWindowVM.ShowMessageAsync("验证失败：Mojang验证Uri不存在",
-                        string.Format("Mojang的验证URI返回404，请联系Mojang客服或启动器开发者寻求帮助，开发者请检查验证URI是否可用。具体信息：{0}",
-                        authResult.Error.ErrorMessage));
-                        #endregion
-                        break;
-
-                    case AuthState.ERR_METHOD_NOT_ALLOW:
-                        #region 错误的验证信息/禁止访问
-                        await MainWindowVM.ShowMessageAsync("验证失败：方法不允许",
-                            string.Format("可能使用了错误的验证Uri或提交了post之外的内容，也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
-                            authResult.Error.ErrorMessage));
-                        #endregion
-                        break;
-
-                    case AuthState.ERR_OTHER:
-                        #region 其他错误
-                        await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
-                            string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
-                        #endregion
-                        break;
-
-                    case AuthState.ERR_INSIDE:
-                        #region 内部错误
-                        if (authResult.Error.Exception != null)
-                        {
-                            App.LogHandler.AppendFatal(authResult.Error.Exception);
-                        }
-                        else
-                        {
-                            await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
-                                string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
-                                authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
-                        }
-                        #endregion
-                        break;
-
-                    default:
-                        #region default
-                        await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
-                            "建议您联系启动器开发者进行解决。");
-                        #endregion
-                        break;
-                }
-            }
-            else
+            string username = InputUsername;
+            string password = InputPassword;
+            bool rememberPassword = SelectedRememberPassword;
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password))
             {
                 await MainWindowVM.ShowMessageAsync("您输入的账号或密码为空", "请检查您是否正确填写登录信息");
                 return;
+            }
+
+            var mYggAuthenticator = new MojangAuthenticator(App.NetHandler.Requester);
+            string currentLoginType = string.Format("正在进行Mojang正版登录中...");
+            string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
+            var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
+
+            loader.SetIndeterminate();
+            var authResult = await mYggAuthenticator.Authenticate(
+                new AuthenticateRequest(username, password, App.Config.MainConfig.User.ClientToken));
+            await loader.CloseAsync();
+
+            if (authResult.IsSuccess)
+            {
+                #region 验证成功
+
+                #region 无选中角色处理
+                if (authResult.Data.AvailableProfiles == null || authResult.Data.AvailableProfiles.Count == 0)
+                {
+                    await MainWindowVM.ShowMessageAsync("警告：您没有可用的游戏角色（Profile）",
+                    "您可能还未购买游戏本体，请联系Mojang客服");
+                    return;
+                }
+                #endregion
+
+                UserNode userNode = new UserNode()
+                {
+                    SelectedProfileUuid = authResult.Data.SelectedProfile?.Value,
+                    AccessToken = authResult.Data.AccessToken,
+                    UserData = authResult.Data.User,
+                    AuthModule = "mojang",
+                    Username = username
+                };
+                foreach (var item in authResult.Data.AvailableProfiles)
+                {
+                    userNode.Profiles.Add(item.Value, item);
+                }
+                LoginNode(userNode);
+                #endregion
+            }
+            else
+            {
+            }
+
+            switch (authResult.State)
+            {
+                case ResponseState.SUCCESS:
+
+                    break;
+
+                case ResponseState.ERR_INVALID_CRDL:
+                    #region 错误的验证信息/禁止访问
+                    await MainWindowVM.ShowMessageAsync("验证失败：您的登录账号或密码错误",
+                        string.Format("请您确认您输入的账号密码正确。也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}", authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
+
+                case ResponseState.ERR_NOTFOUND:
+                    #region 页面未找到
+                    await MainWindowVM.ShowMessageAsync("验证失败：Mojang验证Uri不存在",
+                    string.Format("Mojang的验证URI返回404，请联系Mojang客服或启动器开发者寻求帮助，开发者请检查验证URI是否可用。具体信息：{0}",
+                    authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
+
+                case ResponseState.ERR_METHOD_NOT_ALLOW:
+                    #region 错误的验证信息/禁止访问
+                    await MainWindowVM.ShowMessageAsync("验证失败：方法不允许",
+                        string.Format("可能使用了错误的验证Uri或提交了post之外的内容，也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
+                        authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
+
+                case ResponseState.ERR_OTHER:
+                    #region 其他错误
+                    await MainWindowVM.ShowMessageAsync("验证失败：其他错误",
+                        string.Format("具体信息：{0}", authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
+
+                case ResponseState.ERR_INSIDE:
+                    #region 内部错误
+                    if (authResult.Error.Exception != null)
+                    {
+                        App.LogHandler.AppendFatal(authResult.Error.Exception);
+                    }
+                    else
+                    {
+                        await MainWindowVM.ShowMessageAsync("验证失败：启动器内部错误(无exception对象)",
+                            string.Format("建议您联系启动器开发者进行解决。具体信息：{0}：\n\r{1}",
+                            authResult.Error.ErrorMessage, authResult.Error.Exception?.ToString()));
+                    }
+                    #endregion
+                    break;
+
+                default:
+                    #region default
+                    await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
+                        "建议您联系启动器开发者进行解决。");
+                    #endregion
+                    break;
             }
         }
 
         private async Task Logout()
         {
-            if (LoggedInUser.AuthModule == "offline")
+            if (!User.AuthenticationDic.ContainsKey(LoggedInUser.AuthModule))
             {
+                await App.MainWindowVM.ShowMessageAsync("不存在目前登录用户的登录模型", "这可能是因为注销前删除了登录模型");
             }
-            else if (LoggedInUser.AuthModule == "online")
+            AuthenticationNode node = User.AuthenticationDic[LoggedInUser.AuthModule];
+
+            IAuthenticator authenticator = null;
+
+            switch (node.AuthType)
             {
-                var mYggAuthenticator = new Invalidate(this.LoggedInUser.AccessToken);
-                string currentLoginType = string.Format("正在注销中...");
+                case AuthenticationType.OFFLINE:
+                    break;
+                case AuthenticationType.MOJANG:
+
+                    authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                    break;
+                case AuthenticationType.NIDE8:
+                    authenticator = new Nide8Authenticator(App.NetHandler.Requester, node.Property["nide8ID"]);
+                    break;
+                case AuthenticationType.AUTHLIB_INJECTOR:
+                    authenticator = new YggdrasilAuthenticator(new Uri(node.Property["authserver"]), App.NetHandler.Requester);
+                    break;
+                case AuthenticationType.CUSTOM_SERVER:
+                    authenticator = new YggdrasilAuthenticator(new Uri(node.Property["authserver"]), App.NetHandler.Requester);
+                    break;
+                case AuthenticationType.MICROSOFT:
+                    break;
+                default:
+                    break;
+            }
+
+            if (node.AuthType != AuthenticationType.OFFLINE)
+            {
                 string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
+                var loader = await MainWindowVM.ShowProgressAsync("正在注销中...", loginMsg, true, null);
 
                 loader.SetIndeterminate();
-                await mYggAuthenticator.PerformRequestAsync();
+                await authenticator.Invalidate(new AccessClientTokenPair(LoggedInUser.AccessToken, App.Config.MainConfig.User.ClientToken));
                 await loader.CloseAsync();
             }
+
             User.SelectedUserUuid = null;
             LoggedInUser = null;
         }
 
-        private void Login(UserNode user)
+        private void LoginNode(UserNode user)
         {
             if (user.UserData == null || string.IsNullOrWhiteSpace(user.UserData.ID))
             {
@@ -337,23 +411,6 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             LoggedInUser = user;
             User.SelectedUserUuid = user.UserData.ID;
-        }
-
-        private bool IsValidateLoginData(LoginDialogData data)
-        {
-            if (data == null)
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(data.Username))
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(data.Password))
-            {
-                return false;
-            }
-            return true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

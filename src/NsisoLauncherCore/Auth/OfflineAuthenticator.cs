@@ -1,14 +1,19 @@
 ﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Modules.Yggdrasil;
+using NsisoLauncherCore.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Modules.Yggdrasil.Responses;
+using NsisoLauncherCore.Net.Yggdrasil;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Auth
 {
     public class OfflineAuthenticator : IAuthenticator
     {
-        public string Displayname { get; set; }
-        public UserData UserData { get; set; }
-        public PlayerProfile ProfileUUID { get; set; }
+        public string Displayname { get; private set; }
+        public UserData UserData { get; private set; }
+        public PlayerProfile ProfileUUID { get; private set; }
 
         public OfflineAuthenticator(string displayname)
         {
@@ -35,16 +40,78 @@ namespace NsisoLauncherCore.Auth
             };
         }
 
-        public AuthenticateResult DoAuthenticate()
+        public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
         {
-            string accessToken = Guid.NewGuid().ToString("N");
+            return Task.Factory.StartNew(() =>
+            {
+                string accessToken = Guid.NewGuid().ToString("N");
 
-            return new AuthenticateResult(AuthState.SUCCESS) { AccessToken = accessToken, SelectedProfile = this.ProfileUUID, UserData = this.UserData };
+                return new AuthenticateResponse
+                {
+                    IsSuccess = true,
+                    Data = new AuthenticateResponseData()
+                    {
+                        AccessToken = accessToken,
+                        SelectedProfile = this.ProfileUUID,
+                        AvailableProfiles = new List<PlayerProfile>() { this.ProfileUUID },
+                        User = this.UserData
+                    }
+                };
+            });
+
         }
 
-        public async Task<AuthenticateResult> DoAuthenticateAsync()
+        public Task<TokenResponse> Refresh(RefreshRequest request)
         {
-            return await Task.Factory.StartNew(() => { return DoAuthenticate(); });
+            return Task.Factory.StartNew(() =>
+            {
+                string accessToken = Guid.NewGuid().ToString("N");
+
+                var res = new Response
+                {
+                    IsSuccess = true
+                };
+                return new TokenResponse(res)
+                {
+                    Data = new AccessClientTokenPair()
+                    {
+                        AccessToken = accessToken
+                    }
+                };
+            });
+        }
+
+        public Task<Response> Validate(AccessClientTokenPair data)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return new Response
+                {
+                    IsSuccess = true
+                };
+            });
+        }
+
+        public Task<Response> Signout(UsernamePasswordPair data)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return new Response
+                {
+                    IsSuccess = true
+                };
+            });
+        }
+
+        public Task<Response> Invalidate(AccessClientTokenPair data)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return new Response
+                {
+                    IsSuccess = true
+                };
+            });
         }
     }
 }

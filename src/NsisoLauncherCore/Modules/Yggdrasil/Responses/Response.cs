@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
+using Newtonsoft.Json;
 
-namespace NsisoLauncherCore.Net.MojangApi
+namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
 {
-
     /// <summary>
     /// 默认的响应类,可以继承
     /// </summary>
     public class Response
     {
+        /// <summary>
+        /// State
+        /// </summary>
+        public ResponseState State { get; set; }
 
         /// <summary>
         /// 响应的状态代码
@@ -30,14 +36,33 @@ namespace NsisoLauncherCore.Net.MojangApi
         /// </summary>
         public Error Error { get; internal set; }
 
-        internal Response() { }
+        internal Response()
+        {
+
+        }
+
+        internal Response(ResponseState state)
+        {
+            this.State = state;
+        }
         internal Response(Response response) : this()
         {
+            this.State = response.State;
             this.Code = response.Code;
             this.IsSuccess = response.IsSuccess;
             this.RawMessage = response.RawMessage;
             this.Error = response.Error;
         }
+    }
+
+    public enum ResponseState
+    {
+        SUCCESS,
+        ERR_INVALID_CRDL,
+        ERR_NOTFOUND,
+        ERR_METHOD_NOT_ALLOW,
+        ERR_OTHER,
+        ERR_INSIDE
     }
 
     /// <summary>
@@ -48,16 +73,19 @@ namespace NsisoLauncherCore.Net.MojangApi
         /// <summary>
         /// 给定错误的标记
         /// </summary>
+        [JsonProperty("error")]
         public string ErrorTag { get; internal set; }
 
         /// <summary>
         /// 错误的详细信息
         /// </summary>
+        [JsonProperty("errorMessage")]
         public string ErrorMessage { get; internal set; }
 
         /// <summary>
         /// 异常（如发生代码错误）
         /// </summary>
+        [JsonIgnore]
         public Exception Exception { get; internal set; }
 
         /// <summary>
