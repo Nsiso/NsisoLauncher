@@ -103,7 +103,6 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             args.Add("redirect_uri", RedirectUri.AbsoluteUri);
             args.Add("scope", Scope);
             FormUrlEncodedContent content = new FormUrlEncodedContent(args);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
             result.EnsureSuccessStatusCode();
 
@@ -121,7 +120,6 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             args.Add("grant_type", "refresh_token");
             args.Add("redirect_uri", RedirectUri.AbsoluteUri);
             FormUrlEncodedContent content = new FormUrlEncodedContent(args);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
             result.EnsureSuccessStatusCode();
 

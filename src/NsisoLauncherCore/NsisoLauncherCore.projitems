@@ -25,10 +25,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\GCType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\IUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\MicrosoftUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\ModInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\SaveInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\PlayerProfile.cs" />
@@ -36,8 +38,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Skin.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modules\User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\YggdrasilUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\AccessClientTokenPair.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Requests\AuthenticateRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\Requests\RefreshRequest.cs" />

@@ -1,32 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace NsisoLauncherCore.Modules
 {
-    public class NewProfile
-    {
-        /// <summary>
-        /// 用户id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 用户名
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 皮肤列表
-        /// </summary>
-        public List<Skin> Skins { get; set; }
-
-        /// <summary>
-        /// 披风列表
-        /// </summary>
-        public List<string> Capes { get; set; }
-    }
-
-    public class User
+    public class YggdrasilUser : IUser
     {
         /// <summary>
         /// 用户名
@@ -73,6 +52,31 @@ namespace NsisoLauncherCore.Modules
             {
                 return null;
             }
+        }
+
+        public string GetLaunchAccessToken()
+        {
+            return this.AccessToken;
+        }
+
+        public string GetLaunchPlayerName()
+        {
+            return this.SelectedProfile?.PlayerName;
+        }
+
+        public string GetLaunchUuid()
+        {
+            return this.SelectedProfile?.Value;
+        }
+
+        public UserData GetUserData()
+        {
+            return this.UserData;
+        }
+
+        public bool? IsLegacy()
+        {
+            return this.SelectedProfile?.Legacy;
         }
     }
 

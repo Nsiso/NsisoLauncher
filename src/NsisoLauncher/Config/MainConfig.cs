@@ -648,72 +648,14 @@ namespace NsisoLauncher.Config
     /// <summary>
     /// 用户验证节点设置
     /// </summary>
-    public class UserNode : NsisoLauncherCore.Modules.User, INotifyPropertyChanged
+    public class UserNode
     {
         /// <summary>
         /// 所使用的验证模型
         /// </summary>
         public string AuthModule { get; set; }
 
-        private Dictionary<string, PlayerProfile> profiles = new Dictionary<string, PlayerProfile>();
-        /// <summary>
-        /// 用户profile字典
-        /// </summary>
-        public override Dictionary<string, PlayerProfile> Profiles
-        {
-            get
-            {
-                if (profiles == null)
-                {
-                    profiles = new Dictionary<string, PlayerProfile>();
-                }
-                return profiles;
-            }
-            set
-            {
-                profiles = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Profiles"));
-            }
-        }
-
-        private UserData userData;
-        /// <summary>
-        /// 用户资料
-        /// </summary>
-        public override UserData UserData
-        {
-            get
-            {
-                if (userData == null)
-                {
-                    userData = new UserData();
-                }
-                return userData;
-            }
-            set
-            {
-                userData = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserData"));
-            }
-        }
-
-        public UserNode(string uuid)
-        {
-            this.UserData.ID = uuid;
-        }
-
-        public UserNode()
-        {
-
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void ClearAuthCache()
-        {
-            AccessToken = null;
-            SelectedProfileUuid = null;
-        }
+        public IUser User { get; set; }
     }
 
     public enum VersionSourceType

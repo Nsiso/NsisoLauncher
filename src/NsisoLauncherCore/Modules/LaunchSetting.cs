@@ -10,7 +10,7 @@
         /// <summary>
         /// 验证器
         /// </summary>
-        public User LaunchUser { get; set; }
+        public IUser LaunchUser { get; set; }
 
         /// <summary>
         /// 是否启动垃圾回收，默认开启

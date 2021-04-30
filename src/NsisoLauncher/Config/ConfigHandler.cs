@@ -35,7 +35,11 @@ namespace NsisoLauncher.Config
         /// </summary>
         public LauncherProfiles LauncherProfilesConfig { get; set; }
 
-        public JsonSerializerSettings SerializerSettings { get; set; } = new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        public JsonSerializerSettings SerializerSettings { get; set; } = new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto
+        };
 
         private readonly ReaderWriterLockSlim mainconfigLock = new ReaderWriterLockSlim();
         private readonly ReaderWriterLockSlim launcherProfilesLock = new ReaderWriterLockSlim();

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
+using NsisoLauncherCore.Modules;
 
 namespace NsisoLauncher.Views.Windows
 {
@@ -87,7 +88,7 @@ namespace NsisoLauncher.Views.Windows
                 var result = await OAuthFlower.MicrosoftCodeToAccessToken(code, CancelToken);
 
                 this.Progress = "XboxliveAuther.Authenticate";
-                var xbox_result = await XboxliveAuther.Authenticate(result.Access_token, CancelToken);
+                var xbox_result = await XboxliveAuther.Authenticate(result, CancelToken);
 
                 this.Progress = "McServices.Authenticate";
                 var mc_result = await McServices.Authenticate(xbox_result, CancelToken);
@@ -98,8 +99,7 @@ namespace NsisoLauncher.Views.Windows
                 if (owner_result)
                 {
                     this.Progress = "McServices.GetProfile";
-                    await McServices.GetProfile(mc_result, CancelToken);
-
+                    MicrosoftUser microsoftUser = await McServices.GetProfile(result, mc_result, CancelToken);
 
                     await this.ShowMessageAsync("登录正常", "但没有完成正版登录全部开发工作，敬请期待");
                 }

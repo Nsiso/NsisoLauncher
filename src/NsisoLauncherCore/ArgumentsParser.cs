@@ -98,23 +98,24 @@ namespace NsisoLauncherCore
             #region 处理游戏参数
             string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
             string legacy = "Mojang";
-            if (setting.LaunchUser.SelectedProfile.Legacy.HasValue)
-            {
-                legacy = setting.LaunchUser.SelectedProfile.Legacy.Value ? "Legacy" : "Mojang";
-            }
+            //if (setting.LaunchUser.SelectedProfile.Legacy.HasValue)
+            //{
+            //    legacy = setting.LaunchUser.SelectedProfile.Legacy.Value ? "Legacy" : "Mojang";
+            //}
+            legacy = setting.LaunchUser.IsLegacy() ? "Legacy" : "Mojang";
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(setting.Version));
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.SelectedProfile.PlayerName) },
-                {"${auth_session}",setting.LaunchUser.AccessToken },
+                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.GetLaunchPlayerName()) },
+                {"${auth_session}",setting.LaunchUser.GetLaunchAccessToken() },
                 {"${version_name}",string.Format("\"{0}\"", setting.Version.Id) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",setting.Version.Assets },
-                {"${auth_uuid}",setting.LaunchUser.SelectedProfile.Value },
-                {"${auth_access_token}",setting.LaunchUser.AccessToken },
-                {"${user_properties}",ToList(setting.LaunchUser.UserData?.Properties) },
+                {"${auth_uuid}",setting.LaunchUser.GetLaunchUuid() },
+                {"${auth_access_token}",setting.LaunchUser.GetLaunchAccessToken() },
+                {"${user_properties}",ToList(setting.LaunchUser.GetUserData()?.Properties) },
                 {"${user_type}",legacy },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) }
             };

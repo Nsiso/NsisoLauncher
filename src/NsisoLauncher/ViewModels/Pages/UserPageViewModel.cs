@@ -204,14 +204,18 @@ namespace NsisoLauncher.ViewModels.Pages
                 //不存在用户新建用户
                 string uuidValue = Guid.NewGuid().ToString();
                 string userId = Guid.NewGuid().ToString();
-                UserNode userNode = new UserNode()
+                YggdrasilUser user = new YggdrasilUser()
                 {
                     Username = real_username,
                     AccessToken = Guid.NewGuid().ToString(),
-                    AuthModule = "offline",
                     Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Value = uuidValue } } },
                     SelectedProfileUuid = uuidValue,
                     UserData = new UserData() { ID = userId, Username = username }
+                };
+                UserNode userNode = new UserNode()
+                {
+                    AuthModule = "offline",
+                    User = user
                 };
                 LoginNode(userNode);
             }
