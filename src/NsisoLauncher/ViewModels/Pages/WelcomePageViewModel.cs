@@ -175,6 +175,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                     case AuthenticationType.MICROSOFT:
+                        //todo 刷新微软账户
                         return;
                     default:
                         authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
@@ -184,7 +185,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 AccessClientTokenPair tokens = new AccessClientTokenPair()
                 {
-                    AccessToken = selectedUser.AccessToken,
+                    AccessToken = selectedUser.User.LaunchAccessToken,
                     ClientToken = clientToken
                 };
 
@@ -199,7 +200,10 @@ namespace NsisoLauncher.ViewModels.Pages
                     var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens));
                     if (refresh_result.IsSuccess)
                     {
-                        selectedUser.AccessToken = refresh_result.Data.AccessToken;
+                        if (selectedUser.User is YggdrasilUser ygg)
+                        {
+                            ygg.AccessToken = refresh_result.Data.AccessToken;
+                        }
                     }
                     else
                     {

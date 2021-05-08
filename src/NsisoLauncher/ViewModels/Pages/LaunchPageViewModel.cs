@@ -225,8 +225,9 @@ namespace NsisoLauncher.ViewModels.Pages
             UserNode userNode = UserSetting?.SelectedUser;
             if (userNode != null)
             {
-                UserName = userNode.Username;
-                UserProfileName = userNode.SelectedProfile?.PlayerName;
+                UserName = userNode.User.LaunchPlayerName;
+                //todo 添加prifile name
+                UserProfileName = userNode.User.LaunchPlayerName;
             }
             else
             {
@@ -256,17 +257,10 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
-                if ((launchUser.Profiles == null) || (launchUser.Profiles.Count == 0))
-                {
-                    await MainWindowVM.ShowMessageAsync("没有可用的游戏角色",
-                        "您已经登录，但您没有可以进行游戏的角色（Profile），其角色列表为空");
-                    return;
-                }
-                PlayerProfile selectedProfile = launchUser.SelectedProfile;
-                if (selectedProfile == null)
+                if (launchUser.User.LaunchUuid == null)
                 {
                     await MainWindowVM.ShowMessageAsync("没有选择游戏角色",
-                        "您已经登录，但您没有选择进行游戏的角色（Profile），请在用户页面进行选择要进行游戏的角色");
+                        "您已经登录，但您没有可以进行游戏的角色（Profile），有可能您未选择或者列表为空");
                     return;
                 }
                 //if (LaunchAuthNodePair == null)
@@ -336,7 +330,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     throw new Exception("所使用用户没有验证器类型");
                 }
-                launchSetting.LaunchUser = launchUser;
+                launchSetting.LaunchUser = launchUser.User;
                 #endregion
 
                 #region 验证后用户处理

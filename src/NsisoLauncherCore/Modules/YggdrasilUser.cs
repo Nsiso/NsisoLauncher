@@ -38,6 +38,18 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public virtual UserData UserData { get; set; }
 
+        public string LaunchAccessToken => AccessToken;
+
+        public string LaunchUuid => SelectedProfileUuid;
+
+        public string LaunchPlayerName => SelectedProfile.PlayerName;
+
+        public string UserType => "mojang";
+
+        public List<UserData.Property> Properties => this.UserData.Properties;
+
+        public string UserId => this.UserData.ID;
+
         private PlayerProfile GetSelectProfile()
         {
             if (string.IsNullOrWhiteSpace(SelectedProfileUuid))
@@ -53,31 +65,6 @@ namespace NsisoLauncherCore.Modules
                 return null;
             }
         }
-
-        public string GetLaunchAccessToken()
-        {
-            return this.AccessToken;
-        }
-
-        public string GetLaunchPlayerName()
-        {
-            return this.SelectedProfile?.PlayerName;
-        }
-
-        public string GetLaunchUuid()
-        {
-            return this.SelectedProfile?.Value;
-        }
-
-        public UserData GetUserData()
-        {
-            return this.UserData;
-        }
-
-        public bool? IsLegacy()
-        {
-            return this.SelectedProfile?.Legacy;
-        }
     }
 
     /// <summary>
@@ -92,12 +79,6 @@ namespace NsisoLauncherCore.Modules
         public string ID { get; internal set; }
 
         /// <summary>
-        /// 邮箱
-        /// </summary>
-        [JsonProperty("email")]
-        public string Email { get; set; }
-
-        /// <summary>
         /// 用户名
         /// </summary>
         [JsonProperty("username")]
@@ -108,42 +89,6 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         [JsonProperty("properties")]
         public List<Property> Properties { get; internal set; }
-
-        //[JsonProperty("registerIp")]
-        //public string RegisterIp { get; set; }
-
-        //[JsonProperty("registeredAt")]
-        //[JsonConverter(typeof(UnixDateTimeConverter))]
-        //public DateTime? RegisteredAt { get; set; }
-
-        //[JsonProperty("passwordChangedAt")]
-        //[JsonConverter(typeof(UnixDateTimeConverter))]
-        //public DateTime? PasswordChangedAt { get; set; }
-
-        //[JsonProperty("dateOfBirth")]
-        //[JsonConverter(typeof(UnixDateTimeConverter))]
-        //public DateTime? DateOfBirth { get; set; }
-
-        //[JsonProperty("suspended")]
-        //public bool? Suspended { get; set; }
-
-        //[JsonProperty("blocked")]
-        //public bool? Blocked { get; set; }
-
-        //[JsonProperty("secured")]
-        //public bool? Secured { get; set; }
-
-        //[JsonProperty("migrated")]
-        //public bool? Migrated { get; set; }
-
-        //[JsonProperty("emailVerified")]
-        //public bool? EmailVerified { get; set; }
-
-        //[JsonProperty("legacyUser")]
-        //public bool? LegacyUser { get; set; }
-
-        //[JsonProperty("verifiedByParent")]
-        //public bool? VerifiedByParent { get; set; }
 
         /// <summary>
         /// 代表一个用户属性

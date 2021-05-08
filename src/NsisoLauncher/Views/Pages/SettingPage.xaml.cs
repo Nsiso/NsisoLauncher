@@ -105,7 +105,15 @@ namespace NsisoLauncher.Views.Pages
             KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
             UserNode node = selectedItem.Value;
             //todo （后）恢复注销用户功能
-            node.AccessToken = null;
+            if (node.User is YggdrasilUser ygg)
+            {
+                ygg.AccessToken = null;
+            }
+            else if(node.User is MicrosoftUser ms)
+            {
+                ms.MicrosoftToken = null;
+                ms.MinecraftToken = null;
+            }
             await this.ShowMessageAsync("注销成功", "请保存以生效");
         }
 
@@ -119,10 +127,19 @@ namespace NsisoLauncher.Views.Pages
 
             KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
             UserNode node = selectedItem.Value;
-            node.AccessToken = null;
-            node.Profiles = null;
-            node.UserData = null;
-            node.SelectedProfileUuid = null;
+            if (node.User is YggdrasilUser ygg)
+            {
+                ygg.AccessToken = null;
+                ygg.Profiles = null;
+                ygg.UserData = null;
+                ygg.SelectedProfileUuid = null;
+            }
+            else if (node.User is MicrosoftUser ms)
+            {
+                ms.MicrosoftToken = null;
+                ms.MinecraftToken = null;
+            }
+            
             await this.ShowMessageAsync("重置用户成功", "请保存以生效");
         }
 

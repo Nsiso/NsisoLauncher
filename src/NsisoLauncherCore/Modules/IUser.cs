@@ -1,19 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static NsisoLauncherCore.Modules.UserData;
 
 namespace NsisoLauncherCore.Modules
 {
     public interface IUser
     {
-        string GetLaunchAccessToken();
+        /// <summary>
+        /// 启动所使用的验证密匙
+        /// </summary>
+        string LaunchAccessToken { get; }
 
-        string GetLaunchUuid();
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        string UserId { get; }
 
-        string GetLaunchPlayerName();
+        /// <summary>
+        /// 启动所使用的uuid
+        /// </summary>
+        string LaunchUuid { get; }
 
-        UserData GetUserData();
+        /// <summary>
+        /// 启动所使用的玩家名字
+        /// </summary>
+        string LaunchPlayerName { get; }
 
-        bool? IsLegacy();
+        /// <summary>
+        /// 用户类型
+        /// </summary>
+        string UserType { get; }
+
+        /// <summary>
+        /// 用户属性
+        /// </summary>
+        List<Property> Properties { get; }
     }
 }

@@ -34,6 +34,8 @@ namespace NsisoLauncher.Views.Windows
 
         public CancellationToken CancelToken { get; set; } = default;
 
+        public MicrosoftUser LoggedInUser { get; set; }
+
         public OauthLoginWindow(NetRequester requester)
         {
             InitializeComponent();
@@ -100,8 +102,8 @@ namespace NsisoLauncher.Views.Windows
                 {
                     this.Progress = "McServices.GetProfile";
                     MicrosoftUser microsoftUser = await McServices.GetProfile(result, mc_result, CancelToken);
-
-                    await this.ShowMessageAsync("登录正常", "但没有完成正版登录全部开发工作，敬请期待");
+                    this.LoggedInUser = microsoftUser;
+                    this.Close();
                 }
                 else
                 {

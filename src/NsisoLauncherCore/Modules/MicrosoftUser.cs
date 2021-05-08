@@ -39,30 +39,16 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public MinecraftToken MinecraftToken { get; set; }
 
-        public string GetLaunchAccessToken()
-        {
-            return MinecraftToken?.AccessToken;
+        public string LaunchAccessToken => this.MinecraftToken.AccessToken;
 
-        }
+        public string LaunchUuid => this.Id;
 
-        public string GetLaunchPlayerName()
-        {
-            return this.Name;
-        }
+        public string LaunchPlayerName => this.Name;
 
-        public string GetLaunchUuid()
-        {
-            return this.Id;
-        }
+        public string UserType => "msa";
 
-        public UserData GetUserData()
-        {
-            return null;
-        }
+        public List<UserData.Property> Properties => null;
 
-        public bool? IsLegacy()
-        {
-            return false;
-        }
+        public string UserId => this.MicrosoftToken.User_id;
     }
 }

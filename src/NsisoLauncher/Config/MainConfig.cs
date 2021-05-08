@@ -658,6 +658,7 @@ namespace NsisoLauncher.Config
         public IUser User { get; set; }
     }
 
+
     public enum VersionSourceType
     {
         MOJANG = 0,

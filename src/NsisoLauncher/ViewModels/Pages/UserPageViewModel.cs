@@ -59,7 +59,6 @@ namespace NsisoLauncher.ViewModels.Pages
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         public string State { get; set; }
         public string AuthName { get; set; }
-        public Dictionary<string, PlayerProfile> UUIDList { get; set; }
 
 
         public ICommand LoginCmd { get; set; }
@@ -133,8 +132,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (LoggedInUser != null)
                 {
                     IsLoggedIn = true;
-                    UUIDList = LoggedInUser.Profiles;
-                    LoggedInUsername = LoggedInUser.Username;
+                    LoggedInUsername = LoggedInUser.User.LaunchPlayerName;
                     State = "在线";
                     if (User.AuthenticationDic.ContainsKey(LoggedInUser.AuthModule))
                     {
@@ -149,7 +147,6 @@ namespace NsisoLauncher.ViewModels.Pages
                 else
                 {
                     IsLoggedIn = false;
-                    UUIDList = null;
                     LoggedInUsername = null;
                     State = null;
                     AuthName = null;
@@ -198,7 +195,12 @@ namespace NsisoLauncher.ViewModels.Pages
                 return;
             }
             string real_username = username + "@offline";
-            IEnumerable<UserNode> matchUsers = User.UserDatabase.Values.Where(x => ((x.Username == real_username) && (x.AuthModule == "offline")));
+
+            IEnumerable<UserNode> matchUsers = User.UserDatabase.Values.Where(
+                x => x.User is YggdrasilUser user &&
+                (user.Username == real_username) &&
+                (x.AuthModule == "offline"));
+
             if (matchUsers?.Count() == 0)
             {
                 //不存在用户新建用户
@@ -208,7 +210,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     Username = real_username,
                     AccessToken = Guid.NewGuid().ToString(),
-                    Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Value = uuidValue } } },
+                    Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Id = uuidValue } } },
                     SelectedProfileUuid = uuidValue,
                     UserData = new UserData() { ID = userId, Username = username }
                 };
@@ -237,6 +239,13 @@ namespace NsisoLauncher.ViewModels.Pages
         {
             Views.Windows.OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
             loginWindow.ShowLogin();
+            if (loginWindow.LoggedInUser != null)
+            {
+                UserNode node = new UserNode();
+                node.AuthModule = "microsoft";
+                node.User = loginWindow.LoggedInUser;
+                LoginNode(node);
+            }
         }
 
         private async Task MojangLogin()
@@ -273,18 +282,24 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 #endregion
 
-                UserNode userNode = new UserNode()
+                YggdrasilUser user = new YggdrasilUser()
                 {
-                    SelectedProfileUuid = authResult.Data.SelectedProfile?.Value,
+                    SelectedProfileUuid = authResult.Data.SelectedProfile?.Id,
                     AccessToken = authResult.Data.AccessToken,
                     UserData = authResult.Data.User,
-                    AuthModule = "mojang",
                     Username = username
                 };
                 foreach (var item in authResult.Data.AvailableProfiles)
                 {
-                    userNode.Profiles.Add(item.Value, item);
+                    user.Profiles.Add(item.Id, item);
                 }
+
+                UserNode userNode = new UserNode()
+                {
+                    AuthModule = "mojang",
+                    User = user
+                };
+
                 LoginNode(userNode);
                 #endregion
             }
@@ -391,7 +406,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 var loader = await MainWindowVM.ShowProgressAsync("正在注销中...", loginMsg, true, null);
 
                 loader.SetIndeterminate();
-                await authenticator.Invalidate(new AccessClientTokenPair(LoggedInUser.AccessToken, App.Config.MainConfig.User.ClientToken));
+                await authenticator.Invalidate(new AccessClientTokenPair(LoggedInUser.User.LaunchAccessToken, App.Config.MainConfig.User.ClientToken));
                 await loader.CloseAsync();
             }
 
@@ -401,20 +416,20 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void LoginNode(UserNode user)
         {
-            if (user.UserData == null || string.IsNullOrWhiteSpace(user.UserData.ID))
+            if (string.IsNullOrWhiteSpace(user.User.UserId))
             {
                 throw new ArgumentNullException("User's UserData is null or empty");
             }
-            if (!User.UserDatabase.ContainsKey(user.UserData.ID))
+            if (!User.UserDatabase.ContainsKey(user.User.UserId))
             {
-                User.UserDatabase.Add(user.UserData.ID, user);
+                User.UserDatabase.Add(user.User.UserId, user);
             }
             else
             {
-                User.UserDatabase[user.UserData.ID] = user;
+                User.UserDatabase[user.User.UserId] = user;
             }
             LoggedInUser = user;
-            User.SelectedUserUuid = user.UserData.ID;
+            User.SelectedUserUuid = user.User.UserId;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

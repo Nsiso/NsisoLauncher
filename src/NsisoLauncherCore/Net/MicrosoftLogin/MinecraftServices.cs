@@ -75,6 +75,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             Console.WriteLine(respond_str);
             MicrosoftUser profile = JsonConvert.DeserializeObject<MicrosoftUser>(respond_str);
             profile.MicrosoftToken = ms_token;
+            profile.MinecraftToken = mc_token;
 
             return profile;
         }

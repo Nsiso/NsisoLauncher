@@ -21,7 +21,7 @@ namespace NsisoLauncherCore.Auth
             this.ProfileUUID = new PlayerProfile()
             {
                 PlayerName = Displayname,
-                Value = Guid.NewGuid().ToString("N")
+                Id = Guid.NewGuid().ToString("N")
             };
             this.UserData = new UserData()
             {
@@ -36,7 +36,7 @@ namespace NsisoLauncherCore.Auth
             this.ProfileUUID = new PlayerProfile()
             {
                 PlayerName = Displayname,
-                Value = profileUUID
+                Id = profileUUID
             };
         }
 
