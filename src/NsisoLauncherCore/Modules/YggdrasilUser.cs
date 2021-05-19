@@ -65,6 +65,11 @@ namespace NsisoLauncherCore.Modules
                 return null;
             }
         }
+
+        public YggdrasilUser()
+        {
+            Profiles = new Dictionary<string, PlayerProfile>();
+        }
     }
 
     /// <summary>

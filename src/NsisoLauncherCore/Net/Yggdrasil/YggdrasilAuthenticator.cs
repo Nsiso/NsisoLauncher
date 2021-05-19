@@ -77,6 +77,8 @@ namespace NsisoLauncherCore.Net.Yggdrasil
 
                 var result = await requester.Client.PostAsync(url, content);
 
+                result.EnsureSuccessStatusCode();
+
                 bool is_success = result.IsSuccessStatusCode;
                 string raw = await result.Content.ReadAsStringAsync();
                 HttpStatusCode code = result.StatusCode;

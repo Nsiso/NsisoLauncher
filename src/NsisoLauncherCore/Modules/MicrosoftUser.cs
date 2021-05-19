@@ -22,7 +22,7 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 皮肤列表
         /// </summary>
-        public List<Skin> Skins { get; set; }
+        public List<MicrosoftSkin> Skins { get; set; }
 
         /// <summary>
         /// 披风列表

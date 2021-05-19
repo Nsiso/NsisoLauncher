@@ -10,6 +10,7 @@ using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Security;
@@ -56,6 +57,7 @@ namespace NsisoLauncher.ViewModels.Pages
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
         public Uri SkinUrl { get; set; } = new Uri("/NsisoLauncher;component/Resource/PlayerSkins/steve.png", UriKind.Relative);
+        public ObservableCollection<ISkin> Skins { get; set; } = new ObservableCollection<ISkin>();
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         public string State { get; set; }
         public string AuthName { get; set; }
@@ -174,7 +176,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     await App.MainWindowVM.ShowMessageAsync("Nide8登录暂未开发", "敬请期待");
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    await App.MainWindowVM.ShowMessageAsync("AAuthlib登录暂未开发", "敬请期待");
+                    await App.MainWindowVM.ShowMessageAsync("Authlib登录暂未开发", "敬请期待");
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
                     await App.MainWindowVM.ShowMessageAsync("自定义登录暂未开发", "敬请期待");
@@ -245,6 +247,21 @@ namespace NsisoLauncher.ViewModels.Pages
                 node.AuthModule = "microsoft";
                 node.User = loginWindow.LoggedInUser;
                 LoginNode(node);
+
+                //设置皮肤
+                Skins.Clear();
+                if (loginWindow.LoggedInUser.Skins != null)
+                {
+                    foreach (var item in loginWindow.LoggedInUser.Skins)
+                    {
+                        Skins.Add(item);
+                    }
+                }
+
+            }
+            else
+            {
+                //todo 提醒用户登录未成功
             }
         }
 
@@ -369,9 +386,15 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task Logout()
         {
+            if (LoggedInUser == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("没有登录的用户", "这可能是因为内部异常导致的");
+                return;
+            }
             if (!User.AuthenticationDic.ContainsKey(LoggedInUser.AuthModule))
             {
-                await App.MainWindowVM.ShowMessageAsync("不存在目前登录用户的登录模型", "这可能是因为注销前删除了登录模型");
+                await App.MainWindowVM.ShowMessageAsync("不存在目前登录用户的登录模型", "这可能是因为未登录或注销前删除了登录模型");
+                return;
             }
             AuthenticationNode node = User.AuthenticationDic[LoggedInUser.AuthModule];
 
@@ -400,7 +423,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     break;
             }
 
-            if (node.AuthType != AuthenticationType.OFFLINE)
+            if (node.AuthType != AuthenticationType.OFFLINE && authenticator != null)
             {
                 string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
                 var loader = await MainWindowVM.ShowProgressAsync("正在注销中...", loginMsg, true, null);

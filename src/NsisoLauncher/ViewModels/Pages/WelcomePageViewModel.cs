@@ -7,6 +7,7 @@ using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Modules.Yggdrasil;
 using NsisoLauncherCore.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
@@ -99,7 +100,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     var arch = SystemTools.GetSystemArch();
                     DownloadWindow downloadWindow = new DownloadWindow();
-                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
+                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("16", arch, JavaImageType.JRE,
                                () =>
                                {
                                    App.Current.Dispatcher.Invoke(() =>
@@ -111,6 +112,28 @@ namespace NsisoLauncher.ViewModels.Pages
                     await App.NetHandler.Downloader.StartDownload();
                 }
             }
+
+            //if (App.Handler.Java != null && !App.Handler.Java.Version.StartsWith("1.16"))
+            //{
+            //    var result = await App.MainWindowVM.ShowMessageAsync("Java版本过时",
+            //        "官方从21w19a版本开始建议使用JAVA16，请及时更新，需要自动下载JRE16（Zulu）吗？",
+            //        MessageDialogStyle.AffirmativeAndNegative, null);
+            //    if (result == MessageDialogResult.Affirmative)
+            //    {
+            //        var arch = SystemTools.GetSystemArch();
+            //        DownloadWindow downloadWindow = new DownloadWindow();
+            //        App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("16", arch, JavaImageType.JRE,
+            //                   () =>
+            //                   {
+            //                       App.Current.Dispatcher.Invoke(() =>
+            //                       {
+            //                           App.RefreshJavaList();
+            //                       });
+            //                   }));
+            //        downloadWindow.Show();
+            //        await App.NetHandler.Downloader.StartDownload();
+            //    }
+            //}
             #endregion
 
             #region 检查更新
@@ -153,7 +176,7 @@ namespace NsisoLauncher.ViewModels.Pages
             if (selectedUser != null)
             {
                 AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
-                IAuthenticator authenticator;
+                IAuthenticator authenticator = null;
                 switch (authenticationNode.AuthType)
                 {
                     case AuthenticationType.OFFLINE:
@@ -175,12 +198,51 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                     case AuthenticationType.MICROSOFT:
+                        NowState = string.Format("正在进行微软登录", authenticationNode.Name);
+                        if (selectedUser.User is MicrosoftUser ms && !string.IsNullOrWhiteSpace(ms.MinecraftToken?.AccessToken))
+                        {
+                            //检查minecraft token是否过期
+                            if (Jwt.ValidateExp(ms.MinecraftToken.AccessToken))
+                            {
+                                //如果未过期
+                                break;
+                            }
+                            else
+                            {
+                                //如果过期
+                                //检查微软token是否过期
+                                OauthLoginWindow loginWindow = new OauthLoginWindow(App.NetHandler.Requester);
+                                if (DateTime.UtcNow < ms.MicrosoftToken.IssuedTime.AddSeconds(ms.MicrosoftToken.Expires_in))
+                                {
+                                    ms.MinecraftToken = await loginWindow.RefreshMinecraftToken(ms.MicrosoftToken);
+                                }
+                                else
+                                {
+                                    loginWindow.ShowLogin();
+                                    if (loginWindow.LoggedInUser != null)
+                                    {
+                                        ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;
+                                        //todo 感觉微软登录刷新还没写完
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        await App.MainWindowVM.ShowMessageAsync("登录失败", "请检查微软登录是否成功进行");
+                                    }
+                                }
+                            }
+                        }
                         //todo 刷新微软账户
                         return;
                     default:
                         authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
+                }
+
+                if (authenticator == null)
+                {
+                    return;
                 }
 
                 AccessClientTokenPair tokens = new AccessClientTokenPair()

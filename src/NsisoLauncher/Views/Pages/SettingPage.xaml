@@ -561,6 +561,25 @@
                                 <CheckBox Content="禁用数据收集" IsChecked="{Binding MainConfig.Launcher.NoTracking}" Margin="0,0,0,5"/>
                             </StackPanel>
                         </Expander>
+                        <Expander Header="赞助者" Margin="0,0,0,5">
+                            <StackPanel>
+                                <Label Content="爱发电赞助者（由发电量从高到低）：" FontWeight="Bold"/>
+                                <Label Content="zjt111"/>
+                                <Label Content="爱发电用户_fnke"/>
+                                <Label Content="阿哲闲得慌"/>
+                                <Label Content="CCC"/>
+                                <WrapPanel>
+                                    <Label Content="hhh12315（德咕咕）"/>
+                                    <Label Content="mo_jani"/>
+                                    <Label Content="LEGENT_X"/>
+                                    <Label Content="xcmc666"/>
+                                    <Label Content="麻花"/>
+                                    <Label Content="图样图"/>
+                                    <Label Content="L_inkOO"/>
+                                    <Label Content="爱发电用户_hpbJ"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Expander>
                         <TextBlock>
                         启动器开源
                         <Hyperlink Command="{Binding OpenUriCmd}" CommandParameter="https://github.com/Nsiso/NsisoLauncher">

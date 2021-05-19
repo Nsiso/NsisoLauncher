@@ -12,9 +12,7 @@ namespace NsisoLauncherCore.Util
         public bool IsLaunching
         {
             get
-            {
-                return isLaunching;
-            }
+            { return isLaunching; }
             set
             {
                 isLaunching = value;
@@ -27,15 +25,30 @@ namespace NsisoLauncherCore.Util
         public LaunchInstance LaunchingInstance
         {
             get
-            {
-                return launchingInstance;
-            }
+            { return launchingInstance; }
             set
             {
                 launchingInstance = value;
                 RaisePropertyChangedEvent("LaunchingInstance");
+                if (launchingInstance != null)
+                {
+                    launchingInstance.Log += (obj, str) => { LatestLog = str; };
+                }
             }
         }
+
+        private string latestLog;
+
+        public string LatestLog
+        {
+            get { return latestLog; }
+            set
+            {
+                latestLog = value;
+                RaisePropertyChangedEvent("LatestLog");
+            }
+        }
+
 
         private void RaisePropertyChangedEvent(string propName)
         {

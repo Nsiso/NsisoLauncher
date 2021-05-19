@@ -47,6 +47,11 @@ namespace NsisoLauncher.ViewModels.Pages
         /// 窗口加载完毕命令
         /// </summary>
         public ICommand LoadedCmd { get; set; }
+
+        /// <summary>
+        /// 跳转到用户界面
+        /// </summary>
+        public ICommand ToUserPageCmd { get; set; }
         #endregion
 
         #region ElementsProp
@@ -105,6 +110,12 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (App.LaunchSignal.IsLaunching)
                 {
                     this.page_cutback = true;
+                    this.LogLine = App.LaunchSignal.LatestLog;
+                    CancelLaunchingCmd = new DelegateCommand(
+                        (obj) =>
+                        {
+                            App.LaunchSignal.LaunchingInstance.Kill();
+                        });
                 }
             }
             if (App.LauncherData != null)
@@ -142,6 +153,12 @@ namespace NsisoLauncher.ViewModels.Pages
                        await LaunchFromVM(LaunchType.NORMAL);
                    }
                });
+
+            ToUserPageCmd = new DelegateCommand(
+                (obj) =>
+                {
+                    App.MainPageVM.NavigateToUserPage();
+                });
             #endregion
 
             if (string.IsNullOrWhiteSpace(SelectedLaunchVersionId) && App.Config != null)

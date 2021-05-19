@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\AuthenticationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\GCType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\ISkin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\IUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\LaunchSetting.cs" />
@@ -32,12 +33,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\MicrosoftUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\ModInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\MojangSkin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\SaveInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\PlayerProfile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Proxy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Resolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Server.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Modules\Skin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\MicrosoftSkin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Version.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\YggdrasilUser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\Yggdrasil\AccessClientTokenPair.cs" />
@@ -214,6 +216,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Util\Installer\IInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Java.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\JsonTools.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Jwt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\LaunchSignal.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Mod\ModHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Save\SaveHandler.cs" />

@@ -8,6 +8,7 @@
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -75,14 +76,46 @@
 
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
               Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
             <!--<ListBox Style="{StaticResource radioButtonStyle}" ItemsSource="{Binding UUIDList}" ScrollViewer.VerticalScrollBarVisibility="Visible"
                          DisplayMemberPath="Value.PlayerName" SelectedValuePath="Key" Margin="10" Grid.Column="0"
                 SelectedValue="{Binding LoggedInUser.SelectedProfileUuid}"/>-->
-            <userControl:Skin3dViewer Width="200" Grid.Column="1" HorizontalAlignment="Left" SkinUrl="{Binding SkinUrl}"/>
+
+            <TabControl>
+                <TabItem Header="档案/皮肤">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="当前档案皮肤" FontSize="16" Grid.Column="0" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <userControl:Skin3dViewer Grid.Column="0" Margin="20,40,20,10" HorizontalAlignment="Stretch" SkinUrl="{Binding SkinUrl}"/>
+                        <Label Content="全部档案皮肤" FontSize="16" Grid.Column="1" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <ListBox Grid.Column="1" Margin="10,40,10,10" HorizontalAlignment="Stretch" ItemsSource="{Binding Skins}">
+                            <ListBox.Template>
+                                <ControlTemplate TargetType="{x:Type ListBox}">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                        <WrapPanel Orientation="Horizontal" IsItemsHost="True" ScrollViewer.CanContentScroll="True"/>
+                                    </ScrollViewer>
+                                </ControlTemplate>
+                            </ListBox.Template>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type modules:ISkin}">
+                                    <StackPanel>
+                                        <Image Width="64" Height="64" Source="{Binding Url}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="用户资料">
+                </TabItem>
+            </TabControl>
         </Grid>
         <!--#endregion-->
 

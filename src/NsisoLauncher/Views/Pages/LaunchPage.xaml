@@ -46,7 +46,7 @@
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
             <StackPanel Margin="10">
-                <controls:Tile Width="auto" Title="游戏使用的用户和角色" TitleFontSize="12" HorizontalAlignment="Stretch" Height="120">
+                <controls:Tile Width="auto" Title="游戏使用的用户和角色" TitleFontSize="12" HorizontalAlignment="Stretch" Height="120" Command="{Binding ToUserPageCmd}">
                     <StackPanel Orientation="Horizontal">
                         <Image Width="40" Height="40" Source="/NsisoLauncher;component/Resource/Steve.jpg" Stretch="UniformToFill" Margin="10"/>
                         <StackPanel VerticalAlignment="Center">

@@ -8,6 +8,7 @@ using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.MicrosoftLogin.Modules;
 
 namespace NsisoLauncher.Views.Windows
 {
@@ -54,6 +55,21 @@ namespace NsisoLauncher.Views.Windows
             wb.Source = OAuthFlower.GetAuthorizeUri();
             this.ShowLoading();
             this.ShowDialog();
+        }
+
+        public async Task<MinecraftToken> RefreshMinecraftToken(MicrosoftToken token)
+        {
+            this.Progress = "MicrosoftCodeToAccessToken";
+            var result = await OAuthFlower.RefreshMicrosoftAccessToken(token, CancelToken);
+
+            this.Progress = "XboxliveAuther.Authenticate";
+            var xbox_result = await XboxliveAuther.Authenticate(result, CancelToken);
+
+            this.Progress = "McServices.Authenticate";
+            var mc_result = await McServices.Authenticate(xbox_result, CancelToken);
+
+            return mc_result;
+           
         }
 
         private async void wb_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
@@ -116,6 +132,20 @@ namespace NsisoLauncher.Views.Windows
             {
                 await this.ShowMessageAsync("登录发生异常", ex.ToString());
             }
+        }
+
+        private async Task<MinecraftToken> Refresh(MicrosoftToken token)
+        {
+            this.Progress = "MicrosoftCodeToAccessToken";
+            var result = await OAuthFlower.RefreshMicrosoftAccessToken(token, CancelToken);
+
+            this.Progress = "XboxliveAuther.Authenticate";
+            var xbox_result = await XboxliveAuther.Authenticate(result, CancelToken);
+
+            this.Progress = "McServices.Authenticate";
+            var mc_result = await McServices.Authenticate(xbox_result, CancelToken);
+
+            return mc_result;
         }
 
         private void ShowLoading()
