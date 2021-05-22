@@ -417,7 +417,7 @@ namespace NsisoLauncherCore.Net
 
         private void ApendDebugLog(string msg)
         {
-            this.DownloadLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
+            this.DownloadLog?.Invoke(this, new Log(LogLevel.DEBUG, msg));
         }
 
         private void SendLog(Log e)
@@ -427,18 +427,13 @@ namespace NsisoLauncherCore.Net
 
         private void SendFatalLog(Exception ex, string msg)
         {
-            SendLog(new Log() { Exception = ex, LogLevel = LogLevel.FATAL, Message = msg });
+            SendLog(new Log(LogLevel.FATAL, msg, ex));
         }
 
         private void SendDownloadErrLog(IDownloadTask task, Exception ex)
         {
-            SendLog(new Log()
-            {
-                Exception = ex,
-                LogLevel = LogLevel.ERROR,
-                Message = string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
-                task.TaskName, task.DisplayFrom, ex?.ToString())
-            });
+            SendLog(new Log(LogLevel.ERROR, string.Format("任务{0}下载失败,源地址:{1}错误:\n{2}",
+                task.TaskName, task.DisplayFrom, ex?.ToString()), ex));
         }
         protected virtual void OnPropertyChanged(string propertyName)
         {

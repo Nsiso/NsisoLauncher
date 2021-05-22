@@ -131,7 +131,7 @@ namespace NsisoLauncher.ViewModels.Windows
                             debugWindow.Show();
                             while (arg.Instance.LatestLogQueue.Count > 0)
                             {
-                                debugWindow.AppendGameLog(this, new Log() { LogLevel = LogLevel.GAME, Message = arg.Instance.LatestLogQueue.Dequeue() });
+                                debugWindow.AppendLog(this, new Log(LogLevel.GAME, arg.Instance.LatestLogQueue.Dequeue()));
                             }
                         });
                         break;

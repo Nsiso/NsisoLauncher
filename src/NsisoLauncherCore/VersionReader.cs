@@ -406,7 +406,7 @@ namespace NsisoLauncherCore
 
         private void SendDebugLog(string str)
         {
-            VersionReaderLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = str });
+            VersionReaderLog?.Invoke(this, new Log(LogLevel.DEBUG, str));
         }
     }
 

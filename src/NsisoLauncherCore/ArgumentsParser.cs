@@ -239,7 +239,7 @@ namespace NsisoLauncherCore
 
         private void SendDebugLog(string str)
         {
-            ArgumentsParserLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = str });
+            ArgumentsParserLog?.Invoke(this, new Log(LogLevel.DEBUG, str));
         }
     }
 }

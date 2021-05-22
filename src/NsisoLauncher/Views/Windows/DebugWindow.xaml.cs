@@ -19,17 +19,14 @@ namespace NsisoLauncher.Views.Windows
         {
             this.Dispatcher.Invoke(new Action(delegate ()
             {
-                this.textBox.AppendText(string.Format("[{0}][{1}]{2}\n", log.LogLevel.ToString(), DateTime.Now.ToString(), log.Message));
-                textBox.ScrollToEnd();
-            }));
-
-        }
-
-        public void AppendGameLog(object sender, Log gamelog)
-        {
-            this.Dispatcher.Invoke(new Action(delegate ()
-            {
-                this.textBox.AppendText(gamelog.ToString());
+                if (log.LogLevel == LogLevel.GAME)
+                {
+                    this.textBox.AppendText(string.Format("{0}\n", log.ToString(true)));
+                }
+                else
+                {
+                    this.textBox.AppendText(string.Format("{0}\n", log));
+                }
                 textBox.ScrollToEnd();
             }));
 

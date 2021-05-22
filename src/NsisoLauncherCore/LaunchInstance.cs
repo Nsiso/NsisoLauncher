@@ -62,12 +62,12 @@ namespace NsisoLauncherCore
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
+            this.Log?.Invoke(this, new Log(LogLevel.GAME, e.Data));
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
+            this.Log?.Invoke(this, new Log(LogLevel.GAME, e.Data));
         }
 
         public void Start()

@@ -347,12 +347,12 @@ namespace NsisoLauncherCore
 
         private void AppendLaunchDebugLog(string str)
         {
-            this.LaunchLog?.Invoke(this, new Log() { LogLevel = LogLevel.DEBUG, Message = str });
+            this.LaunchLog?.Invoke(this, new Log(LogLevel.DEBUG, str));
         }
 
         private void AppendLaunchInfoLog(string str)
         {
-            this.LaunchLog?.Invoke(this, new Log() { LogLevel = LogLevel.INFO, Message = str });
+            this.LaunchLog?.Invoke(this, new Log(LogLevel.INFO, str));
         }
 
         #endregion

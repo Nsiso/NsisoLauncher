@@ -109,14 +109,18 @@ namespace NsisoLauncher.ViewModels.Pages
                 this.IsLaunching = App.LaunchSignal.IsLaunching;
                 if (App.LaunchSignal.IsLaunching)
                 {
-                    this.page_cutback = true;
-                    App.LaunchSignal.LaunchingInstance.Log += OnLog;
                     this.LogLine = App.LaunchSignal.LatestLog;
-                    CancelLaunchingCmd = new DelegateCommand(
+                    this.page_cutback = true;
+                    if (App.LaunchSignal.LaunchingInstance != null)
+                    {
+                        App.LaunchSignal.LaunchingInstance.Log += OnLog;
+                        CancelLaunchingCmd = new DelegateCommand(
                         (obj) =>
                         {
                             App.LaunchSignal.LaunchingInstance.Kill();
                         });
+                    }
+
                 }
             }
             if (App.LauncherData != null)
@@ -587,7 +591,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                         if (result.Instance != null)
                         {
-                            result.Instance.Log += debugWindow.AppendGameLog;
+                            result.Instance.Log += debugWindow.AppendLog;
                         }
                     }
                     #endregion

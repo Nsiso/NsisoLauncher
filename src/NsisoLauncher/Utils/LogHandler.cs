@@ -62,27 +62,27 @@ namespace NsisoLauncher.Core.Util
 
         public void AppendDebug(string msg)
         {
-            AppendLog(this, new Log() { LogLevel = LogLevel.DEBUG, Message = msg });
+            AppendLog(this, new Log(LogLevel.DEBUG, msg));
         }
 
         public void AppendInfo(string msg)
         {
-            AppendLog(this, new Log() { LogLevel = LogLevel.INFO, Message = msg });
+            AppendLog(this, new Log(LogLevel.INFO, msg));
         }
 
         public void AppendWarn(string msg)
         {
-            AppendLog(this, new Log() { LogLevel = LogLevel.WARN, Message = msg });
+            AppendLog(this, new Log(LogLevel.WARN, msg));
         }
 
         public void AppendError(Exception e)
         {
-            AppendLog(this, new Log() { LogLevel = LogLevel.ERROR, Message = e.ToString() });
+            AppendLog(this, new Log(LogLevel.ERROR, e.ToString(), e));
         }
 
         public void AppendFatal(Exception e)
         {
-            AppendLog(this, new Log() { LogLevel = LogLevel.FATAL, Message = e.ToString() });
+            AppendLog(this, new Log(LogLevel.FATAL, e.ToString(), e));
             new ErrorWindow(e).Show();
         }
 
