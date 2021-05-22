@@ -25,11 +25,11 @@ namespace NsisoLauncher.Views.Windows
 
         }
 
-        public void AppendGameLog(object sender, string gamelog)
+        public void AppendGameLog(object sender, Log gamelog)
         {
             this.Dispatcher.Invoke(new Action(delegate ()
             {
-                this.textBox.AppendText(string.Format("[GameLog]{0}\n", gamelog));
+                this.textBox.AppendText(gamelog.ToString());
                 textBox.ScrollToEnd();
             }));
 

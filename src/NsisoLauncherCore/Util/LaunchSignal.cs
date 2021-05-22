@@ -32,7 +32,7 @@ namespace NsisoLauncherCore.Util
                 RaisePropertyChangedEvent("LaunchingInstance");
                 if (launchingInstance != null)
                 {
-                    launchingInstance.Log += (obj, str) => { LatestLog = str; };
+                    launchingInstance.Log += (obj, str) => { LatestLog = str.Message; };
                 }
             }
         }

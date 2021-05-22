@@ -28,5 +28,10 @@ namespace NsisoLauncherCore.Modules
         /// 异常信息
         /// </summary>
         public Exception Exception { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}] {1}", this.LogLevel.ToString(), this.Message);
+        }
     }
 }

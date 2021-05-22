@@ -110,6 +110,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (App.LaunchSignal.IsLaunching)
                 {
                     this.page_cutback = true;
+                    App.LaunchSignal.LaunchingInstance.Log += OnLog;
                     this.LogLine = App.LaunchSignal.LatestLog;
                     CancelLaunchingCmd = new DelegateCommand(
                         (obj) =>

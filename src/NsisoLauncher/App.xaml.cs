@@ -220,7 +220,7 @@ namespace NsisoLauncher
 
             #region 启动核心初始化
             Handler = new LaunchHandler(gameroot, java, verIso);
-            Handler.GameLog += (s, log) => LogHandler.AppendLog(s, new Log() { LogLevel = LogLevel.GAME, Message = log });
+            Handler.GameLog += (s, log) => LogHandler.AppendLog(s, log);
             Handler.LaunchLog += (s, log) => LogHandler.AppendLog(s, log);
             #endregion
 

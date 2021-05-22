@@ -45,7 +45,7 @@ namespace NsisoLauncherCore
         /// </summary>
         public ModHandler ModHandler { get; set; }
 
-        public event EventHandler<string> GameLog;
+        public event EventHandler<Log> GameLog;
         public event EventHandler<GameExitArg> GameExit;
         public event EventHandler<Log> LaunchLog;
 
@@ -218,7 +218,7 @@ namespace NsisoLauncherCore
             }
         }
 
-        private void Instance_Log(object sender, string e)
+        private void Instance_Log(object sender, Log e)
         {
             this.GameLog?.Invoke(this, e);
         }

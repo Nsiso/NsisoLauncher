@@ -112,7 +112,7 @@
                            Margin="0,10,0,20"/>
                 <Button Content="取消启动" Padding="10,0" Command="{Binding CancelLaunchingCmd}"/>
             </StackPanel>
-            <TextBlock Text="{Binding LogLine}" Foreground="White" Background="{DynamicResource MahApps.Brushes.Accent}" TextAlignment="Right"
+            <TextBlock Text="{Binding LogLine, TargetNullValue='游戏暂时没有日志产出，可能还在等待游戏响应'}" Foreground="White" Background="{DynamicResource MahApps.Brushes.Accent}" TextAlignment="Right"
                        VerticalAlignment="Bottom" Padding="10,0"/>
         </Grid>
     </Grid>

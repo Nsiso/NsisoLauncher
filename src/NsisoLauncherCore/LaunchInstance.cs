@@ -25,7 +25,7 @@ namespace NsisoLauncherCore
         public Queue<string> LatestLogQueue { get; private set; }
 
 
-        public event EventHandler<string> Log;
+        public event EventHandler<Log> Log;
         public event EventHandler<GameExitArg> Exit;
 
         public LaunchInstance(LaunchSetting setting, ProcessStartInfo processStartInfo)
@@ -51,23 +51,23 @@ namespace NsisoLauncherCore
             LatestLogQueue = new Queue<string>(3);
         }
 
-        private void LaunchInstance_Log(object sender, string e)
+        private void LaunchInstance_Log(object sender, Log e)
         {
             if (LatestLogQueue.Count >= SaveLogSize)
             {
                 LatestLogQueue.Dequeue();
             }
-            LatestLogQueue.Enqueue(e);
+            LatestLogQueue.Enqueue(e.Message);
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, e.Data);
+            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.Log?.Invoke(this, e.Data);
+            this.Log?.Invoke(this, new Log() { LogLevel = LogLevel.GAME, Message = e.Data });
         }
 
         public void Start()

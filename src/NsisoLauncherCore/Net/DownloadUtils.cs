@@ -37,7 +37,8 @@ namespace NsisoLauncherCore.Net
         /// </summary>
         /// <param name="task">下载任务</param>
         /// <param name="cancelToken">取消的token</param>
-        private static async Task<DownloadResult> HTTPDownloadAsync(DownloadObject obj, NetRequester requester, CancellationToken cancellationToken, ProgressCallback progressCallback,
+        private static async Task<DownloadResult> HTTPDownloadAsync(DownloadObject obj, NetRequester requester,
+            CancellationToken cancellationToken, ProgressCallback progressCallback,
             IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             DownloadResult downloadResult = new DownloadResult() { IsSuccess = false, ObjectToDownload = obj };
