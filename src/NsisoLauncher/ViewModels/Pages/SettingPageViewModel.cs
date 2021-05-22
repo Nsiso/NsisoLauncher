@@ -49,6 +49,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ulong MaxMemory { get; set; } = SystemTools.GetTotalMemory();
 
+        public int TabIndex { get; set; } = 0;
+
         #region 命令
         public ICommand ChooseJavaButtonClickCmd { get; set; }
         public ICommand ChooseGameDirButtonClickCmd { get; set; }

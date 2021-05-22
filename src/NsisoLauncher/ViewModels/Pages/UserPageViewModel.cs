@@ -67,6 +67,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ICommand LogoutCmd { get; set; }
 
+        public ICommand AddAuthNodeCmd { get; set; }
+
         public User User { get; set; }
 
         #region 多语言支持变量
@@ -112,6 +114,11 @@ namespace NsisoLauncher.ViewModels.Pages
            {
                await Logout();
            });
+
+            AddAuthNodeCmd = new DelegateCommand((a) =>
+            {
+
+            });
 
             //LoggedInUser = new UserNode()
             //{
@@ -170,16 +177,16 @@ namespace NsisoLauncher.ViewModels.Pages
                     await OfflineLogin();
                     break;
                 case AuthenticationType.MOJANG:
-                    await MojangLogin();
+                    await YggdrasilLogin();
                     break;
                 case AuthenticationType.NIDE8:
-                    await App.MainWindowVM.ShowMessageAsync("Nide8登录暂未开发", "敬请期待");
+                    await YggdrasilLogin();
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    await App.MainWindowVM.ShowMessageAsync("Authlib登录暂未开发", "敬请期待");
+                    await YggdrasilLogin();
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
-                    await App.MainWindowVM.ShowMessageAsync("自定义登录暂未开发", "敬请期待");
+                    await YggdrasilLogin();
                     break;
                 case AuthenticationType.MICROSOFT:
                     MicrosoftLogin();
@@ -265,9 +272,77 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private async Task MojangLogin()
+        private async Task YggdrasilLogin()
         {
+            if (SelectedAuthenticationNode == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("您没有选择登录类型", "请在登录类型选择框中选择你要进行登录的版本。");
+                return;
+            }
+            AuthenticationNode selectedAuthNode = SelectedAuthenticationNode;
+            YggdrasilAuthenticator authenticator = null;
+            switch (selectedAuthNode.AuthType)
+            {
+                case AuthenticationType.MOJANG:
+                    authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                    break;
+                case AuthenticationType.NIDE8:
+                    authenticator = new Nide8Authenticator(App.NetHandler.Requester, selectedAuthNode.Property["nide8ID"]);
+                    break;
+                case AuthenticationType.AUTHLIB_INJECTOR:
+                    authenticator = new YggdrasilAuthenticator(new Uri(selectedAuthNode.Property["authserver"]), App.NetHandler.Requester);
+                    break;
+                case AuthenticationType.CUSTOM_SERVER:
+                    authenticator = new YggdrasilAuthenticator(new Uri(selectedAuthNode.Property["authserver"]), App.NetHandler.Requester);
+                    break;
+                default:
+                    throw new Exception("Using yggdrasil authenticator but the auth node auth type is not yggdrasil.");
+            }
+
             string username = InputUsername;
+
+            bool older_success = false;
+            var older = App.Config.MainConfig.User.UserDatabase.FirstOrDefault(x => x.Value.User is YggdrasilUser yggdrasilUser && yggdrasilUser.Username == username);
+
+
+            if (!string.IsNullOrEmpty(older.Key) && older.Value != null)
+            {
+                AccessClientTokenPair tokens = new AccessClientTokenPair()
+                {
+                    AccessToken = older.Value.User.LaunchAccessToken,
+                    ClientToken = App.Config.MainConfig.User.ClientToken
+                };
+                string refreshTitle = string.Format("正在进行{0}登录中...", selectedAuthNode.Name);
+                string refreshMsg = "这需要联网进行操作，可能需要一分钟的时间";
+                var progress = await MainWindowVM.ShowProgressAsync(refreshTitle, refreshMsg, true, null);
+
+                var result = await authenticator.Validate(tokens);
+                if (result.IsSuccess)
+                {
+                    older_success = true;
+                }
+                else
+                {
+                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens));
+                    if (refresh_result.IsSuccess)
+                    {
+                        if (older.Value.User is YggdrasilUser ygg)
+                        {
+                            ygg.AccessToken = refresh_result.Data.AccessToken;
+                            older_success = true;
+                        }
+                    }
+                }
+
+                await progress.CloseAsync();
+
+                if (older_success)
+                {
+                    LoginNode(older.Value);
+                    return;
+                }
+            }
+
             string password = InputPassword;
             bool rememberPassword = SelectedRememberPassword;
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password))
@@ -276,13 +351,12 @@ namespace NsisoLauncher.ViewModels.Pages
                 return;
             }
 
-            var mYggAuthenticator = new MojangAuthenticator(App.NetHandler.Requester);
-            string currentLoginType = string.Format("正在进行Mojang正版登录中...");
+            string currentLoginType = string.Format("正在进行{0}登录中...", selectedAuthNode.Name);
             string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
             var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
 
             loader.SetIndeterminate();
-            var authResult = await mYggAuthenticator.Authenticate(
+            var authResult = await authenticator.Authenticate(
                 new AuthenticateRequest(username, password, App.Config.MainConfig.User.ClientToken));
             await loader.CloseAsync();
 
@@ -299,13 +373,25 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 #endregion
 
-                YggdrasilUser user = new YggdrasilUser()
+                YggdrasilUser user;
+                if (App.Config.MainConfig.User.UserDatabase.ContainsKey(authResult.Data.User.ID))
                 {
-                    SelectedProfileUuid = authResult.Data.SelectedProfile?.Id,
-                    AccessToken = authResult.Data.AccessToken,
-                    UserData = authResult.Data.User,
-                    Username = username
-                };
+                    user = (YggdrasilUser)App.Config.MainConfig.User.UserDatabase[authResult.Data.User.ID].User;
+                    user.SelectedProfileUuid = authResult.Data.SelectedProfile?.Id;
+                    user.AccessToken = authResult.Data.AccessToken;
+                    user.UserData = authResult.Data.User;
+                    user.Username = username;
+                }
+                else
+                {
+                    user = new YggdrasilUser()
+                    {
+                        SelectedProfileUuid = authResult.Data.SelectedProfile?.Id,
+                        AccessToken = authResult.Data.AccessToken,
+                        UserData = authResult.Data.User,
+                        Username = username
+                    };
+                }
                 foreach (var item in authResult.Data.AvailableProfiles)
                 {
                     user.Profiles.Add(item.Id, item);

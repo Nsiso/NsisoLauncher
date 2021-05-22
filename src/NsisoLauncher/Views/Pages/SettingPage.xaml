@@ -36,7 +36,7 @@
         <TabControl x:Name="tabControl">
 
             <!--#region 全局设置-->
-            <TabItem Header="{StaticResource String.Settingwindow.Env}">
+            <TabItem Header="{StaticResource String.Settingwindow.Env}" TabIndex="{Binding TabIndex}">
                 <ScrollViewer>
                     <StackPanel Margin="10,0">
                         <Expander Header="{StaticResource String.Settingwindow.Env.Java}" Margin="0,0,0,5">

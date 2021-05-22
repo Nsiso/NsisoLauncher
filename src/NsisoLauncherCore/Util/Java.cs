@@ -307,56 +307,6 @@ namespace NsisoLauncherCore.Util
             }
             return javas;
         }
-
-        ///// <summary>
-        ///// 从注册表中查找可能的javaw.exe位置
-        ///// This code is from kmccc, thx
-        ///// </summary>
-        ///// <returns>JAVA地址列表</returns>
-        //public static IEnumerable<string> GetJavaPathList()
-        //{
-        //    try
-        //    {
-        //        var rootReg = Registry.LocalMachine.OpenSubKey("SOFTWARE");
-        //        return rootReg == null
-        //            ? new string[0]
-        //            : FindJavaPathInternal(rootReg).Union(FindJavaPathInternal(rootReg.OpenSubKey("Wow6432Node"))).Where(x => File.Exists(x));
-        //    }
-        //    catch
-        //    {
-        //        return new string[0];
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 内部注册表搜索方法
-        ///// This code is from kmccc, thx
-        ///// </summary>
-        ///// <param name="registry">注册表</param>
-        ///// <returns>JAVA可能路径</returns>
-        //private static IEnumerable<string> FindJavaPathInternal(RegistryKey registry)
-        //{
-        //    try
-        //    {
-        //        var registryKey = registry.OpenSubKey("JavaSoft");
-        //        if ((registryKey == null) || ((registry = registryKey.OpenSubKey("Java Runtime Environment")) == null)) return new string[0];
-        //        return (from ver in registry.GetSubKeyNames()
-        //                select registry.OpenSubKey(ver)
-        //            into command
-        //                where command != null
-        //                select command.GetValue("JavaHome")
-        //            into javaHomes
-        //                where javaHomes != null
-        //                select javaHomes.ToString()
-        //            into str
-        //                where !String.IsNullOrWhiteSpace(str)
-        //                select str + @"\bin\javaw.exe");
-        //    }
-        //    catch
-        //    {
-        //        return new string[0];
-        //    }
-        //}
     }
 
     public enum JavaImageType

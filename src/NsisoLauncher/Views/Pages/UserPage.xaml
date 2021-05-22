@@ -96,7 +96,7 @@
                         <Label Content="全部档案皮肤" FontSize="16" Grid.Column="1" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Top"/>
                         <ListBox Grid.Column="1" Margin="10,40,10,10" HorizontalAlignment="Stretch" ItemsSource="{Binding Skins}">
                             <ListBox.Template>
-                                <ControlTemplate TargetType="{x:Type ListBox}">
+                                <ControlTemplate TargetType="{x:Type ListBox}">
                                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                                         <WrapPanel Orientation="Horizontal" IsItemsHost="True" ScrollViewer.CanContentScroll="True"/>
                                     </ScrollViewer>
@@ -153,10 +153,15 @@
                     <iconPacks:PackIconFontAwesome Kind="CubeSolid" Margin="5"/>
                     <TextBlock Text="验证类型:" Margin="5"/>
                 </StackPanel>
-                <ComboBox ItemsSource="{Binding AuthenticationDic}" DisplayMemberPath="Value.Name"
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Width="200">
+                    <ComboBox ItemsSource="{Binding AuthenticationDic}" DisplayMemberPath="Value.Name"
                           SelectedValuePath="Value" SelectedValue="{Binding SelectedAuthenticationNode}"
-                          controls:TextBoxHelper.Watermark="选择验证类型" Width="200"
-                          Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" x:Name="authTypeCombobox"/>
+                          controls:TextBoxHelper.Watermark="选择验证类型" Width="165"
+                          VerticalAlignment="Center" x:Name="authTypeCombobox"/>
+                    <Button Width="30" Content="{iconPacks:FontAwesome Kind=PlusSolid, Width='10', Height='10'}"
+                            VerticalAlignment="Center" Margin="5,0,0,0" Command="{Binding AddAuthNodeCmd}"/>
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="1"
                             Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='username'}">
                     <iconPacks:PackIconFontAwesome Kind="UserAltSolid" Margin="5"/>
