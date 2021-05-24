@@ -103,7 +103,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 forgeListUri = mirror.ForgeListUri;
             }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(new Uri(forgeListUri, version.Id));
+            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(string.Format("{0}/{1}", forgeListUri, version.Id));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {

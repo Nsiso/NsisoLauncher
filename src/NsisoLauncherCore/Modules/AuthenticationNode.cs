@@ -20,6 +20,8 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public Dictionary<string, string> Property { get; set; } = new Dictionary<string, string>();
 
+        public bool Locked { get; set; } = false;
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

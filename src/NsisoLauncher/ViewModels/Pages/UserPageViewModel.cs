@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Modules.Yggdrasil;
@@ -117,7 +118,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
             AddAuthNodeCmd = new DelegateCommand((a) =>
             {
-
+                AuthNodeWindow nodeWindow = new AuthNodeWindow();
+                nodeWindow.Show();
             });
 
             //LoggedInUser = new UserNode()
@@ -290,10 +292,10 @@ namespace NsisoLauncher.ViewModels.Pages
                     authenticator = new Nide8Authenticator(App.NetHandler.Requester, selectedAuthNode.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new YggdrasilAuthenticator(new Uri(selectedAuthNode.Property["authserver"]), App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
-                    authenticator = new YggdrasilAuthenticator(new Uri(selectedAuthNode.Property["authserver"]), App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
                     break;
                 default:
                     throw new Exception("Using yggdrasil authenticator but the auth node auth type is not yggdrasil.");
@@ -425,16 +427,16 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 case ResponseState.ERR_NOTFOUND:
                     #region 页面未找到
-                    await MainWindowVM.ShowMessageAsync("验证失败：Mojang验证Uri不存在",
-                    string.Format("Mojang的验证URI返回404，请联系Mojang客服或启动器开发者寻求帮助，开发者请检查验证URI是否可用。具体信息：{0}",
-                    authResult.Error.ErrorMessage));
+                    await MainWindowVM.ShowMessageAsync("验证失败：验证服务器Uri不存在",
+                    string.Format("验证服务器URI：{0}返回404，请联系{1}客服或启动器开发者寻求帮助，开发者请检查验证URI是否可用。具体信息：{2}",
+                    authenticator.AuthServerUrl, selectedAuthNode.Name, authResult.Error?.ErrorMessage));
                     #endregion
                     break;
 
                 case ResponseState.ERR_METHOD_NOT_ALLOW:
                     #region 错误的验证信息/禁止访问
                     await MainWindowVM.ShowMessageAsync("验证失败：方法不允许",
-                        string.Format("可能使用了错误的验证Uri或提交了post之外的内容，也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
+                        string.Format("可能使用了错误的验证服务器Uri或提交了post之外的内容，也有可能是因为验证请求频率过高，被服务器暂时禁止访问。具体信息：{0}",
                         authResult.Error.ErrorMessage));
                     #endregion
                     break;
@@ -498,10 +500,10 @@ namespace NsisoLauncher.ViewModels.Pages
                     authenticator = new Nide8Authenticator(App.NetHandler.Requester, node.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new YggdrasilAuthenticator(new Uri(node.Property["authserver"]), App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
-                    authenticator = new YggdrasilAuthenticator(new Uri(node.Property["authserver"]), App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
                     break;
                 case AuthenticationType.MICROSOFT:
                     break;

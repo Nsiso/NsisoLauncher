@@ -190,11 +190,11 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = "正在进行统一通行证登录";
                         break;
                     case AuthenticationType.AUTHLIB_INJECTOR:
-                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
                         NowState = "正在进行Authlib_injector登录";
                         break;
                     case AuthenticationType.CUSTOM_SERVER:
-                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                     case AuthenticationType.MICROSOFT:
@@ -235,7 +235,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         //todo 刷新微软账户
                         return;
                     default:
-                        authenticator = new YggdrasilAuthenticator(new Uri(authenticationNode.Property["authserver"]), App.NetHandler.Requester);
+                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                 }

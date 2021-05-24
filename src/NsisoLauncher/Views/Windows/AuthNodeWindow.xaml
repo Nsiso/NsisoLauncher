@@ -5,21 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
+        xmlns:utils="clr-namespace:NsisoLauncher.Utils"
+        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
         mc:Ignorable="d"
         Title="AuthNodeWindow" Height="450" Width="800">
+    <controls:MetroWindow.Resources>
+        <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotNullToBool"/>
+        <utils:ComparisonConverter x:Key="comparisonConverter"/>
+    </controls:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <DataGrid Margin="10,10,10,5" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+        <DataGrid Margin="10,10,10,5" IsReadOnly="True" AutoGenerateColumns="False" CanUserDeleteRows="False" x:Name="data" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="验证模型名称"/>
-                <DataGridTextColumn Header="验证模型类型"/>
-                <DataGridTextColumn Header="验证模型数据"/>
+                <DataGridTextColumn Header="验证模型名称" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="验证模型类型" Binding="{Binding AuthType}"/>
+                <DataGridTextColumn Header="验证模型数据" Binding="{Binding Property}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox Margin="10,5,10,10" Header="详细信息" Grid.Row="1">
+        <GroupBox Margin="10,5,10,10" Header="详细信息" Grid.Row="1" DataContext="{Binding ElementName=data, Path=SelectedItem}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -31,13 +37,27 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="验证模型名称：" Margin="0,5,0,5"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,5,0,5"/>
-                <Label Grid.Row="1" Grid.Column="0" Content="验证模型名称：" Margin="0,5,0,5"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
-                <Label Grid.Row="2" Grid.Column="0" Content="验证模型名称：" Margin="0,5,0,5"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
-                <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Content="保存" Width="100"/>
+                <Label Grid.Row="0" Grid.Column="0" Content="验证模型名称：" Margin="0,0,10,5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5"/>
+                <Label Grid.Row="1" Grid.Column="0" Content="验证模型类型：" Margin="0,0,10,5"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Orientation="Horizontal">
+                    <RadioButton Content="NIDE8统一通行证" Margin="0,0,10,0"
+                                 IsChecked="{Binding AuthType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:AuthenticationType.NIDE8}}"/>
+                    <RadioButton Content="Authlib-injector外置登录" Margin="0,0,10,0"
+                                 IsChecked="{Binding AuthType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:AuthenticationType.AUTHLIB_INJECTOR}}"/>
+                    <RadioButton Content="其他Yggdrasil外置登录" Margin="0,0,10,0"
+                                 IsChecked="{Binding AuthType,
+                                    Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:AuthenticationType.CUSTOM_SERVER}}"/>
+                </StackPanel>
+                <Label Grid.Row="2" Grid.Column="0" Content="验证模型数据：" Margin="0,0,10,5"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,5"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Orientation="Horizontal">
+                    <Button  Content="删除" Width="100" Margin="0,0,10,0" IsEnabled="{Binding ElementName=data, Path=SelectedItem, Converter={StaticResource objectNotNullToBool}}"/>
+                    <Button  Content="保存" Width="100"/>
+                </StackPanel>
+
             </Grid>
         </GroupBox>
     </Grid>

@@ -9,16 +9,17 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace NsisoLauncherCore.Net.Yggdrasil
 {
     public class YggdrasilAuthenticator : IAuthenticator
     {
-        public Uri AuthServerUrl { get; set; }
+        public string AuthServerUrl { get; set; }
 
         private NetRequester requester;
 
-        public YggdrasilAuthenticator(Uri authServer, NetRequester requester)
+        public YggdrasilAuthenticator(string authServer, NetRequester requester)
         {
             this.requester = requester;
             this.AuthServerUrl = authServer;
@@ -26,7 +27,7 @@ namespace NsisoLauncherCore.Net.Yggdrasil
 
         async public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
         {
-            Response response = await SendRequest(new Uri(AuthServerUrl, "/authenticate"), request);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "authenticate"), request);
             AuthenticateResponse authenticateResponse = new AuthenticateResponse(response);
             if (response.IsSuccess)
             {
@@ -34,20 +35,24 @@ namespace NsisoLauncherCore.Net.Yggdrasil
             }
             else
             {
-                authenticateResponse.Error = JsonConvert.DeserializeObject<AuthenticationResponseError>(response.RawMessage);
+                string raw_trim = response.RawMessage.Trim();
+                if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
+                {
+                    authenticateResponse.Error = JsonConvert.DeserializeObject<AuthenticationResponseError>(raw_trim);
+                }
             }
             return authenticateResponse;
         }
 
         async public Task<Response> Invalidate(AccessClientTokenPair data)
         {
-            Response response = await SendRequest(new Uri(AuthServerUrl, "/invalidate"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "invalidate"), data);
             return response;
         }
 
         async public Task<TokenResponse> Refresh(RefreshRequest request)
         {
-            Response response = await SendRequest(new Uri(AuthServerUrl, "/refresh"), request);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "refresh"), request);
             TokenResponse tokenResponse = new TokenResponse(response);
             if (response.IsSuccess)
             {
@@ -58,26 +63,26 @@ namespace NsisoLauncherCore.Net.Yggdrasil
 
         async public Task<Response> Signout(UsernamePasswordPair data)
         {
-            Response response = await SendRequest(new Uri(AuthServerUrl, "/signout"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "signout"), data);
             return response;
         }
 
         async public Task<Response> Validate(AccessClientTokenPair data)
         {
-            Response response = await SendRequest(new Uri(AuthServerUrl, "/validate"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "validate"), data);
             return response;
         }
 
-        async private Task<Response> SendRequest(Uri url, object request)
+        async private Task<Response> SendRequest(string url, object request, CancellationToken cancellation = default)
         {
             try
             {
                 string request_str = JsonConvert.SerializeObject(request);
                 StringContent content = new StringContent(request_str, Encoding.UTF8, "application/json");
 
-                var result = await requester.Client.PostAsync(url, content);
+                var result = await requester.Client.PostAsync(url, content, cancellation);
 
-                result.EnsureSuccessStatusCode();
+                //result.EnsureSuccessStatusCode();
 
                 bool is_success = result.IsSuccessStatusCode;
                 string raw = await result.Content.ReadAsStringAsync();
@@ -97,8 +102,12 @@ namespace NsisoLauncherCore.Net.Yggdrasil
                 }
                 else
                 {
-                    Error error = JsonConvert.DeserializeObject<Error>(raw);
-                    response.Error = error;
+                    string raw_trim = raw.Trim();
+                    if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(raw_trim);
+                        response.Error = error;
+                    }
 
                     switch (result.StatusCode)
                     {
@@ -114,6 +123,15 @@ namespace NsisoLauncherCore.Net.Yggdrasil
                         default:
                             errState = ResponseState.ERR_OTHER;
                             break;
+                    }
+
+                    if (response.Error == null)
+                    {
+                        response.Error = new Error()
+                        {
+                            ErrorMessage = result.StatusCode.ToString(),
+                            ErrorTag = result.StatusCode.ToString()
+                        };
                     }
                 }
                 response.State = errState;

@@ -11,7 +11,7 @@ namespace NsisoLauncherCore.Auth
 {
     public class MojangAuthenticator : YggdrasilAuthenticator
     {
-        public MojangAuthenticator(NetRequester requester) : base(new Uri("https://authserver.mojang.com"), requester)
+        public MojangAuthenticator(NetRequester requester) : base("https://authserver.mojang.com", requester)
         { }
     }
 }

@@ -15,7 +15,7 @@ namespace NsisoLauncherCore.Auth
         private Net.Nide8API.APIHandler nide8Handler;
 
         public Nide8Authenticator(NetRequester requester, string nide8ID) : base(
-            new Uri(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID)), requester)
+            string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), requester)
         {
             nide8Handler = new Net.Nide8API.APIHandler(requester, nide8ID);
         }
@@ -23,7 +23,7 @@ namespace NsisoLauncherCore.Auth
         public async Task UpdateApiRoot()
         {
             var result = await nide8Handler.GetInfoAsync();
-            this.AuthServerUrl = new Uri(result.APIRoot);
+            this.AuthServerUrl = result.APIRoot;
         }
 
         public async Task<Net.Nide8API.APIModules> GetInfo()
