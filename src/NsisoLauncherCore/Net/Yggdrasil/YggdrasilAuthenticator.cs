@@ -25,9 +25,9 @@ namespace NsisoLauncherCore.Net.Yggdrasil
             this.AuthServerUrl = authServer;
         }
 
-        async public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
+        async public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, CancellationToken cancellation = default)
         {
-            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "authenticate"), request);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "authenticate"), request, cancellation);
             AuthenticateResponse authenticateResponse = new AuthenticateResponse(response);
             if (response.IsSuccess)
             {
@@ -35,24 +35,28 @@ namespace NsisoLauncherCore.Net.Yggdrasil
             }
             else
             {
-                string raw_trim = response.RawMessage.Trim();
-                if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
+                if (!string.IsNullOrWhiteSpace(authenticateResponse.RawMessage))
                 {
-                    authenticateResponse.Error = JsonConvert.DeserializeObject<AuthenticationResponseError>(raw_trim);
+                    string raw_trim = response.RawMessage.Trim();
+                    if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
+                    {
+                        authenticateResponse.Error = JsonConvert.DeserializeObject<AuthenticationResponseError>(raw_trim);
+                    }
                 }
+
             }
             return authenticateResponse;
         }
 
-        async public Task<Response> Invalidate(AccessClientTokenPair data)
+        async public Task<Response> Invalidate(AccessClientTokenPair data, CancellationToken cancellation = default)
         {
-            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "invalidate"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "invalidate"), data, cancellation);
             return response;
         }
 
-        async public Task<TokenResponse> Refresh(RefreshRequest request)
+        async public Task<TokenResponse> Refresh(RefreshRequest request, CancellationToken cancellation = default)
         {
-            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "refresh"), request);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "refresh"), request, cancellation);
             TokenResponse tokenResponse = new TokenResponse(response);
             if (response.IsSuccess)
             {
@@ -61,15 +65,15 @@ namespace NsisoLauncherCore.Net.Yggdrasil
             return tokenResponse;
         }
 
-        async public Task<Response> Signout(UsernamePasswordPair data)
+        async public Task<Response> Signout(UsernamePasswordPair data, CancellationToken cancellation = default)
         {
-            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "signout"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "signout"), data, cancellation);
             return response;
         }
 
-        async public Task<Response> Validate(AccessClientTokenPair data)
+        async public Task<Response> Validate(AccessClientTokenPair data, CancellationToken cancellation = default)
         {
-            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "validate"), data);
+            Response response = await SendRequest(string.Format("{0}/{1}", AuthServerUrl, "validate"), data, cancellation);
             return response;
         }
 
@@ -136,6 +140,35 @@ namespace NsisoLauncherCore.Net.Yggdrasil
                 }
                 response.State = errState;
                 return response;
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new Response(ResponseState.CANCELED)
+                    {
+                        IsSuccess = false,
+                        Error = new Error()
+                        {
+                            ErrorTag = ex.Message,
+                            ErrorMessage = ex.Message,
+                            Exception = ex
+                        }
+                    };
+                }
+                else
+                {
+                    return new Response(ResponseState.ERR_TIMEOUT)
+                    {
+                        IsSuccess = false,
+                        Error = new Error()
+                        {
+                            ErrorTag = ex.Message,
+                            ErrorMessage = ex.Message,
+                            Exception = ex
+                        }
+                    };
+                }
             }
             catch (Exception ex)
             {

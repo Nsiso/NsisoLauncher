@@ -44,6 +44,10 @@ namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
         internal Response(ResponseState state)
         {
             this.State = state;
+            if (state == ResponseState.SUCCESS)
+            {
+                this.IsSuccess = true;
+            }
         }
         internal Response(Response response) : this()
         {
@@ -58,9 +62,11 @@ namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
     public enum ResponseState
     {
         SUCCESS,
+        CANCELED,
         ERR_INVALID_CRDL,
         ERR_NOTFOUND,
         ERR_METHOD_NOT_ALLOW,
+        ERR_TIMEOUT,
         ERR_OTHER,
         ERR_INSIDE
     }

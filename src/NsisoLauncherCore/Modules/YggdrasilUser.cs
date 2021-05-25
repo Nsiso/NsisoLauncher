@@ -42,7 +42,7 @@ namespace NsisoLauncherCore.Modules
 
         public string LaunchUuid => SelectedProfileUuid;
 
-        public string LaunchPlayerName => SelectedProfile.PlayerName;
+        public string LaunchPlayerName => SelectedProfile?.PlayerName;
 
         public string UserType => "mojang";
 

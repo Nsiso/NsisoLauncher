@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ArgumentsParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Auth\AuthlibInjectorAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\Nide8Authenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\OfflineAuthenticator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Auth\MojangAuthenticator.cs" />

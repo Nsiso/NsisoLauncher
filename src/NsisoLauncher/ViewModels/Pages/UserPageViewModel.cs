@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -32,7 +33,25 @@ namespace NsisoLauncher.ViewModels.Pages
         /// <summary>
         /// 选中的验证模型节点
         /// </summary>
-        public AuthenticationNode SelectedAuthenticationNode { get; set; }
+        public AuthenticationNode SelectedAuthenticationNode
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(SelectedAuthenticationNodeId) && App.Config?.MainConfig?.User?.AuthenticationDic.ContainsKey(SelectedAuthenticationNodeId) == true)
+                {
+                    return App.Config?.MainConfig?.User?.AuthenticationDic[SelectedAuthenticationNodeId];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 选中的验证模型节点
+        /// </summary>
+        public string SelectedAuthenticationNodeId { get; set; }
 
         /// <summary>
         /// 输入的用户名
@@ -282,6 +301,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 return;
             }
             AuthenticationNode selectedAuthNode = SelectedAuthenticationNode;
+            string selectedAuthNodeId = SelectedAuthenticationNodeId;
             YggdrasilAuthenticator authenticator = null;
             switch (selectedAuthNode.AuthType)
             {
@@ -292,7 +312,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     authenticator = new Nide8Authenticator(App.NetHandler.Requester, selectedAuthNode.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new AuthlibInjectorAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
                     authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
@@ -304,28 +324,34 @@ namespace NsisoLauncher.ViewModels.Pages
             string username = InputUsername;
 
             bool older_success = false;
-            var older = App.Config.MainConfig.User.UserDatabase.FirstOrDefault(x => x.Value.User is YggdrasilUser yggdrasilUser && yggdrasilUser.Username == username);
+            var older = App.Config.MainConfig.User.UserDatabase.FirstOrDefault(x => x.Value.User is YggdrasilUser yggdrasilUser && x.Value.AuthModule == selectedAuthNodeId && yggdrasilUser.Username == username);
 
 
-            if (!string.IsNullOrEmpty(older.Key) && older.Value != null)
+            if (!string.IsNullOrEmpty(older.Key) && older.Value != null && !string.IsNullOrEmpty(older.Value.User.LaunchAccessToken))
             {
                 AccessClientTokenPair tokens = new AccessClientTokenPair()
                 {
                     AccessToken = older.Value.User.LaunchAccessToken,
                     ClientToken = App.Config.MainConfig.User.ClientToken
                 };
-                string refreshTitle = string.Format("正在进行{0}登录中...", selectedAuthNode.Name);
+                string refreshTitle = string.Format("正在进行{0}登录中（重新登录）...", selectedAuthNode.Name);
                 string refreshMsg = "这需要联网进行操作，可能需要一分钟的时间";
-                var progress = await MainWindowVM.ShowProgressAsync(refreshTitle, refreshMsg, true, null);
 
-                var result = await authenticator.Validate(tokens);
+                CancellationTokenSource olderCancellationSource = new CancellationTokenSource();
+                var progress = await MainWindowVM.ShowProgressAsync(refreshTitle, refreshMsg, true, null);
+                progress.Canceled += (obj, arg) =>
+                {
+                    olderCancellationSource.Cancel();
+                };
+
+                var result = await authenticator.Validate(tokens, olderCancellationSource.Token);
                 if (result.IsSuccess)
                 {
                     older_success = true;
                 }
                 else
                 {
-                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens));
+                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens), olderCancellationSource.Token);
                     if (refresh_result.IsSuccess)
                     {
                         if (older.Value.User is YggdrasilUser ygg)
@@ -355,11 +381,17 @@ namespace NsisoLauncher.ViewModels.Pages
 
             string currentLoginType = string.Format("正在进行{0}登录中...", selectedAuthNode.Name);
             string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
+
+            CancellationTokenSource cancellationSource = new CancellationTokenSource();
             var loader = await MainWindowVM.ShowProgressAsync(currentLoginType, loginMsg, true, null);
+            loader.Canceled += (obj, arg) =>
+            {
+                cancellationSource.Cancel();
+            };
 
             loader.SetIndeterminate();
             var authResult = await authenticator.Authenticate(
-                new AuthenticateRequest(username, password, App.Config.MainConfig.User.ClientToken));
+                new AuthenticateRequest(username, password, App.Config.MainConfig.User.ClientToken), cancellationSource.Token);
             await loader.CloseAsync();
 
             if (authResult.IsSuccess)
@@ -394,6 +426,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         Username = username
                     };
                 }
+                user.Profiles.Clear();
                 foreach (var item in authResult.Data.AvailableProfiles)
                 {
                     user.Profiles.Add(item.Id, item);
@@ -401,7 +434,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 UserNode userNode = new UserNode()
                 {
-                    AuthModule = "mojang",
+                    AuthModule = selectedAuthNodeId,
                     User = user
                 };
 
@@ -463,6 +496,19 @@ namespace NsisoLauncher.ViewModels.Pages
                     #endregion
                     break;
 
+                case ResponseState.CANCELED:
+                    #region 取消
+                    await MainWindowVM.ShowMessageAsync("登录已被取消",
+                            string.Format("您已经主动取消了登录过程。具体信息：{0}", authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
+
+                case ResponseState.ERR_TIMEOUT:
+                    #region 网络超时
+                    await MainWindowVM.ShowMessageAsync("登录过程中网络超时",
+                            string.Format("请检查您的网络环境。具体信息：{0}", authResult.Error.ErrorMessage));
+                    #endregion
+                    break;
                 default:
                     #region default
                     await MainWindowVM.ShowMessageAsync("验证失败：未知错误",
@@ -500,7 +546,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     authenticator = new Nide8Authenticator(App.NetHandler.Requester, node.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new YggdrasilAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new AuthlibInjectorAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
                     authenticator = new YggdrasilAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
@@ -513,15 +559,26 @@ namespace NsisoLauncher.ViewModels.Pages
 
             if (node.AuthType != AuthenticationType.OFFLINE && authenticator != null)
             {
+                CancellationTokenSource cancellationSource = new CancellationTokenSource();
+
                 string loginMsg = "这需要联网进行操作，可能需要一分钟的时间";
                 var loader = await MainWindowVM.ShowProgressAsync("正在注销中...", loginMsg, true, null);
 
+                loader.Canceled += (obj, arg) =>
+                {
+                    cancellationSource.Cancel();
+                };
+
                 loader.SetIndeterminate();
-                await authenticator.Invalidate(new AccessClientTokenPair(LoggedInUser.User.LaunchAccessToken, App.Config.MainConfig.User.ClientToken));
+                await authenticator.Invalidate(new AccessClientTokenPair(LoggedInUser.User.LaunchAccessToken, App.Config.MainConfig.User.ClientToken), cancellationSource.Token);
                 await loader.CloseAsync();
             }
 
             User.SelectedUserUuid = null;
+            if (LoggedInUser.User is YggdrasilUser ygg_usr)
+            {
+                ygg_usr.AccessToken = null;
+            }
             LoggedInUser = null;
         }
 

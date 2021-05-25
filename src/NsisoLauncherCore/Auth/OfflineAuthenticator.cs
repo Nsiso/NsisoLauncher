@@ -5,6 +5,7 @@ using NsisoLauncherCore.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.Net.Yggdrasil;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Auth
@@ -40,7 +41,7 @@ namespace NsisoLauncherCore.Auth
             };
         }
 
-        public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request)
+        public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, CancellationToken cancellation = default)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -61,7 +62,7 @@ namespace NsisoLauncherCore.Auth
 
         }
 
-        public Task<TokenResponse> Refresh(RefreshRequest request)
+        public Task<TokenResponse> Refresh(RefreshRequest request, CancellationToken cancellation = default)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -81,7 +82,7 @@ namespace NsisoLauncherCore.Auth
             });
         }
 
-        public Task<Response> Validate(AccessClientTokenPair data)
+        public Task<Response> Validate(AccessClientTokenPair data, CancellationToken cancellation = default)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -92,7 +93,7 @@ namespace NsisoLauncherCore.Auth
             });
         }
 
-        public Task<Response> Signout(UsernamePasswordPair data)
+        public Task<Response> Signout(UsernamePasswordPair data, CancellationToken cancellation = default)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -103,7 +104,7 @@ namespace NsisoLauncherCore.Auth
             });
         }
 
-        public Task<Response> Invalidate(AccessClientTokenPair data)
+        public Task<Response> Invalidate(AccessClientTokenPair data, CancellationToken cancellation = default)
         {
             return Task.Factory.StartNew(() =>
             {

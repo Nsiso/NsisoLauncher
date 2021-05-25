@@ -190,7 +190,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = "正在进行统一通行证登录";
                         break;
                     case AuthenticationType.AUTHLIB_INJECTOR:
-                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+                        authenticator = new AuthlibInjectorAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
                         NowState = "正在进行Authlib_injector登录";
                         break;
                     case AuthenticationType.CUSTOM_SERVER:

@@ -155,7 +155,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Width="200">
                     <ComboBox ItemsSource="{Binding AuthenticationDic}" DisplayMemberPath="Value.Name"
-                          SelectedValuePath="Value" SelectedValue="{Binding SelectedAuthenticationNode}"
+                          SelectedValuePath="Key" SelectedValue="{Binding SelectedAuthenticationNodeId}"
                           controls:TextBoxHelper.Watermark="选择验证类型" Width="165"
                           VerticalAlignment="Center" x:Name="authTypeCombobox"/>
                     <Button Width="30" Content="{iconPacks:FontAwesome Kind=PlusSolid, Width='10', Height='10'}"
