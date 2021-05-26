@@ -93,7 +93,7 @@ namespace NsisoLauncher.Views.Controls
             {
                 string authName = authmoduleNameTextbox.Text;
                 string authData = authDataTextbox.Text;
-                AuthenticationNode node = new AuthenticationNode() { AuthType = authenticationType, Name = authName };
+                AuthenticationNode node = new AuthenticationNode(authName) { AuthType = authenticationType, Name = authName };
                 switch (authenticationType)
                 {
                     case AuthenticationType.NIDE8:

@@ -212,9 +212,9 @@ namespace NsisoLauncher.Config
                     UserDatabase = new ObservableDictionary<string, UserNode>(),
                     AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
                     {
-                        {"offline", new AuthenticationNode(){AuthType = AuthenticationType.OFFLINE, Name="离线登录"} },
-                        {"mojang", new AuthenticationNode(){AuthType = AuthenticationType.MOJANG, Name="Mojang正版登录"} },
-                        {"microsoft", new AuthenticationNode(){AuthType = AuthenticationType.MICROSOFT, Name="微软正版登录"} },
+                        {"offline", new AuthenticationNode("offline"){AuthType = AuthenticationType.OFFLINE, Name="离线登录", Locked = true} },
+                        {"mojang", new AuthenticationNode("mojang"){AuthType = AuthenticationType.MOJANG, Name="Mojang正版登录", Locked = true} },
+                        {"microsoft", new AuthenticationNode("microsoft"){AuthType = AuthenticationType.MICROSOFT, Name="微软正版登录", Locked = true} },
                     }
                 },
                 History = new History(),

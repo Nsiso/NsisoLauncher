@@ -8,7 +8,7 @@
         xmlns:utils="clr-namespace:NsisoLauncher.Utils"
         xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
         mc:Ignorable="d"
-        Title="AuthNodeWindow" Height="450" Width="800">
+        Title="AuthNodeWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
         <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotNullToBool"/>
         <utils:ComparisonConverter x:Key="comparisonConverter"/>
@@ -18,14 +18,16 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <DataGrid Margin="10,10,10,5" IsReadOnly="True" AutoGenerateColumns="False" CanUserDeleteRows="False" x:Name="data" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}">
+        <DataGrid Margin="10,10,10,5" IsReadOnly="True" AutoGenerateColumns="False" CanUserDeleteRows="False" x:Name="data"
+                  ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="验证模型名称" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header="验证模型类型" Binding="{Binding AuthType}"/>
                 <DataGridTextColumn Header="验证模型数据" Binding="{Binding Property}"/>
+                <DataGridTextColumn Header="是否锁定" Binding="{Binding Locked}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox Margin="10,5,10,10" Header="详细信息" Grid.Row="1" DataContext="{Binding ElementName=data, Path=SelectedItem}">
+        <GroupBox Margin="10,5,10,10" Header="详细信息" Grid.Row="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -38,9 +40,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Content="验证模型名称：" Margin="0,0,10,5"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" Text="{Binding NodeName}" IsEnabled="{Binding SaveEnable}"/>
                 <Label Grid.Row="1" Grid.Column="0" Content="验证模型类型：" Margin="0,0,10,5"/>
-                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Orientation="Horizontal">
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" Orientation="Horizontal" IsEnabled="{Binding SaveEnable}">
                     <RadioButton Content="NIDE8统一通行证" Margin="0,0,10,0"
                                  IsChecked="{Binding AuthType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:AuthenticationType.NIDE8}}"/>
@@ -51,11 +53,12 @@
                                  IsChecked="{Binding AuthType,
                                     Converter={StaticResource comparisonConverter},ConverterParameter={x:Static modules:AuthenticationType.CUSTOM_SERVER}}"/>
                 </StackPanel>
-                <Label Grid.Row="2" Grid.Column="0" Content="验证模型数据：" Margin="0,0,10,5"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,5"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="{Binding PropertyLabel}" Margin="0,0,10,5"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,5" Text="{Binding Property}" IsEnabled="{Binding SaveEnable}"/>
                 <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Orientation="Horizontal">
-                    <Button  Content="删除" Width="100" Margin="0,0,10,0" IsEnabled="{Binding ElementName=data, Path=SelectedItem, Converter={StaticResource objectNotNullToBool}}"/>
-                    <Button  Content="保存" Width="100"/>
+                    <Button  Content="取消选定" Width="100" Margin="0,0,10,0" Command="{Binding ClearSelectedCmd}"/>
+                    <Button  Content="删除" Width="100" Margin="0,0,10,0" IsEnabled="{Binding DeleteEnable}" Command="{Binding DeleteCmd}"/>
+                    <Button  Content="保存" Width="100" IsEnabled="{Binding SaveEnable}" Command="{Binding SaveCmd}"/>
                 </StackPanel>
 
             </Grid>

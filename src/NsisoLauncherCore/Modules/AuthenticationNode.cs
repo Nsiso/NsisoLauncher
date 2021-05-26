@@ -10,6 +10,13 @@ namespace NsisoLauncherCore.Modules
     /// </summary>
     public class AuthenticationNode : INotifyPropertyChanged
     {
+        public AuthenticationNode(string id)
+        {
+            this.Id = id;
+        }
+
+        public string Id { get; set; }
+
         public string Name { get; set; }
 
         public AuthenticationType AuthType { get; set; }
