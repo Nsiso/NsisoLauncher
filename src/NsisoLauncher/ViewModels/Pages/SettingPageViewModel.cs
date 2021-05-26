@@ -2,6 +2,7 @@
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
+using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
@@ -64,6 +65,8 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand OpenVideoDirCmd { get; set; }
 
         public ICommand OpenUriCmd { get; set; }
+
+        public ICommand OpenAuthNodeWindowCmd { get; set; }
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -119,6 +122,10 @@ namespace NsisoLauncher.ViewModels.Pages
             OpenUriCmd = new DelegateCommand((a) =>
             {
                 Process.Start(new ProcessStartInfo(a.ToString()));
+            });
+            OpenAuthNodeWindowCmd = new DelegateCommand((a) =>
+            {
+                new AuthNodeWindow().Show();
             });
             #endregion
 

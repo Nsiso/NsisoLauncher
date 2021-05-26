@@ -332,16 +332,7 @@
                 <ScrollViewer>
                     <StackPanel x:Name="userGrid" Margin="10,0">
                         <Expander x:Name="addAuthModuleExpander" Header="自定义验证模型设置" Margin="0,0,0,5">
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="选择要管理的验证模型："/>
-                                    <ComboBox x:Name="authModuleCombobox" Width="200" Margin="0,0,5,0"
-                                    DisplayMemberPath="Value.Name" SelectionChanged="AuthModuleCombobox_SelectionChanged"
-                                    SelectedValuePath="Key" ItemsSource="{Binding MainConfig.User.AuthenticationDic}"/>
-                                    <Button x:Name="clearAuthselectButton" Width="100" Margin="0,0,5,0" Content="选择新添加" Click="ClearAuthselectButton_Click"/>
-                                </StackPanel>
-                                <userControl:AuthModuleControl x:Name="authmoduleControl"/>
-                            </StackPanel>
+                            <Button Content="打开自定义验证模型设置窗口" Command="{Binding OpenAuthNodeWindowCmd}"/>
                         </Expander>
                         <Expander Header="用户设置" Margin="0,0,0,5">
                             <StackPanel>

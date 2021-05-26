@@ -156,51 +156,6 @@ namespace NsisoLauncher.Views.Pages
             await this.ShowMessageAsync("删除用户成功", "请保存以生效");
         }
 
-        #region 自定义验证模型
-
-        private void AuthModuleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            object selectedItem = authModuleCombobox.SelectedItem;
-            if (selectedItem == null)
-            {
-                authmoduleControl.ClearAll();
-            }
-            else
-            {
-                authmoduleControl.SelectionChangedAccept((KeyValuePair<string, AuthenticationNode>)selectedItem);
-            }
-        }
-
-        public async void AddAuthModule(string name, AuthenticationNode authmodule)
-        {
-            if (App.Config.MainConfig.User.AuthenticationDic.Any(x => x.Key == name))
-            {
-                await this.ShowMessageAsync("添加的验证模型名称已存在", "您可以尝试更换可用的验证模型名称");
-                return;
-            }
-            var item = new KeyValuePair<string, AuthenticationNode>(name, authmodule);
-            App.Config.MainConfig.User.AuthenticationDic.Add(name, authmodule);
-            await this.ShowMessageAsync("添加成功", "记得点击应用按钮保存噢");
-            authModuleCombobox.SelectedItem = item;
-        }
-
-        public async void SaveAuthModule(KeyValuePair<string, AuthenticationNode> node)
-        {
-            await this.ShowMessageAsync("保存成功", "记得点击应用按钮保存噢");
-        }
-
-        public async void DeleteAuthModule(KeyValuePair<string, AuthenticationNode> node)
-        {
-            App.Config.MainConfig.User.AuthenticationDic.Remove(node.Key);
-            await this.ShowMessageAsync("删除成功", "记得点击应用按钮保存噢");
-        }
-
-        private void ClearAuthselectButton_Click(object sender, RoutedEventArgs e)
-        {
-            authModuleCombobox.SelectedItem = null;
-        }
-        #endregion
-
         private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
         {
             lockauthCombobox.SelectedItem = null;
