@@ -346,12 +346,10 @@
   <ItemGroup>
     <PackageReference Include="Costura.Fody">
       <Version>4.1.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.5.1</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="HelixToolkit.Wpf">
@@ -369,7 +367,7 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
-    <PackageReference Include="PropertyChanged.Fody">
+    <PackageReference Include="PropertyChanged.Fody" PrivateAssets="All">
       <Version>3.3.3</Version>
     </PackageReference>
     <PackageReference Include="SharpZipLib">
