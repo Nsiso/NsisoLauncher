@@ -30,7 +30,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 'net46' # SDK Version to use; x will use the latest version of the 3.1 channel
+        dotnet-version: '3.1' # SDK Version to use; x will use the latest version of the 3.1 channel
 
     - name: Nuget restore
       run: dotnet restore $env:working_dir
