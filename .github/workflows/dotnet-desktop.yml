@@ -18,29 +18,30 @@ jobs:
     
     env:
       working_dir: src
-      launcher_dir: src\NsisoLauncher
+      launcher_dir: NsisoLauncher
       Configuration: ${{ matrix.configuration }}
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+        
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1' # SDK Version to use; x will use the latest version of the 3.1 channel
-
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+      
+    - name: Navigate to Workspace
+      run: cd $env:working_dir
+      
     - name: Nuget restore
-      run: dotnet restore $env:working_dir
+      run: nuget restore
 
     - name: Build
-      run: dotnet build  $env:launcher_dir --configuration $env:Configuration
+      run: msbuild $env:launcher_dir /p:configuration=$env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.Configuration }} Build Result
-        path: src\NsisoLauncher\bin\${{ env.Configuration }}
+        path: NsisoLauncher\bin\${{ env.Configuration }}
