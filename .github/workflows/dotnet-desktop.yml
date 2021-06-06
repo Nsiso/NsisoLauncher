@@ -18,7 +18,7 @@ jobs:
     
     env:
       working_dir: src
-      launcher_dir: NsisoLauncher
+      launcher_dir: src\NsisoLauncher
       Configuration: ${{ matrix.configuration }}
       
     steps:
@@ -31,11 +31,8 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
       
-    - name: Navigate to Workspace
-      run: cd $env:working_dir
-      
     - name: Nuget restore
-      run: nuget restore NsisoLauncher.sln
+      run: nuget restore $env:working_dir
       
     - name: Build
       run: msbuild $env:launcher_dir /p:configuration=$env:Configuration
