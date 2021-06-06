@@ -25,17 +25,17 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-      
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
       
     - name: Nuget restore
-      run: nuget restore $env:working_dir
+      run: dotnet restore $env:working_dir
       
     - name: Build
-      run: msbuild $env:launcher_dir /p:configuration=$env:Configuration
+      run: dotnet build $env:launcher_dir --configuration $env:Configuration
+      
+    - name: Test
+      run: dotnet test $env:launcher_dir --configuration $env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
