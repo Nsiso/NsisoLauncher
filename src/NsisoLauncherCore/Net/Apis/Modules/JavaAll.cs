@@ -9,10 +9,13 @@ namespace NsisoLauncherCore.Net.Apis.Modules
 {
     public class JavaAll
     {
+        [JsonProperty("gamecore")]
         public Dictionary<string, List<JObject>> Gamecore { get; set; }
 
+        [JsonProperty("windows-x64")]
         public Dictionary<string, List<JavaMeta>> Windows_x64 { get; set; }
 
+        [JsonProperty("windows-x86")]
         public Dictionary<string, List<JavaMeta>> Windows_x86 { get; set; }
     }
 
