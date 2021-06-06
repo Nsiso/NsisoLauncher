@@ -27,14 +27,16 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 'net46' # SDK Version to use; x will use the latest version of the 3.1 channel
 
-    - name: Restore
-      run: msbuild $env:working_dir -t:restore
+    - name: Nuget restore
+      run: dotnet restore $env:working_dir
 
     - name: Build
-      run: msbuild $env:launcher_dir -p:Configuration=$env:Configuration
+      run: dotnet build  $env:launcher_dir --configuration $env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
