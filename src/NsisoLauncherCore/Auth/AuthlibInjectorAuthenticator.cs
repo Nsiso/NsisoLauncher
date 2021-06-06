@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NsisoLauncherCore.Auth
 {
-    class AuthlibInjectorAuthenticator : YggdrasilAuthenticator
+    public class AuthlibInjectorAuthenticator : YggdrasilAuthenticator
     {
         public string AuthlibInjectorUri { get; set; }
         public AuthlibInjectorAuthenticator(string ai_url, NetRequester requester) : base(string.Format("{0}/{1}", ai_url, "authserver"), requester)

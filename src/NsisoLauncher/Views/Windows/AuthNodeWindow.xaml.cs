@@ -96,7 +96,10 @@ namespace NsisoLauncher.Views.Windows
                         case AuthenticationType.NIDE8:
                             this.Property = SelectedNode.Property["nide8ID"];
                             break;
-                        case AuthenticationType.AUTHLIB_INJECTOR | AuthenticationType.CUSTOM_SERVER:
+                        case AuthenticationType.AUTHLIB_INJECTOR:
+                            this.Property = SelectedNode.Property["authserver"];
+                            break;
+                        case AuthenticationType.CUSTOM_SERVER:
                             this.Property = SelectedNode.Property["authserver"];
                             break;
                         default:
@@ -172,6 +175,7 @@ namespace NsisoLauncher.Views.Windows
             }
             if (SelectedNode == null)
             {
+                //add
                 string id = Guid.NewGuid().ToString();
                 AuthenticationNode newNode = new AuthenticationNode(id)
                 {
@@ -194,9 +198,11 @@ namespace NsisoLauncher.Views.Windows
                 }
                 App.Config.MainConfig.User.AuthenticationDic.Add(id, newNode);
                 Nodes.Add(newNode);
+                this.SelectedNode = newNode;
             }
             else
             {
+                //change
                 AuthenticationNode selected = SelectedNode;
                 selected.Name = NodeName;
                 selected.AuthType = AuthType.Value;

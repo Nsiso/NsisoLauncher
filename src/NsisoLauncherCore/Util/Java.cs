@@ -113,8 +113,10 @@ namespace NsisoLauncherCore.Util
                     string version = firstL[2].Trim('\"');
                     bool is64 = result.Contains("64-Bit");
                     ArchEnum arch = is64 ? ArchEnum.x64 : ArchEnum.x32;
-                    Java info = new Java(javaPath, version, arch);
-                    info.Type = type;
+                    Java info = new Java(javaPath, version, arch)
+                    {
+                        Type = type
+                    };
                     p.Dispose();
                     return info;
                 }

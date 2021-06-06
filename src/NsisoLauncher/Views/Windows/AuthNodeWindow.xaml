@@ -6,7 +6,7 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:NsisoLauncher.Views.Windows"
         xmlns:utils="clr-namespace:NsisoLauncher.Utils"
-        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+        xmlns:modules="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore"
         mc:Ignorable="d"
         Title="AuthNodeWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
@@ -23,7 +23,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="验证模型名称" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header="验证模型类型" Binding="{Binding AuthType}"/>
-                <DataGridTextColumn Header="验证模型数据" Binding="{Binding Property}"/>
+                <DataGridTextColumn Header="验证模型数据" Binding="{Binding Property}" CanUserSort="False"/>
                 <DataGridTextColumn Header="是否锁定" Binding="{Binding Locked}"/>
             </DataGrid.Columns>
         </DataGrid>

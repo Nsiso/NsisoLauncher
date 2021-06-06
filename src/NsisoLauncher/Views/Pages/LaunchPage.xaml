@@ -10,7 +10,7 @@
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LaunchPage">

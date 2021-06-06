@@ -1,5 +1,8 @@
-﻿namespace NsisoLauncherCore.Modules
+﻿using System;
+
+namespace NsisoLauncherCore.Modules
 {
+    [Flags]
     public enum AuthenticationType
     {
         /// <summary>

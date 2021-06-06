@@ -81,7 +81,7 @@ namespace NsisoLauncherCore.Modules
         /// User ID
         /// </summary>
         [JsonProperty("id")]
-        public string ID { get; internal set; }
+        public string ID { get; set; }
 
         /// <summary>
         /// 用户名
@@ -93,7 +93,7 @@ namespace NsisoLauncherCore.Modules
         /// 此用户的属性
         /// </summary>
         [JsonProperty("properties")]
-        public List<Property> Properties { get; internal set; }
+        public List<Property> Properties { get; set; }
 
         /// <summary>
         /// 代表一个用户属性
@@ -104,13 +104,13 @@ namespace NsisoLauncherCore.Modules
             /// Property name
             /// </summary>
             [JsonProperty("name")]
-            public string Name { get; internal set; }
+            public string Name { get; set; }
 
             /// <summary>
             /// Property value
             /// </summary>
             [JsonProperty("value")]
-            public string Value { get; internal set; }
+            public string Value { get; set; }
         }
 
     }

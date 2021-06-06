@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:v="clr-namespace:NsisoLauncherCore.Modules">
+                    xmlns:v="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore">
     <DataTemplate x:Key="VersionComboboxStyle" DataType="{x:Type v:Version}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">

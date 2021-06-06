@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NsisoLauncherCore.Modules
 {
-    public class MojangSkin : ISkin
+    public class YggdrasilSkin : ISkin
     {
         public string Name { get; set; }
 

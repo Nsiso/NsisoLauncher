@@ -112,12 +112,6 @@
     <Compile Include="ViewModels\Pages\UserPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\WelcomePageViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
-    <Compile Include="Views\Controls\HeadSculControl.xaml.cs">
-      <DependentUpon>HeadSculControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Controls\MainPanelControl.xaml.cs">
-      <DependentUpon>MainPanelControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Controls\ServerInfoControl.xaml.cs">
       <DependentUpon>ServerInfoControl.xaml</DependentUpon>
     </Compile>
@@ -188,14 +182,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resource\Style\VersionComboboxStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Controls\HeadSculControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Controls\MainPanelControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -387,10 +373,10 @@
       <Version>3.3.3</Version>
     </PackageReference>
     <PackageReference Include="SharpZipLib">
-      <Version>1.3.1</Version>
+      <Version>1.3.2</Version>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
-      <Version>6.11.0</Version>
+      <Version>6.11.1</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
@@ -425,6 +411,12 @@
   <ItemGroup>
     <Resource Include="Resource\PlayerSkins\test.png" />
   </ItemGroup>
-  <Import Project="..\NsisoLauncherCore\NsisoLauncherCore.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\NsisoLauncherCore\NsisoLauncherCore.csproj">
+      <Project>{8edd876e-b824-4ec9-a5d1-aacec9ed2ffe}</Project>
+      <Name>NsisoLauncherCore</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

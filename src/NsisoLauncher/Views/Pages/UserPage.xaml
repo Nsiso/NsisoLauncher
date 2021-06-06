@@ -8,7 +8,7 @@
       xmlns:userControl="clr-namespace:NsisoLauncher.Views.Controls"
       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
-      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules"
+      xmlns:modules="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
