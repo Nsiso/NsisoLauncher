@@ -19,6 +19,7 @@ jobs:
     env:
       working_dir: src
       launcher_dir: src\NsisoLauncher
+      test_dir: src\NsisoLauncherCoreTest
       Configuration: ${{ matrix.configuration }}
       
     steps:
@@ -41,7 +42,7 @@ jobs:
       run: msbuild $env:launcher_dir /p:Configuration=$env:Configuration
       
     - name: Test
-      run: dotnet test $env:launcher_dir --configuration $env:Configuration
+      run: dotnet test $env:test_dir --configuration $env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
