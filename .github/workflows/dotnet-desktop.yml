@@ -20,6 +20,7 @@ jobs:
       working_dir: src
       launcher_dir: src\NsisoLauncher
       Configuration: ${{ matrix.configuration }}
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
     - name: Checkout
