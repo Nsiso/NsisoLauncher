@@ -18,19 +18,19 @@ jobs:
     
     env:
       working_dir: src
-      launcher_dir: src\NsisoLauncher
-      test_dir: src\NsisoLauncherCoreTest
+      launcher_name: NsisoLauncher
+      test_name: NsisoLauncherCoreTest
       Configuration: ${{ matrix.configuration }}
       
     steps:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Setup vstest
-      uses: darenm/Setup-VSTest@v1
-      
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v1
+      
+    - name: Setup vstest
+      uses: darenm/Setup-VSTest@v1
       
     - name: Setup NuGet
       uses: nuget/setup-nuget@v1
@@ -41,11 +41,11 @@ jobs:
     - name: Build
       run: msbuild $env:working_dir /p:Configuration=$env:Configuration
       
-    - name: Unit Test
-      run: VSTest.Console.exe $env:test_dir\bin\$env:Configuration\NsisoLauncherCoreTest.dll
+    - name: Unit test
+      run: VSTest.Console.exe $env:working_dir\$env:test_name\bin\$env:Configuration\$env:test_name.dll
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.Configuration }} Build Result
-        path: ${{ env.launcher_dir }}\bin\${{ env.Configuration }}
+        path: ${{ env.working_dir }}\${{ env.launcher_name }}\bin\${{ env.Configuration }}
