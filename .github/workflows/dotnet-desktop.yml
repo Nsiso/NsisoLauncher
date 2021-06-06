@@ -28,11 +28,14 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v1
+      
     - name: Nuget restore
       run: dotnet restore $env:working_dir
       
     - name: Build
-      run: dotnet build $env:launcher_dir --configuration $env:Configuration
+      run: msbuild $env:launcher_dir /p:Configuration=$env:Configuration
       
     - name: Test
       run: dotnet test $env:launcher_dir --configuration $env:Configuration
