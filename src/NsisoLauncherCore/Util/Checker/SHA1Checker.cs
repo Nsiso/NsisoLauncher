@@ -10,6 +10,17 @@ namespace NsisoLauncherCore.Util.Checker
         public string CheckSum { get; set; }
         public string FilePath { get; set; }
 
+        public SHA1Checker()
+        {
+
+        }
+
+        public SHA1Checker(string sha1, string file)
+        {
+            this.CheckSum = sha1;
+            this.FilePath = file;
+        }
+
         public bool CheckFilePass()
         {
             if (string.IsNullOrWhiteSpace(CheckSum))

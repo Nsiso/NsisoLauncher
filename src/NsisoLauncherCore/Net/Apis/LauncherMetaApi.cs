@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Net.Apis.Modules;
+using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -42,6 +44,51 @@ namespace NsisoLauncherCore.Net.Apis
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<JavaAll>(json_str);
+        }
+
+        public async Task<JavaManifest> GetJavaManifest(JavaMeta java, CancellationToken cancellation = default)
+        {
+            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(java.Manifest.Url, cancellation);
+            jsonRespond.EnsureSuccessStatusCode();
+            string json_str = await jsonRespond.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<JavaManifest>(json_str);
+        }
+
+        public async Task<JavaManifest> GetJavaManifest(string gamecore, CancellationToken cancellation = default)
+        {
+            JavaAll javas = await GetJavaAll(cancellation);
+            JavaMeta java = null;
+            OsType os = SystemTools.GetOsType();
+            ArchEnum arch = SystemTools.GetSystemArch();
+            switch (os)
+            {
+                case OsType.Windows:
+                    switch (arch)
+                    {
+                        case ArchEnum.x32:
+                            java = javas.Windows_x86[gamecore].FirstOrDefault();
+                            break;
+                        case ArchEnum.x64:
+                            java = javas.Windows_x64[gamecore].FirstOrDefault();
+                            break;
+                        default:
+                            java = javas.Windows_x86[gamecore].FirstOrDefault();
+                            break;
+                    }
+                    break;
+                case OsType.Linux:
+                    java = javas.Linux[gamecore].FirstOrDefault();
+                    break;
+                case OsType.MacOS:
+                    java = javas.MacOS[gamecore].FirstOrDefault();
+                    break;
+                default:
+                    break;
+            }
+            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(java.Manifest.Url, cancellation);
+            jsonRespond.EnsureSuccessStatusCode();
+            string json_str = await jsonRespond.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<JavaManifest>(json_str);
         }
     }
 }

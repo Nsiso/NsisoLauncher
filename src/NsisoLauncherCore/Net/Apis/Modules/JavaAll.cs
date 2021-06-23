@@ -17,6 +17,17 @@ namespace NsisoLauncherCore.Net.Apis.Modules
 
         [JsonProperty("windows-x86")]
         public Dictionary<string, List<JavaMeta>> Windows_x86 { get; set; }
+
+        [JsonProperty("mac-os")]
+        public Dictionary<string, List<JavaMeta>> MacOS { get; set; }
+
+        [JsonProperty("linux")]
+        public Dictionary<string, List<JavaMeta>> Linux { get; set; }
+
+        [JsonProperty("linux-i386")]
+        public Dictionary<string, List<JavaMeta>> LinuxI386 { get; set; }
+
+
     }
 
     public class JavaMeta

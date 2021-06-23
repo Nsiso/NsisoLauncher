@@ -589,6 +589,11 @@ namespace NsisoLauncher.ViewModels.Pages
                         debugWindow.Show();
                         debugWindow.Title = launchSetting.Version.Id;
 
+                        debugWindow.AppendLog(this, new Log(LogLevel.DEBUG,
+                            string.Format("Using java: versiom:{0} arch:{1} path:{2}",
+                            result.UsingJava?.Version, result.UsingJava?.Arch, result.UsingJava?.Path)));
+                        debugWindow.AppendLog(this, new Log(LogLevel.DEBUG, result.LaunchArguments));
+
                         if (result.Instance != null)
                         {
                             result.Instance.Log += debugWindow.AppendLog;

@@ -3,15 +3,20 @@ using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
+using NsisoLauncherCore;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Modules.Yggdrasil;
 using NsisoLauncherCore.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Net.Apis;
+using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,7 +89,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task CheckEnvironment()
         {
-            #region 无JAVA提示
+            #region check java runtime
             if ((App.JavaList == null || App.JavaList.Count == 0) && App.Handler.Java == null)
             {
                 var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
@@ -98,16 +103,11 @@ namespace NsisoLauncher.ViewModels.Pages
                     });
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    var arch = SystemTools.GetSystemArch();
                     DownloadWindow downloadWindow = new DownloadWindow();
-                    App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("16", arch, JavaImageType.JRE,
-                               () =>
-                               {
-                                   App.Current.Dispatcher.Invoke(() =>
-                                   {
-                                       App.RefreshJavaList();
-                                   });
-                               }));
+                    string core = "java-runtime-alpha";
+                    JavaManifest java = await new LauncherMetaApi(App.NetHandler.Requester).GetJavaManifest(core, CancellationSource.Token);
+                    List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(java, string.Format("{0}\\{1}", PathManager.RuntimeDirectory, core));
+                    App.NetHandler.Downloader.AddDownloadTask(tasks);
                     downloadWindow.Show();
                     await App.NetHandler.Downloader.StartDownload();
                 }

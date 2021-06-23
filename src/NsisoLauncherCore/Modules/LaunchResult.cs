@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Util;
+using System;
 
 namespace NsisoLauncherCore.Modules
 {
@@ -8,6 +9,11 @@ namespace NsisoLauncherCore.Modules
         /// 游戏进程
         /// </summary>
         public LaunchInstance Instance { get; set; }
+
+        /// <summary>
+        /// 启动所使用的java
+        /// </summary>
+        public Java UsingJava { get; set; }
 
         /// <summary>
         /// 启动参数

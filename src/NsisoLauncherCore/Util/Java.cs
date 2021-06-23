@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NsisoLauncherCore.Net.Apis.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,12 +53,14 @@ namespace NsisoLauncherCore.Util
         /// <summary>
         /// Java类型（OracleJDK or OpenJDK...）
         /// </summary>
-        public string Type { get; set; }
+        public string Type { get; private set; }
 
         /// <summary>
         /// java位数
         /// </summary>
         public ArchEnum Arch { get; private set; }
+
+        public string GameCoreTag { get; private set; }
 
         public Java(string path, string version, ArchEnum arch)
         {
@@ -167,18 +170,7 @@ namespace NsisoLauncherCore.Util
                 else
                 { goodjava = javalist.ToList(); }
 
-                var java8 = goodjava.Where((x) =>
-                {
-                    return x.Version.StartsWith("1.8");
-                });
-                if (java8.Count() != 0)
-                {
-                    return java8.OrderByDescending(x => x.Version).ToList().FirstOrDefault();
-                }
-                else
-                {
-                    return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
-                }
+                return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
             }
             catch (Exception)
             { return null; }
@@ -189,7 +181,7 @@ namespace NsisoLauncherCore.Util
             return GetSuitableJava(GetJavaList());
         }
 
-        public static Dictionary<string, string> GetJavaRegisterPath(RegistryKey key)
+        private static Dictionary<string, string> GetJavaRegisterPath(RegistryKey key)
         {
             Dictionary<string, string> jres = new Dictionary<string, string>();
 
@@ -306,6 +298,78 @@ namespace NsisoLauncherCore.Util
                     var jresDefault = GetJavaRegisterPath(localMachine);
                     javas.AddRange(jresDefault.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
                     break;
+            }
+            return javas;
+        }
+
+        public static List<Java> GetRuntimeRootJavaList(string runtime_dir)
+        {
+            List<Java> javas = new List<Java>();
+            if (!Directory.Exists(runtime_dir))
+            {
+                return javas;
+            }
+            List<Tuple<string, ArchEnum>> names = new List<Tuple<string, ArchEnum>>(2);
+            OsType os = SystemTools.GetOsType();
+            switch (os)
+            {
+                case OsType.Windows:
+                    ArchEnum arch = SystemTools.GetSystemArch();
+                    switch (arch)
+                    {
+                        case ArchEnum.x32:
+                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
+                            break;
+                        case ArchEnum.x64:
+                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
+                            names.Add(new Tuple<string, ArchEnum>("windows-x64", ArchEnum.x64));
+                            break;
+                        default:
+                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
+                            break;
+                    }
+                    break;
+                case OsType.Linux:
+                    names.Add(new Tuple<string, ArchEnum>("linux", ArchEnum.x64));
+                    break;
+                case OsType.MacOS:
+                    names.Add(new Tuple<string, ArchEnum>("mac-os", ArchEnum.x64));
+                    break;
+                default:
+                    break;
+            }
+            string[] java_dirs = Directory.GetDirectories(runtime_dir);
+            foreach (var item_dir in java_dirs)
+            {
+                string java_tag_name = System.IO.Path.GetFileName(item_dir);
+                foreach (var item_os in names)
+                {
+                    string base_dir = string.Format("{0}\\{1}", item_dir, item_os.Item1);
+                    if (!Directory.Exists(base_dir))
+                    {
+                        continue;
+                    }
+                    string base_runtime_dir = string.Format("{0}\\{1}", base_dir, java_tag_name);
+                    string javaw_path = base_runtime_dir + "\\bin\\javaw.exe";
+                    if (!File.Exists(javaw_path))
+                    {
+                        continue;
+                    }
+                    string version_info_path = base_dir + "\\.version";
+                    Java java;
+                    if (File.Exists(version_info_path))
+                    {
+                        string version = File.ReadAllLines(version_info_path)[0];
+                        java = new Java(javaw_path, version, item_os.Item2);
+                    }
+                    else
+                    {
+                        java = GetJavaInfo(javaw_path);
+                    }
+                    java.GameCoreTag = java_tag_name;
+                    java.Type = "offical";
+                    javas.Add(java);
+                }
             }
             return javas;
         }

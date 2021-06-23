@@ -2,6 +2,7 @@
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Apis;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCoreTest.Apis
@@ -34,6 +35,23 @@ namespace NsisoLauncherCoreTest.Apis
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Windows_x64);
             Assert.IsNotNull(result.Windows_x86);
+            Assert.IsNotNull(result.MacOS);
+            Assert.IsNotNull(result.Linux);
+            Assert.IsNotNull(result.LinuxI386);
+        }
+
+        [TestMethod]
+        public async Task TestGetJavaManifest()
+        {
+            var javas = await _api.GetJavaAll();
+            Assert.IsNotNull(javas);
+            foreach (var item in javas.Gamecore)
+            {
+                var result = await _api.GetJavaManifest(item.Key);
+                Assert.IsNotNull(result);
+                Assert.IsNotNull(result.Files);
+                Assert.IsTrue(result.Files.Count != 0);
+            }
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
@@ -223,6 +225,45 @@ namespace NsisoLauncherCore.Net.Tools
         {
             AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
             return await handler.GetLatestAICoreDownloadTask(source, downloadTo, requester);
+        }
+
+        public static List<IDownloadTask> GetJavaDownloadTasks(JavaManifest manifest, string download_to_dir)
+        {
+            List<IDownloadTask> tasks = new List<IDownloadTask>();
+            foreach (var item in manifest.Files)
+            {
+                switch (item.Value.Type)
+                {
+                    case "directory":
+                        {
+                            string dir = Path.Combine(download_to_dir, item.Key);
+                            ActionDownloadTask task = new ActionDownloadTask("创建Java组件文件夹", () =>
+                            {
+                                if (!Directory.Exists(dir))
+                                {
+                                    Directory.CreateDirectory(dir);
+                                }
+                            });
+                            tasks.Add(task);
+                            break;
+                        }
+
+                    case "file":
+                        {
+                            string file = Path.Combine(download_to_dir, item.Key);
+                            DownloadTask task = new DownloadTask(string.Format("下载JAVA组件{0}", item.Key), new DownloadObject(item.Value.Downloads.Raw, file)
+                            {
+                                Checker = new SHA1Checker(item.Value.Downloads.Raw.Sha1, file)
+                            });
+                            tasks.Add(task);
+                            break;
+                        }
+
+                    default:
+                        break;
+                }
+            }
+            return tasks;
         }
     }
 }

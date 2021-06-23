@@ -40,6 +40,8 @@ namespace NsisoLauncherCore
             }
         }
 
+        public static string RuntimeDirectory { get => CurrentLauncherDirectory + "\\runtime"; }
+
         public static string ConfigDirectory { get => BaseStorageDirectory + "\\Config"; }
 
         public static string TempDirectory { get => BaseStorageDirectory + "\\temp"; }

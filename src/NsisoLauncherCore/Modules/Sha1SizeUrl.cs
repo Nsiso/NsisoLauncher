@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Net;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace NsisoLauncherCore.Modules
     /// <summary>
     /// 基本数据要素类
     /// </summary>
-    public class Sha1SizeUrl
+    public class Sha1SizeUrl : IDownloadable
     {
         /// <summary>
         /// SHA1
@@ -23,6 +24,11 @@ namespace NsisoLauncherCore.Modules
         /// 下载URL
         /// </summary>
         public string Url { get; set; }
+
+        public string GetDownloadSourceURL()
+        {
+            return Url;
+        }
     }
 
     /// <summary>

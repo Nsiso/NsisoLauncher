@@ -15,7 +15,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 下载原本来源
         /// </summary>
-        public string OriginFrom { get; set; } 
+        public string OriginFrom { get; set; }
 
         /// <summary>
         /// 下载到路径

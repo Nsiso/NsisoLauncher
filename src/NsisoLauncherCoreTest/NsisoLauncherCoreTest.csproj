@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Apis\LauncherMetaApiTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\JavaTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NsisoLauncherCore\NsisoLauncherCore.csproj">

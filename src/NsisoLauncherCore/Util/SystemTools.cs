@@ -13,6 +13,13 @@ namespace NsisoLauncherCore.Util
         x64
     }
 
+    public enum OsType
+    {
+        Windows,
+        Linux,
+        MacOS
+    }
+
     public class SystemTools
     {
         /// <summary>
@@ -69,6 +76,12 @@ namespace NsisoLauncherCore.Util
             {
                 return ArchEnum.x32;
             }
+        }
+
+        public static OsType GetOsType()
+        {
+            // this is a hard code, if change to .net core you shoul make a choice.
+            return OsType.Windows;
         }
 
         /// <summary>

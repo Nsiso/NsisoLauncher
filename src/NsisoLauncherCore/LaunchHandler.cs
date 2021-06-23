@@ -166,7 +166,7 @@ namespace NsisoLauncherCore
                     if (setting.LaunchType == LaunchType.CREATE_SHORT)
                     {
                         File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", Java.Path, arg));
-                        return new LaunchResult() { IsSuccess = true, LaunchArguments = arg };
+                        return new LaunchResult() { IsSuccess = true, LaunchArguments = arg, UsingJava = Java };
                     }
 
                     #region 检查处理库文件
@@ -201,7 +201,8 @@ namespace NsisoLauncherCore
                     AppendLaunchInfoLog(string.Format("成功启动游戏进程,总共用时:{0}ms", launchUsingMsTime));
 
 
-                    return new LaunchResult() { Instance = instance, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime };
+                    return new LaunchResult()
+                    { Instance = instance, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime, UsingJava = Java };
                 }
             }
             catch (LaunchException.LaunchException ex)

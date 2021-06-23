@@ -380,17 +380,40 @@ namespace NsisoLauncher
         {
             if (JavaList == null)
             {
-                JavaList = new ObservableCollection<Java>(Java.GetJavaList());
+                JavaList = new ObservableCollection<Java>();
             }
-            else
+            JavaList.Clear();
+            List<Java> javas = Java.GetJavaList();
+            javas.AddRange(Java.GetRuntimeRootJavaList(PathManager.RuntimeDirectory));
+            foreach (var item in javas)
             {
-                JavaList.Clear();
-                List<Java> javas = Java.GetJavaList();
-                foreach (var item in javas)
-                {
-                    JavaList.Add(item);
-                }
+                JavaList.Add(item);
             }
+
+            //if (Directory.Exists(PathManager.RuntimeDirectory))
+            //{
+            //    string[] dirs = Directory.GetDirectories(PathManager.RuntimeDirectory);
+            //    string core = "java-runtime-alpha";
+            //    foreach (var item in dirs)
+            //    {
+            //        string native = null;
+            //        switch (SystemTools.GetOsType())
+            //        {
+            //            case OsType.Windows:
+            //                string[]
+            //                break;
+            //            case OsType.Linux:
+            //                native = "linux";
+            //                break;
+            //            case OsType.MacOS:
+            //                native = "macos";
+            //                break;
+            //            default:
+            //                break;
+            //        }
+
+            //    }
+            //}
         }
 
         public async static Task RefreshVersionListAsync()

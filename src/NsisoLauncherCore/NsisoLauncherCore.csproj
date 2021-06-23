@@ -130,8 +130,10 @@
     <Compile Include="Nbt\TagShort.cs" />
     <Compile Include="Nbt\TagString.cs" />
     <Compile Include="Nbt\TagType.generated.cs" />
+    <Compile Include="Net\ActionDownloadTask.cs" />
     <Compile Include="Net\Apis\LauncherMetaApi.cs" />
     <Compile Include="Net\Apis\Modules\JavaAll.cs" />
+    <Compile Include="Net\Apis\Modules\JavaManifest.cs" />
     <Compile Include="Net\Apis\Modules\VersionManifest.cs" />
     <Compile Include="Net\AuthlibInjectorAPI\APIHandler.cs" />
     <Compile Include="Net\Dns\Header.cs" />
