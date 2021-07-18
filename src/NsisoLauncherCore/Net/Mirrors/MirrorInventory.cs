@@ -29,7 +29,7 @@ namespace NsisoLauncherCore.Net.Mirrors
             bmclapi.BaseUri = new Uri(BMCLUrl);
             bmclapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("bmclapi2.bangbang93.com");
             bmclapi.VersionListUri = new Uri(BMCLVersionURL);
-            bmclapi.ForgeListUri = new Uri(bmclapi.BaseUri, "/forge/minecraft/");
+            bmclapi.ForgeListUri = new Uri(bmclapi.BaseUri, "/forge/minecraft");
             return bmclapi;
         }
 
@@ -43,7 +43,7 @@ namespace NsisoLauncherCore.Net.Mirrors
             mcbbsapi.BaseUri = new Uri(MCBBSUrl);
             mcbbsapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("download.mcbbs.net");
             mcbbsapi.VersionListUri = new Uri(MCBBSVersionURL);
-            mcbbsapi.ForgeListUri = new Uri(mcbbsapi.BaseUri, "/forge/minecraft/");
+            mcbbsapi.ForgeListUri = new Uri(mcbbsapi.BaseUri, "/forge/minecraft");
             return mcbbsapi;
         }
 

@@ -315,17 +315,19 @@ namespace NsisoLauncherCore.Util
             {
                 case OsType.Windows:
                     ArchEnum arch = SystemTools.GetSystemArch();
+                    Tuple<string, ArchEnum> win86 = new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32);
+                    Tuple<string, ArchEnum> win64 = new Tuple<string, ArchEnum>("windows-x64", ArchEnum.x64);
                     switch (arch)
                     {
                         case ArchEnum.x32:
-                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
+                            names.Add(win86);
                             break;
                         case ArchEnum.x64:
-                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
-                            names.Add(new Tuple<string, ArchEnum>("windows-x64", ArchEnum.x64));
+                            names.Add(win86);
+                            names.Add(win64);
                             break;
                         default:
-                            names.Add(new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32));
+                            names.Add(win86);
                             break;
                     }
                     break;
