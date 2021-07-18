@@ -198,41 +198,51 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                     case AuthenticationType.MICROSOFT:
-                        NowState = string.Format("正在进行微软登录", authenticationNode.Name);
-                        if (selectedUser.User is MicrosoftUser ms && !string.IsNullOrWhiteSpace(ms.MinecraftToken?.AccessToken))
                         {
-                            //检查minecraft token是否过期
-                            if (Jwt.ValidateExp(ms.MinecraftToken.AccessToken))
+                            try
                             {
-                                //如果未过期
-                                break;
-                            }
-                            else
-                            {
-                                //如果过期
-                                //检查微软token是否过期
-                                OauthLoginWindow loginWindow = new OauthLoginWindow(App.NetHandler.Requester);
-                                if (DateTime.UtcNow < ms.MicrosoftToken.IssuedTime.AddSeconds(ms.MicrosoftToken.Expires_in))
+                                NowState = string.Format("正在进行微软登录", authenticationNode.Name);
+                                if (selectedUser.User is MicrosoftUser ms && !string.IsNullOrWhiteSpace(ms.MinecraftToken?.AccessToken))
                                 {
-                                    ms.MinecraftToken = await loginWindow.RefreshMinecraftToken(ms.MicrosoftToken);
-                                }
-                                else
-                                {
-                                    loginWindow.ShowLogin();
-                                    if (loginWindow.LoggedInUser != null)
+                                    //检查minecraft token是否过期
+
+                                    //如果未过期
+                                    if (Jwt.ValidateExp(ms.MinecraftToken.AccessToken))
                                     {
-                                        ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;
-                                        //todo 感觉微软登录刷新还没写完
                                         break;
+                                    }
+
+                                    //如果过期
+                                    //检查微软token是否过期
+                                    OauthLoginWindow loginWindow = new OauthLoginWindow(App.NetHandler.Requester);
+                                    loginWindow.CancelToken = CancellationSource.Token;
+                                    if (DateTime.UtcNow < ms.MicrosoftToken.IssuedTime.AddSeconds(ms.MicrosoftToken.Expires_in))
+                                    {
+                                        ms.MinecraftToken = await loginWindow.RefreshMinecraftToken(ms.MicrosoftToken);
                                     }
                                     else
                                     {
-                                        await App.MainWindowVM.ShowMessageAsync("登录失败", "请检查微软登录是否成功进行");
+                                        loginWindow.ShowLogin();
+                                        if (loginWindow.LoggedInUser != null)
+                                        {
+                                            ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;
+                                            //todo 感觉微软登录刷新还没写完
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            await App.MainWindowVM.ShowMessageAsync("登录失败", "请检查微软登录是否成功进行");
+                                        }
                                     }
                                 }
+                                //todo 刷新微软账户
+                                return;
+                            }
+                            catch (Exception ex)
+                            {
+                                await App.MainWindowVM.ShowMessageAsync(string.Format("登录失败", ex.Message), ex.ToString());
                             }
                         }
-                        //todo 刷新微软账户
                         return;
                     default:
                         authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
@@ -251,7 +261,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     ClientToken = clientToken
                 };
 
-                var result = await authenticator.Validate(tokens);
+                var result = await authenticator.Validate(tokens, CancellationSource.Token);
 
                 if (result.IsSuccess)
                 {
@@ -259,7 +269,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 else
                 {
-                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens));
+                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens), CancellationSource.Token);
                     if (refresh_result.IsSuccess)
                     {
                         if (selectedUser.User is YggdrasilUser ygg)
