@@ -54,6 +54,7 @@
     <Compile Include="Config\LauncherSettings.cs" />
     <Compile Include="Config\LauncherSkins.cs" />
     <Compile Include="LaunchException\GameValidateFailedException.cs" />
+    <Compile Include="LaunchException\JavaNotMatchedException.cs" />
     <Compile Include="LaunchException\LaunchException.cs" />
     <Compile Include="LaunchException\LibraryNotFoundException.cs" />
     <Compile Include="LaunchException\NativeNotFoundException.cs" />

@@ -121,6 +121,13 @@ namespace NsisoLauncherCore
                     {
                         return new LaunchResult(new ArgumentException("启动所需必要的版本参数为空"));
                     }
+                    if (setting.Version.JavaVersion != null)
+                    {
+                        if (setting.Version.JavaVersion.MajorVersion > Java.MajorVersion)
+                        {
+                            return new LaunchResult(new JavaNotMatchedException(setting.Version.JavaVersion, Java));
+                        }
+                    }
 
                     if (setting.MaxMemory == 0)
                     {

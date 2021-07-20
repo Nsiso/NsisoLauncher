@@ -50,6 +50,22 @@ namespace NsisoLauncherCore.Util
         /// </summary>
         public string Version { get; private set; }
 
+        public int MajorVersion
+        {
+            get
+            {
+                string[] vers = Version.Trim().Split('.', '_', '-', '+');
+                if (vers[0] == "1")
+                {
+                    return int.Parse(vers[1]);
+                }
+                else
+                {
+                    return int.Parse(vers[0]);
+                }
+            }
+        }
+
         /// <summary>
         /// Java类型（OracleJDK or OpenJDK...）
         /// </summary>

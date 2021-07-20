@@ -119,6 +119,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             args.Add("refresh_token", token.Refresh_token);
             args.Add("grant_type", "refresh_token");
             args.Add("redirect_uri", RedirectUri.AbsoluteUri);
+            args.Add("scope", Scope);
             FormUrlEncodedContent content = new FormUrlEncodedContent(args);
             var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
             result.EnsureSuccessStatusCode();

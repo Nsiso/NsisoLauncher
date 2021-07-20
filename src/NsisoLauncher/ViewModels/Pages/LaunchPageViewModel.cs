@@ -616,6 +616,11 @@ namespace NsisoLauncher.ViewModels.Pages
                                 await MainWindowVM.ShowMessageAsync("游戏文件缺失或破损，无法安全启动",
                                     string.Format("游戏文件存在缺失或破损的情况，请检查游戏完整性\n{0}", validate_str_builder.ToString()));
                             }
+                            else if (result.LaunchException is JavaNotMatchedException java_ex)
+                            {
+                                await MainWindowVM.ShowMessageAsync("该minecraft版本要求更高版本的JAVA",
+                                   string.Format("游戏要求使用最低的java版本{0}，而启动所使用的java版本为{1}", java_ex.RequiredVersion.MajorVersion, java_ex.CurrentJava.MajorVersion));
+                            }
                             else
                             {
                                 await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.LaunchError") + result.LaunchException.Title, result.LaunchException.Message);
