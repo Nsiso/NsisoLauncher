@@ -41,16 +41,17 @@ namespace NsisoLauncherCoreTest.Apis
         }
 
         [TestMethod]
-        public async Task TestGetJavaManifest()
+        public async Task TestGetNativeJavaMeta()
         {
             var javas = await _api.GetJavaAll();
             Assert.IsNotNull(javas);
             foreach (var item in javas.Gamecore)
             {
-                var result = await _api.GetJavaManifest(item.Key);
+                var result = await _api.GetNativeJavaMeta(item.Key);
                 Assert.IsNotNull(result);
-                Assert.IsNotNull(result.Files);
-                Assert.IsTrue(result.Files.Count != 0);
+                Assert.IsNotNull(result.Manifest);
+                Assert.IsNotNull(result.Manifest.Files);
+                Assert.IsTrue(result.Manifest.Files.Count != 0);
             }
         }
     }
