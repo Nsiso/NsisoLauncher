@@ -135,6 +135,7 @@
     <Compile Include="Net\Apis\LauncherMetaApi.cs" />
     <Compile Include="Net\Apis\Modules\JavaAll.cs" />
     <Compile Include="Net\Apis\Modules\JavaManifest.cs" />
+    <Compile Include="Net\Apis\Modules\NativeJavaMeta.cs" />
     <Compile Include="Net\Apis\Modules\VersionManifest.cs" />
     <Compile Include="Net\AuthlibInjectorAPI\APIHandler.cs" />
     <Compile Include="Net\Dns\Header.cs" />

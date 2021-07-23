@@ -54,7 +54,7 @@ namespace NsisoLauncherCore.Util
         {
             get
             {
-                string[] vers = Version.Trim().Split('.', '_', '-', '+');
+                string[] vers = Version.Trim().Split('.', '_', '-', '+', 'u', 'U');
                 if (vers[0] == "1")
                 {
                     return int.Parse(vers[1]);

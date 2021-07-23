@@ -21,6 +21,8 @@ using System.Windows;
 using System.Windows.Input;
 using Version = NsisoLauncherCore.Modules.Version;
 using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Net.Apis;
+using NsisoLauncherCore.Net.Apis.Modules;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -618,8 +620,39 @@ namespace NsisoLauncher.ViewModels.Pages
                             }
                             else if (result.LaunchException is JavaNotMatchedException java_ex)
                             {
-                                await MainWindowVM.ShowMessageAsync("该minecraft版本要求更高版本的JAVA",
-                                   string.Format("游戏要求使用最低的java版本{0}，而启动所使用的java版本为{1}", java_ex.RequiredVersion.MajorVersion, java_ex.CurrentJava.MajorVersion));
+                                var java_choose = await MainWindowVM.ShowMessageAsync("该minecraft版本要求更高版本的JAVA",
+                                   string.Format("游戏要求使用最低的java版本{0}，而启动所使用的java版本为{1}，是否下载该版本支持的java？",
+                                   java_ex.RequiredVersion.MajorVersion, java_ex.CurrentJava.MajorVersion),
+                                   MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings()
+                                   {
+                                       AffirmativeButtonText = "下载",
+                                       NegativeButtonText = "取消"
+                                   });
+                                switch (java_choose)
+                                {
+                                    case MessageDialogResult.Canceled:
+                                        break;
+                                    case MessageDialogResult.Negative:
+                                        break;
+                                    case MessageDialogResult.Affirmative:
+                                        if (result.Setting.Version.JavaVersion != null)
+                                        {
+                                            LauncherMetaApi metaApi = new LauncherMetaApi(App.NetHandler.Requester);
+                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(result.Setting.Version.JavaVersion.Component);
+                                            List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
+                                            App.NetHandler.Downloader.AddDownloadTask(tasks);
+                                            App.MainPageVM.NavigateToDownloadPage();
+                                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
+                                            App.RefreshJavaList();
+                                        }
+                                        else
+                                        {
+                                            await MainWindowVM.ShowMessageAsync("该版本没有提供java信息", "无法进行自动下载，请自行下载最新版本java");
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             else
                             {

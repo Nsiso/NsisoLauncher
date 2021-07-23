@@ -54,41 +54,69 @@ namespace NsisoLauncherCore.Net.Apis
             return JsonConvert.DeserializeObject<JavaManifest>(json_str);
         }
 
-        public async Task<JavaManifest> GetJavaManifest(string gamecore, CancellationToken cancellation = default)
+        public async Task<NativeJavaMeta> GetNativeJavaMeta(string gamecore, CancellationToken cancellation = default)
         {
             JavaAll javas = await GetJavaAll(cancellation);
+            if (javas == null)
+            {
+                throw new Exception("The java list is null");
+            }
             JavaMeta java = null;
             OsType os = SystemTools.GetOsType();
             ArchEnum arch = SystemTools.GetSystemArch();
+            string os_info = null;
             switch (os)
             {
                 case OsType.Windows:
+                    os_info = "windows";
                     switch (arch)
                     {
                         case ArchEnum.x32:
+                            os_info += "-x86";
                             java = javas.Windows_x86[gamecore].FirstOrDefault();
                             break;
                         case ArchEnum.x64:
+                            os_info += "-x64";
                             java = javas.Windows_x64[gamecore].FirstOrDefault();
                             break;
                         default:
+                            os_info += "-x86";
                             java = javas.Windows_x86[gamecore].FirstOrDefault();
                             break;
                     }
                     break;
                 case OsType.Linux:
+                    os_info = "linux";
                     java = javas.Linux[gamecore].FirstOrDefault();
                     break;
                 case OsType.MacOS:
+                    os_info = "mac-os";
                     java = javas.MacOS[gamecore].FirstOrDefault();
                     break;
                 default:
                     break;
             }
+
+            if (java == null)
+            {
+                throw new Exception("The selected java is null in get native java meta");
+            }
+
             HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(java.Manifest.Url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<JavaManifest>(json_str);
+            JavaManifest manifest = JsonConvert.DeserializeObject<JavaManifest>(json_str);
+
+            NativeJavaMeta nativeJavaMeta = new NativeJavaMeta()
+            {
+                Manifest = manifest,
+                Tag = gamecore,
+                Version = java.Version.Name,
+                OsInfo = os_info
+            };
+
+
+            return nativeJavaMeta;
         }
     }
 }

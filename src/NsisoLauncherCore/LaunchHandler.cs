@@ -104,6 +104,7 @@ namespace NsisoLauncherCore
         #region 启动主方法
         private LaunchResult Launch(LaunchSetting setting)
         {
+            LaunchResult result = new LaunchResult() { Setting = setting, UsingJava = Java };
             try
             {
                 IsBusyLaunching = true;
@@ -111,21 +112,25 @@ namespace NsisoLauncherCore
                 {
                     if (Java == null)
                     {
-                        return new LaunchResult(new NullJavaException());
+                        result.SetException(new NullJavaException());
+                        return result;
                     }
                     if (setting.LaunchUser == null)
                     {
-                        return new LaunchResult(new ArgumentException("启动所需必要的用户参数为空"));
+                        result.SetException(new ArgumentException("启动所需必要的用户参数为空"));
+                        return result;
                     }
                     if (setting.Version == null)
                     {
-                        return new LaunchResult(new ArgumentException("启动所需必要的版本参数为空"));
+                        result.SetException(new ArgumentException("启动所需必要的版本参数为空"));
+                        return result;
                     }
                     if (setting.Version.JavaVersion != null)
                     {
                         if (setting.Version.JavaVersion.MajorVersion > Java.MajorVersion)
                         {
-                            return new LaunchResult(new JavaNotMatchedException(setting.Version.JavaVersion, Java));
+                            result.SetException(new JavaNotMatchedException(setting.Version.JavaVersion, Java));
+                            return result;
                         }
                     }
 
@@ -160,20 +165,27 @@ namespace NsisoLauncherCore
                                         AppendLaunchInfoLog(string.Format("文件损坏（hash不一致）:{0}", item.Key));
                                         break;
                                     default:
-                                        AppendLaunchInfoLog(string.Format("文件异常:{0}", item.Key));
+                                        AppendLaunchInfoLog(string.Format("未知文件异常:{0}", item.Key));
                                         break;
                                 }
                             }
-                            throw new GameValidateFailedException(validate_result.FailedFiles);
+                            result.SetException(new GameValidateFailedException(validate_result.FailedFiles));
+                            return result;
                         }
                     }
 
+
+                    // 生成启动参数
                     string arg = argumentsParser.Parse(setting);
+                    result.LaunchArguments = arg;
+
 
                     if (setting.LaunchType == LaunchType.CREATE_SHORT)
                     {
                         File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", Java.Path, arg));
-                        return new LaunchResult() { IsSuccess = true, LaunchArguments = arg, UsingJava = Java };
+
+                        result.SetSuccess();
+                        return result;
                     }
 
                     #region 检查处理库文件
@@ -187,17 +199,24 @@ namespace NsisoLauncherCore
                         }
                         else
                         {
-                            return new LaunchResult(new NativeNotFoundException(item, nativePath));
+                            result.SetException(new NativeNotFoundException(item, nativePath));
+                            return result;
                         }
                     }
                     #endregion
 
                     AppendLaunchInfoLog(string.Format("开始启动游戏进程，使用JAVA路径:{0}", this.Java.Path));
 
+                    if (!File.Exists(Java.Path))
+                    {
+                        result.SetException(new NullJavaException());
+                        return result;
+                    }
                     ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
                     { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
 
                     LaunchInstance instance = new LaunchInstance(setting, startInfo);
+                    result.Instance = instance;
                     instance.Exit += Instance_Exit;
                     instance.Log += Instance_Log;
 
@@ -205,20 +224,25 @@ namespace NsisoLauncherCore
 
                     sw.Stop();
                     long launchUsingMsTime = sw.ElapsedMilliseconds;
+                    result.LaunchUsingMs = launchUsingMsTime;
+
+
                     AppendLaunchInfoLog(string.Format("成功启动游戏进程,总共用时:{0}ms", launchUsingMsTime));
 
 
-                    return new LaunchResult()
-                    { Instance = instance, IsSuccess = true, LaunchArguments = arg, LaunchUsingMs = launchUsingMsTime, UsingJava = Java };
+                    result.SetSuccess();
+                    return result;
                 }
             }
             catch (LaunchException.LaunchException ex)
             {
-                return new LaunchResult(ex);
+                result.SetException(ex);
+                return result;
             }
             catch (Exception ex)
             {
-                return new LaunchResult(ex);
+                result.SetException(ex);
+                return result;
             }
             finally
             {

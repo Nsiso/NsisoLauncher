@@ -11,6 +11,11 @@ namespace NsisoLauncherCore.Modules
         public LaunchInstance Instance { get; set; }
 
         /// <summary>
+        /// 启动使用的设置
+        /// </summary>
+        public LaunchSetting Setting { get; set; }
+
+        /// <summary>
         /// 启动所使用的java
         /// </summary>
         public Java UsingJava { get; set; }
@@ -35,23 +40,34 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public long LaunchUsingMs { get; set; }
 
+        public void SetException(Exception ex)
+        {
+            this.IsSuccess = false;
+            this.LaunchException = new LaunchException.LaunchException(ex);
+        }
+
+        public void SetException(LaunchException.LaunchException ex)
+        {
+            this.IsSuccess = false;
+            this.LaunchException = ex;
+        }
+
+        public void SetSuccess()
+        {
+            this.IsSuccess = true;
+            this.LaunchException = null;
+        }
 
         public LaunchResult() { }
 
         public LaunchResult(LaunchException.LaunchException ex)
         {
-            Instance = null;
-            LaunchArguments = null;
-            this.IsSuccess = false;
-            this.LaunchException = ex;
+            SetException(ex);
         }
 
         public LaunchResult(Exception ex)
         {
-            Instance = null;
-            LaunchArguments = null;
-            this.IsSuccess = false;
-            this.LaunchException = new LaunchException.LaunchException(ex);
+            SetException(ex);
         }
     }
 }

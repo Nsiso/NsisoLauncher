@@ -1,10 +1,12 @@
 ﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Tools
@@ -227,7 +229,7 @@ namespace NsisoLauncherCore.Net.Tools
             return await handler.GetLatestAICoreDownloadTask(source, downloadTo, requester);
         }
 
-        public static List<IDownloadTask> GetJavaDownloadTasks(JavaManifest manifest, string download_to_dir)
+        private static List<IDownloadTask> GetJavaManifestDownloadTasks(JavaManifest manifest, string download_to_dir)
         {
             List<IDownloadTask> tasks = new List<IDownloadTask>();
             foreach (var item in manifest.Files)
@@ -263,6 +265,19 @@ namespace NsisoLauncherCore.Net.Tools
                         break;
                 }
             }
+            return tasks;
+        }
+
+        public static List<IDownloadTask> GetJavaDownloadTasks(NativeJavaMeta native_meta)
+        {
+            List<IDownloadTask> tasks = GetJavaManifestDownloadTasks(native_meta.Manifest, native_meta.GetJavaDestinationPath(PathManager.RuntimeDirectory));
+
+            tasks.Add(new ActionDownloadTask("创建Java版本信息", () =>
+            {
+                string file_name = string.Format("{0}\\{1}", native_meta.GetBasePath(PathManager.RuntimeDirectory), ".version");
+                File.WriteAllText(file_name, native_meta.Version);
+            }));
+
             return tasks;
         }
     }
