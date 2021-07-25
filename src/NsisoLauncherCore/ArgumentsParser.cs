@@ -3,6 +3,7 @@ using NsisoLauncherCore.Net.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -37,7 +38,24 @@ namespace NsisoLauncherCore
             }
             #endregion
 
-            #region 处理JVM启动头参数  
+
+            #region 处理游戏JVM参数
+            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
+            {
+                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(setting.Version), @"\$natives") },
+                {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
+                {"${classpath_separator}", ";" },
+                {"${launcher_name}","NsisoLauncher5" },
+                {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
+                {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
+            };
+
+            jvmHead.Append(ReplaceByDic(setting.Version.JvmArguments, jvmArgDic)?.Trim());
+            jvmHead.Append(' ');
+            jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
+            #endregion
+
+            #region 处理JVM启动参数  
             if (setting.GCEnabled)
             {
                 switch (setting.GCType)
@@ -77,20 +95,8 @@ namespace NsisoLauncherCore
             {
                 jvmHead.Append(setting.AdvencedJvmArguments).Append(' ');
             }
-            #endregion
-
-            #region 处理游戏JVM参数
-            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
-            {
-                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(setting.Version), @"\$natives") },
-                {"${launcher_name}","NsisoLauncher5" },
-                {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                {"${classpath}", GetClassPaths(setting.Version.Libraries,setting.Version) },
-            };
-
-            jvmHead.Append(ReplaceByDic(setting.Version.JvmArguments, jvmArgDic)?.Trim());
-            jvmHead.Append(' ');
-            jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
+            //允许实验参数
+            jvmHead.Append("-XX:+UnlockExperimentalVMOptions ");
             #endregion
 
             #endregion
@@ -223,8 +229,12 @@ namespace NsisoLauncherCore
                 string libPath = handler.GetLibraryPath(item);
                 stringBuilder.AppendFormat("{0};", libPath);
             }
-            stringBuilder.Append(handler.GetJarPath(ver));
+
+            string jar_path = handler.GetJarPath(ver);
+            stringBuilder.Append(jar_path);
+
             stringBuilder.Append('\"');
+
             return stringBuilder.ToString().Trim();
         }
 

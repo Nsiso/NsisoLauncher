@@ -98,6 +98,9 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Json
 
         public class Processor
         {
+            [JsonProperty("sides")]
+            public List<string> Sides { get; set; }
+
             /// <summary>
             /// The executable jar to run, The installer will run it in-process, but external tools can run it using java -jar {file}, so MANFEST Main-Class entry must be valid.
             /// </summary>

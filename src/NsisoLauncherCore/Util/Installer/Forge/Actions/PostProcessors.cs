@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 /* 项目“NsisoLauncher.Test”的未合并的更改
 在此之前:
@@ -44,7 +45,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
             this.HasTasks = this.Processors.Count != 0;
             this.Data = new Dictionary<string, string>();
         }
-        public Exception Process(string temp, string gamerootPath, string minecraft, Java java)
+        public Exception Process(string installer_path, string temp, string gamerootPath, string minecraft, Java java)
         {
             try
             {
@@ -76,6 +77,8 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                 }
                 Data.Add("SIDE", IsClient ? "client" : "server");
                 Data.Add("MINECRAFT_JAR", minecraft);
+                Data.Add("ROOT", gamerootPath);
+                Data.Add("INSTALLER", installer_path);
 
                 Monitor.TotalSize = Processors.Count;
                 Monitor.DoneSize = 0;
@@ -83,6 +86,11 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 
                 foreach (var proc in Processors)
                 {
+                    if (proc.Sides != null && !proc.Sides.Contains("client"))
+                    {
+                        continue;
+                    }
+
                     string jarPath = GetArtifactPath(gamerootPath, proc.Jar);
                     if (!File.Exists(jarPath))
                     {
@@ -121,18 +129,13 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                         {
                             argBuilder.Append("\"").Append(GetArtifactPath(gamerootPath, item.Substring(1, item.Length - 2))).Append("\" ");
                         }
-                        else if (start == '{' && end == '}')
-                        { // Data
-                            string key = item.Substring(1, item.Length - 2);
-                            string value = Data[key];
+                        else
+                        {
+                            string value = ReplaceByDic(item, Data);
                             if (value != null)
                             {
                                 argBuilder.Append("\"").Append(value).Append("\" ");
                             }
-                        }
-                        else
-                        {
-                            argBuilder.Append(item).Append(' ');
                         }
                     }
 
@@ -149,6 +152,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 
                     Monitor.IncreaseDoneSize(1);
                 }
+
                 Monitor.SetDone();
                 return null;
             }
@@ -162,6 +166,19 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
         private void Result_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine(e.Data);
+        }
+
+        private static string ReplaceByDic(string str, Dictionary<string, string> dic)
+        {
+            if (str == null)
+            {
+                return null;
+            }
+            return dic.Aggregate(str, (a, b) =>
+            {
+                string item = string.Format("{{{0}}}", b.Key);
+                return a.Replace(item, b.Value);
+            });
         }
     }
 }

@@ -41,6 +41,11 @@ namespace NsisoLauncherCore.Modules
 
         public Artifact(string descriptor)
         {
+            if (string.IsNullOrEmpty(descriptor))
+            {
+                throw new ArgumentNullException("The artifact description must not be null or empty");
+            }
+
             this.Descriptor = descriptor;
             string[] parts = descriptor.Split(':');
 

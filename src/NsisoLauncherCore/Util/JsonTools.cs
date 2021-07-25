@@ -10,12 +10,26 @@ namespace NsisoLauncherCore.Util
         {
             public override Artifact ReadJson(JsonReader reader, Type objectType, Artifact existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
-                return new Artifact((string)reader.Value);
+                if (reader.Value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new Artifact((string)reader.Value);
+                }
             }
 
             public override void WriteJson(JsonWriter writer, Artifact value, JsonSerializer serializer)
             {
-                writer.WriteValue(value.Descriptor);
+                if (value == null)
+                {
+                    writer.WriteValue((object)null);
+                }
+                else
+                {
+                    writer.WriteValue(value.Descriptor);
+                }
             }
         }
     }

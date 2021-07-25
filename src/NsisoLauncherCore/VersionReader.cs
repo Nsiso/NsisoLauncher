@@ -47,7 +47,28 @@ namespace NsisoLauncherCore
 
                 SendDebugLog(string.Format("检测到\"{0}\"使用新版本启动参数", ver.Id));
 
-                #region 处理版本继承
+                JObject verArg = (JObject)obj["arguments"];
+
+                #region JVM参数
+                //版本继承
+                if (innerVer != null && innerVer.ContainsKey("arguments"))
+                {
+                    JObject innerVerArg = (JObject)innerVer["arguments"];
+                    if (innerVerArg.ContainsKey("jvm"))
+                    {
+                        ver.JvmArguments += string.Format("{0} ", ParseJvmArgFromJson(innerVerArg["jvm"]));
+                    }
+                }
+                if (verArg.ContainsKey("jvm"))
+                {
+                    JToken jvmArg = verArg["jvm"];
+                    ver.JvmArguments += string.Format("{0} ", ParseJvmArgFromJson(jvmArg));
+                }
+                #endregion
+
+
+                #region 游戏参数
+                //版本继承
                 if (innerVer != null && innerVer.ContainsKey("arguments"))
                 {
                     JObject innerVerArg = (JObject)innerVer["arguments"];
@@ -55,28 +76,11 @@ namespace NsisoLauncherCore
                     {
                         ver.MinecraftArguments += string.Format("{0} ", ParseGameArgFromJson(innerVerArg["game"]));
                     }
-                    if (innerVerArg.ContainsKey("jvm"))
-                    {
-                        ver.JvmArguments += string.Format("{0} ", ParseJvmArgFromJson(innerVerArg["jvm"]));
-                    }
                 }
-                #endregion
-
-                JObject verArg = (JObject)obj["arguments"];
-
-                #region 游戏参数
                 if (verArg.ContainsKey("game"))
                 {
                     JToken gameArg = verArg["game"];
-                    ver.MinecraftArguments += ParseGameArgFromJson(gameArg);
-                }
-                #endregion
-
-                #region JVM参数
-                if (verArg.ContainsKey("jvm"))
-                {
-                    JToken jvmArg = verArg["jvm"];
-                    ver.JvmArguments += ParseJvmArgFromJson(jvmArg);
+                    ver.MinecraftArguments += string.Format("{0} ", ParseGameArgFromJson(gameArg));
                 }
                 #endregion
             }
@@ -145,7 +149,8 @@ namespace NsisoLauncherCore
                     ver.AssetIndex = iv.AssetIndex;
                     ver.Natives.AddRange(iv.Natives);
                     ver.Libraries.AddRange(iv.Libraries);
-                    ver.Jar = iv.Id;
+                    //todo 不知道这的jar干啥的
+                    // ver.Jar = iv.Id;
                 }
             }
             #endregion
@@ -172,7 +177,7 @@ namespace NsisoLauncherCore
             {
                 if (arg.Type == JTokenType.String)
                 {
-                    gameArgBuilder.AppendFormat("{0} ", arg.ToString());
+                    gameArgBuilder.AppendFormat("\"{0}\" ", arg.ToString());
                 }
                 else if (arg.Type == JTokenType.Object)
                 {
@@ -186,13 +191,13 @@ namespace NsisoLauncherCore
                         JToken valueJtoken = argObj["value"];
                         if (valueJtoken.Type == JTokenType.String)
                         {
-                            gameArgBuilder.AppendFormat("{0} ", valueJtoken.ToString());
+                            gameArgBuilder.AppendFormat("\"{0}\" ", valueJtoken.ToString());
                         }
                         else if (valueJtoken.Type == JTokenType.Array)
                         {
                             foreach (var item in valueJtoken)
                             {
-                                gameArgBuilder.AppendFormat("{0} ", item.ToString());
+                                gameArgBuilder.AppendFormat("\"{0}\" ", item.ToString());
                             }
                         }
                     }
@@ -208,7 +213,7 @@ namespace NsisoLauncherCore
             {
                 if (arg.Type == JTokenType.String)
                 {
-                    jvmArgBuilder.AppendFormat("{0} ", arg.ToString());
+                    jvmArgBuilder.AppendFormat("\"{0}\" ", arg.ToString());
                 }
                 else if (arg.Type == JTokenType.Object)
                 {
@@ -266,28 +271,14 @@ namespace NsisoLauncherCore
                                 if (arg["value"].Type == JTokenType.String)
                                 {
                                     string value = arg["value"].ToString();
-                                    if (value.Contains(" "))
-                                    {
-                                        jvmArgBuilder.AppendFormat("\"{0}\" ", value);
-                                    }
-                                    else
-                                    {
-                                        jvmArgBuilder.AppendFormat("{0} ", value);
-                                    }
+                                    jvmArgBuilder.AppendFormat("\"{0}\" ", value);
                                 }
                                 else if (arg["value"].Type == JTokenType.Array)
                                 {
                                     foreach (var str in arg["value"])
                                     {
                                         string value = str.ToString();
-                                        if (value.Contains(" "))
-                                        {
-                                            jvmArgBuilder.AppendFormat("\"{0}\" ", value);
-                                        }
-                                        else
-                                        {
-                                            jvmArgBuilder.AppendFormat("{0} ", value);
-                                        }
+                                        jvmArgBuilder.AppendFormat("\"{0}\" ", value);
                                     }
                                 }
                             }
@@ -299,13 +290,13 @@ namespace NsisoLauncherCore
                         JToken valueJtoken = argObj["value"];
                         if (valueJtoken.Type == JTokenType.String)
                         {
-                            jvmArgBuilder.AppendFormat("{0} ", valueJtoken.ToString());
+                            jvmArgBuilder.AppendFormat("\"{0}\" ", valueJtoken.ToString());
                         }
                         else if (valueJtoken.Type == JTokenType.Array)
                         {
                             foreach (var item in valueJtoken)
                             {
-                                jvmArgBuilder.AppendFormat("{0} ", item.ToString());
+                                jvmArgBuilder.AppendFormat("\"{0}\" ", item.ToString());
                             }
                         }
                     }

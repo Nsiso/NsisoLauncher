@@ -57,7 +57,10 @@ namespace NsisoLauncherCore
             {
                 LatestLogQueue.Dequeue();
             }
-            LatestLogQueue.Enqueue(e.Message);
+            if (e.Message != null)
+            {
+                LatestLogQueue.Enqueue(e.Message);
+            }
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)

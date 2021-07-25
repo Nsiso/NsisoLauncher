@@ -37,7 +37,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             this.Options = options ?? throw new ArgumentNullException("Install options is null");
         }
 
-        public void BeginInstallFromJObject(ProgressCallback monitor, CancellationToken cancellationToken, JObject jObj, string tempPath)
+        public void BeginInstallFromJObject(ProgressCallback monitor, CancellationToken cancellationToken, JObject jObj, string installer_path, string tempPath)
         {
             profile = jObj.ToObject<Install>();
 
@@ -88,15 +88,19 @@ namespace NsisoLauncherCore.Util.Installer.Forge
                 throw exc;
             }
 
-            string[] mavenFolders = Directory.GetDirectories(tempPath + "\\maven");
-            foreach (var item in mavenFolders)
+            string maven = tempPath + "\\maven";
+            if (Directory.Exists(maven))
             {
-                DirectoryInfo info = new DirectoryInfo(item);
-                FileHelper.DirectoryCopy(item, librariesDir + '\\' + info.Name, true, true);
+                string[] mavenFolders = Directory.GetDirectories(maven);
+                foreach (var item in mavenFolders)
+                {
+                    DirectoryInfo info = new DirectoryInfo(item);
+                    FileHelper.DirectoryCopy(item, librariesDir + '\\' + info.Name, true, true);
+                }
             }
 
             PostProcessors postProcessors = new PostProcessors(profile, Options.IsClient, monitor);
-            Exception procExc = postProcessors.Process(tempPath, Options.GameRootPath, clientTarget, Options.Java);
+            Exception procExc = postProcessors.Process(installer_path, tempPath, Options.GameRootPath, clientTarget, Options.Java);
             if (procExc != null)
             {
                 throw procExc;
@@ -140,7 +144,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             else if (jObject.ContainsKey("data") && jObject.ContainsKey("processors") && jObject.ContainsKey("libraries"))
             {
                 DataProcessorsForgeInstaller forgeInstaller = new DataProcessorsForgeInstaller(InstallerPath, Options);
-                forgeInstaller.BeginInstallFromJObject(monitor, cancellationToken, jObject, tempPath);
+                forgeInstaller.BeginInstallFromJObject(monitor, cancellationToken, jObject, InstallerPath, tempPath);
             }
             else
             {
