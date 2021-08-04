@@ -5,6 +5,7 @@ using NsisoLauncherCore.Util.Mod;
 using NsisoLauncherCore.Util.Save;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,11 +20,6 @@ namespace NsisoLauncherCore
         /// 启动器所处理的游戏根目录
         /// </summary>
         public string GameRootPath { get; set; }
-
-        /// <summary>
-        /// 启动器所使用JAVA
-        /// </summary>
-        public Java Java { get; set; }
 
         /// <summary>
         /// 是否开启版本隔离
@@ -45,6 +41,11 @@ namespace NsisoLauncherCore
         /// </summary>
         public ModHandler ModHandler { get; set; }
 
+        /// <summary>
+        /// All javas
+        /// </summary>
+        public ObservableCollection<Java> Javas { get; set; }
+
         public event EventHandler<Log> GameLog;
         public event EventHandler<GameExitArg> GameExit;
         public event EventHandler<Log> LaunchLog;
@@ -53,12 +54,11 @@ namespace NsisoLauncherCore
         private VersionReader versionReader;
         private AssetsReader assetsReader;
 
-        public LaunchHandler() : this(PathManager.CurrentLauncherDirectory + "\\.minecraft", Java.GetSuitableJava(), false) { }
+        public LaunchHandler() : this(PathManager.CurrentLauncherDirectory + "\\.minecraft", false) { }
 
-        public LaunchHandler(string gamepath, Java java, bool isversionIsolation)
+        public LaunchHandler(string gamepath, bool isversionIsolation)
         {
             this.GameRootPath = gamepath;
-            this.Java = java;
             this.VersionIsolation = isversionIsolation;
 
             versionReader = new VersionReader(this);
@@ -73,16 +73,16 @@ namespace NsisoLauncherCore
             ModHandler = new ModHandler(this);
         }
 
-        public async Task<LaunchResult> LaunchAsync(LaunchSetting setting)
+        public async Task<LaunchResult> LaunchAsync(VersionBase ver, LaunchSetting setting)
         {
             var result = await Task.Factory.StartNew(() =>
             {
-                return Launch(setting);
+                return Launch(ver, setting);
             });
             return result;
         }
 
-        public JAssets GetAssets(Modules.Version version)
+        public JAssets GetAssets(VersionBase version)
         {
             return assetsReader.GetAssets(version);
         }
@@ -92,7 +92,7 @@ namespace NsisoLauncherCore
             return assetsReader.GetAssetsByJson(json);
         }
 
-        public async Task<JAssets> GetAssetsAsync(Modules.Version version)
+        public async Task<JAssets> GetAssetsAsync(VersionBase version)
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -102,41 +102,48 @@ namespace NsisoLauncherCore
         }
 
         #region 启动主方法
-        private LaunchResult Launch(LaunchSetting setting)
+        private LaunchResult Launch(VersionBase ver, LaunchSetting setting)
         {
-            LaunchResult result = new LaunchResult() { Setting = setting, UsingJava = Java };
+            LaunchResult result = new LaunchResult() { Setting = setting, UsingJava = setting.UsingJava, Version = ver };
             try
             {
                 IsBusyLaunching = true;
                 lock (launchLocker)
                 {
-                    if (Java == null)
-                    {
-                        result.SetException(new NullJavaException());
-                        return result;
-                    }
                     if (setting.LaunchUser == null)
                     {
                         result.SetException(new ArgumentException("启动所需必要的用户参数为空"));
                         return result;
                     }
-                    if (setting.Version == null)
+                    if (ver == null)
                     {
                         result.SetException(new ArgumentException("启动所需必要的版本参数为空"));
                         return result;
                     }
-                    if (setting.Version.JavaVersion != null)
+                    if (setting.UsingJava == null)
                     {
-                        if (setting.Version.JavaVersion.MajorVersion > Java.MajorVersion)
+                        if (Javas != null && Javas.Count != 0)
                         {
-                            result.SetException(new JavaNotMatchedException(setting.Version.JavaVersion, Java));
+                            setting.UsingJava = Java.GetSuitableJava(Javas, ver);
+                        }
+                        else
+                        {
+                            result.SetException(new NullJavaException());
+                            return result;
+                        }
+                    }
+                    if (ver.JavaVersion != null)
+                    {
+                        if (ver.JavaVersion.MajorVersion > setting.UsingJava.MajorVersion)
+                        {
+                            result.SetException(new JavaNotMatchedException(ver.JavaVersion, setting.UsingJava));
                             return result;
                         }
                     }
 
                     if (setting.MaxMemory == 0)
                     {
-                        setting.MaxMemory = SystemTools.GetBestMemory(this.Java);
+                        setting.MaxMemory = SystemTools.GetBestMemory(setting.UsingJava);
                     }
 
                     Stopwatch sw = new Stopwatch();
@@ -151,7 +158,7 @@ namespace NsisoLauncherCore
                         setting.JavaAgent = null;
 
                         AppendLaunchInfoLog("正在检查游戏依赖文件完整性");
-                        var validate_result = GameValidator.Validate(this, setting.Version, ValidateType.DEPEND);
+                        var validate_result = GameValidator.Validate(this, ver, ValidateType.DEPEND);
                         if (!validate_result.IsPass)
                         {
                             foreach (var item in validate_result.FailedFiles)
@@ -176,46 +183,62 @@ namespace NsisoLauncherCore
 
 
                     // 生成启动参数
-                    string arg = argumentsParser.Parse(setting);
+                    string arg = ver.ToLaunchArgument(argumentsParser, setting);
                     result.LaunchArguments = arg;
 
 
                     if (setting.LaunchType == LaunchType.CREATE_SHORT)
                     {
-                        File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", Java.Path, arg));
+                        File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", setting.UsingJava.Path, arg));
 
                         result.SetSuccess();
                         return result;
                     }
 
                     #region 检查处理库文件
-                    foreach (var item in setting.Version.Natives)
+                    foreach (var item in ver.Libraries)
                     {
-                        string nativePath = GetNativePath(item);
-                        if (File.Exists(nativePath))
+                        if (item.IsEnable())
                         {
-                            AppendLaunchInfoLog(string.Format("检查并解压不存在的库文件:{0}", nativePath));
-                            Unzip.UnZipNativeFile(nativePath, GetGameVersionRootDir(setting.Version) + @"\$natives", item.Exclude, setting.LaunchType != LaunchType.SAFE);
-                        }
-                        else
-                        {
-                            result.SetException(new NativeNotFoundException(item, nativePath));
-                            return result;
+                            string libPath = GetLibraryPath(item);
+                            if (item is Native native)
+                            {
+                                // is a native
+                                if (File.Exists(libPath))
+                                {
+                                    AppendLaunchInfoLog(string.Format("检查并解压不存在的库文件:{0}", libPath));
+                                    Unzip.UnZipNativeFile(libPath, GetGameVersionRootDir(ver) + @"\$natives", native.Extract, setting.LaunchType != LaunchType.SAFE);
+                                }
+                                else
+                                {
+                                    result.SetException(new NativeNotFoundException(native, libPath));
+                                    return result;
+                                }
+                            }
+                            else
+                            {
+                                // not a native
+                                if (!File.Exists(libPath))
+                                {
+                                    result.SetException(new LibraryNotFoundException(item, libPath));
+                                    return result;
+                                }
+                            }
                         }
                     }
                     #endregion
 
-                    AppendLaunchInfoLog(string.Format("开始启动游戏进程，使用JAVA路径:{0}", this.Java.Path));
+                    AppendLaunchInfoLog(string.Format("开始启动游戏进程，使用JAVA路径:{0}", setting.UsingJava.Path));
 
-                    if (!File.Exists(Java.Path))
+                    if (!File.Exists(setting.UsingJava.Path))
                     {
                         result.SetException(new NullJavaException());
                         return result;
                     }
-                    ProcessStartInfo startInfo = new ProcessStartInfo(Java.Path, arg)
-                    { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(setting.Version) };
+                    ProcessStartInfo startInfo = new ProcessStartInfo(setting.UsingJava.Path, arg)
+                    { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(ver) };
 
-                    LaunchInstance instance = new LaunchInstance(setting, startInfo);
+                    LaunchInstance instance = new LaunchInstance(ver, setting, startInfo);
                     result.Instance = instance;
                     instance.Exit += Instance_Exit;
                     instance.Log += Instance_Log;
@@ -263,17 +286,17 @@ namespace NsisoLauncherCore
         #endregion
 
         #region 版本获取
-        public Modules.Version GetVersionByID(string id)
+        public VersionBase GetVersionByID(string id)
         {
             return versionReader.GetVersion(id);
         }
 
-        public Modules.Version RefreshVersion(Modules.Version ver)
+        public VersionBase RefreshVersion(VersionBase ver)
         {
             return versionReader.GetVersion(ver.Id);
         }
 
-        public async Task<List<Modules.Version>> GetVersionsAsync()
+        public async Task<List<VersionBase>> GetVersionsAsync()
         {
             try
             {
@@ -281,11 +304,11 @@ namespace NsisoLauncherCore
             }
             catch (Exception)
             {
-                return new List<Modules.Version>();
+                return new List<VersionBase>();
             }
         }
 
-        public List<Modules.Version> GetVersions()
+        public List<VersionBase> GetVersions()
         {
             try
             {
@@ -293,43 +316,48 @@ namespace NsisoLauncherCore
             }
             catch (Exception)
             {
-                return new List<Modules.Version>();
+                return new List<VersionBase>();
             }
         }
 
-        public Modules.Version JsonToVersion(string json)
+        public VersionBase JsonToVersion(string json)
         {
             return versionReader.JsonToVersion(json);
         }
         #endregion
 
         #region 路径获取
-        public string GetGameVersionRootDir(Modules.Version ver)
+        public string GetGameVersionRootDir(VersionBase ver)
         {
             return PathManager.GetGameVersionRootDir(VersionIsolation, GameRootPath, ver);
         }
 
-        public string GetLibraryPath(Modules.Library lib)
+        public string GetLibrariesRoot()
+        {
+            return PathManager.GetLibrariesRoot(GameRootPath);
+        }
+
+        public string GetLibraryPath(Library lib)
         {
             return PathManager.GetLibraryPath(GameRootPath, lib);
         }
 
-        public string GetNativePath(Native native)
-        {
-            return PathManager.GetNativePath(GameRootPath, native);
-        }
+        //public string GetNativePath(Library native)
+        //{
+        //    return PathManager.GetNativePath(GameRootPath, native);
+        //}
 
         public string GetJsonPath(string ID)
         {
             return PathManager.GetJsonPath(GameRootPath, ID);
         }
 
-        public string GetJsonPath(Modules.Version ver)
+        public string GetJsonPath(VersionBase ver)
         {
             return PathManager.GetJsonPath(GameRootPath, ver.Id);
         }
 
-        public string GetJarPath(Modules.Version ver)
+        public string GetJarPath(VersionBase ver)
         {
             return PathManager.GetJarPath(GameRootPath, ver);
         }
@@ -359,17 +387,17 @@ namespace NsisoLauncherCore
             return PathManager.GetAIJarPath(GameRootPath);
         }
 
-        public string GetVersionOptionsPath(Modules.Version version)
+        public string GetVersionOptionsPath(VersionBase version)
         {
             return PathManager.GetVersionOptionsPath(VersionIsolation, GameRootPath, version);
         }
 
-        public string GetVersionSavesDir(Modules.Version version)
+        public string GetVersionSavesDir(VersionBase version)
         {
             return PathManager.GetVersionSavesDir(VersionIsolation, GameRootPath, version);
         }
 
-        public string GetVersionModsDir(Modules.Version version)
+        public string GetVersionModsDir(VersionBase version)
         {
             return PathManager.GetVersionModsDir(VersionIsolation, GameRootPath, version);
         }
@@ -405,7 +433,7 @@ namespace NsisoLauncherCore
         /// <summary>
         /// Exited Version
         /// </summary>
-        public Modules.Version Version { get; set; }
+        public VersionBase Version { get; set; }
 
         /// <summary>
         /// From launch to exit time spawn

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using System;
@@ -91,7 +92,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// </summary>
         /// <param name="version">要搜索的版本</param>
         /// <returns>Forge列表</returns>
-        public async Task<List<JWForge>> GetForgeList(Modules.Version version)
+        public async Task<List<JWForge>> GetForgeList(VersionBase version)
         {
             Uri forgeListUri;
             IFunctionalMirror mirror = (IFunctionalMirror)await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);

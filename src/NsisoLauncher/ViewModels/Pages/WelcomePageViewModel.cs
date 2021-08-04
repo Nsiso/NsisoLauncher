@@ -90,7 +90,7 @@ namespace NsisoLauncher.ViewModels.Pages
         private async Task CheckEnvironment()
         {
             #region check java runtime
-            if ((App.JavaList == null || App.JavaList.Count == 0) && App.Handler.Java == null)
+            if (App.JavaList == null || App.JavaList.Count == 0)
             {
                 var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
                     App.GetResourceString("String.Message.NoJava2"),

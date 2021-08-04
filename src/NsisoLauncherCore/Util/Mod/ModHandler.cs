@@ -15,7 +15,7 @@ namespace NsisoLauncherCore.Util.Mod
             _launchHandler = handler;
         }
 
-        public List<ModInfo> GetMods(Modules.Version version)
+        public List<ModInfo> GetMods(VersionBase version)
         {
             if (_launchHandler == null)
             {
@@ -42,7 +42,7 @@ namespace NsisoLauncherCore.Util.Mod
             return mods;
         }
 
-        public Task<List<ModInfo>> GetModsAsync(Modules.Version version)
+        public Task<List<ModInfo>> GetModsAsync(VersionBase version)
         {
             return Task.Run(() =>
             {

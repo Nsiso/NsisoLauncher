@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using NsisoLauncherCore.Modules;
+using System.ComponentModel;
 
 namespace NsisoLauncherCore.Util
 {
@@ -7,7 +8,7 @@ namespace NsisoLauncherCore.Util
         /// <summary>
         /// 选中的版本
         /// </summary>
-        public Modules.Version SelectedVersion { get; set; }
+        public VersionBase SelectedVersion { get; set; }
 
         ///// <summary>
         ///// 登录的用户

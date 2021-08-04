@@ -17,7 +17,7 @@ namespace NsisoLauncherCore.Util.Save
             _launchHandler = handler;
         }
 
-        public List<SaveInfo> GetSaves(Modules.Version version)
+        public List<SaveInfo> GetSaves(VersionBase version)
         {
             if (_launchHandler == null)
             {
@@ -66,7 +66,7 @@ namespace NsisoLauncherCore.Util.Save
             return maps;
         }
 
-        public Task<List<SaveInfo>> GetSavesAsync(Modules.Version version)
+        public Task<List<SaveInfo>> GetSavesAsync(VersionBase version)
         {
             return Task.Run(() =>
             {
@@ -79,7 +79,7 @@ namespace NsisoLauncherCore.Util.Save
             save.DeleteSave();
         }
 
-        public void AddSave(Modules.Version version, string path)
+        public void AddSave(VersionBase version, string path)
         {
             if (_launchHandler == null)
             {

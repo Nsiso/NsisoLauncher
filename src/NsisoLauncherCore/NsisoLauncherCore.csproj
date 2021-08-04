@@ -81,7 +81,9 @@
     <Compile Include="Modules\SaveInfo.cs" />
     <Compile Include="Modules\Server.cs" />
     <Compile Include="Modules\Sha1SizeUrl.cs" />
-    <Compile Include="Modules\Version.cs" />
+    <Compile Include="Modules\VersionBase.cs" />
+    <Compile Include="Modules\VersionV1.cs" />
+    <Compile Include="Modules\VersionV2.cs" />
     <Compile Include="Modules\YggdrasilSkin.cs" />
     <Compile Include="Modules\YggdrasilUser.cs" />
     <Compile Include="Modules\Yggdrasil\AccessClientTokenPair.cs" />
@@ -277,6 +279,7 @@
     <Compile Include="Util\Mod\ModHandler.cs" />
     <Compile Include="Util\ObservableDictionary.cs" />
     <Compile Include="Util\ObservableLauncherData.cs" />
+    <Compile Include="Util\RuleChecker.cs" />
     <Compile Include="Util\Save\SaveHandler.cs" />
     <Compile Include="Util\SystemTools.cs" />
     <Compile Include="Util\Unzip.cs" />

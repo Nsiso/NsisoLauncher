@@ -31,30 +31,6 @@ namespace NsisoLauncherCore.Net.Tools
             return ret;
         }
 
-        private static string GetLibBasePath(Library lib)
-        {
-            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Path))
-            {
-                return lib.LibDownloadInfo.Path;
-            }
-            else
-            {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", lib.Artifact.Package.Replace(".", "\\"), lib.Artifact.Name, lib.Artifact.Version);
-            }
-        }
-
-        private static string GetNativeBasePath(Native native)
-        {
-            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.Path))
-            {
-                return native.NativeDownloadInfo.Path;
-            }
-            else
-            {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.jar", native.Artifact.Package.Replace(".", "\\"), native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
-            }
-        }
-
         private static string GetAssetsBasePath(JAssetInfo assetsInfo)
         {
             return string.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
@@ -72,7 +48,7 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
         }
 
-        public static string GetCoreJarDownloadURL(Modules.Version ver, IVersionListMirror mirror)
+        public static string GetCoreJarDownloadURL(VersionBase ver, IVersionListMirror mirror)
         {
             string url;
             if (ver.Downloads?.Client != null)
@@ -93,7 +69,7 @@ namespace NsisoLauncherCore.Net.Tools
             return url;
         }
 
-        public static DownloadTask GetCoreJarDownloadTask(Modules.Version version, LaunchHandler core, IVersionListMirror mirror)
+        public static DownloadTask GetCoreJarDownloadTask(VersionBase version, LaunchHandler core, IVersionListMirror mirror)
         {
             string to = core.GetJarPath(version);
             string from = GetCoreJarDownloadURL(version, mirror);
@@ -105,28 +81,6 @@ namespace NsisoLauncherCore.Net.Tools
             return downloadTask;
         }
 
-        /// <summary>
-        /// 获取Lib下载地址
-        /// </summary>
-        /// <param name="lib">lib实例</param>
-        /// <returns>下载URL</returns>
-        public static string GetLibDownloadURL(Library lib)
-        {
-            if (!string.IsNullOrWhiteSpace(lib.LibDownloadInfo?.Url))
-            {
-                return lib.LibDownloadInfo.Url;
-            }
-            else if (!string.IsNullOrWhiteSpace(lib.Url))
-            {
-                string libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
-                return lib.Url + libUrlPath;
-            }
-            else
-            {
-                string libUrlPath = GetLibBasePath(lib).Replace('\\', '/');
-                return MojanglibrariesUrl + libUrlPath;
-            }
-        }
 
         /// <summary>
         /// 获取Lib下载任务
@@ -137,29 +91,12 @@ namespace NsisoLauncherCore.Net.Tools
         public static DownloadTask GetLibDownloadTask(KeyValuePair<string, Library> lib)
         {
             string to = lib.Key;
-            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Artifact.Name, lib.Value, to);
-            if (lib.Value.LibDownloadInfo != null)
+            DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Name.Name, lib.Value, to);
+            if (lib.Value.LocalDownloadInfo != null)
             {
-                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = lib.Value.LibDownloadInfo.Sha1, FilePath = to };
+                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = lib.Value.LocalDownloadInfo.Sha1, FilePath = to };
             }
             return task;
-        }
-
-        /// <summary>
-        /// 获取native下载地址
-        /// </summary>
-        /// <param name="native">native实例</param>
-        /// <returns>下载URL</returns>
-        public static string GetNativeDownloadURL(Native native)
-        {
-            if (!string.IsNullOrWhiteSpace(native.NativeDownloadInfo?.Url))
-            {
-                return native.NativeDownloadInfo.Url;
-            }
-            else
-            {
-                return (MojanglibrariesUrl + GetNativeBasePath(native)).Replace('\\', '/');
-            }
         }
 
         /// <summary>
@@ -171,10 +108,10 @@ namespace NsisoLauncherCore.Net.Tools
         public static DownloadTask GetNativeDownloadTask(KeyValuePair<string, Native> native)
         {
             string to = native.Key;
-            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Artifact.Name, native.Value, to);
-            if (native.Value.NativeDownloadInfo != null)
+            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Name.Name, native.Value, to);
+            if (native.Value.LocalDownloadInfo != null)
             {
-                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = native.Value.NativeDownloadInfo.Sha1, FilePath = to };
+                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = native.Value.LocalDownloadInfo.Sha1, FilePath = to };
             }
             return task;
         }

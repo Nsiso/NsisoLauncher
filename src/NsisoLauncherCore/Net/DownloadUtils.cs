@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net.Mirrors;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Mirrors;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -232,7 +233,7 @@ namespace NsisoLauncherCore.Net
             return downloadResult;
         }
 
-        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<JLibrary> libs, string librariesDir)
+        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<Library> libs, string librariesDir)
         {
             try
             {

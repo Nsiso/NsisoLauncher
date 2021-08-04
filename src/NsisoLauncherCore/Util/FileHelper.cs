@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Util
 {
@@ -53,7 +52,7 @@ namespace NsisoLauncherCore.Util
         #endregion
 
         #region 检查Jar核心文件
-        public static bool IsLostJarCore(LaunchHandler core, Version version)
+        public static bool IsLostJarCore(LaunchHandler core, VersionBase version)
         {
             if (version.InheritsFrom == null)
             {
@@ -75,14 +74,17 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">启动核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns>是否丢失任何库文件</returns>
-        public static bool IsLostAnyLibs(LaunchHandler core, Version version)
+        public static bool IsLostAnyLibs(LaunchHandler core, VersionBase version)
         {
             foreach (var item in version.Libraries)
             {
-                string path = core.GetLibraryPath(item);
-                if (!File.Exists(path))
+                if (item.IsEnable())
                 {
-                    return true;
+                    string path = core.GetLibraryPath(item);
+                    if (!File.Exists(path))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -94,71 +96,77 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">所使用的启动核心</param>
         /// <param name="version">要检查的版本</param>
         /// <returns>返回Key为路径，value为库实例的集合</returns>
-        public static Dictionary<string, Modules.Library> GetLostLibs(LaunchHandler core, Version version)
+        public static Dictionary<string, Library> GetLostLibs(LaunchHandler core, VersionBase version)
         {
-            Dictionary<string, Modules.Library> lostLibs = new Dictionary<string, Modules.Library>();
+            Dictionary<string, Library> lostLibs = new Dictionary<string, Library>();
 
             foreach (var item in version.Libraries)
             {
-                string path = core.GetLibraryPath(item);
-                if (lostLibs.ContainsKey(path))
+                if (item.IsEnable())
                 {
-                    continue;
-                }
-                else if (!File.Exists(path))
-                {
-                    lostLibs.Add(path, item);
+                    string path = core.GetLibraryPath(item);
+                    if (lostLibs.ContainsKey(path))
+                    {
+                        continue;
+                    }
+                    else if (!File.Exists(path))
+                    {
+                        lostLibs.Add(path, item);
+                    }
                 }
             }
             return lostLibs;
         }
         #endregion
 
-        #region 检查Natives本机文件
-        /// <summary>
-        /// 获取版本是否丢失任何natives文件
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public static bool IsLostAnyNatives(LaunchHandler core, Version version)
-        {
-            foreach (var item in version.Natives)
-            {
-                string path = core.GetNativePath(item);
-                if (!File.Exists(path))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //#region 检查Natives本机文件
+        ///// <summary>
+        ///// 获取版本是否丢失任何natives文件
+        ///// </summary>
+        ///// <param name="core"></param>
+        ///// <param name="version"></param>
+        ///// <returns></returns>
+        //public static bool IsLostAnyNatives(LaunchHandler core, VersionBase version)
+        //{
+        //    foreach (var item in version.Libraries)
+        //    {
+        //        string path = core.GetNativePath(item);
+        //        if (!File.Exists(path))
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
-        /// <summary>
-        /// 获取版本丢失的natives文件
-        /// </summary>
-        /// <param name="core">所使用的核心</param>
-        /// <param name="version">要检查的版本</param>
-        /// <returns>返回Key为路径，value为native实例的集合</returns>
-        public static Dictionary<string, Native> GetLostNatives(LaunchHandler core, Version version)
-        {
-            Dictionary<string, Native> lostNatives = new Dictionary<string, Native>();
+        ///// <summary>
+        ///// 获取版本丢失的natives文件
+        ///// </summary>
+        ///// <param name="core">所使用的核心</param>
+        ///// <param name="version">要检查的版本</param>
+        ///// <returns>返回Key为路径，value为native实例的集合</returns>
+        //public static Dictionary<string, Native> GetLostNatives(LaunchHandler core, VersionBase version)
+        //{
+        //    Dictionary<string, Native> lostNatives = new Dictionary<string, Native>();
 
-            foreach (var item in version.Natives)
-            {
-                string path = core.GetNativePath(item);
-                if (lostNatives.ContainsKey(path))
-                {
-                    continue;
-                }
-                else if (!File.Exists(path))
-                {
-                    lostNatives.Add(path, item);
-                }
-            }
-            return lostNatives;
-        }
-        #endregion
+        //    foreach (var item in version.Libraries)
+        //    {
+        //        if (item is Native)
+        //        {
+        //            string path = core.GetNativePath(item);
+        //            if (lostNatives.ContainsKey(path))
+        //            {
+        //                continue;
+        //            }
+        //            else if (!File.Exists(path))
+        //            {
+        //                lostNatives.Add(path, item);
+        //            }
+        //        }
+        //    }
+        //    return lostNatives;
+        //}
+        //#endregion
 
         #region 检查Assets资源文件
         private static bool IsLostAnyAssetsFromJassets(LaunchHandler core, JAssets assets)
@@ -203,7 +211,7 @@ namespace NsisoLauncherCore.Util
             return lostAssets;
         }
 
-        public static async Task<bool> IsLostAssetsAsync(LaunchHandler core, Version ver)
+        public static async Task<bool> IsLostAssetsAsync(LaunchHandler core, VersionBase ver)
         {
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
@@ -227,7 +235,7 @@ namespace NsisoLauncherCore.Util
         /// <param name="core"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public static List<IDownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, Version ver)
+        public static List<IDownloadTask> GetLostAssetsDownloadTaskAsync(LaunchHandler core, VersionBase ver)
         {
             List<IDownloadTask> tasks = new List<IDownloadTask>();
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
@@ -290,10 +298,9 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, Version version, IList<IVersionListMirror> mirrors, NetRequester netRequester)
+        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, VersionBase version, IList<IVersionListMirror> mirrors, NetRequester netRequester)
         {
             var lostLibs = GetLostLibs(core, version);
-            var lostNatives = GetLostNatives(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
             IVersionListMirror mirror = null;
             if ((mirrors != null) && (mirrors.Count != 0))
@@ -326,7 +333,7 @@ namespace NsisoLauncherCore.Util
                         }
                         else
                         {
-                            mirror = ((IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors));
+                            mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors);
                         }
                     }
                     HttpResponseMessage jsonRespond = await netRequester.Client.GetAsync(GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsFrom, mirror));
@@ -349,7 +356,7 @@ namespace NsisoLauncherCore.Util
                 {
                     innerJsonStr = File.ReadAllText(innerJsonPath);
                 }
-                Version innerVer = core.JsonToVersion(innerJsonStr);
+                VersionBase innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
                     tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester));
@@ -359,10 +366,6 @@ namespace NsisoLauncherCore.Util
             foreach (var item in lostLibs)
             {
                 tasks.Add(GetDownloadUri.GetLibDownloadTask(item));
-            }
-            foreach (var item in lostNatives)
-            {
-                tasks.Add(GetDownloadUri.GetNativeDownloadTask(item));
             }
             return tasks;
         }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Version = NsisoLauncherCore.Modules.Version;
 using NsisoLauncherCore.Util;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace NsisoLauncherCore
     {
         public LaunchSetting InstanceSetting { get; private set; }
 
-        public Version InstanceVersion { get; private set; }
+        public VersionBase InstanceVersion { get; private set; }
 
         public Process InstanceProcess { get; private set; }
 
@@ -28,10 +27,10 @@ namespace NsisoLauncherCore
         public event EventHandler<Log> Log;
         public event EventHandler<GameExitArg> Exit;
 
-        public LaunchInstance(LaunchSetting setting, ProcessStartInfo processStartInfo)
+        public LaunchInstance(VersionBase version,LaunchSetting setting, ProcessStartInfo processStartInfo)
         {
             this.InstanceSetting = setting;
-            this.InstanceVersion = setting.Version;
+            this.InstanceVersion = version;
             this.InstanceProcess = new Process();
 
             this.InstanceProcess.StartInfo = processStartInfo;
@@ -85,7 +84,7 @@ namespace NsisoLauncherCore
                 Exit?.Invoke(this, new GameExitArg()
                 {
                     Instance = this,
-                    Version = InstanceSetting.Version,
+                    Version = InstanceVersion,
                     ExitCode = InstanceProcess.ExitCode,
                     Duration = (InstanceProcess.StartTime - InstanceProcess.ExitTime)
                 });

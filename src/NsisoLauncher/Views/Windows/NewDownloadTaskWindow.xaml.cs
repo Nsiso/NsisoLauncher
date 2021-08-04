@@ -1,9 +1,11 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.FunctionAPI;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Installer;
 using NsisoLauncherCore.Util.Installer.Forge;
 using System;
@@ -20,7 +22,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
-using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.Views.Windows
 {
@@ -51,7 +52,7 @@ namespace NsisoLauncher.Views.Windows
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Version> vers = await App.Handler.GetVersionsAsync();
+            List<VersionBase> vers = await App.Handler.GetVersionsAsync();
             verToInstallForgeComboBox.ItemsSource = vers.Where(x => string.IsNullOrWhiteSpace(x.InheritsFrom));
         }
 
@@ -102,10 +103,10 @@ namespace NsisoLauncher.Views.Windows
 
         private async void RefreshForge()
         {
-            Version ver = null;
+            VersionBase ver = null;
             if (verToInstallForgeComboBox.SelectedItem != null)
             {
-                ver = (Version)verToInstallForgeComboBox.SelectedItem;
+                ver = (VersionBase)verToInstallForgeComboBox.SelectedItem;
             }
             else
             {
@@ -159,10 +160,10 @@ namespace NsisoLauncher.Views.Windows
         //TODO:修复FORGE刷新不成功崩溃
         private async void DownloadForgeButton_Click(object sender, RoutedEventArgs e)
         {
-            Version ver = null;
+            VersionBase ver = null;
             if (verToInstallForgeComboBox.SelectedItem != null)
             {
-                ver = (Version)verToInstallForgeComboBox.SelectedItem;
+                ver = (VersionBase)verToInstallForgeComboBox.SelectedItem;
             }
             else
             {
@@ -212,7 +213,7 @@ namespace NsisoLauncher.Views.Windows
                         await this.ShowMessageAsync("获取版本Json失败", "请检查您的网络是否正常或更改下载源");
                         return;
                     }
-                    NsisoLauncherCore.Modules.Version ver = App.Handler.JsonToVersion(json);
+                    VersionBase ver = App.Handler.JsonToVersion(json);
                     string jsonPath = App.Handler.GetJsonPath(ver.Id);
 
                     string dir = Path.GetDirectoryName(jsonPath);
@@ -252,7 +253,7 @@ namespace NsisoLauncher.Views.Windows
 
         }
 
-        private async Task AppendForgeDownloadTask(Version ver, JWForge forge)
+        private async Task AppendForgeDownloadTask(VersionBase ver, JWForge forge)
         {
             IFunctionalMirror functionalMirror = (IFunctionalMirror)(await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.FunctionalMirrorList));
             if (functionalMirror == null)
@@ -274,7 +275,7 @@ namespace NsisoLauncher.Views.Windows
                         IsClient = true,
                         VersionToInstall = ver,
                         Mirror = mirror,
-                        Java = App.Handler.Java
+                        Java = Java.GetSuitableJava(App.JavaList, ver)
                     });
                     installer.BeginInstall(callback, cancelToken);
                     this.Dispatcher.Invoke(() =>

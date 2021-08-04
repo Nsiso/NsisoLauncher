@@ -61,7 +61,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 
                         if (item.Value[0] == '[' && item.Value[item.Value.Length - 1] == ']')
                         { //Artifact
-                            Data.Add(item.Key, GetArtifactPath(gamerootPath, item.Value.Substring(1, item.Value.Length - 2)));
+                            Data.Add(item.Key, GetLibraryPath(gamerootPath, item.Value.Substring(1, item.Value.Length - 2)));
                         }
                         else if (item.Value[0] == '\'' && item.Value[item.Value.Length - 1] == '\'')
                         { //Literal
@@ -91,7 +91,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                         continue;
                     }
 
-                    string jarPath = GetArtifactPath(gamerootPath, proc.Jar);
+                    string jarPath = GetLibraryPath(gamerootPath, proc.Jar);
                     if (!File.Exists(jarPath))
                     {
                         return new FileNotFoundException("Jar file can not found", jarPath);
@@ -114,7 +114,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                     argBuilder.Append("-cp \"");
                     foreach (var item in proc.ClassPath)
                     {
-                        argBuilder.Append(GetArtifactPath(gamerootPath, item)).Append(';');
+                        argBuilder.Append(GetLibraryPath(gamerootPath, item)).Append(';');
                     }
                     argBuilder.Append(jarPath).Append("\" ");
 
@@ -127,7 +127,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 
                         if (start == '[' && end == ']') //Library
                         {
-                            argBuilder.Append("\"").Append(GetArtifactPath(gamerootPath, item.Substring(1, item.Length - 2))).Append("\" ");
+                            argBuilder.Append("\"").Append(GetLibraryPath(gamerootPath, item.Substring(1, item.Length - 2))).Append("\" ");
                         }
                         else
                         {

@@ -72,5 +72,13 @@ namespace NsisoLauncherCore.Modules
         {
             return new Artifact(descriptor);
         }
+
+        public string Path
+        {
+            get
+            {
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", Package.Replace(".", "\\"), Name, Version);
+            }
+        }
     }
 }

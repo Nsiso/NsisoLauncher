@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NsisoLauncherCore.LaunchException
 {
-    public class LibraryNotFoundException
+    public class LibraryNotFoundException : LaunchException
     {
         /// <summary>
         /// 丢失的库文件
@@ -13,25 +13,14 @@ namespace NsisoLauncherCore.LaunchException
         public Library LostLibrary { get; private set; }
 
         /// <summary>
-        /// 是否丢失本机库
+        /// The lost jar file path.
         /// </summary>
-        public bool IsLostNative { get; private set; }
+        public string LostPath { get; set; }
 
-        /// <summary>
-        /// 是否丢失游戏jar依赖
-        /// </summary>
-        public bool IsLostArtifact { get; private set; }
-
-        /// <summary>
-        /// 内部错误
-        /// </summary>
-        public Exception InnerException { get; private set; }
-
-        public LibraryNotFoundException(Library lost, bool isLostNative, bool isLostArtifact)
+        public LibraryNotFoundException(Library lost, string path) : base("缺失Library文件", string.Format("无法找到指定的Librarty文件{0},游戏是否完整?路径:{1}", lost.Name.Name, path))
         {
             this.LostLibrary = lost;
-            this.IsLostArtifact = isLostArtifact;
-            this.IsLostNative = isLostNative;
+            this.LostPath = path;
         }
     }
 }

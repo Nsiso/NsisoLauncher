@@ -1,7 +1,15 @@
-﻿namespace NsisoLauncherCore.Modules
+﻿using NsisoLauncherCore.Util;
+using System.Collections.Generic;
+
+namespace NsisoLauncherCore.Modules
 {
     public class LaunchSetting
     {
+        /// <summary>
+        /// 启动指定的java
+        /// </summary>
+        public Java UsingJava { get; set; }
+
         /// <summary>
         /// 启动模式
         /// </summary>
@@ -26,11 +34,6 @@
         /// 垃圾回收器附加参数
         /// </summary>
         public string GCArgument { get; set; }
-
-        /// <summary>
-        /// 启动版本
-        /// </summary>
-        public Version Version { get; set; }
 
         /// <summary>
         /// 最大运行内存

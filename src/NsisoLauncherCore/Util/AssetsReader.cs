@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Tools;
 using System;
@@ -22,7 +23,7 @@ namespace NsisoLauncherCore.Util
             return JsonConvert.DeserializeObject<JAssets>(json);
         }
 
-        public JAssets GetAssets(Modules.Version version)
+        public JAssets GetAssets(VersionBase version)
         {
             try
             {

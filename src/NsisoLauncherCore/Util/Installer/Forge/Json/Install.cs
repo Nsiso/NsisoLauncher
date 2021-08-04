@@ -64,7 +64,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Json
         /// Extra libraries needed by processors, that may differ from the installer version's library list. Uses the same format as Mojang for simplicities sake.
         /// </summary>
         [JsonProperty("libraries")]
-        public List<JLibrary> Libraries { get; set; }
+        public List<Library> Libraries { get; set; }
 
         /// <summary>
         /// Executable jars to be run after all libraries have been downloaded.

@@ -11,6 +11,11 @@ namespace NsisoLauncherCore.Modules
         public LaunchInstance Instance { get; set; }
 
         /// <summary>
+        /// The minecraft version to launch
+        /// </summary>
+        public VersionBase Version { get; set; }
+
+        /// <summary>
         /// 启动使用的设置
         /// </summary>
         public LaunchSetting Setting { get; set; }

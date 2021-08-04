@@ -84,7 +84,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="ver">版本</param>
         /// <returns></returns>
-        public static string GetGameVersionRootDir(bool versionIsolation, string gameRootPath, Modules.Version ver)
+        public static string GetGameVersionRootDir(bool versionIsolation, string gameRootPath, VersionBase ver)
         {
             if (versionIsolation)
             {
@@ -97,59 +97,80 @@ namespace NsisoLauncherCore
         }
 
         /// <summary>
+        /// 获取库文件根目录
+        /// </summary>
+        /// <param name="versionIsolation">版本是否隔离</param>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <param name="ver">版本</param>
+        /// <returns></returns>
+        public static string GetLibrariesRoot(string gameRootPath)
+        {
+            return string.Format(@"{0}\libraries", gameRootPath);
+        }
+
+        /// <summary>
         /// 获取Artifact（字符串形式）路径
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="artifactStr">obj</param>
         /// <returns>路径</returns>
-        public static string GetArtifactPath(string gameRootPath, string artifactStr)
+        public static string GetLibraryPath(string gameRootPath, string artifactStr)
         {
-            Artifact artifact = new Artifact(artifactStr);
-            return GetArtifactPath(gameRootPath, artifact);
+            Artifact art = new Artifact(artifactStr);
+            return Path.Combine(GetLibrariesRoot(gameRootPath), art.Path);
         }
 
         /// <summary>
         /// 获取Artifact路径
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="artifact">obj</param>
+        /// <param name="artifactStr">obj</param>
         /// <returns>路径</returns>
-        public static string GetArtifactPath(string gameRootPath, Artifact artifact)
+        public static string GetLibraryPath(string gameRootPath, Artifact artifact)
         {
-            if (string.IsNullOrEmpty(artifact.Classifier))
-            {
-                return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.{4}",
-                gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Extension);
-            }
-            else
-            {
-                return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.{5}",
-                gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Classifier, artifact.Extension);
-            }
+            return Path.Combine(GetLibrariesRoot(gameRootPath), artifact.Path);
         }
 
         /// <summary>
-        /// 获取library库路径
+        /// 获取Library路径
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="lib">库</param>
+        /// <param name="artifact">obj</param>
         /// <returns>路径</returns>
         public static string GetLibraryPath(string gameRootPath, Library lib)
         {
-            return GetArtifactPath(gameRootPath, lib.Artifact);
+            return Path.Combine(GetLibrariesRoot(gameRootPath), lib.Path);
+            //if (string.IsNullOrEmpty(artifact.Classifier))
+            //{
+            //    return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.{4}",
+            //    gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Extension);
+            //}
+            //else
+            //{
+            //    return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.{5}",
+            //    gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Classifier, artifact.Extension);
+            //}
         }
 
-        /// <summary>
-        /// 获取Native库路径
-        /// </summary>
-        /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="native">库</param>
-        /// <returns>路径</returns>
-        public static string GetNativePath(string gameRootPath, Native native)
-        {
-            return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
-                gameRootPath, native.Artifact.Package.Replace(".", @"\"), native.Artifact.Name, native.Artifact.Version, native.NativeSuffix);
-        }
+
+        ///// <summary>
+        ///// 获取Native库路径
+        ///// </summary>
+        ///// <param name="gameRootPath">游戏根目录</param>
+        ///// <param name="native">库</param>
+        ///// <returns>路径</returns>
+        //public static string GetNativePath(string gameRootPath, Library lib)
+        //{
+        //    if (lib is Native native)
+        //    {
+        //        return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
+        //        gameRootPath, native.Name.Package.Replace(".", @"\"), native.Name.Name, native.Name.Version, native.NativeSuffix);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
 
         /// <summary>
         /// 获取Json文件
@@ -168,7 +189,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="ver">版本</param>
         /// <returns></returns>
-        public static string GetJarPath(string gameRootPath, Modules.Version ver)
+        public static string GetJarPath(string gameRootPath, VersionBase ver)
         {
             if (ver.Jar != null)
             {
@@ -240,7 +261,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="version">版本</param>
         /// <returns>版本配置文件路径</returns>
-        public static string GetVersionOptionsPath(bool versionIsolation, string gameRootPath, Modules.Version version)
+        public static string GetVersionOptionsPath(bool versionIsolation, string gameRootPath, VersionBase version)
         {
             string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\options.txt";
@@ -253,7 +274,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="version">版本</param>
         /// <returns>版本存档路径</returns>
-        public static string GetVersionSavesDir(bool versionIsolation, string gameRootPath, Modules.Version version)
+        public static string GetVersionSavesDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
             string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\saves";
@@ -267,7 +288,7 @@ namespace NsisoLauncherCore
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="version">版本</param>
         /// <returns>版本mod文件夹路径</returns>
-        public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, Modules.Version version)
+        public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
             string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\mods";

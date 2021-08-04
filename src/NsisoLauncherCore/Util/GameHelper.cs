@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Modules;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -35,7 +36,7 @@ namespace NsisoLauncherCore.Util
 
     public static class GameHelper
     {
-        public static Task<List<VersionOption>> GetOptionsAsync(LaunchHandler core, Modules.Version version)
+        public static Task<List<VersionOption>> GetOptionsAsync(LaunchHandler core, VersionBase version)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -92,7 +93,7 @@ namespace NsisoLauncherCore.Util
             });
         }
 
-        public static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, Modules.Version version)
+        public static Task SaveOptionsAsync(List<VersionOption> opts, LaunchHandler core, VersionBase version)
         {
             return Task.Factory.StartNew(() =>
             {

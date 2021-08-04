@@ -15,12 +15,12 @@ namespace NsisoLauncher.ViewModels.Pages
 {
     public class ExtendPageViewModel : INotifyPropertyChanged
     {
-        public NsisoLauncherCore.Modules.Version SelectedVersion { get; set; }
+        public VersionBase SelectedVersion { get; set; }
 
         /// <summary>
         /// 版本
         /// </summary>
-        public ObservableCollection<NsisoLauncherCore.Modules.Version> VersionList { get; private set; }
+        public ObservableCollection<VersionBase> VersionList { get; private set; }
 
         #region 存档数据
         /// <summary>

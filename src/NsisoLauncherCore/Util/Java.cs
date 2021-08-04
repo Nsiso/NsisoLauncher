@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Apis.Modules;
 using System;
 using System.Collections.Generic;
@@ -164,37 +165,84 @@ namespace NsisoLauncherCore.Util
         }
 
         /// <summary>
-        /// 从所给JAVA列表中寻找最适合本机的JAVA
+        /// 从所给JAVA列表中寻找最适合该版本的JAVA
         /// </summary>
         /// <param name="javalist"></param>
         /// <returns></returns>
-        public static Java GetSuitableJava(IEnumerable<Java> javalist)
+        public static Java GetSuitableJava(IEnumerable<Java> javalist, VersionBase version)
         {
             try
             {
-                List<Java> goodjava = new List<Java>();
-                if (SystemTools.GetSystemArch() == ArchEnum.x64)
+                if (javalist == null || javalist.Count() == 0)
                 {
-                    foreach (var item in javalist)
-                    {
-                        if (item.Arch == ArchEnum.x64)
-                        { goodjava.Add(item); }
-                    }
-                    if (goodjava.Count == 0)
-                    { goodjava.AddRange(javalist); }
+                    return null;
                 }
-                else
-                { goodjava = javalist.ToList(); }
 
-                return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
+                ArchEnum arch = SystemTools.GetSystemArch();
+                IOrderedEnumerable<Java> ordered_javas = null;
+                switch (arch)
+                {
+                    case ArchEnum.x32:
+                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.x32).OrderByDescending(x => x.Version);
+                        break;
+                    case ArchEnum.x64:
+                        //ordered_javas = javalist.OrderByDescending(a => a.Version).ThenByDescending(x => x.Arch);
+                        ordered_javas = javalist.OrderByDescending(x => x.Version).ThenByDescending(x => x.Arch);
+                        break;
+                    default:
+                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.x32).OrderByDescending(x => x.Version);
+                        break;
+                }
+
+                if (version.JavaVersion != null)
+                {
+                    //如果指定了java
+                    Java com_java = ordered_javas.Where(x => x.GameCoreTag == version.JavaVersion.Component).FirstOrDefault();
+                    if (com_java != null)
+                    {
+                        return com_java;
+                    }
+                    Java second_com_java = ordered_javas.Where(x => x.MajorVersion == version.JavaVersion.MajorVersion).FirstOrDefault();
+                    if (second_com_java != null)
+                    {
+                        return second_com_java;
+                    }
+                }
+
+                Java a_java = ordered_javas.Where(x => x.MajorVersion <= 8).FirstOrDefault();
+                if (a_java != null)
+                {
+                    return a_java;
+                }
+
+                return ordered_javas.FirstOrDefault();
             }
             catch (Exception)
-            { return null; }
-        }
+            {
+                return null;
+            }
 
-        public static Java GetSuitableJava()
-        {
-            return GetSuitableJava(GetJavaList());
+
+            //try
+            //{
+            //    List<Java> goodjava = new List<Java>();
+            //    if (SystemTools.GetSystemArch() == ArchEnum.x64)
+            //    {
+            //        foreach (var item in javalist)
+            //        {
+            //            if (item.Arch == ArchEnum.x64)
+            //            { goodjava.Add(item); }
+            //        }
+            //        if (goodjava.Count == 0)
+            //        { goodjava.AddRange(javalist); }
+            //    }
+            //    else
+            //    { goodjava = javalist.ToList(); }
+
+            //    return goodjava.OrderByDescending(a => a.Version).ToList().FirstOrDefault();
+            //}
+            //catch (Exception)
+            //{ return null; }
         }
 
         private static Dictionary<string, string> GetJavaRegisterPath(RegistryKey key)

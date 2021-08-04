@@ -17,7 +17,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
-using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher
 {
@@ -63,7 +62,7 @@ namespace NsisoLauncher
         /// <summary>
         /// 版本
         /// </summary>
-        public static ObservableCollection<Version> VersionList { get; private set; }
+        public static ObservableCollection<VersionBase> VersionList { get; private set; }
         #endregion
 
         #region 全局数据属性
@@ -187,41 +186,42 @@ namespace NsisoLauncher
             }
             LogHandler.AppendInfo("核心初始化->游戏根目录(默认则为空):" + gameroot);
 
-            //设置JAVA
-            Java java = null;
-            if (env.AutoJava)
-            {
-                java = Java.GetSuitableJava(JavaList);
-            }
-            else
-            {
-                java = JavaList.Where(x => x.Path == env.JavaPath).FirstOrDefault();
-                if (java == null)
-                {
-                    java = Java.GetJavaInfo(env.JavaPath);
-                }
+            ////设置JAVA
+            //Java java = null;
+            //if (env.AutoJava)
+            //{
+            //    java = Java.GetSuitableJava(JavaList);
+            //}
+            //else
+            //{
+            //    java = JavaList.Where(x => x.Path == env.JavaPath).FirstOrDefault();
+            //    if (java == null)
+            //    {
+            //        java = Java.GetJavaInfo(env.JavaPath);
+            //    }
 
-            }
-            if (java != null)
-            {
-                env.JavaPath = java.Path;
-                LogHandler.AppendInfo("核心初始化->Java路径:" + java.Path);
-                LogHandler.AppendInfo("核心初始化->Java版本:" + java.Version);
-                LogHandler.AppendInfo("核心初始化->Java位数:" + java.Arch);
-            }
-            else
-            {
-                LogHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
-            }
+            //}
+            //if (java != null)
+            //{
+            //    env.JavaPath = java.Path;
+            //    LogHandler.AppendInfo("核心初始化->Java路径:" + java.Path);
+            //    LogHandler.AppendInfo("核心初始化->Java版本:" + java.Version);
+            //    LogHandler.AppendInfo("核心初始化->Java位数:" + java.Arch);
+            //}
+            //else
+            //{
+            //    LogHandler.AppendWarn("核心初始化失败，当前电脑未匹配到JAVA");
+            //}
 
             //设置版本独立
             bool verIso = Config.MainConfig.Environment.VersionIsolation;
             #endregion
 
             #region 启动核心初始化
-            Handler = new LaunchHandler(gameroot, java, verIso);
+            Handler = new LaunchHandler(gameroot, verIso);
             Handler.GameLog += (s, log) => LogHandler.AppendLog(s, log);
             Handler.LaunchLog += (s, log) => LogHandler.AppendLog(s, log);
+            Handler.Javas = JavaList;
             #endregion
 
             #region 网络功能初始化
@@ -420,7 +420,7 @@ namespace NsisoLauncher
         {
             if (VersionList == null)
             {
-                VersionList = new ObservableCollection<Version>();
+                VersionList = new ObservableCollection<VersionBase>();
             }
             var list = await Handler.GetVersionsAsync();
             VersionList.Clear();
@@ -434,7 +434,7 @@ namespace NsisoLauncher
         {
             if (VersionList == null)
             {
-                VersionList = new ObservableCollection<Version>();
+                VersionList = new ObservableCollection<VersionBase>();
             }
             var list = Handler.GetVersions();
             VersionList.Clear();

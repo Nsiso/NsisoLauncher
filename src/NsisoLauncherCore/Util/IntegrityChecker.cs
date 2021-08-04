@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using NsisoLauncherCore.Modules;
-using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncherCore.Util
 {
@@ -19,7 +18,7 @@ namespace NsisoLauncherCore.Util
         /// </summary>
         /// <param name="version">要检查的版本</param>
         /// <returns>返回Key为路径，value为库实例的集合</returns>
-        public Dictionary<string, Library> GetLostLibs(Version version)
+        public Dictionary<string, Library> GetLostLibs(VersionBase version)
         {
             Dictionary<string, Library> lostLibs = new Dictionary<string, Library>();
 

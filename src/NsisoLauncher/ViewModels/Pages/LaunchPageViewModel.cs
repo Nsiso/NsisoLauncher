@@ -19,7 +19,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Version = NsisoLauncherCore.Modules.Version;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
@@ -71,7 +70,7 @@ namespace NsisoLauncher.ViewModels.Pages
         /// </summary>
         public bool IsLaunching { get; set; }
 
-        public ObservableCollection<Version> Versions { get; }
+        public ObservableCollection<VersionBase> Versions { get; }
 
 
         #region 服务器
@@ -85,7 +84,7 @@ namespace NsisoLauncher.ViewModels.Pages
         /// <summary>
         /// 启动的版本
         /// </summary>
-        public Version LaunchVersion { get; set; }
+        public VersionBase LaunchVersion { get; set; }
 
         /// <summary>
         /// 选中版本id
@@ -293,41 +292,37 @@ namespace NsisoLauncher.ViewModels.Pages
                 //        App.GetResourceString("String.Message.EmptyAuthType2"));
                 //    return;
                 //}
-                if (App.Handler.Java == null)
+                if ((App.JavaList == null || App.JavaList.Count == 0))
                 {
-                    if ((App.JavaList == null || App.JavaList.Count == 0))
-                    {
-                        var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
-                            App.GetResourceString("String.Message.NoJava2"),
-                            MessageDialogStyle.AffirmativeAndNegative,
-                            new MetroDialogSettings()
-                            {
-                                AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
-                                NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
-                                DefaultButtonFocus = MessageDialogResult.Affirmative
-                            });
-                        if (result == MessageDialogResult.Affirmative)
+                    var result = await App.MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.NoJava"),
+                        App.GetResourceString("String.Message.NoJava2"),
+                        MessageDialogStyle.AffirmativeAndNegative,
+                        new MetroDialogSettings()
                         {
-                            var arch = SystemTools.GetSystemArch();
-                            App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
-                                () =>
-                                {
-                                    App.Current.Dispatcher.Invoke(() =>
-                                    {
-                                        App.RefreshJavaList();
-                                    });
-                                }));
-                            App.MainPageVM.NavigateToDownloadPage();
-                            await App.NetHandler.Downloader.StartDownload();
-                        }
-                    }
-                    else
+                            AffirmativeButtonText = App.GetResourceString("String.Base.Yes"),
+                            NegativeButtonText = App.GetResourceString("String.Base.Cancel"),
+                            DefaultButtonFocus = MessageDialogResult.Affirmative
+                        });
+                    if (result == MessageDialogResult.Affirmative)
                     {
-                        await MainWindowVM.ShowMessageAsync("没有设置启动所使用的java",
-                            "您的电脑安装了java，但您没有设置启动所使用的java，请转移至设置中的：环境设置-java设置 以设置启动使用的java");
+                        var arch = SystemTools.GetSystemArch();
+                        App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
+                            () =>
+                            {
+                                App.Current.Dispatcher.Invoke(() =>
+                                {
+                                    App.RefreshJavaList();
+                                });
+                            }));
+                        App.MainPageVM.NavigateToDownloadPage();
+                        await App.NetHandler.Downloader.StartDownload();
                     }
-                    return;
                 }
+                //else
+                //{
+                //    await MainWindowVM.ShowMessageAsync("没有设置启动所使用的java",
+                //        "您的电脑安装了java，但您没有设置启动所使用的java，请转移至设置中的：环境设置-java设置 以设置启动使用的java");
+                //}
                 #endregion
 
                 #region 保存启动数据
@@ -337,7 +332,6 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 LaunchSetting launchSetting = new LaunchSetting()
                 {
-                    Version = LaunchVersion,
                     LaunchType = launchType
                 };
 
@@ -373,8 +367,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
-                    App.Handler,
-                    launchSetting.Version, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
+                    App.Handler, LaunchVersion, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
 
                 #region 检查验证核心
                 if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
@@ -429,7 +422,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 #region 检查资源文件
                 App.LogHandler.AppendInfo("检查丢失的资源文件中...");
-                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Handler, launchSetting.Version)))
+                if (App.Config.MainConfig.Environment.DownloadLostAssets && (await FileHelper.IsLostAssetsAsync(App.Handler, LaunchVersion)))
                 {
                     MessageDialogResult downDependResult = await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Mainwindow.NeedDownloadAssets"),
                         App.GetResourceString("String.Mainwindow.NeedDownloadAssets2"),
@@ -444,7 +437,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     {
                         case MessageDialogResult.Affirmative:
                             var lostAssets = FileHelper.GetLostAssetsDownloadTaskAsync(
-                                App.Handler, launchSetting.Version);
+                                App.Handler, LaunchVersion);
                             losts.AddRange(lostAssets);
                             break;
                         case MessageDialogResult.FirstAuxiliary:
@@ -534,39 +527,42 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
                 }
-                if (App.Config.MainConfig.Environment.AutoJava)
-                {
-                    App.Handler.Java = Java.GetSuitableJava(App.JavaList);
-                }
 
-                //自动内存设置
-                if (App.Config.MainConfig.Environment.AutoMemory)
-                {
-                    var m = SystemTools.GetBestMemory(App.Handler.Java);
-                    App.Config.MainConfig.Environment.MaxMemory = m;
-                    launchSetting.MaxMemory = m;
-                }
-                else
-                {
-                    launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
-                }
+                //todo 自动选择java
+                //if (App.Config.MainConfig.Environment.AutoJava)
+                //{
+                //    App.Handler.Java = Java.GetSuitableJava(App.JavaList);
+                //}
+
+                //todo 检查自动设置内存
+                ////自动内存设置
+                //if (App.Config.MainConfig.Environment.AutoMemory)
+                //{
+                //    var m = SystemTools.GetBestMemory(App.Handler.Java);
+                //    App.Config.MainConfig.Environment.MaxMemory = m;
+                //    launchSetting.MaxMemory = m;
+                //}
+                //else
+                //{
+                //    launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
+                //}
                 launchSetting.VersionType = App.Config.MainConfig.Customize.VersionInfo;
                 launchSetting.WindowSize = App.Config.MainConfig.Environment.WindowSize;
 
                 #endregion
 
                 #region 性能警告
-                if (App.Handler.Java.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
-                {
-                    await MainWindowVM.ShowMessageAsync("性能优化提示",
-                        "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
-                }
-
-                if (App.Handler.Java.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
-                {
-                    await MainWindowVM.ShowMessageAsync("内存分配警告",
-                        "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
-                }
+                //todo 性能警告
+                //if (App.Handler.Java.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
+                //{
+                //    await MainWindowVM.ShowMessageAsync("性能优化提示",
+                //        "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
+                //}
+                //if (App.Handler.Java.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
+                //{
+                //    await MainWindowVM.ShowMessageAsync("内存分配警告",
+                //        "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
+                //}
                 #endregion
 
                 #region 配置文件处理
@@ -579,7 +575,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     App.LogHandler.OnLog += OnLog;
 
                     //启动
-                    var result = await App.Handler.LaunchAsync(launchSetting);
+                    var result = await App.Handler.LaunchAsync(LaunchVersion, launchSetting);
 
                     //标记启动中的实例
                     App.LaunchSignal.LaunchingInstance = result.Instance;
@@ -589,7 +585,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     {
                         DebugWindow debugWindow = new DebugWindow();
                         debugWindow.Show();
-                        debugWindow.Title = launchSetting.Version.Id;
+                        debugWindow.Title = LaunchVersion.Id;
 
                         debugWindow.AppendLog(this, new Log(LogLevel.DEBUG,
                             string.Format("Using java: versiom:{0} arch:{1} path:{2}",
@@ -635,10 +631,10 @@ namespace NsisoLauncher.ViewModels.Pages
                                     case MessageDialogResult.Negative:
                                         break;
                                     case MessageDialogResult.Affirmative:
-                                        if (result.Setting.Version.JavaVersion != null)
+                                        if (result.Version.JavaVersion != null)
                                         {
                                             LauncherMetaApi metaApi = new LauncherMetaApi(App.NetHandler.Requester);
-                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(result.Setting.Version.JavaVersion.Component);
+                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(result.Version.JavaVersion.Component);
                                             List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
                                             App.NetHandler.Downloader.AddDownloadTask(tasks);
                                             App.MainPageVM.NavigateToDownloadPage();

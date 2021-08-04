@@ -1,5 +1,6 @@
 ﻿using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using NsisoLauncherCore.Modules;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,8 +10,15 @@ namespace NsisoLauncherCore.Util
     public static class Unzip
     {
 
-        public static void UnZipNativeFile(string zipPath, string outFolder, List<string> exclude, bool check)
+        public static void UnZipNativeFile(string zipPath, string outFolder, Extract extract, bool check)
+
         {
+            List<string> exclude = null;
+            if (extract != null)
+            {
+                exclude = extract.Exculde;
+            }
+
             ZipFile zf = null;
             try
             {

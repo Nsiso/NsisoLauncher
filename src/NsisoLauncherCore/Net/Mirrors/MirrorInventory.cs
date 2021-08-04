@@ -57,6 +57,7 @@ namespace NsisoLauncherCore.Net.Mirrors
                 {"resources.download.minecraft.net", bmclBase + "/assets" },
                 {"libraries.minecraft.net", maven },
                 {"files.minecraftforge.net/maven", maven },
+                {"maven.minecraftforge.net", maven },
                 {"meta.fabricmc.net", bmclBase + "/fabric-meta" },
                 {"maven.fabricmc.net", maven }
             };

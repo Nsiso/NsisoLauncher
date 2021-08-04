@@ -4,6 +4,7 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.ViewModels.Windows;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
@@ -19,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using Version = NsisoLauncherCore.Modules.Version;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -41,9 +41,9 @@ namespace NsisoLauncher.ViewModels.Pages
         public Java SelectedJava { get; set; }
         public string SelectedJavaInfo { get; set; }
 
-        public ObservableCollection<Version> MinecraftVersions { get; set; }
+        public ObservableCollection<VersionBase> MinecraftVersions { get; set; }
 
-        public Version SelectedSettingVersion { get; set; }
+        public VersionBase SelectedSettingVersion { get; set; }
         public ObservableCollection<VersionOption> VersionOptions { get; set; } = new ObservableCollection<VersionOption>();
 
         public MainConfig MainConfig { get; set; }
@@ -228,7 +228,6 @@ namespace NsisoLauncher.ViewModels.Pages
             if (SelectedJava != null)
             {
                 SelectedJavaInfo = string.Format("Java版本：{0}，位数：{1}", SelectedJava.Version, SelectedJava.Arch);
-                App.Handler.Java = SelectedJava;
             }
             else
             {

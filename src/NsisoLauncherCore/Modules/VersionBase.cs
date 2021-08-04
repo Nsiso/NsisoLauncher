@@ -1,16 +1,15 @@
 ﻿using Newtonsoft.Json;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
-using static NsisoLauncherCore.Util.JsonTools;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Modules
 {
-    /// <summary>
-    /// the minecraft version info class
-    /// </summary>
-    public class Version
+    [JsonConverter(typeof(VersionBaseJsonConverter))]
+    public abstract class VersionBase
     {
         /// <summary>
         /// 资源引导
@@ -21,6 +20,11 @@ namespace NsisoLauncherCore.Modules
         /// 资源ID
         /// </summary>
         public string Assets { get; set; }
+
+        /// <summary>
+        /// Compliance等级
+        /// </summary>
+        public string ComplianceLevel { get; set; }
 
         /// <summary>
         /// 下载引导
@@ -43,18 +47,6 @@ namespace NsisoLauncherCore.Modules
         public JavaVersion JavaVersion { get; set; }
 
         /// <summary>
-        /// 库列表
-        /// </summary>
-        [JsonIgnore]
-        public List<Library> Libraries { get; set; }
-
-        /// <summary>
-        /// native列表
-        /// </summary>
-        [JsonIgnore]
-        public List<Native> Natives { get; set; }
-
-        /// <summary>
         /// 启动主类
         /// </summary>
         public string MainClass { get; set; }
@@ -65,15 +57,9 @@ namespace NsisoLauncherCore.Modules
         public string Jar { get; set; }
 
         /// <summary>
-        /// JVM启动参数
+        /// 库列表
         /// </summary>
-        [JsonIgnore]
-        public string JvmArguments { get; set; }
-
-        /// <summary>
-        /// Minecraft启动参数
-        /// </summary>
-        public string MinecraftArguments { get; set; }
+        public List<Library> Libraries { get; set; }
 
         /// <summary>
         /// 启动器最低能启动版本号
@@ -94,7 +80,10 @@ namespace NsisoLauncherCore.Modules
         /// 版本类型
         /// </summary>
         public string Type { get; set; }
+
+        public abstract string ToLaunchArgument(ArgumentsParser parser, LaunchSetting setting);
     }
+
 
     #region assetsIndex
     public class AssetIndex : Sha1SizeUrl
@@ -134,4 +123,6 @@ namespace NsisoLauncherCore.Modules
         public int MajorVersion { get; set; }
     }
     #endregion
+
+
 }

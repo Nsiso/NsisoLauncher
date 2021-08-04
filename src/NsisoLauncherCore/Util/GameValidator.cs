@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Version = NsisoLauncherCore.Modules.Version;
 using System.IO;
 using NsisoLauncherCore.Util.Checker;
+using NsisoLauncherCore.Modules;
 
 namespace NsisoLauncherCore.Util
 {
@@ -25,7 +25,7 @@ namespace NsisoLauncherCore.Util
 
     public static class GameValidator
     {
-        public static Task<GameValidateResult> ValidateAsync(LaunchHandler handler, Version version, ValidateType type)
+        public static Task<GameValidateResult> ValidateAsync(LaunchHandler handler, VersionBase version, ValidateType type)
         {
 
             return Task.Run(() =>
@@ -34,7 +34,7 @@ namespace NsisoLauncherCore.Util
              });
         }
 
-        public static GameValidateResult Validate(LaunchHandler handler, Version version, ValidateType type)
+        public static GameValidateResult Validate(LaunchHandler handler, VersionBase version, ValidateType type)
         {
             GameValidateResult result = new GameValidateResult();
             SHA1Checker checker = new SHA1Checker();
@@ -70,9 +70,9 @@ namespace NsisoLauncherCore.Util
                             continue;
                         }
 
-                        if (item.LibDownloadInfo?.Sha1 != null)
+                        if (item.LocalDownloadInfo?.Sha1 != null)
                         {
-                            checker.CheckSum = item.LibDownloadInfo.Sha1;
+                            checker.CheckSum = item.LocalDownloadInfo.Sha1;
                             checker.FilePath = lib_path;
                             if (!checker.CheckFilePass())
                             {
