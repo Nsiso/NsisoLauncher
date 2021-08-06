@@ -11,9 +11,14 @@ namespace NsisoLauncherCore.Modules
     {
         public string MinecraftArguments { get; set; }
 
-        public override string ToLaunchArgument(ArgumentsParser parser, LaunchSetting setting)
+        public override string GetJvmLaunchArguments()
         {
-            return parser.ParseV1(this, setting);
+            return "-Djava.library.path=${natives_directory} -cp ${classpath}";
+        }
+
+        public override string GetGameLaunchArguments()
+        {
+            return MinecraftArguments;
         }
     }
 }

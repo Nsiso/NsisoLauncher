@@ -110,21 +110,40 @@ namespace NsisoLauncherCore
                 IsBusyLaunching = true;
                 lock (launchLocker)
                 {
+                    #region Check
+                    // check launch user is null
                     if (setting.LaunchUser == null)
                     {
                         result.SetException(new ArgumentException("启动所需必要的用户参数为空"));
                         return result;
                     }
+
+                    // check launch version is null
                     if (ver == null)
                     {
                         result.SetException(new ArgumentException("启动所需必要的版本参数为空"));
                         return result;
                     }
+
+                    // take care with inherit
+                    if (ver.InheritsFrom != null && ver.InheritsFromInstance == null)
+                    {
+                        throw new LaunchException.LaunchException("父版本不存在", "启动该版本需要依赖父版本");
+                    }
+
+                    // choose suitable java for version
                     if (setting.UsingJava == null)
                     {
                         if (Javas != null && Javas.Count != 0)
                         {
-                            setting.UsingJava = Java.GetSuitableJava(Javas, ver);
+                            if (ver.InheritsFromInstance == null)
+                            {
+                                setting.UsingJava = Java.GetSuitableJava(Javas, ver);
+                            }
+                            else
+                            {
+                                setting.UsingJava = Java.GetSuitableJava(Javas, ver.InheritsFromInstance);
+                            }
                         }
                         else
                         {
@@ -132,23 +151,31 @@ namespace NsisoLauncherCore
                             return result;
                         }
                     }
+
+                    //check best java for minecraft
+                    JavaVersion javaVersion = null;
                     if (ver.JavaVersion != null)
                     {
-                        if (ver.JavaVersion.MajorVersion > setting.UsingJava.MajorVersion)
-                        {
-                            result.SetException(new JavaNotMatchedException(ver.JavaVersion, setting.UsingJava));
-                            return result;
-                        }
+                        javaVersion = ver.JavaVersion;
+                    }
+                    else if (ver.InheritsFromInstance != null && ver.InheritsFromInstance.JavaVersion != null)
+                    {
+                        javaVersion = ver.InheritsFromInstance.JavaVersion;
+                    }
+                    if (javaVersion != null && javaVersion.MajorVersion > setting.UsingJava.MajorVersion)
+                    {
+                        result.SetException(new JavaNotMatchedException(javaVersion, setting.UsingJava));
+                        return result;
                     }
 
                     if (setting.MaxMemory == 0)
                     {
                         setting.MaxMemory = SystemTools.GetBestMemory(setting.UsingJava);
                     }
+                    #endregion
 
                     Stopwatch sw = new Stopwatch();
                     sw.Start();
-
 
                     if (setting.LaunchType == LaunchType.SAFE)
                     {
@@ -181,22 +208,9 @@ namespace NsisoLauncherCore
                         }
                     }
 
-
-                    // 生成启动参数
-                    string arg = ver.ToLaunchArgument(argumentsParser, setting);
-                    result.LaunchArguments = arg;
-
-
-                    if (setting.LaunchType == LaunchType.CREATE_SHORT)
-                    {
-                        File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", setting.UsingJava.Path, arg));
-
-                        result.SetSuccess();
-                        return result;
-                    }
-
                     #region 检查处理库文件
-                    foreach (var item in ver.Libraries)
+                    List<Library> libraries = ver.GetAllLibraries();
+                    foreach (var item in libraries)
                     {
                         if (item.IsEnable())
                         {
@@ -227,6 +241,19 @@ namespace NsisoLauncherCore
                         }
                     }
                     #endregion
+
+                    // 生成启动参数
+                    string arg = argumentsParser.Parse(ver, setting);
+                    result.LaunchArguments = arg;
+
+
+                    if (setting.LaunchType == LaunchType.CREATE_SHORT)
+                    {
+                        File.WriteAllText(Environment.CurrentDirectory + "\\LaunchMinecraft.bat", string.Format("\"{0}\" {1}", setting.UsingJava.Path, arg));
+
+                        result.SetSuccess();
+                        return result;
+                    }
 
                     AppendLaunchInfoLog(string.Format("开始启动游戏进程，使用JAVA路径:{0}", setting.UsingJava.Path));
 

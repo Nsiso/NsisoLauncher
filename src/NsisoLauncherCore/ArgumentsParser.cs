@@ -206,64 +206,61 @@ namespace NsisoLauncherCore
         //    return allArg.Trim();
         //}
 
-        public string ParseV1(VersionV1 version, LaunchSetting setting)
+        public string Parse(VersionBase version, LaunchSetting setting)
         {
-            SendDebugLog("Start version v1 launch argument parse.");
+            SendDebugLog(string.Format("Start version {0} launch argument parse.", version.Id));
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             #region JVM头参数部分
-            string jvmArg = ParseJvmArg(version, setting, "-Djava.library.path=${natives_directory} -cp ${classpath}");
+            string jvmArg = ParseJvmArg(version, setting);
             #endregion
 
             #region 处理游戏参数
-            string gameArg = ParseGameArg(version, setting, version.MinecraftArguments);
+            string gameArg = ParseGameArg(version, setting);
             #endregion
 
             stopwatch.Stop();
 
             string allArg = string.Format("{0} {1} {2}", jvmArg, version.MainClass, gameArg);
-            SendDebugLog(string.Format("Finished version v1 launch argument parse, Using time:{0}ms", stopwatch.ElapsedMilliseconds));
-            SendDebugLog(string.Format("Original version v1 launch argument: {0}", allArg));
-            SendDebugLog(string.Format("Formated version v1 launch argument: {0}", allArg.Replace(";", ";\n").Replace(' ', '\n')));
+
+            SendDebugLog(string.Format("Finished version launch argument parse, Using time:{0}ms", stopwatch.ElapsedMilliseconds));
+            SendDebugLog(string.Format("Original version launch argument: \n{0}", allArg));
+            SendDebugLog(string.Format("Formated version launch argument: \n{0}", allArg.Replace(";", ";\n").Replace(' ', '\n')));
 
             return allArg.Trim();
         }
 
-        public string ParseV2(VersionV2 version, LaunchSetting setting)
+        private string ParseGameArg(VersionBase version, LaunchSetting setting)
         {
-            SendDebugLog("Start version v2 launch argument parse.");
+            string game_arg;
+            if (version.InheritsFromInstance != null && !(version.InheritsFromInstance is VersionV1))
+            {
+                game_arg = string.Format("{0} {1}", version.InheritsFromInstance.GetGameLaunchArguments(), version.GetGameLaunchArguments());
+            }
+            else
+            {
+                game_arg = version.GetGameLaunchArguments();
+            }
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            #region JVM头参数部分
-            string originalJvmArg = BuildV2ArgFromJTokenList(version.Arguments.Jvm);
-            string jvmArg = ParseJvmArg(version, setting, originalJvmArg);
-            #endregion
-
-            #region 处理游戏参数
-            string originalGameArg = BuildV2ArgFromJTokenList(version.Arguments.Game);
-            string gameArg = ParseGameArg(version, setting, originalGameArg);
-            #endregion
-
-            stopwatch.Stop();
-
-            string allArg = string.Format("{0} {1} {2}", jvmArg, version.MainClass, gameArg);
-            SendDebugLog(string.Format("Finished version v2 launch argument parse, Using time:{0}ms", stopwatch.ElapsedMilliseconds));
-            SendDebugLog(string.Format("Original version v2 launch argument: {0}", allArg));
-            SendDebugLog(string.Format("Formated version v2 launch argument: {0}", allArg.Replace(";", ";\n").Replace(' ', '\n')));
-
-            return allArg.Trim();
-        }
-
-        private string ParseGameArg(VersionBase version, LaunchSetting setting, string game_arg)
-        {
             StringBuilder gameArgBuilder = new StringBuilder();
 
             string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(version));
+            string assetsIndexName;
+            if (version.Assets != null)
+            {
+                assetsIndexName = version.Assets;
+            }
+            else if(version.InheritsFromInstance != null && version.InheritsFromInstance.Assets != null)
+            {
+                assetsIndexName = version.InheritsFromInstance.Assets;
+            }
+            else
+            {
+                assetsIndexName = "legacy";
+            }
             Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
             {
                 {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.LaunchPlayerName) },
@@ -272,7 +269,7 @@ namespace NsisoLauncherCore
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
-                {"${assets_index_name}",version.Assets },
+                {"${assets_index_name}",assetsIndexName },
                 {"${auth_uuid}",setting.LaunchUser.LaunchUuid },
                 {"${auth_access_token}",setting.LaunchUser.LaunchAccessToken },
                 {"${user_properties}",ToList(setting.LaunchUser.Properties) },
@@ -358,34 +355,18 @@ namespace NsisoLauncherCore
 
         }
 
-        private string ParseJvmArg(VersionBase version, LaunchSetting setting, string jvm_arg)
+        private string ParseJvmArg(VersionBase version, LaunchSetting setting)
         {
-            StringBuilder jvmHead = new StringBuilder();
-
-            #region 处理JavaAgent
-            if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
+            string jvm_arg;
+            if (version.InheritsFromInstance != null && !(version.InheritsFromInstance is VersionV1))
             {
-                jvmHead.Append("-javaagent:");
-                jvmHead.Append(setting.JavaAgent.Trim());
-                jvmHead.Append(' ');
+                jvm_arg = string.Format("{0} {1}", version.InheritsFromInstance.GetJvmLaunchArguments(), version.GetJvmLaunchArguments());
             }
-            #endregion
-
-            #region 处理游戏JVM参数
-            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
-                {
-                    {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(version), @"\$natives") },
-                    {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
-                    {"${classpath_separator}", ";" },
-                    {"${launcher_name}","NsisoLauncher5" },
-                    {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                    {"${classpath}", GetClassPaths(version.Libraries, version) },
-                };
-
-            jvmHead.Append(ReplaceByDic(jvm_arg, jvmArgDic)?.Trim());
-            jvmHead.Append(' ');
-            jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
-            #endregion
+            else
+            {
+                jvm_arg = version.GetJvmLaunchArguments();
+            }
+            StringBuilder jvmHead = new StringBuilder();
 
             #region 处理JVM启动参数  
             if (setting.GCEnabled)
@@ -427,59 +408,41 @@ namespace NsisoLauncherCore
             {
                 jvmHead.Append(setting.AdvencedJvmArguments).Append(' ');
             }
-            //允许实验参数
+            //unlock jvm
             jvmHead.Append("-XX:+UnlockExperimentalVMOptions ");
+
+            // allow fml method
+            jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
+            #endregion
+
+            #region 处理JavaAgent
+            if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
+            {
+                jvmHead.Append("-javaagent:");
+                jvmHead.Append(setting.JavaAgent.Trim());
+                jvmHead.Append(' ');
+            }
+            #endregion
+
+            #region 处理游戏JVM参数
+            List<Library> libraries = version.GetAllLibraries();
+
+            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
+                {
+                    {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(version), @"\$natives") },
+                    {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
+                    {"${classpath_separator}", ";" },
+                    {"${launcher_name}","NsisoLauncher5" },
+                    {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
+                    {"${classpath}", GetClassPaths(libraries, version) },
+                };
+
+            jvmHead.Append(ReplaceByDic(jvm_arg, jvmArgDic)?.Trim());
+            jvmHead.Append(' ');
             #endregion
 
             return jvmHead.ToString()?.Trim();
         }
-
-        #region v2 arg parser
-
-        private string BuildV2ArgFromJTokenList(List<JToken> args)
-        {
-            StringBuilder argBuilder = new StringBuilder();
-            foreach (var arg in args)
-            {
-                switch (arg.Type)
-                {
-                    case JTokenType.Object:
-                        {
-                            JObject argObj = arg.ToObject<JObject>();
-                            if (argObj.ContainsKey("rules") && argObj.ContainsKey("value"))
-                            {
-                                List<Rule> rules = argObj["rules"].ToObject<List<Rule>>();
-                                if (RuleChecker.CheckRules(rules))
-                                {
-                                    if (arg["value"].Type == JTokenType.String)
-                                    {
-                                        string value = arg["value"].ToString();
-                                        argBuilder.AppendFormat("\"{0}\" ", value);
-                                    }
-                                    else if (arg["value"].Type == JTokenType.Array)
-                                    {
-                                        foreach (var str in arg["value"])
-                                        {
-                                            string value = str.ToString();
-                                            argBuilder.AppendFormat("\"{0}\" ", value);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case JTokenType.String:
-                        argBuilder.AppendFormat("\"{0}\" ", arg.ToString());
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-            return argBuilder.ToString().Trim();
-        }
-
-        #endregion
 
         private static string ToList(List<UserData.Property> properties)
         {

@@ -38,7 +38,7 @@ namespace NsisoLauncherCore.Modules
 
         public virtual string GetDownloadSourceURL()
         {
-            if (!string.IsNullOrWhiteSpace(LocalDownloadInfo.Url))
+            if (!string.IsNullOrWhiteSpace(LocalDownloadInfo?.Url))
             {
                 return LocalDownloadInfo.Url;
             }
@@ -63,7 +63,7 @@ namespace NsisoLauncherCore.Modules
         {
             get
             {
-                return Downloads.Artifact;
+                return Downloads?.Artifact;
             }
         }
 

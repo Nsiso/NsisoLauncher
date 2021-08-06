@@ -42,6 +42,11 @@ namespace NsisoLauncherCore.Modules
         public string InheritsFrom { get; set; }
 
         /// <summary>
+        /// 继承版本实例
+        /// </summary>
+        public VersionBase InheritsFromInstance { get; set; }
+
+        /// <summary>
         /// 使用Java版本
         /// </summary>
         public JavaVersion JavaVersion { get; set; }
@@ -81,7 +86,24 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public string Type { get; set; }
 
-        public abstract string ToLaunchArgument(ArgumentsParser parser, LaunchSetting setting);
+        public abstract string GetJvmLaunchArguments();
+
+        public abstract string GetGameLaunchArguments();
+
+        public virtual List<Library> GetAllLibraries()
+        {
+            if (InheritsFromInstance == null)
+            {
+                return Libraries;
+            }
+            else
+            {
+                List<Library> libraries = new List<Library>();
+                libraries.AddRange(this.InheritsFromInstance.Libraries);
+                libraries.AddRange(this.Libraries);
+                return libraries;
+            }
+        }
     }
 
 
@@ -106,12 +128,20 @@ namespace NsisoLauncherCore.Modules
         /// <summary>
         /// 客户端下载信息
         /// </summary>
+        [JsonProperty("client")]
         public Sha1SizeUrl Client { get; set; }
 
         /// <summary>
         /// 服务端下载信息
         /// </summary>
+        [JsonProperty("server")]
         public Sha1SizeUrl Server { get; set; }
+
+        /// <summary>
+        /// mapping download info
+        /// </summary>
+        [JsonProperty("client_mappings")]
+        public Sha1SizeUrl ClientMappings { get; set; }
     }
     #endregion
 

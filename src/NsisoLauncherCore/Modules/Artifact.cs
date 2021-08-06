@@ -77,8 +77,13 @@ namespace NsisoLauncherCore.Modules
         {
             get
             {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}.jar", Package.Replace(".", "\\"), Name, Version);
+                return string.Format(@"{0}\{1}\{2}\{1}-{2}.{3}", Package.Replace(".", "\\"), Name, Version, Extension);
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

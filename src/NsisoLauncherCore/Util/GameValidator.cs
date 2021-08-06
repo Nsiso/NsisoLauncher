@@ -59,7 +59,8 @@ namespace NsisoLauncherCore.Util
                     }
                     break;
                 case ValidateType.ONLY_LIB:
-                    foreach (var item in version.Libraries)
+                    List<Library> libraries = version.GetAllLibraries();
+                    foreach (var item in libraries)
                     {
                         string lib_path = handler.GetLibraryPath(item);
 

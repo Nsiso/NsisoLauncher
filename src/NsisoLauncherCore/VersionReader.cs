@@ -165,16 +165,40 @@ namespace NsisoLauncherCore
         //    return ver;
         //}
 
+        private VersionBase ReadVersion(JObject obj)
+        {
+            VersionBase version = obj.ToObject<VersionBase>();
+            SendDebugLog(string.Format("The version {0} is loaded.", version.Id));
+
+            //处理版本继承
+            if (!string.IsNullOrEmpty(version.InheritsFrom))
+            {
+                SendDebugLog(string.Format("The version {0} is inherited from version {1}.", version.Id, version.InheritsFrom));
+                VersionBase base_ver = GetVersion(version.InheritsFrom);
+                if (base_ver == null)
+                {
+                    SendDebugLog(string.Format("The version {0} is mising it's inhertis version.", version.Id));
+                    throw new Exception("The inherit version is mising.");
+                }
+
+                version.InheritsFromInstance = base_ver;
+            }
+
+            return version;
+
+        }
+
         public VersionBase JsonToVersion(string jsonStr)
         {
             if (string.IsNullOrWhiteSpace(jsonStr))
             {
                 return null;
             }
-            return JsonConvert.DeserializeObject<VersionBase>(jsonStr);
+            JObject ver_obj = JObject.Parse(jsonStr);
+            return ReadVersion(ver_obj);
         }
 
-        
+
 
         public VersionBase GetVersion(string ID)
         {

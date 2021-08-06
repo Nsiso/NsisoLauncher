@@ -99,7 +99,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
                 }
             }
 
-            PostProcessors postProcessors = new PostProcessors(profile, Options.IsClient, monitor);
+            PostProcessors postProcessors = new PostProcessors(profile, Options.IsClient, monitor, Options.VersionToInstall);
             Exception procExc = postProcessors.Process(installer_path, tempPath, Options.GameRootPath, clientTarget, Options.Java);
             if (procExc != null)
             {
