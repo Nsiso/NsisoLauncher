@@ -86,10 +86,6 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public string Type { get; set; }
 
-        public abstract string GetJvmLaunchArguments();
-
-        public abstract string GetGameLaunchArguments();
-
         public virtual List<Library> GetAllLibraries()
         {
             if (InheritsFromInstance == null)
@@ -99,11 +95,15 @@ namespace NsisoLauncherCore.Modules
             else
             {
                 List<Library> libraries = new List<Library>();
-                libraries.AddRange(this.InheritsFromInstance.Libraries);
+                libraries.AddRange(this.InheritsFromInstance.GetAllLibraries());
                 libraries.AddRange(this.Libraries);
                 return libraries;
             }
         }
+
+        public abstract string GetJvmLaunchArguments();
+
+        public abstract string GetGameLaunchArguments();
     }
 
 

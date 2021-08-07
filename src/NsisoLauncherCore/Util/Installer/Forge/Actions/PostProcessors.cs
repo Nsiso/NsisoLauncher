@@ -33,17 +33,17 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
         public Install Profile { get; set; }
         public bool IsClient { get; set; }
         public ProgressCallback Monitor { get; set; }
-        public VersionBase VersionToInstall { get; set; }
+        public CommonInstallOptions Option { get; set; }
         public bool HasTasks { get; set; }
         public Dictionary<string, string> Data { get; set; }
         public List<Processor> Processors { get; set; }
 
-        public PostProcessors(Install profile, bool isClient, ProgressCallback monitor, VersionBase version)
+        public PostProcessors(Install profile, bool isClient, ProgressCallback monitor, CommonInstallOptions option)
         {
             this.Profile = profile;
             this.IsClient = isClient;
             this.Monitor = monitor;
-            this.VersionToInstall = version;
+            this.Option = option;
 
             this.Processors = profile.Processors;
             this.HasTasks = this.Processors.Count != 0;
@@ -90,14 +90,27 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
 
                 foreach (var proc in Processors)
                 {
-                    // WARNING! HARD INJECT!
-                    //if (proc.Args.Contains("DOWNLOAD_MOJMAPS"))
+                    //// WARNING! HARD INJECT!
+                    //#region HARD INJECT
+                    //try
                     //{
-                    //    //Net.DownloadUtils.DownloadAsync(
-                    //    //    new DownloadObject(VersionToInstall.Downloads.ClientMappings, Data["MOJMAPS"]), new NetRequester())
-                    //    //    .Wait();
-                    //    continue;
+                    //    if (proc.Args.Contains("DOWNLOAD_MOJMAPS"))
+                    //    {
+                    //        Monitor.State = string.Format("接管{0}安装器mappings下载", proc.Jar.Name);
+                    //        var download_result = DownloadUtils.SimpleDownload(
+                    //            new DownloadObject(Option.VersionToInstall.Downloads.ClientMappings, Data["MOJMAPS"]), Option.Mirror);
+                    //        if (download_result.IsSuccess)
+                    //        {
+                    //            continue;
+                    //        }
+                    //    }
                     //}
+                    //catch (Exception)
+                    //{
+                    //    // if any error, let this processor run.
+                    //}
+                    //#endregion
+
 
                     if (proc.Sides != null && !proc.Sides.Contains("client"))
                     {
@@ -162,6 +175,11 @@ namespace NsisoLauncherCore.Util.Installer.Forge.Actions
                     result.BeginOutputReadLine();
                     result.OutputDataReceived += Result_OutputDataReceived;
                     result.WaitForExit();
+
+                    if (result.ExitCode != 0)
+                    {
+                        throw new Exception("Processor exited withou code zero. Please try to install other version");
+                    }
 
                     Monitor.IncreaseDoneSize(1);
                 }

@@ -12,6 +12,50 @@ namespace NsisoLauncherCore.Net
 {
     public static class DownloadUtils
     {
+        public static DownloadResult SimpleDownload(DownloadObject obj, IDownloadableMirror mirror)
+        {
+            try
+            {
+                if (obj == null || obj.Downloadable == null)
+                {
+                    return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
+                }
+                string from = obj.Downloadable.GetDownloadSourceURL();
+                if (mirror != null)
+                {
+                    from = mirror.DoDownloadUriReplace(from);
+                }
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFile(obj.Downloadable.GetDownloadSourceURL(), obj.To);
+                }
+                #region 下载后校验
+                if (obj.Checker != null)
+                {
+                    if (!obj.Checker.CheckFilePass())
+                    {
+                        return new DownloadResult()
+                        {
+                            IsSuccess = false,
+                            ObjectToDownload = obj,
+                            DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.Checker.CheckSum))
+                        };
+                    }
+                }
+                #endregion
+                return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
+            }
+            catch (Exception ex)
+            {
+                return new DownloadResult()
+                {
+                    IsSuccess = false,
+                    ObjectToDownload = obj,
+                    DownloadException = ex
+                };
+            }
+        }
+
         public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, NetRequester requester, CancellationToken cancellationToken, ProgressCallback progressCallback,
             IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
@@ -70,7 +114,7 @@ namespace NsisoLauncherCore.Net
             #region 镜像站替换URL处理
             if (mirror != null)
             {
-                from = mirror.DoDownloadUriReplace(obj.Downloadable.GetDownloadSourceURL());
+                from = mirror.DoDownloadUriReplace(from);
                 progressCallback.ChangeMirror(mirror);
             }
             else

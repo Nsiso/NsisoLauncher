@@ -234,17 +234,9 @@ namespace NsisoLauncherCore
 
         private string ParseGameArg(VersionBase version, LaunchSetting setting)
         {
-            string game_arg;
-            if (version.InheritsFromInstance != null && !(version.InheritsFromInstance is VersionV1))
-            {
-                game_arg = string.Format("{0} {1}", version.InheritsFromInstance.GetGameLaunchArguments(), version.GetGameLaunchArguments());
-            }
-            else
-            {
-                game_arg = version.GetGameLaunchArguments();
-            }
+            string game_arg = version.GetGameLaunchArguments();
 
-            StringBuilder gameArgBuilder = new StringBuilder();
+            StringBuilder gameArgBuilder = new StringBuilder(game_arg);
 
             string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(version));
@@ -253,7 +245,7 @@ namespace NsisoLauncherCore
             {
                 assetsIndexName = version.Assets;
             }
-            else if(version.InheritsFromInstance != null && version.InheritsFromInstance.Assets != null)
+            else if (version.InheritsFromInstance != null && version.InheritsFromInstance.Assets != null)
             {
                 assetsIndexName = version.InheritsFromInstance.Assets;
             }
@@ -276,7 +268,7 @@ namespace NsisoLauncherCore
                 {"${user_type}",setting.LaunchUser.UserType },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) }
             };
-            gameArgBuilder.Append(ReplaceByDic(game_arg, gameArgDic));
+            ReplaceByDic(gameArgBuilder, gameArgDic);
 
             // set window size arg
             if (setting.WindowSize != null)
@@ -357,15 +349,6 @@ namespace NsisoLauncherCore
 
         private string ParseJvmArg(VersionBase version, LaunchSetting setting)
         {
-            string jvm_arg;
-            if (version.InheritsFromInstance != null && !(version.InheritsFromInstance is VersionV1))
-            {
-                jvm_arg = string.Format("{0} {1}", version.InheritsFromInstance.GetJvmLaunchArguments(), version.GetJvmLaunchArguments());
-            }
-            else
-            {
-                jvm_arg = version.GetJvmLaunchArguments();
-            }
             StringBuilder jvmHead = new StringBuilder();
 
             #region 处理JVM启动参数  
@@ -425,6 +408,9 @@ namespace NsisoLauncherCore
             #endregion
 
             #region 处理游戏JVM参数
+            string jvm_arg = version.GetJvmLaunchArguments();
+            jvmHead.Append(jvm_arg);
+
             List<Library> libraries = version.GetAllLibraries();
 
             Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
@@ -437,7 +423,8 @@ namespace NsisoLauncherCore
                     {"${classpath}", GetClassPaths(libraries, version) },
                 };
 
-            jvmHead.Append(ReplaceByDic(jvm_arg, jvmArgDic)?.Trim());
+            ReplaceByDic(jvmHead, jvmArgDic);
+
             jvmHead.Append(' ');
             #endregion
 
@@ -483,7 +470,7 @@ namespace NsisoLauncherCore
             return stringBuilder.ToString().Trim();
         }
 
-        private static string ReplaceByDic(string str, Dictionary<string, string> dic)
+        private static StringBuilder ReplaceByDic(StringBuilder str, Dictionary<string, string> dic)
         {
             if (str == null)
             {

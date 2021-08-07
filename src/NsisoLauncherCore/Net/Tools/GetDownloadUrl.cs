@@ -100,23 +100,6 @@ namespace NsisoLauncherCore.Net.Tools
         }
 
         /// <summary>
-        /// 获取Native下载任务
-        /// </summary>
-        /// <param name="native">native实例</param>
-        /// <param name="core">所使用的核心</param>
-        /// <returns>下载任务</returns>
-        public static DownloadTask GetNativeDownloadTask(KeyValuePair<string, Native> native)
-        {
-            string to = native.Key;
-            DownloadTask task = new DownloadTask("版本系统依赖库文件" + native.Value.Name.Name, native.Value, to);
-            if (native.Value.LocalDownloadInfo != null)
-            {
-                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = native.Value.LocalDownloadInfo.Sha1, FilePath = to };
-            }
-            return task;
-        }
-
-        /// <summary>
         /// 获取assets下载地址
         /// </summary>
         /// <param name="assets">assets实例</param>

@@ -49,8 +49,11 @@ namespace NsisoLauncherCore.Modules
             this.Descriptor = descriptor;
             string[] parts = descriptor.Split(':');
 
+            int length = parts.Length;
+
             this.Package = parts[0];
             this.Name = parts[1];
+            this.Version = parts[2];
 
             int last = parts.Length - 1;
             int idx = parts[last].IndexOf('@');
@@ -59,13 +62,25 @@ namespace NsisoLauncherCore.Modules
                 this.Extension = parts[last].Substring(idx + 1);
                 parts[last] = parts[last].Substring(0, idx);
             }
-
             this.Version = parts[2];
-
             if (parts.Length > 3)
             {
                 this.Classifier = parts[3];
             }
+
+            //int last = parts.Length - 1;
+            //int idx = parts[last].IndexOf('@');
+            //if (idx != -1)
+            //{
+            //    this.Extension = parts[last].Substring(idx + 1);
+            //    parts[last] = parts[last].Substring(0, idx);
+            //}
+
+
+            //if (parts.Length > 3)
+            //{
+            //    this.Classifier = parts[3];
+            //}
         }
 
         public static Artifact From(string descriptor)
@@ -77,7 +92,14 @@ namespace NsisoLauncherCore.Modules
         {
             get
             {
-                return string.Format(@"{0}\{1}\{2}\{1}-{2}.{3}", Package.Replace(".", "\\"), Name, Version, Extension);
+                if (Classifier == null)
+                {
+                    return string.Format(@"{0}\{1}\{2}\{1}-{2}.{3}", Package.Replace(".", "\\"), Name, Version, Extension);
+                }
+                else
+                {
+                    return string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}.{4}", Package.Replace(".", "\\"), Name, Version, Classifier, Extension);
+                }
             }
         }
 

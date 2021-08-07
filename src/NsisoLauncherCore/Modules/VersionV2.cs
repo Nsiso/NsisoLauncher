@@ -15,12 +15,30 @@ namespace NsisoLauncherCore.Modules
 
         public override string GetJvmLaunchArguments()
         {
-            return BuildV2ArgFromJTokenList(Arguments.Jvm);
+            string current_arg = BuildV2ArgFromJTokenList(Arguments.Jvm);
+            if (InheritsFromInstance == null)
+            {
+                return current_arg;
+            }
+            else
+            {
+                string base_arg = InheritsFromInstance.GetJvmLaunchArguments();
+                return string.Format("{0} {1}", base_arg, current_arg);
+            }
         }
 
         public override string GetGameLaunchArguments()
         {
-            return BuildV2ArgFromJTokenList(Arguments.Game);
+            string current_arg = BuildV2ArgFromJTokenList(Arguments.Game);
+            if (InheritsFromInstance == null)
+            {
+                return current_arg;
+            }
+            else
+            {
+                string base_arg = InheritsFromInstance.GetGameLaunchArguments();
+                return string.Format("{0} {1}", base_arg, current_arg);
+            }
         }
 
         private string BuildV2ArgFromJTokenList(List<JToken> args)
