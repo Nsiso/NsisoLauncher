@@ -26,6 +26,10 @@ namespace NsisoLauncherCore.Modules
         private string BuildV2ArgFromJTokenList(List<JToken> args)
         {
             StringBuilder argBuilder = new StringBuilder();
+            if (args == null)
+            {
+                return null;
+            }
             foreach (var arg in args)
             {
                 switch (arg.Type)

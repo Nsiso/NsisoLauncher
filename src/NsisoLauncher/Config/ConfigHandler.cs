@@ -158,7 +158,7 @@ namespace NsisoLauncher.Config
                 {
                     Directory.CreateDirectory(profilesConfigDir);
                 }
-                File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig));
+                File.WriteAllText(LauncherProfilesConfigPath, JsonConvert.SerializeObject(LauncherProfilesConfig, Formatting.Indented, SerializerSettings));
             }
             catch (UnauthorizedAccessException e)
             {

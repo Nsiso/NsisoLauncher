@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Modules;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -28,11 +29,6 @@ namespace NsisoLauncherCore.Config
         /// 用户端Token
         /// </summary>
         public string ClientToken { get; set; }
-
-        /// <summary>
-        /// 选中的版本profile
-        /// </summary>
-        public string SelectedProfile { get; set; }
 
         private ObservableDictionary<string, VersionProfile> profiles;
         /// <summary>

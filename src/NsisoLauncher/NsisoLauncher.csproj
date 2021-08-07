@@ -100,7 +100,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Config\ConfigHandler.cs" />
-    <Compile Include="Config\LauncherProfilesConfig.cs" />
     <Compile Include="Config\MainConfig.cs" />
     <Compile Include="Utils\MenuItem.cs" />
     <Compile Include="Utils\NavigationServiceEx.cs" />
