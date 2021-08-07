@@ -208,7 +208,25 @@ namespace NsisoLauncherCore
                         }
                     }
 
-                    #region 检查处理库文件
+                    #region 检查依赖文件
+                    string core_path = GetJarPath(ver);
+                    if (!File.Exists(core_path))
+                    {
+                        if (ver.InheritsFromInstance != null)
+                        {
+                            string base_core_path = GetJarPath(ver.InheritsFromInstance);
+                            if (!File.Exists(base_core_path))
+                            {
+                                throw new LaunchException.LaunchException("继承版本丢失启动核心且无法补全", "请尝试重新安装此版本");
+                            }
+                            File.Copy(base_core_path, core_path, true);
+                        }
+                        else
+                        {
+                            throw new LaunchException.LaunchException("丢失启动核心且无法补全", "请尝试重新安装此版本");
+                        }
+                    }
+
                     List<Library> libraries = ver.GetAllLibraries();
                     foreach (var item in libraries)
                     {
@@ -262,8 +280,14 @@ namespace NsisoLauncherCore
                         result.SetException(new NullJavaException());
                         return result;
                     }
+
                     ProcessStartInfo startInfo = new ProcessStartInfo(setting.UsingJava.Path, arg)
-                    { RedirectStandardError = true, RedirectStandardOutput = true, UseShellExecute = false, WorkingDirectory = GetGameVersionRootDir(ver) };
+                    {
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        WorkingDirectory = GetGameVersionRootDir(ver)
+                    };
 
                     LaunchInstance instance = new LaunchInstance(ver, setting, startInfo);
                     result.Instance = instance;
