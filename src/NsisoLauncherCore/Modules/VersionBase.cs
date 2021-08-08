@@ -96,7 +96,15 @@ namespace NsisoLauncherCore.Modules
             {
                 List<Library> libraries = new List<Library>();
                 libraries.AddRange(this.InheritsFromInstance.GetAllLibraries());
-                libraries.AddRange(this.Libraries);
+                foreach (var item in this.Libraries)
+                {
+                    Library duplicates = libraries.Find(x => x.Name.Package == item.Name.Package && x.Name.Name == item.Name.Name);
+                    if (duplicates != null)
+                    {
+                        libraries.Remove(duplicates);
+                    }
+                    libraries.Add(item);
+                }
                 return libraries;
             }
         }
