@@ -528,24 +528,25 @@ namespace NsisoLauncher.ViewModels.Pages
                     launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
                 }
 
-                //todo 自动选择java
-                //if (App.Config.MainConfig.Environment.AutoJava)
-                //{
-                //    App.Handler.Java = Java.GetSuitableJava(App.JavaList);
-                //}
+                //设置java
+                if (!App.Config.MainConfig.Environment.AutoJava)
+                {
+                    if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Environment.JavaPath) && File.Exists(App.Config.MainConfig.Environment.JavaPath))
+                    {
+                        launchSetting.UsingJava = await Java.GetJavaInfoAsync(App.Config.MainConfig.Environment.JavaPath);
+                    }
+                    else
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("您手动设置的JAVA不存在", "请检查您手动设置的java路径填写正确");
+                        return;
+                    }
+                }
 
-                //todo 检查自动设置内存
-                ////自动内存设置
-                //if (App.Config.MainConfig.Environment.AutoMemory)
-                //{
-                //    var m = SystemTools.GetBestMemory(App.Handler.Java);
-                //    App.Config.MainConfig.Environment.MaxMemory = m;
-                //    launchSetting.MaxMemory = m;
-                //}
-                //else
-                //{
-                //    launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
-                //}
+                //内存设置
+                launchSetting.AutoMemory = App.Config.MainConfig.Environment.AutoMemory;
+                launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
+                launchSetting.MinMemory = App.Config.MainConfig.Environment.MinMemory;
+
                 launchSetting.VersionType = App.Config.MainConfig.Customize.VersionInfo;
                 launchSetting.WindowSize = App.Config.MainConfig.Environment.WindowSize;
 
@@ -609,7 +610,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                 StringBuilder validate_str_builder = new StringBuilder();
                                 foreach (var item in ((GameValidateFailedException)result.LaunchException).FailedFiles)
                                 {
-                                    validate_str_builder.AppendLine(item.Key);
+                                    validate_str_builder.AppendLine(Path.GetFileName(item.Key));
                                 }
                                 await MainWindowVM.ShowMessageAsync("游戏文件缺失或破损，无法安全启动",
                                     string.Format("游戏文件存在缺失或破损的情况，请检查游戏完整性\n{0}", validate_str_builder.ToString()));
@@ -631,19 +632,21 @@ namespace NsisoLauncher.ViewModels.Pages
                                     case MessageDialogResult.Negative:
                                         break;
                                     case MessageDialogResult.Affirmative:
-                                        if (result.Version.JavaVersion != null)
+                                        NsisoLauncherCore.Modules.JavaVersion javaVersion = java_ex.RequiredVersion;
+                                        if (javaVersion == null)
+                                        {
+                                            await MainWindowVM.ShowMessageAsync("该版本没有提供java信息", "无法进行自动下载，请自行下载最新版本java");
+                                            return;
+                                        }
+                                        else
                                         {
                                             LauncherMetaApi metaApi = new LauncherMetaApi(App.NetHandler.Requester);
-                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(result.Version.JavaVersion.Component);
+                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(javaVersion.Component);
                                             List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
                                             App.NetHandler.Downloader.AddDownloadTask(tasks);
                                             App.MainPageVM.NavigateToDownloadPage();
                                             await App.NetHandler.Downloader.StartDownloadAndWaitDone();
                                             App.RefreshJavaList();
-                                        }
-                                        else
-                                        {
-                                            await MainWindowVM.ShowMessageAsync("该版本没有提供java信息", "无法进行自动下载，请自行下载最新版本java");
                                         }
                                         break;
                                     default:

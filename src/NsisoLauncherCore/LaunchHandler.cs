@@ -168,9 +168,17 @@ namespace NsisoLauncherCore
                         return result;
                     }
 
-                    if (setting.MaxMemory == 0)
+                    if (setting.AutoMemory)
                     {
                         setting.MaxMemory = SystemTools.GetBestMemory(setting.UsingJava);
+                        setting.MinMemory = 0;
+                    }
+
+                    // check folder is exsist
+                    string assetsRoot = this.GetAssetsRoot();
+                    if (!Directory.Exists(assetsRoot))
+                    {
+                        Directory.CreateDirectory(assetsRoot);
                     }
                     #endregion
 
@@ -416,6 +424,11 @@ namespace NsisoLauncherCore
         public string GetJarPath(string id)
         {
             return PathManager.GetJarPath(GameRootPath, id);
+        }
+
+        public string GetAssetsRoot()
+        {
+            return PathManager.GetAssetsRoot(GameRootPath);
         }
 
         public string GetAssetsIndexPath(string assetsID)

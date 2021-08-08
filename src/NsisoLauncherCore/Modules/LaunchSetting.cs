@@ -36,6 +36,11 @@ namespace NsisoLauncherCore.Modules
         public string GCArgument { get; set; }
 
         /// <summary>
+        /// Is enable auto memory set.
+        /// </summary>
+        public bool AutoMemory { get; set; }
+
+        /// <summary>
         /// 最大运行内存
         /// </summary>
         public int MaxMemory { get; set; }

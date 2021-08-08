@@ -213,32 +213,25 @@ namespace NsisoLauncherCore
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            #region JVM头参数部分
             string jvmArg = ParseJvmArg(version, setting);
-            #endregion
-
-            #region 处理游戏参数
             string gameArg = ParseGameArg(version, setting);
-            #endregion
-
-            stopwatch.Stop();
 
             string allArg = string.Format("{0} {1} {2}", jvmArg, version.MainClass, gameArg);
 
-            SendDebugLog(string.Format("Finished version launch argument parse, Using time:{0}ms", stopwatch.ElapsedMilliseconds));
-            SendDebugLog(string.Format("Original version launch argument: \n{0}", allArg));
-            SendDebugLog(string.Format("Formated version launch argument: \n{0}", allArg.Replace(";", ";\n").Replace(' ', '\n')));
+            string final_arg = ReplaceAll(version, setting, allArg);
 
-            return allArg.Trim();
+            stopwatch.Stop();
+
+            SendDebugLog(string.Format("Finished version launch argument parse, Using time:{0}ms", stopwatch.ElapsedMilliseconds));
+            SendDebugLog(string.Format("Original version launch argument: \n{0}", final_arg));
+            SendDebugLog(string.Format("Formated version launch argument: \n{0}", final_arg.Replace(";", ";\n").Replace(' ', '\n')));
+
+            return final_arg;
         }
 
-        private string ParseGameArg(VersionBase version, LaunchSetting setting)
+        private string ReplaceAll(VersionBase version, LaunchSetting setting, string all_arg)
         {
-            string game_arg = version.GetGameLaunchArguments();
-
-            StringBuilder gameArgBuilder = new StringBuilder(game_arg);
-
-            string assetsPath = string.Format("\"{0}\\assets\"", handler.GameRootPath);
+            string assetsPath = string.Format("\"{0}\"", handler.GetAssetsRoot());
             string gameDir = string.Format("\"{0}\"", handler.GetGameVersionRootDir(version));
             string assetsIndexName;
             if (version.Assets != null)
@@ -253,7 +246,8 @@ namespace NsisoLauncherCore
             {
                 assetsIndexName = "legacy";
             }
-            Dictionary<string, string> gameArgDic = new Dictionary<string, string>()
+            List<Library> libraries = version.GetAllLibraries();
+            Dictionary<string, string> argDic = new Dictionary<string, string>()
             {
                 {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.LaunchPlayerName) },
                 {"${auth_session}",setting.LaunchUser.LaunchAccessToken },
@@ -266,9 +260,23 @@ namespace NsisoLauncherCore
                 {"${auth_access_token}",setting.LaunchUser.LaunchAccessToken },
                 {"${user_properties}",ToList(setting.LaunchUser.Properties) },
                 {"${user_type}",setting.LaunchUser.UserType },
-                {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) }
+                {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) },
+                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(version), @"\$natives") },
+                {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
+                {"${classpath_separator}", ";" },
+                {"${launcher_name}","NsisoLauncher5" },
+                {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
+                {"${classpath}", GetClassPaths(libraries, version) },
             };
-            ReplaceByDic(gameArgBuilder, gameArgDic);
+            StringBuilder final_arg_builder = new StringBuilder(all_arg);
+            return ReplaceByDic(final_arg_builder, argDic).ToString().Trim();
+        }
+
+        private string ParseGameArg(VersionBase version, LaunchSetting setting)
+        {
+            string game_arg = version.GetGameLaunchArguments();
+
+            StringBuilder gameArgBuilder = new StringBuilder(game_arg);
 
             // set window size arg
             if (setting.WindowSize != null)
@@ -410,21 +418,6 @@ namespace NsisoLauncherCore
             #region 处理游戏JVM参数
             string jvm_arg = version.GetJvmLaunchArguments();
             jvmHead.Append(jvm_arg);
-
-            List<Library> libraries = version.GetAllLibraries();
-
-            Dictionary<string, string> jvmArgDic = new Dictionary<string, string>()
-                {
-                    {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetGameVersionRootDir(version), @"\$natives") },
-                    {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
-                    {"${classpath_separator}", ";" },
-                    {"${launcher_name}","NsisoLauncher5" },
-                    {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
-                    {"${classpath}", GetClassPaths(libraries, version) },
-                };
-
-            ReplaceByDic(jvmHead, jvmArgDic);
-
             jvmHead.Append(' ');
             #endregion
 

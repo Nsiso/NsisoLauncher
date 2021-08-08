@@ -100,7 +100,10 @@ namespace NsisoLauncherCore.Util
         {
             Dictionary<string, Library> lostLibs = new Dictionary<string, Library>();
 
-            foreach (var item in version.Libraries)
+
+            List<Library> libraries = version.GetAllLibraries();
+
+            foreach (var item in libraries)
             {
                 if (item.IsEnable())
                 {

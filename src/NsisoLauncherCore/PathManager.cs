@@ -213,6 +213,16 @@ namespace NsisoLauncherCore
         }
 
         /// <summary>
+        /// Get assets folder root path
+        /// </summary>
+        /// <param name="gameRootPath"></param>
+        /// <returns></returns>
+        public static string GetAssetsRoot(string gameRootPath)
+        {
+            return string.Format(@"{0}\assets", gameRootPath);
+        }
+
+        /// <summary>
         /// 获取资源引导文件路径
         /// </summary>
         /// <param name="gameRootPath">游戏根目录</param>
@@ -220,7 +230,7 @@ namespace NsisoLauncherCore
         /// <returns></returns>
         public static string GetAssetsIndexPath(string gameRootPath, string assetsID)
         {
-            return string.Format(@"{0}\assets\indexes\{1}.json", gameRootPath, assetsID);
+            return string.Format(@"{0}\indexes\{1}.json", GetAssetsRoot(gameRootPath), assetsID);
         }
 
         /// <summary>
@@ -231,7 +241,7 @@ namespace NsisoLauncherCore
         /// <returns></returns>
         public static string GetAssetsPath(string gameRootPath, JAssetInfo assetsInfo)
         {
-            return string.Format(@"{0}\assets\objects\{1}\{2}", gameRootPath, assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
+            return string.Format(@"{0}\objects\{1}\{2}", GetAssetsRoot(gameRootPath), assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
         }
 
         /// <summary>

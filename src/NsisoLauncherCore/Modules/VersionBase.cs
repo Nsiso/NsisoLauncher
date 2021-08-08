@@ -90,21 +90,32 @@ namespace NsisoLauncherCore.Modules
         {
             if (InheritsFromInstance == null)
             {
-                return Libraries;
+                return this.Libraries;
             }
             else
             {
                 List<Library> libraries = new List<Library>();
-                libraries.AddRange(this.InheritsFromInstance.GetAllLibraries());
-                foreach (var item in this.Libraries)
+                if (this.Libraries != null)
                 {
-                    Library duplicates = libraries.Find(x => x.Name.Package == item.Name.Package && x.Name.Name == item.Name.Name);
-                    if (duplicates != null)
-                    {
-                        libraries.Remove(duplicates);
-                    }
-                    libraries.Add(item);
+                    libraries.AddRange(this.Libraries);
                 }
+                List<Library> base_libs = this.InheritsFromInstance.GetAllLibraries();
+                if (base_libs != null)
+                {
+                    libraries.AddRange(base_libs);
+                }
+                
+                // REMOVE THE DUPLICATES LIB, I'M NOT SURE IF THIS IS NEEDED. 
+                //foreach (var item in this.Libraries)
+                //{
+                //    Library duplicates = libraries.Find(x => x.Name.Package == item.Name.Package && x.Name.Name == item.Name.Name);
+                //    if (duplicates != null)
+                //    {
+                //        libraries.Remove(duplicates);
+                //    }
+                //    libraries.Add(item);
+                //}
+
                 return libraries;
             }
         }
