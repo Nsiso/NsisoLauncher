@@ -142,7 +142,6 @@ namespace NsisoLauncher
             #endregion
 
             #region 自定义主题初始化
-            //todo 恢复自定义主题初始化
             var custom = Config.MainConfig.Customize;
             if (!string.IsNullOrWhiteSpace(custom.AccentColor))
             {

@@ -529,7 +529,11 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
 
                 //设置java
-                if (!App.Config.MainConfig.Environment.AutoJava)
+                if (App.Config.MainConfig.Environment.AutoJava)
+                {
+                    launchSetting.UsingJava = Java.GetSuitableJava(App.JavaList, LaunchVersion);
+                }
+                else
                 {
                     if (!string.IsNullOrWhiteSpace(App.Config.MainConfig.Environment.JavaPath) && File.Exists(App.Config.MainConfig.Environment.JavaPath))
                     {
@@ -541,7 +545,6 @@ namespace NsisoLauncher.ViewModels.Pages
                         return;
                     }
                 }
-
                 //内存设置
                 launchSetting.AutoMemory = App.Config.MainConfig.Environment.AutoMemory;
                 launchSetting.MaxMemory = App.Config.MainConfig.Environment.MaxMemory;
@@ -553,17 +556,16 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 性能警告
-                //todo 性能警告
-                //if (App.Handler.Java.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
-                //{
-                //    await MainWindowVM.ShowMessageAsync("性能优化提示",
-                //        "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
-                //}
-                //if (App.Handler.Java.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
-                //{
-                //    await MainWindowVM.ShowMessageAsync("内存分配警告",
-                //        "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
-                //}
+                if (launchSetting.UsingJava.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
+                {
+                    await MainWindowVM.ShowMessageAsync("性能优化提示",
+                        "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
+                }
+                if (launchSetting.UsingJava.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
+                {
+                    await MainWindowVM.ShowMessageAsync("内存分配警告",
+                        "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
+                }
                 #endregion
 
                 #region 配置文件处理

@@ -227,6 +227,7 @@ namespace NsisoLauncher.Config
                     DownloadLostDepend = true,
                     GCEnabled = true,
                     GCType = GCType.G1GC,
+                    GCArgument = "-XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M",
                     AutoJava = true,
                     WindowSize = new Resolution() { FullScreen = false },
                     ExitAfterLaunch = false

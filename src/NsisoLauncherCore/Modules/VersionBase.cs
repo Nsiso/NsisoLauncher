@@ -88,36 +88,34 @@ namespace NsisoLauncherCore.Modules
 
         public virtual List<Library> GetAllLibraries()
         {
-            if (InheritsFromInstance == null)
-            {
-                return this.Libraries;
-            }
-            else
-            {
-                List<Library> libraries = new List<Library>();
-                if (this.Libraries != null)
-                {
-                    libraries.AddRange(this.Libraries);
-                }
-                List<Library> base_libs = this.InheritsFromInstance.GetAllLibraries();
-                if (base_libs != null)
-                {
-                    libraries.AddRange(base_libs);
-                }
-                
-                // REMOVE THE DUPLICATES LIB, I'M NOT SURE IF THIS IS NEEDED. 
-                //foreach (var item in this.Libraries)
-                //{
-                //    Library duplicates = libraries.Find(x => x.Name.Package == item.Name.Package && x.Name.Name == item.Name.Name);
-                //    if (duplicates != null)
-                //    {
-                //        libraries.Remove(duplicates);
-                //    }
-                //    libraries.Add(item);
-                //}
+            HashSet<Library> lib_hash_set = new HashSet<Library>(new LibraryNameEqualityComparer());
 
-                return libraries;
+            if (this.Libraries != null)
+            {
+                foreach (var item in this.Libraries)
+                {
+                    if (item.IsEnable())
+                    {
+                        lib_hash_set.Add(item);
+                    }
+                    
+                }
             }
+
+
+            if (InheritsFromInstance != null)
+            {
+                List<Library> base_libs = InheritsFromInstance.GetAllLibraries();
+                foreach (var item in base_libs)
+                {
+                    if (item.IsEnable())
+                    {
+                        lib_hash_set.Add(item);
+                    }
+                }
+            }
+
+            return lib_hash_set.ToList();
         }
 
         public abstract string GetJvmLaunchArguments();

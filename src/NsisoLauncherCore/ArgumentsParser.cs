@@ -359,7 +359,25 @@ namespace NsisoLauncherCore
         {
             StringBuilder jvmHead = new StringBuilder();
 
-            #region 处理JVM启动参数  
+            #region 处理JavaAgent
+            if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
+            {
+                jvmHead.Append("-javaagent:");
+                jvmHead.Append(setting.JavaAgent.Trim());
+                jvmHead.Append(' ');
+            }
+            #endregion
+
+            #region 处理游戏JVM参数
+            string jvm_arg = version.GetJvmLaunchArguments();
+            jvmHead.Append(jvm_arg);
+            jvmHead.Append(' ');
+            #endregion
+
+            #region 处理JVM启动参数
+            //unlock jvm
+            jvmHead.Append("-XX:+UnlockExperimentalVMOptions ");
+
             if (setting.GCEnabled)
             {
                 switch (setting.GCType)
@@ -399,26 +417,9 @@ namespace NsisoLauncherCore
             {
                 jvmHead.Append(setting.AdvencedJvmArguments).Append(' ');
             }
-            //unlock jvm
-            jvmHead.Append("-XX:+UnlockExperimentalVMOptions ");
 
             // allow fml method
             jvmHead.Append("-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.ignorePatchDiscrepancies=true ");
-            #endregion
-
-            #region 处理JavaAgent
-            if (!string.IsNullOrWhiteSpace(setting.JavaAgent))
-            {
-                jvmHead.Append("-javaagent:");
-                jvmHead.Append(setting.JavaAgent.Trim());
-                jvmHead.Append(' ');
-            }
-            #endregion
-
-            #region 处理游戏JVM参数
-            string jvm_arg = version.GetJvmLaunchArguments();
-            jvmHead.Append(jvm_arg);
-            jvmHead.Append(' ');
             #endregion
 
             return jvmHead.ToString()?.Trim();

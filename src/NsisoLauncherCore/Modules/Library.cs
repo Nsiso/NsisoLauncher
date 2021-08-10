@@ -97,6 +97,22 @@ namespace NsisoLauncherCore.Modules
         }
     }
 
+    public class LibraryNameEqualityComparer : IEqualityComparer<Library>
+    {
+        public bool Equals(Library x, Library y)
+        {
+            return x.Name.Package == y.Name.Package &&
+                   x.Name.Name == y.Name.Name &&
+                   x.Name.Extension == y.Name.Extension &&
+                   x.Name.Classifier == y.Name.Classifier;
+        }
+
+        public int GetHashCode(Library obj)
+        {
+            return string.Format("{0}-{1}-{2}.{3}", obj.Name.Package, obj.Name.Name, obj.Name.Classifier, obj.Name.Extension).GetHashCode();
+        }
+    }
+
     public class Native : Library
     {
         /// <summary>

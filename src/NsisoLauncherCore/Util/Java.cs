@@ -194,15 +194,25 @@ namespace NsisoLauncherCore.Util
                         break;
                 }
 
+                Modules.JavaVersion javaVersion = null;
                 if (version.JavaVersion != null)
                 {
+                    javaVersion = version.JavaVersion;
+                }
+                else if (version.InheritsFromInstance != null && version.InheritsFromInstance.JavaVersion != null)
+                {
+                    javaVersion = version.InheritsFromInstance.JavaVersion;
+                }
+
+                if (javaVersion != null)
+                {
                     //如果指定了java
-                    Java com_java = ordered_javas.Where(x => x.GameCoreTag == version.JavaVersion.Component).FirstOrDefault();
+                    Java com_java = ordered_javas.Where(x => x.GameCoreTag == javaVersion.Component).FirstOrDefault();
                     if (com_java != null)
                     {
                         return com_java;
                     }
-                    Java second_com_java = ordered_javas.Where(x => x.MajorVersion == version.JavaVersion.MajorVersion).FirstOrDefault();
+                    Java second_com_java = ordered_javas.Where(x => x.MajorVersion == javaVersion.MajorVersion).FirstOrDefault();
                     if (second_com_java != null)
                     {
                         return second_com_java;

@@ -134,26 +134,16 @@ namespace NsisoLauncherCore
                     // choose suitable java for version
                     if (setting.UsingJava == null)
                     {
-                        if (Javas != null && Javas.Count != 0)
-                        {
-                            if (ver.InheritsFromInstance == null)
-                            {
-                                setting.UsingJava = Java.GetSuitableJava(Javas, ver);
-                            }
-                            else
-                            {
-                                setting.UsingJava = Java.GetSuitableJava(Javas, ver.InheritsFromInstance);
-                            }
-                        }
-                        else
-                        {
-                            result.SetException(new NullJavaException());
-                            return result;
-                        }
+                        setting.UsingJava = Java.GetSuitableJava(Javas, ver);
                     }
 
-                    //check best java for minecraft
+                    //check java for minecraft
                     JavaVersion javaVersion = null;
+                    if (setting.UsingJava == null)
+                    {
+                        result.SetException(new NullJavaException());
+                        return result;
+                    }
                     if (ver.JavaVersion != null)
                     {
                         javaVersion = ver.JavaVersion;
@@ -168,6 +158,7 @@ namespace NsisoLauncherCore
                         return result;
                     }
 
+                    // auto memory size
                     if (setting.AutoMemory)
                     {
                         setting.MaxMemory = SystemTools.GetBestMemory(setting.UsingJava);
