@@ -98,7 +98,7 @@ namespace NsisoLauncherCore.Modules
                     {
                         lib_hash_set.Add(item);
                     }
-                    
+
                 }
             }
 

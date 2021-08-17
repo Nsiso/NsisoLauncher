@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NsisoLauncher.Views.Controls
@@ -12,15 +13,17 @@ namespace NsisoLauncher.Views.Controls
     /// </summary>
     public partial class Skin3dViewer : UserControl
     {
-        public Uri SkinUrl
+        public BitmapImage SkinImage
         {
-            get { return (Uri)GetValue(SkinUrlProperty); }
-            set { SetValue(SkinUrlProperty, value); }
+            get { return (BitmapImage)GetValue(SkinImageProperty); }
+            set { SetValue(SkinImageProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SkinUrl.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SkinUrlProperty =
-            DependencyProperty.Register("SkinUrl", typeof(Uri), typeof(Skin3dViewer), new PropertyMetadata(null));
+        // Using a DependencyProperty as the backing store for SkinImage.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SkinImageProperty =
+            DependencyProperty.Register("SkinImage", typeof(BitmapImage), typeof(Skin3dViewer), new PropertyMetadata(null));
+
+
 
 
         public Skin3dViewer()

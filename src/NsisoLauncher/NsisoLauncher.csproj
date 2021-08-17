@@ -101,6 +101,7 @@
     </ApplicationDefinition>
     <Compile Include="Config\ConfigHandler.cs" />
     <Compile Include="Config\MainConfig.cs" />
+    <Compile Include="Resource\Models\ModelPlayer.cs" />
     <Compile Include="Utils\MenuItem.cs" />
     <Compile Include="Utils\NavigationServiceEx.cs" />
     <Compile Include="ViewModels\Pages\DownloadPageViewModel.cs" />
@@ -122,6 +123,9 @@
     <Compile Include="ViewModels\Windows\DownloadWindowViewModel.cs" />
     <Compile Include="Views\Controls\Skin3dViewer.xaml.cs">
       <DependentUpon>Skin3dViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\UserProfilesControl.xaml.cs">
+      <DependentUpon>UserProfilesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\ChooseProfileDialog.xaml.cs">
       <DependentUpon>ChooseProfileDialog.xaml</DependentUpon>
@@ -168,10 +172,6 @@
     <Compile Include="Views\Windows\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Resource\3dModels\Material.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Resource\3dModels\Normal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -189,6 +189,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\Skin3dViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\UserProfilesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

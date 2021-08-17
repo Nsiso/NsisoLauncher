@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Security;
 using System.Threading;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using User = NsisoLauncher.Config.User;
 
 namespace NsisoLauncher.ViewModels.Pages
@@ -76,11 +78,15 @@ namespace NsisoLauncher.ViewModels.Pages
         public bool IsLoggedIn { get; set; } = false;
         public string LoggedInUsername { get; set; }
         public UserNode LoggedInUser { get; set; }
-        public Uri SkinUrl { get; set; } = new Uri("/NsisoLauncher;component/Resource/PlayerSkins/steve.png", UriKind.Relative);
-        public ObservableCollection<ISkin> Skins { get; set; } = new ObservableCollection<ISkin>();
+        //public BitmapImage SkinImage { get; set; } /*= new Uri("/NsisoLauncher;component/Resource/PlayerSkins/steve.png", UriKind.Relative);*/
+        //public ObservableCollection<ISkin> Skins { get; set; } = new ObservableCollection<ISkin>();
         public Brush StateColor { get; set; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         public string State { get; set; }
         public string AuthName { get; set; }
+
+        #region YggdrasilUser
+        public bool IsYggdrasil { get; set; }
+        #endregion
 
 
         public ICommand LoginCmd { get; set; }
@@ -88,6 +94,10 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand LogoutCmd { get; set; }
 
         public ICommand AddAuthNodeCmd { get; set; }
+
+        public ICommand GoAccountManagementCmd { get; set; }
+
+        public ICommand ChangeSkinCmd { get; set; }
 
         public User User { get; set; }
 
@@ -139,6 +149,16 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 AuthNodeWindow nodeWindow = new AuthNodeWindow();
                 nodeWindow.Show();
+            });
+
+            ChangeSkinCmd = new DelegateCommand((a) =>
+            {
+                Process.Start("https://www.minecraft.net/zh-hans/profile/skin");
+            });
+
+            GoAccountManagementCmd = new DelegateCommand((a) =>
+            {
+                Process.Start("https://www.minecraft.net/zh-hans/profile");
             });
 
             //LoggedInUser = new UserNode()
@@ -276,15 +296,15 @@ namespace NsisoLauncher.ViewModels.Pages
                 node.User = loginWindow.LoggedInUser;
                 LoginNode(node);
 
-                //设置皮肤
-                Skins.Clear();
-                if (loginWindow.LoggedInUser.Skins != null)
-                {
-                    foreach (var item in loginWindow.LoggedInUser.Skins)
-                    {
-                        Skins.Add(item);
-                    }
-                }
+                ////设置皮肤
+                //Skins.Clear();
+                //if (loginWindow.LoggedInUser.Skins != null)
+                //{
+                //    foreach (var item in loginWindow.LoggedInUser.Skins)
+                //    {
+                //        Skins.Add(item);
+                //    }
+                //}
 
             }
             else

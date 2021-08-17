@@ -21,11 +21,14 @@
                     <MaterialGroup x:Key="steveMR1" >
                         <DiffuseMaterial>
                             <DiffuseMaterial.Brush>
-                                <VisualBrush TileMode="Tile" ViewportUnits="Absolute" Viewport="0 0 1 1" AlignmentX="Left" AlignmentY="Top">
+                                <ImageBrush ViewportUnits="Absolute"
+                                    ImageSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:Skin3dViewer},Path=SkinImage}"/>
+                                <!--<VisualBrush ViewportUnits="Absolute">
                                     <VisualBrush.Visual>
-                                        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:Skin3dViewer},Path=SkinUrl}" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.ClearTypeHint="Enabled"/>
+                                        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:Skin3dViewer},Path=SkinUrl}"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                                     </VisualBrush.Visual>
-                                </VisualBrush>
+                                </VisualBrush>-->
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </MaterialGroup>
