@@ -47,12 +47,10 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <local:YggdrasilUserProfilesConverter x:Key="profilesConverter"/>
-        <local:YggdrasilUserSelectedProfileUuidConverter x:Key="selectedProfileUuidConverter"/>
     </UserControl.Resources>
     <Grid>
         <ListBox Style="{StaticResource radioButtonStyle}" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 ItemsSource="{Binding User, ElementName=uc, Converter={StaticResource profilesConverter},Mode=OneWay}"
-                 SelectedValuePath="Key" SelectedValue="{Binding User, ElementName=uc, Converter={StaticResource selectedProfileUuidConverter},Mode=OneWay}"/>
+                 ItemsSource="{Binding User.Profiles, ElementName=uc}"
+                 SelectedValuePath="Key" SelectedValue="{Binding User.SelectedProfileUuid, ElementName=uc}"/>
     </Grid>
 </UserControl>

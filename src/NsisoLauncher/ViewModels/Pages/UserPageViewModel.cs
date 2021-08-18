@@ -182,7 +182,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (LoggedInUser != null)
                 {
                     IsLoggedIn = true;
-                    LoggedInUsername = LoggedInUser.User.LaunchPlayerName;
+                    LoggedInUsername = LoggedInUser.User.DisplayUsername;
                     State = "在线";
                     if (User.AuthenticationDic.ContainsKey(LoggedInUser.AuthModule))
                     {

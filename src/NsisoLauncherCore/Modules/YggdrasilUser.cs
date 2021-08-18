@@ -50,6 +50,8 @@ namespace NsisoLauncherCore.Modules
 
         public string UserId => this.UserData.ID;
 
+        public string DisplayUsername => Username;
+
         private PlayerProfile GetSelectProfile()
         {
             if (string.IsNullOrWhiteSpace(SelectedProfileUuid))

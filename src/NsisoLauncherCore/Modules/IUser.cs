@@ -9,6 +9,12 @@ namespace NsisoLauncherCore.Modules
     public interface IUser
     {
         /// <summary>
+        /// 账户用户名
+        /// </summary>
+        [JsonIgnore]
+        string DisplayUsername { get; }
+
+        /// <summary>
         /// 启动所使用的验证密匙
         /// </summary>
         [JsonIgnore]
@@ -43,5 +49,15 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         [JsonIgnore]
         List<Property> Properties { get; }
+
+        /// <summary>
+        /// Profiles
+        /// </summary>
+        Dictionary<string, PlayerProfile> Profiles { get; set; }
+
+        /// <summary>
+        /// 选中profile的uuid
+        /// </summary>
+        string SelectedProfileUuid { get; set; }
     }
 }

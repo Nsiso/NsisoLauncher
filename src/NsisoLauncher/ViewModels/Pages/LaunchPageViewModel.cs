@@ -248,7 +248,7 @@ namespace NsisoLauncher.ViewModels.Pages
             UserNode userNode = UserSetting?.SelectedUser;
             if (userNode != null)
             {
-                UserName = userNode.User.LaunchPlayerName;
+                UserName = userNode.User.DisplayUsername;
                 //todo 添加prifile name
                 UserProfileName = userNode.User.LaunchPlayerName;
             }

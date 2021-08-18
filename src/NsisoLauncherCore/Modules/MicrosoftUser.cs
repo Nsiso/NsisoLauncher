@@ -39,6 +39,8 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public MinecraftToken MinecraftToken { get; set; }
 
+        public string DisplayUsername => Name;
+
         public string LaunchAccessToken => this.MinecraftToken.AccessToken;
 
         public string LaunchUuid => this.Id;
@@ -50,5 +52,8 @@ namespace NsisoLauncherCore.Modules
         public List<UserData.Property> Properties => null;
 
         public string UserId => this.MicrosoftToken.User_id;
+
+        public Dictionary<string, PlayerProfile> Profiles { get => null; set { } }
+        public string SelectedProfileUuid { get => null; set { } }
     }
 }
