@@ -28,33 +28,15 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// 联网获取版本列表
         /// </summary>
         /// <returns>版本列表</returns>
-        public async Task<List<JWVersion>> GetVersionList()
+        public async Task<VersionManifest> GetVersionManifest()
         {
             Uri versionListUri;
             IVersionListMirror mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(VersionListMirrorList);
-            if (mirror == null)
-            {
-                versionListUri = new Uri(GetDownloadUri.MojangVersionUrl);
-            }
-            else
-            {
-                versionListUri = mirror.VersionListUri;
-            }
+            versionListUri = mirror == null ? new Uri(GetDownloadUri.MojangVersionUrl) : mirror.VersionListUri;
             HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(versionListUri);
-            string json = null;
-            if (jsonRespond.IsSuccessStatusCode)
-            {
-                json = await jsonRespond.Content.ReadAsStringAsync();
-            }
-            if (!string.IsNullOrEmpty(json))
-            {
-                var e = JsonConvert.DeserializeObject<JWVersions>(json);
-                return e.Versions;
-            }
-            else
-            {
-                return null;
-            }
+            jsonRespond.EnsureSuccessStatusCode();
+            string json = await jsonRespond.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<VersionManifest>(json);
         }
 
         /// <summary>

@@ -283,7 +283,6 @@
     <Compile Include="Util\Save\SaveHandler.cs" />
     <Compile Include="Util\SystemTools.cs" />
     <Compile Include="Util\Unzip.cs" />
-    <Compile Include="VersionManager.cs" />
     <Compile Include="VersionReader.cs" />
   </ItemGroup>
   <ItemGroup>

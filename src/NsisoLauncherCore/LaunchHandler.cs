@@ -377,6 +377,11 @@ namespace NsisoLauncherCore
         #endregion
 
         #region 路径获取
+        public string GetVersionsRoot()
+        {
+            return PathManager.GetVersionsRoot(GameRootPath);
+        }
+
         public string GetVersionWorkspaceDir(VersionBase ver)
         {
             return PathManager.GetVersionWorkspaceDir(VersionIsolation, GameRootPath, ver);

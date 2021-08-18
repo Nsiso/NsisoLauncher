@@ -99,6 +99,7 @@
                 <controls:HamburgerMenuItemCollection>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=HomeSolid}" Label="开始游戏" NavigationDestination="Views/Pages/LaunchPage.xaml"/>
                     <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=CubesSolid}" Label="仓库" NavigationDestination="Views/Pages/ExtendPage.xaml"/>
+                    <itemUtils:MenuItem Icon="{iconPacks:FontAwesome Kind=PlusSolid}" Label="添加安装" NavigationDestination="Views/Pages/AdditionPage.xaml"/>
                 </controls:HamburgerMenuItemCollection>
             </controls:HamburgerMenu.ItemsSource>
             <controls:HamburgerMenu.OptionsItemsSource>

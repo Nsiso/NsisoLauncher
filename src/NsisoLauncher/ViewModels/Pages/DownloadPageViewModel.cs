@@ -49,10 +49,14 @@ namespace NsisoLauncher.ViewModels.Pages
             ProgressMaximum = 1;
             ProgressValue = 0;
             Percentage = 0;
-            if (App.NetHandler.Downloader != null)
+            if (App.NetHandler?.Downloader != null)
             {
                 Tasks = App.NetHandler.Downloader.ViewDownloadTasks;
                 SubscribeEvent();
+            }
+            if (App.MainWindowVM != null)
+            {
+                MainWindowVM = App.MainWindowVM;
             }
 
             CancelButtonCommand = new DelegateCommand(async (a) =>
@@ -62,13 +66,16 @@ namespace NsisoLauncher.ViewModels.Pages
 
             PauseBeginButtonCommand = new DelegateCommand((a) =>
             {
-                if (App.NetHandler.Downloader.IsBusy)
+                if (App.NetHandler?.Downloader != null)
                 {
-                    App.NetHandler.Downloader.RequestPause();
-                }
-                else
-                {
-                    App.NetHandler.Downloader.RequestContinue();
+                    if (App.NetHandler.Downloader.IsBusy)
+                    {
+                        App.NetHandler.Downloader.RequestPause();
+                    }
+                    else
+                    {
+                        App.NetHandler.Downloader.RequestContinue();
+                    }
                 }
             });
 
@@ -76,8 +83,6 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 new NewDownloadTaskWindow().ShowDialog();
             });
-
-            MainWindowVM = App.MainWindowVM;
         }
 
         public void SubscribeEvent()

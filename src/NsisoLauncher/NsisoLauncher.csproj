@@ -104,6 +104,7 @@
     <Compile Include="Resource\Models\ModelPlayer.cs" />
     <Compile Include="Utils\MenuItem.cs" />
     <Compile Include="Utils\NavigationServiceEx.cs" />
+    <Compile Include="ViewModels\Pages\AdditionPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\ExtendPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\LaunchPageViewModel.cs" />
@@ -129,6 +130,9 @@
     </Compile>
     <Compile Include="Views\Dialogs\ChooseProfileDialog.xaml.cs">
       <DependentUpon>ChooseProfileDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\AdditionPage.xaml.cs">
+      <DependentUpon>AdditionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
@@ -197,6 +201,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\ChooseProfileDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\AdditionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

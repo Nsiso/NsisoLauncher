@@ -63,7 +63,7 @@ namespace NsisoLauncher.Views.Windows
             List<JWVersion> result = null;
             try
             {
-                result = await apiHandler.GetVersionList();
+                //result = await apiHandler.GetVersionManifest();
             }
             catch (WebException)
             {

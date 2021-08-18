@@ -1,0 +1,110 @@
+﻿<Page x:Class="NsisoLauncher.Views.Pages.AdditionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
+      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:interactivity="http://schemas.microsoft.com/expression/2010/interactivity"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AdditionPage" Background="{DynamicResource MahApps.Brushes.Control.Background}">
+    <interactivity:Interaction.Triggers>
+        <interactivity:EventTrigger EventName="Loaded">
+            <interactivity:InvokeCommandAction Command="{Binding LoadedCmd}"/>
+        </interactivity:EventTrigger>
+    </interactivity:Interaction.Triggers>
+    <Page.DataContext>
+        <vm:AdditionPageViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <CollectionViewSource x:Key="versionListGroupSource" Source="{Binding VersionList}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Type" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </Page.Resources>
+    <Grid>
+        <TabControl>
+            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Version}">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="versionListDataGrid" Grid.Row="0" Margin="0,0,0,10" Language="zh-CN"
+                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                              ItemsSource="{Binding Source={StaticResource versionListGroupSource}}" Style="{StaticResource MahApps.Styles.ListView}">
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.ID}"
+                                                    DisplayMemberBinding="{Binding Path=Id}"/>
+                                    <GridViewColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.Type}"
+                                                    DisplayMemberBinding="{Binding Path=Type}"/>
+                                    <GridViewColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.ReleaseTime}"
+                                                    DisplayMemberBinding="{Binding Path=ReleaseTime, StringFormat=G}"/>
+                                    <GridViewColumn Header="{DynamicResource String.NewDownloadTaskWindow.Version.Time}"
+                                                    DisplayMemberBinding="{Binding Path=Time, StringFormat=G}"/>
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <Expander controls:ExpanderHelper.CollapseStoryboard="{x:Null}" controls:ExpanderHelper.ExpandStoryboard="{x:Null}"
+                                                              IsExpanded="True" Margin="0,0,0,5">
+                                                        <Expander.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="版本类型: " Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
+                                                                <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
+                                                            </StackPanel>
+                                                        </Expander.Header>
+                                                        <ItemsPresenter />
+                                                    </Expander>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+                    </ListView>
+                    <controls:ProgressRing IsActive="{Binding IsLoadingVersion}" Grid.Row="0"/>
+                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}" Grid.Row="1" Padding="25,0"
+                            HorizontalAlignment="Right" Style="{StaticResource MahApps.Styles.Button.Square.Accent}"/>
+                    <Button Content="获取/刷新" Grid.Row="1" Padding="25,0"
+                             Style="{DynamicResource MahApps.Styles.Button.Square}" HorizontalAlignment="Left" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Forge}" >
+                <Grid >
+                    <Label Content="要安装Forge的版本：" Margin="10,10,0,0" HorizontalAlignment="Left" Width="130" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="verToInstallForgeComboBox" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="300" DisplayMemberPath="Id"/>
+                    <DataGrid x:Name="forgeListDataGrid" Margin="10,42,10,43" 
+                              AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                              SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Forge版本" Binding="{Binding Path=Version}"
+                                                IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Build" Binding="{Binding Path=Build}"
+                                                IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
+                        </DataGrid.Resources>
+                    </DataGrid>
+                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}"
+                            Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Style="{StaticResource MahApps.Styles.Button.Square.Accent}"/>
+                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Refresh}"
+                            Margin="10,0,0,10" Style="{DynamicResource MahApps.Styles.Button.Square}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="70"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

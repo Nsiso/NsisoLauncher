@@ -63,13 +63,34 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             public string Link { get; set; }
         }
 
-        public class JWVersions
+        public class VersionManifest
         {
+            /// <summary>
+            /// The latest information
+            /// </summary>
+            [JsonProperty("latest")]
+            public JWVersionLatest Latest { get; set; }
+
             /// <summary>
             /// 版本集合
             /// </summary>
             [JsonProperty("versions")]
             public List<JWVersion> Versions { get; set; }
+        }
+
+        public class JWVersionLatest
+        {
+            /// <summary>
+            /// latest release id
+            /// </summary>
+            [JsonProperty("release")]
+            public string Release { get; set; }
+
+            /// <summary>
+            /// latest snapshot id
+            /// </summary>
+            [JsonProperty("snapshot")]
+            public string Snapshot { get; set; }
         }
 
         public class JWVersion
@@ -90,13 +111,13 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             /// 版本修改时间
             /// </summary>
             [JsonProperty("time")]
-            public string Time { get; set; }
+            public DateTime Time { get; set; }
 
             /// <summary>
             /// 版本发布时间
             /// </summary>
             [JsonProperty("releaseTime")]
-            public string ReleaseTime { get; set; }
+            public DateTime ReleaseTime { get; set; }
 
             /// <summary>
             /// 版本下载URL
