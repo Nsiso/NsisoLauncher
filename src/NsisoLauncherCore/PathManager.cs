@@ -76,33 +76,89 @@ namespace NsisoLauncherCore
             }
         }
 
-        #region 启动器路径处理
+        #region The path method
         /// <summary>
-        /// 获取游戏版本根目录
+        /// Get the root path of all versions.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <returns>root path of all version</returns>
+        public static string GetVersionsRoot(string gameRootPath)
+        {
+            return string.Format(@"{0}\versions", gameRootPath);
+        }
+
+        /// <summary>
+        /// Get specified version root by it's id.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="id">The version id string</param>
+        /// <returns>This version's root path</returns>
+        public static string GetVersionRoot(string gameRootPath, string id)
+        {
+            return string.Format(@"{0}\{1}", GetVersionsRoot(gameRootPath), id);
+        }
+
+        /// <summary>
+        /// Get specified version root by it's instance.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="ver">The version instance</param>
+        /// <returns>This version's root path</returns>
+        public static string GetVersionRoot(string gameRootPath, VersionBase ver)
+        {
+            return GetVersionRoot(gameRootPath, ver.Id);
+        }
+
+        /// <summary>
+        /// Get the specified version's index json file path.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="id">The version id string</param>
+        /// <returns>This version's index json file path</returns>
+        public static string GetVersionJsonPath(string gameRootPath, string id)
+        {
+            return string.Format(@"{0}\{1}.json", GetVersionRoot(gameRootPath, id), id);
+        }
+
+        /// <summary>
+        /// Get the specified version's core jar file path by it's id.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="id">The version id string</param>
+        /// <returns>The version's core jar file path</returns>
+        public static string GetVersionJarPath(string gameRootPath, string id)
+        {
+            return string.Format(@"{0}\{1}.jar", GetVersionRoot(gameRootPath, id), id);
+        }
+
+        /// <summary>
+        /// Get the specified version's core jar file path by it's instance.
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="ver">The version's instance</param>
+        /// <returns>The version's core jar file path</returns>
+        public static string GetVersionJarPath(string gameRootPath, VersionBase ver)
+        {
+            return ver.Jar != null ? GetVersionJarPath(gameRootPath, ver.Jar) : GetVersionJarPath(gameRootPath, ver.Id);
+        }
+
+        /// <summary>
+        /// 获取游戏特定版本工作目录
         /// </summary>
         /// <param name="versionIsolation">版本是否隔离</param>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="ver">版本</param>
-        /// <returns></returns>
-        public static string GetGameVersionRootDir(bool versionIsolation, string gameRootPath, VersionBase ver)
+        /// <returns>特定版本工作目录路径</returns>
+        public static string GetVersionWorkspaceDir(bool versionIsolation, string gameRootPath, VersionBase ver)
         {
-            if (versionIsolation)
-            {
-                return string.Format(@"{0}\versions\{1}", gameRootPath, ver.Id);
-            }
-            else
-            {
-                return gameRootPath;
-            }
+            return versionIsolation ? GetVersionRoot(gameRootPath, ver) : gameRootPath;
         }
 
         /// <summary>
         /// 获取库文件根目录
         /// </summary>
-        /// <param name="versionIsolation">版本是否隔离</param>
         /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="ver">版本</param>
-        /// <returns></returns>
+        /// <returns>库文件根目录路径</returns>
         public static string GetLibrariesRoot(string gameRootPath)
         {
             return string.Format(@"{0}\libraries", gameRootPath);
@@ -140,76 +196,6 @@ namespace NsisoLauncherCore
         public static string GetLibraryPath(string gameRootPath, Library lib)
         {
             return Path.Combine(GetLibrariesRoot(gameRootPath), lib.Path);
-            //if (string.IsNullOrEmpty(artifact.Classifier))
-            //{
-            //    return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}.{4}",
-            //    gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Extension);
-            //}
-            //else
-            //{
-            //    return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.{5}",
-            //    gameRootPath, artifact.Package.Replace(".", @"\"), artifact.Name, artifact.Version, artifact.Classifier, artifact.Extension);
-            //}
-        }
-
-
-        ///// <summary>
-        ///// 获取Native库路径
-        ///// </summary>
-        ///// <param name="gameRootPath">游戏根目录</param>
-        ///// <param name="native">库</param>
-        ///// <returns>路径</returns>
-        //public static string GetNativePath(string gameRootPath, Library lib)
-        //{
-        //    if (lib is Native native)
-        //    {
-        //        return string.Format(@"{0}\libraries\{1}\{2}\{3}\{2}-{3}-{4}.jar",
-        //        gameRootPath, native.Name.Package.Replace(".", @"\"), native.Name.Name, native.Name.Version, native.NativeSuffix);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-
-        /// <summary>
-        /// 获取Json文件
-        /// </summary>
-        /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="ID">版本ID</param>
-        /// <returns></returns>
-        public static string GetJsonPath(string gameRootPath, string ID)
-        {
-            return string.Format(@"{0}\versions\{1}\{1}.json", gameRootPath, ID);
-        }
-
-        /// <summary>
-        /// 获取核心Jar包路径
-        /// </summary>
-        /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="ver">版本</param>
-        /// <returns></returns>
-        public static string GetJarPath(string gameRootPath, VersionBase ver)
-        {
-            if (ver.Jar != null)
-            {
-                return string.Format(@"{0}\versions\{1}\{1}.jar", gameRootPath, ver.Jar);
-            }
-            else
-            {
-                return GetJarPath(gameRootPath, ver.Id);
-            }
-        }
-
-        /// <summary>
-        /// 获取核心Jar包路径
-        /// </summary>
-        /// <param name="gameRootPath">游戏根目录</param>
-        /// <param name="id">版本ID</param>
-        /// <returns></returns>
-        public static string GetJarPath(string gameRootPath, string id)
-        {
-            return string.Format(@"{0}\versions\{1}\{1}.jar", gameRootPath, id);
         }
 
         /// <summary>
@@ -273,7 +259,7 @@ namespace NsisoLauncherCore
         /// <returns>版本配置文件路径</returns>
         public static string GetVersionOptionsPath(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\options.txt";
         }
 
@@ -286,7 +272,7 @@ namespace NsisoLauncherCore
         /// <returns>版本存档路径</returns>
         public static string GetVersionSavesDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\saves";
         }
 
@@ -300,7 +286,7 @@ namespace NsisoLauncherCore
         /// <returns>版本mod文件夹路径</returns>
         public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetGameVersionRootDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
             return verRoot + "\\mods";
         }
         #endregion

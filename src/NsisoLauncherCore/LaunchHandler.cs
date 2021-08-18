@@ -208,12 +208,12 @@ namespace NsisoLauncherCore
                     }
 
                     #region 检查依赖文件
-                    string core_path = GetJarPath(ver);
+                    string core_path = GetVersionJarPath(ver);
                     if (!File.Exists(core_path))
                     {
                         if (ver.InheritsFromInstance != null)
                         {
-                            string base_core_path = GetJarPath(ver.InheritsFromInstance);
+                            string base_core_path = GetVersionJarPath(ver.InheritsFromInstance);
                             if (!File.Exists(base_core_path))
                             {
                                 throw new LaunchException.LaunchException("继承版本丢失启动核心且无法补全", "请尝试重新安装此版本");
@@ -238,7 +238,7 @@ namespace NsisoLauncherCore
                                 if (File.Exists(libPath))
                                 {
                                     AppendLaunchInfoLog(string.Format("检查并解压不存在的库文件:{0}", libPath));
-                                    Unzip.UnZipNativeFile(libPath, GetGameVersionRootDir(ver) + @"\$natives", native.Extract, setting.LaunchType != LaunchType.SAFE);
+                                    Unzip.UnZipNativeFile(libPath, GetVersionWorkspaceDir(ver) + @"\$natives", native.Extract, setting.LaunchType != LaunchType.SAFE);
                                 }
                                 else
                                 {
@@ -285,7 +285,7 @@ namespace NsisoLauncherCore
                         RedirectStandardError = true,
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
-                        WorkingDirectory = GetGameVersionRootDir(ver)
+                        WorkingDirectory = GetVersionWorkspaceDir(ver)
                     };
 
                     LaunchInstance instance = new LaunchInstance(ver, setting, startInfo);
@@ -377,9 +377,9 @@ namespace NsisoLauncherCore
         #endregion
 
         #region 路径获取
-        public string GetGameVersionRootDir(VersionBase ver)
+        public string GetVersionWorkspaceDir(VersionBase ver)
         {
-            return PathManager.GetGameVersionRootDir(VersionIsolation, GameRootPath, ver);
+            return PathManager.GetVersionWorkspaceDir(VersionIsolation, GameRootPath, ver);
         }
 
         public string GetLibrariesRoot()
@@ -392,29 +392,14 @@ namespace NsisoLauncherCore
             return PathManager.GetLibraryPath(GameRootPath, lib);
         }
 
-        //public string GetNativePath(Library native)
-        //{
-        //    return PathManager.GetNativePath(GameRootPath, native);
-        //}
-
-        public string GetJsonPath(string ID)
+        public string GetVersionJsonPath(string ID)
         {
-            return PathManager.GetJsonPath(GameRootPath, ID);
+            return PathManager.GetVersionJsonPath(GameRootPath, ID);
         }
 
-        public string GetJsonPath(VersionBase ver)
+        public string GetVersionJarPath(VersionBase ver)
         {
-            return PathManager.GetJsonPath(GameRootPath, ver.Id);
-        }
-
-        public string GetJarPath(VersionBase ver)
-        {
-            return PathManager.GetJarPath(GameRootPath, ver);
-        }
-
-        public string GetJarPath(string id)
-        {
-            return PathManager.GetJarPath(GameRootPath, id);
+            return PathManager.GetVersionJarPath(GameRootPath, ver);
         }
 
         public string GetAssetsRoot()

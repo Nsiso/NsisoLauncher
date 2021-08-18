@@ -41,7 +41,7 @@ namespace NsisoLauncherCore.Util
             switch (type)
             {
                 case ValidateType.ONLY_CORE:
-                    string core_path = handler.GetJarPath(version);
+                    string core_path = handler.GetVersionJarPath(version);
                     if (version.Downloads?.Client?.Sha1 != null)
                     {
                         if (!File.Exists(core_path))

@@ -141,13 +141,8 @@ namespace NsisoLauncher.ViewModels.Windows
             }
         }
 
-        public async Task<MessageDialogResult> ShowMessageAsync(string title, string message)
-        {
-            return await instance.ShowMessageAsync(this, title, message);
-        }
-
         public async Task<MessageDialogResult> ShowMessageAsync(string title, string message,
-            MessageDialogStyle style, MetroDialogSettings settings)
+            MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
         {
             return await instance.ShowMessageAsync(this, title, message, style, settings);
         }

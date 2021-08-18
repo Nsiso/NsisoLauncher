@@ -43,7 +43,7 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core, IVersionListMirror mirror)
         {
-            string to = core.GetJsonPath(verID);
+            string to = core.GetVersionJsonPath(verID);
             string from = GetCoreJsonDownloadURL(verID, mirror);
             return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
         }
@@ -71,7 +71,7 @@ namespace NsisoLauncherCore.Net.Tools
 
         public static DownloadTask GetCoreJarDownloadTask(VersionBase version, LaunchHandler core, IVersionListMirror mirror)
         {
-            string to = core.GetJarPath(version);
+            string to = core.GetVersionJarPath(version);
             string from = GetCoreJarDownloadURL(version, mirror);
             DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.Sha1))

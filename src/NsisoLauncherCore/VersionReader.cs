@@ -79,7 +79,7 @@ namespace NsisoLauncherCore
 
         public string GetVersionJsonText(string id)
         {
-            string jsonPath = handler.GetJsonPath(id);
+            string jsonPath = handler.GetVersionJsonPath(id);
             if (!File.Exists(jsonPath))
             {
                 return null;

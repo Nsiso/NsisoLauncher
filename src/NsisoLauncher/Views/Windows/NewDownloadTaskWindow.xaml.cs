@@ -214,7 +214,7 @@ namespace NsisoLauncher.Views.Windows
                         return;
                     }
                     VersionBase ver = App.Handler.JsonToVersion(json);
-                    string jsonPath = App.Handler.GetJsonPath(ver.Id);
+                    string jsonPath = App.Handler.GetVersionJsonPath(ver.Id);
 
                     string dir = Path.GetDirectoryName(jsonPath);
                     if (!Directory.Exists(dir))

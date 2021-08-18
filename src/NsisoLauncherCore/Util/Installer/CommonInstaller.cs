@@ -96,9 +96,9 @@ namespace NsisoLauncherCore.Util.Installer
             File.Copy(tempPath + '\\' + jsonObj.Install.FilePath, libPath, true);
 
 
-            string newPath = PathManager.GetJsonPath(Options.GameRootPath, jsonObj.Install.Target);
+            string newPath = PathManager.GetVersionJsonPath(Options.GameRootPath, jsonObj.Install.Target);
             string newDir = Path.GetDirectoryName(newPath);
-            string jarPath = PathManager.GetJarPath(Options.GameRootPath, jsonObj.Install.Target);
+            string jarPath = PathManager.GetVersionJarPath(Options.GameRootPath, jsonObj.Install.Target);
 
             if (!Directory.Exists(newDir))
             {

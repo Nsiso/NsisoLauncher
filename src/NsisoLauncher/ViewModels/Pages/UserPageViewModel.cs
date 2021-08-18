@@ -251,43 +251,57 @@ namespace NsisoLauncher.ViewModels.Pages
                 (user.Username == real_username) &&
                 (x.AuthModule == "offline"));
 
-            if (matchUsers?.Count() == 0)
+            OfflineAuthenticator offlineAuthenticator;
+
+            if (matchUsers == null || matchUsers.Count() == 0)
             {
-                //不存在用户新建用户
-                string uuidValue = Guid.NewGuid().ToString();
-                string userId = Guid.NewGuid().ToString();
-                YggdrasilUser user = new YggdrasilUser()
-                {
-                    Username = real_username,
-                    AccessToken = Guid.NewGuid().ToString(),
-                    Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Id = uuidValue } } },
-                    SelectedProfileUuid = uuidValue,
-                    UserData = new UserData() { ID = userId, Username = username }
-                };
-                UserNode userNode = new UserNode()
-                {
-                    AuthModule = "offline",
-                    User = user
-                };
-                LoginNode(userNode);
+                //不存在用户，新建用户
+                offlineAuthenticator = new OfflineAuthenticator(real_username, username);
             }
             else
             {
-                UserNode firstMatchUsrNode = matchUsers.FirstOrDefault();
-                if (firstMatchUsrNode != null)
+                UserNode firstMatchUsrNode = matchUsers.First();
+                var dialogResult = await App.MainWindowVM.ShowMessageAsync("输入的用户名已存在", "是否使用原有的用户登录？", MessageDialogStyle.AffirmativeAndNegative);
+                if (dialogResult != MessageDialogResult.Affirmative)
                 {
-                    var dialogResult = await App.MainWindowVM.ShowMessageAsync("输入的用户名已存在", "是否使用原有的用户登录？");
-                    if (dialogResult == MessageDialogResult.Affirmative)
-                    {
-                        LoginNode(firstMatchUsrNode);
-                    }
+                    return;
                 }
+                offlineAuthenticator = new OfflineAuthenticator((YggdrasilUser)firstMatchUsrNode.User);
             }
+
+            AuthenticateResponse authResult = await offlineAuthenticator.Authenticate(null);
+
+            UserNode userNode = new UserNode()
+            {
+                AuthModule = SelectedAuthenticationNodeId,
+                User = offlineAuthenticator.User
+            };
+
+            LoginNode(userNode);
+
+
+
+            //string uuidValue = Guid.NewGuid().ToString();
+            //string userId = Guid.NewGuid().ToString();
+            //YggdrasilUser user = new YggdrasilUser()
+            //{
+            //    Username = real_username,
+            //    AccessToken = Guid.NewGuid().ToString(),
+            //    Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = username, Id = uuidValue } } },
+            //    SelectedProfileUuid = uuidValue,
+            //    UserData = new UserData() { ID = userId, Username = username }
+            //};
+            //UserNode userNode = new UserNode()
+            //{
+            //    AuthModule = "offline",
+            //    User = user
+            //};
+            //LoginNode(userNode);
         }
 
         private void MicrosoftLogin()
         {
-            Views.Windows.OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
+            OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
             loginWindow.ShowLogin();
             if (loginWindow.LoggedInUser != null)
             {
@@ -410,7 +424,7 @@ namespace NsisoLauncher.ViewModels.Pages
             };
 
             loader.SetIndeterminate();
-            var authResult = await authenticator.Authenticate(
+            AuthenticateResponse authResult = await authenticator.Authenticate(
                 new AuthenticateRequest(username, password, App.Config.MainConfig.User.ClientToken), cancellationSource.Token);
             await loader.CloseAsync();
 

@@ -56,7 +56,7 @@ namespace NsisoLauncherCore.Util
         {
             if (version.InheritsFrom == null)
             {
-                string jarPath = core.GetJarPath(version);
+                string jarPath = core.GetVersionJarPath(version);
                 return !File.Exists(jarPath);
             }
             else
@@ -320,7 +320,7 @@ namespace NsisoLauncherCore.Util
 
             if (version.InheritsFrom != null)
             {
-                string innerJsonPath = core.GetJsonPath(version.InheritsFrom);
+                string innerJsonPath = core.GetVersionJsonPath(version.InheritsFrom);
                 string innerJsonStr = null;
                 if (!File.Exists(innerJsonPath))
                 {

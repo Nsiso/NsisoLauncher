@@ -63,7 +63,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
 
             //Extracting json
             monitor.State = "提取json";
-            string jsonPath = PathManager.GetJsonPath(Options.GameRootPath, profile.Version);
+            string jsonPath = PathManager.GetVersionJsonPath(Options.GameRootPath, profile.Version);
             if (!Directory.Exists(Path.GetDirectoryName(jsonPath)))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(jsonPath));
@@ -72,8 +72,8 @@ namespace NsisoLauncherCore.Util.Installer.Forge
 
             //Consider minecraft client jar
             monitor.State = "检查游戏文件";
-            string clientTarget = PathManager.GetJarPath(Options.GameRootPath, profile.Minecraft);
-            if (!File.Exists(PathManager.GetJsonPath(Options.GameRootPath, profile.Minecraft)))
+            string clientTarget = PathManager.GetVersionJarPath(Options.GameRootPath, profile.Minecraft);
+            if (!File.Exists(PathManager.GetVersionJsonPath(Options.GameRootPath, profile.Minecraft)))
             {
                 throw new FileNotFoundException("Minecraft json is not exists");
             }

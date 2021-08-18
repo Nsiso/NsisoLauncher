@@ -12,33 +12,26 @@ namespace NsisoLauncherCore.Auth
 {
     public class OfflineAuthenticator : IAuthenticator
     {
-        public string Displayname { get; private set; }
-        public UserData UserData { get; private set; }
-        public PlayerProfile ProfileUUID { get; private set; }
+        public YggdrasilUser User { get; set; }
 
-        public OfflineAuthenticator(string displayname)
+        public OfflineAuthenticator(string username, string displayname)
         {
-            this.Displayname = displayname;
-            this.ProfileUUID = new PlayerProfile()
+            string uuidValue = Guid.NewGuid().ToString("N");
+            string userId = Guid.NewGuid().ToString("N");
+            YggdrasilUser user = new YggdrasilUser()
             {
-                PlayerName = Displayname,
-                Id = Guid.NewGuid().ToString("N")
+                Username = username,
+                AccessToken = Guid.NewGuid().ToString("N"),
+                Profiles = new Dictionary<string, PlayerProfile>() { { uuidValue, new PlayerProfile() { PlayerName = displayname, Id = uuidValue } } },
+                SelectedProfileUuid = uuidValue,
+                UserData = new UserData() { ID = userId, Username = username }
             };
-            this.UserData = new UserData()
-            {
-                ID = Guid.NewGuid().ToString("N")
-            };
+            this.User = user;
         }
 
-        public OfflineAuthenticator(string displayname, UserData userData, string profileUUID)
+        public OfflineAuthenticator(YggdrasilUser user)
         {
-            this.Displayname = displayname;
-            this.UserData = userData;
-            this.ProfileUUID = new PlayerProfile()
-            {
-                PlayerName = Displayname,
-                Id = profileUUID
-            };
+            this.User = user;
         }
 
         public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, CancellationToken cancellation = default)
@@ -46,16 +39,16 @@ namespace NsisoLauncherCore.Auth
             return Task.Factory.StartNew(() =>
             {
                 string accessToken = Guid.NewGuid().ToString("N");
-
+                User.AccessToken = accessToken;
                 return new AuthenticateResponse
                 {
                     IsSuccess = true,
                     Data = new AuthenticateResponseData()
                     {
                         AccessToken = accessToken,
-                        SelectedProfile = this.ProfileUUID,
-                        AvailableProfiles = new List<PlayerProfile>() { this.ProfileUUID },
-                        User = this.UserData
+                        SelectedProfile = User.SelectedProfile,
+                        AvailableProfiles = new List<PlayerProfile>() { this.User.SelectedProfile },
+                        User = this.User.UserData
                     }
                 };
             });
@@ -67,6 +60,7 @@ namespace NsisoLauncherCore.Auth
             return Task.Factory.StartNew(() =>
             {
                 string accessToken = Guid.NewGuid().ToString("N");
+                User.AccessToken = accessToken;
 
                 var res = new Response
                 {
