@@ -187,7 +187,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         NowState = "正在进行正版登录";
                         break;
                     case AuthenticationType.NIDE8:
-                        authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["Nide8ID"]);
+                        authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["nide8ID"]);
                         NowState = "正在进行统一通行证登录";
                         break;
                     case AuthenticationType.AUTHLIB_INJECTOR:
