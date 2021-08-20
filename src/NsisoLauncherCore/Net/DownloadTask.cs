@@ -41,10 +41,10 @@ namespace NsisoLauncherCore.Net
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-        public async Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, IDownloadableMirror mirror, DownloadSetting downloadSetting)
+        public async Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent, IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             ProgressCallback.PropertyChanged += ProgressCallback_PropertyChanged;
-            var result = await DownloadUtils.DownloadAsync(DownloadObject, requester, cancellationToken, ProgressCallback, mirror, downloadSetting);
+            var result = await DownloadUtils.DownloadAsync(DownloadObject, requester, cancellationToken, manualResetEvent, ProgressCallback, mirror, downloadSetting);
             ProgressCallback.PropertyChanged -= ProgressCallback_PropertyChanged;
             return result;
         }

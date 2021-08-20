@@ -53,6 +53,10 @@ namespace NsisoLauncherCore.Net
 
         ProgressCallback ProgressCallback { get; set; }
 
-        Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, IDownloadableMirror mirror, DownloadSetting downloadSetting);
+        Task<DownloadResult> DownloadAsync(NetRequester requester,
+            CancellationToken cancellationToken,
+            ManualResetEventSlim manualResetEvent,
+            IDownloadableMirror mirror,
+            DownloadSetting downloadSetting);
     }
 }

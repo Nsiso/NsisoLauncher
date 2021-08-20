@@ -167,9 +167,6 @@
     <Compile Include="Views\Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Windows\NewDownloadTaskWindow.xaml.cs">
-      <DependentUpon>NewDownloadTaskWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Windows\OauthLoginWindow.xaml.cs">
       <DependentUpon>OauthLoginWindow.xaml</DependentUpon>
     </Compile>
@@ -297,10 +294,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Windows\ErrorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Windows\NewDownloadTaskWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

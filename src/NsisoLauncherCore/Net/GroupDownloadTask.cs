@@ -30,7 +30,7 @@ namespace NsisoLauncherCore.Net
             ProgressCallback = new ProgressCallback();
         }
 
-        public async Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, IDownloadableMirror mirror, DownloadSetting downloadSetting)
+        public async Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent, IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             ProgressCallback.PropertyChanged += ProgressCallback_PropertyChanged;
             ProgressCallback.IncreasedDoneSize += ProgressCallback_IncreasedDoneSize;
@@ -42,7 +42,7 @@ namespace NsisoLauncherCore.Net
                 {
                     break;
                 }
-                var itemResult = await DownloadUtils.DownloadAsync(item, requester, cancellationToken, ProgressCallback, mirror, downloadSetting);
+                var itemResult = await DownloadUtils.DownloadAsync(item, requester, cancellationToken, manualResetEvent, ProgressCallback, mirror, downloadSetting);
                 if (!itemResult.IsSuccess)
                 {
                     all_success = false;

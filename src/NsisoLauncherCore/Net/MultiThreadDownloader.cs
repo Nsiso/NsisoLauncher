@@ -122,6 +122,11 @@ namespace NsisoLauncherCore.Net
         /// 下载使用的协议
         /// </summary>
         public DownloadProtocolType ProtocolType { get; set; } = DownloadProtocolType.ORIGIN;
+
+        /// <summary>
+        /// Is downloader now paused.
+        /// </summary>
+        public bool Paused { get; set; } = false;
         #endregion
 
         #region 只读数据属性（可绑定NotifyPropertyChanged）
@@ -208,6 +213,7 @@ namespace NsisoLauncherCore.Net
                 _downloadTasks.TryDequeue(out _);
             }
 
+            Paused = false;
             DoneTaskCount = 0;
             LeftTaskCount = 0;
         }
@@ -252,12 +258,14 @@ namespace NsisoLauncherCore.Net
         public void RequestPause()
         {
             _pauseResetEvent.Reset();
+            Paused = true;
             ApendDebugLog("已申请暂停下载");
         }
 
         public void RequestContinue()
         {
             _pauseResetEvent.Set();
+            Paused = false;
             ApendDebugLog("已申请继续下载");
         }
 
@@ -362,7 +370,7 @@ namespace NsisoLauncherCore.Net
                     {
                         item.ProgressCallback.IncreasedDoneSize += ProgressCallback_IncreasedDoneSize;
 
-                        var result = await item.DownloadAsync(_requester, cancelToken, mirror, downloadSetting).ConfigureAwait(false);
+                        var result = await item.DownloadAsync(_requester, cancelToken, _pauseResetEvent, mirror, downloadSetting).ConfigureAwait(false);
 
                         if (!result.IsSuccess)
                         {
@@ -412,6 +420,7 @@ namespace NsisoLauncherCore.Net
             _downloadSizePerSec = 0;
             IsBusy = false;
             DownloadCompleted?.Invoke(this, new DownloadCompletedArg() { ErrorList = _errorList });
+            Paused = false;
             ApendDebugLog("全部下载任务已完成");
         }
 

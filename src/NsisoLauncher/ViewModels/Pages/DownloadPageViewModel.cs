@@ -38,8 +38,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
         #region Commands
         public ICommand CancelButtonCommand { get; set; }
-        public ICommand PauseBeginButtonCommand { get; set; }
-        public ICommand NewDownloadButtonCommand { get; set; }
+        public ICommand BeginButtonCommand { get; set; }
+        public ICommand PauseButtonCommand { get; set; }
         #endregion
 
         public DownloadPageViewModel()
@@ -63,25 +63,34 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 await CancelDownload();
             });
-
-            PauseBeginButtonCommand = new DelegateCommand((a) =>
+            PauseButtonCommand = new DelegateCommand(async (a) =>
             {
                 if (App.NetHandler?.Downloader != null)
                 {
-                    if (App.NetHandler.Downloader.IsBusy)
+                    if (!App.NetHandler.Downloader.Paused)
                     {
                         App.NetHandler.Downloader.RequestPause();
                     }
                     else
                     {
-                        App.NetHandler.Downloader.RequestContinue();
+                        await App.MainWindowVM.ShowMessageAsync("当前已经暂停下载", "无需暂停");
                     }
                 }
             });
-
-            NewDownloadButtonCommand = new DelegateCommand((a) =>
+            BeginButtonCommand = new DelegateCommand(async (a) =>
             {
-                new NewDownloadTaskWindow().ShowDialog();
+                if (App.NetHandler?.Downloader != null)
+                {
+                    if (App.NetHandler.Downloader.Paused)
+                    {
+                        App.NetHandler.Downloader.RequestContinue();
+                    }
+                    else
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("当前正在下载", "无需继续下载");
+                    }
+
+                }
             });
         }
 

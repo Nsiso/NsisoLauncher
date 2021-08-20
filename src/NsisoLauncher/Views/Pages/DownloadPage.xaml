@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
@@ -14,18 +15,23 @@
     <Page.DataContext>
         <vm:DownloadPageViewModel/>
     </Page.DataContext>
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Button Content="{DynamicResource String.Downloadwindow.CancelDownload}" Grid.Row="0"
-                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" 
-                Style="{DynamicResource MahApps.Styles.Button.Square}" Command="{Binding CancelButtonCommand}" Height="28"/>
-        <Button Content="{DynamicResource String.Downloadwindow.NewTask}" Grid.Row="0"
-                Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" 
-                HorizontalAlignment="Right" Margin="0,10,10,0" Width="100" VerticalAlignment="Top" Command="{Binding NewDownloadButtonCommand}" Height="28"/>
-        <DataGrid x:Name="downloadList" Margin="10,43,10,2" Grid.Row="0"  ItemsSource="{Binding Tasks}"
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0">
+            <Button Content="{iconPacks:FontAwesome Kind=PlaySolid, Height=10, Width=10}" Width="25" Height="25" Margin="5,0"
+                Style="{DynamicResource MahApps.Styles.Button.Circle}" Command="{Binding BeginButtonCommand}"/>
+            <Button Content="{iconPacks:FontAwesome Kind=PauseSolid, Height=10, Width=10}" Width="25" Height="25" Margin="5,0"
+                Style="{DynamicResource MahApps.Styles.Button.Circle}" Command="{Binding PauseButtonCommand}"/>
+            <Button Content="{iconPacks:FontAwesome Kind=StopSolid, Height=10, Width=10}" Width="25" Height="25" Margin="5,0"
+                Style="{DynamicResource MahApps.Styles.Button.Circle}" Command="{Binding CancelButtonCommand}"/>
+        </StackPanel>
+        <DataGrid x:Name="downloadList" Margin="0,10,0,5" Grid.Row="1"  ItemsSource="{Binding Tasks}"
                   AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"
                   VirtualizingPanel.IsVirtualizing="True" EnableColumnVirtualization="True" EnableRowVirtualization="True">
             <DataGrid.Columns>
@@ -49,7 +55,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <lvc:CartesianChart x:Name="plotter" LegendLocation="Right" Series="{Binding ChartSeries}" DisableAnimations="True"
-                            Hoverable="False" DataTooltip="{x:Null}" Grid.Row="1" Margin="10,10,10,44">
+                            Hoverable="False" DataTooltip="{x:Null}" Grid.Row="2" Margin="0,5">
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis x:Name="YAxis" MinValue="0" LabelFormatter="{Binding YFormatter}"/>
             </lvc:CartesianChart.AxisY>
@@ -57,13 +63,11 @@
                 <lvc:Axis ShowLabels="False"/>
             </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
-        <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,10,10" VerticalAlignment="Bottom" Grid.Row="1"
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,5"
+                   Text="{Binding Percentage, StringFormat={}{0:P}}" VerticalAlignment="Bottom" Grid.Row="3"/>
+        <TextBlock TextWrapping="Wrap" TextAlignment="Right" Text="{Binding SpeedStr}" Margin="0,5"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="3"/>
+        <ProgressBar x:Name="progressBar" Height="10" VerticalAlignment="Bottom" Grid.Row="4"
                      Maximum="{Binding ProgressMaximum}" Value="{Binding ProgressValue}"/>
-        <TextBlock x:Name="progressPerTextBlock"
-                   HorizontalAlignment="Left" Margin="10,0,0,24" TextWrapping="Wrap" 
-                   Text="{Binding Percentage, StringFormat={}{0:P}}" VerticalAlignment="Bottom" Grid.Row="1"/>
-        <TextBlock x:Name="speedTextBlock"
-                   Margin="0,0,10,24" TextWrapping="Wrap" TextAlignment="Right" Text="{Binding SpeedStr}"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1"/>
     </Grid>
 </Page>

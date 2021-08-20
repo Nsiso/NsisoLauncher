@@ -276,11 +276,13 @@ namespace NsisoLauncherCore.Util
             foreach (var group in groupResult)
             {
                 List<DownloadObject> downloads = new List<DownloadObject>();
+                long total_size = 0;
                 foreach (var item in group)
                 {
+                    total_size += item.Value.Size;
                     downloads.Add(GetDownloadUri.GetAssetsDownloadObject(item.Value, core));
                 }
-                tasks.Add(new GroupDownloadTask(string.Format("资源文件-{0}", group.Key), downloads, ver.AssetIndex.TotalSize));
+                tasks.Add(new GroupDownloadTask(string.Format("资源文件-{0}", group.Key), downloads, total_size));
             }
             return tasks;
         }

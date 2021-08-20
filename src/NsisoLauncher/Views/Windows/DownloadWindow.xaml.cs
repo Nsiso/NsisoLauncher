@@ -39,11 +39,6 @@ namespace NsisoLauncher.Views.Windows
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            new NewDownloadTaskWindow().ShowDialog();
-        }
-
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.NetHandler.Downloader.IsBusy)

@@ -56,8 +56,8 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, NetRequester requester, CancellationToken cancellationToken, ProgressCallback progressCallback,
-            IDownloadableMirror mirror, DownloadSetting downloadSetting)
+        public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, NetRequester requester, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent,
+            ProgressCallback progressCallback, IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             #region 检查
             if (obj == null)
@@ -74,18 +74,6 @@ namespace NsisoLauncherCore.Net
             }
             #endregion
 
-            return await HTTPDownloadAsync(obj, requester, cancellationToken, progressCallback, mirror, downloadSetting);
-        }
-
-        /// <summary>
-        /// http下载主函数
-        /// </summary>
-        /// <param name="task">下载任务</param>
-        /// <param name="cancelToken">取消的token</param>
-        private static async Task<DownloadResult> HTTPDownloadAsync(DownloadObject obj, NetRequester requester,
-            CancellationToken cancellationToken, ProgressCallback progressCallback,
-            IDownloadableMirror mirror, DownloadSetting downloadSetting)
-        {
             DownloadResult downloadResult = new DownloadResult() { IsSuccess = false, ObjectToDownload = obj };
 
             string from = obj.Downloadable.GetDownloadSourceURL();
@@ -192,6 +180,7 @@ namespace NsisoLauncherCore.Net
 
                                 while (size > 0)
                                 {
+                                    manualResetEvent.Wait();
                                     await fs.WriteAsync(bArr, 0, size, cancellationToken).ConfigureAwait(false);
                                     size = await responseStream.ReadAsync(bArr, 0, bArr.Length, cancellationToken).ConfigureAwait(false);
                                     progressCallback.IncreaseDoneSize(size);
