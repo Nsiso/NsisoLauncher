@@ -104,12 +104,13 @@ namespace NsisoLauncherCore.Modules
             return x.Name.Package == y.Name.Package &&
                    x.Name.Name == y.Name.Name &&
                    x.Name.Extension == y.Name.Extension &&
-                   x.Name.Classifier == y.Name.Classifier;
+                   x.Name.Classifier == y.Name.Classifier &&
+                   x.IsNative() == y.IsNative();
         }
 
         public int GetHashCode(Library obj)
         {
-            return string.Format("{0}-{1}-{2}.{3}", obj.Name.Package, obj.Name.Name, obj.Name.Classifier, obj.Name.Extension).GetHashCode();
+            return string.Format("{0}-{1}-{2}.{3} {4}", obj.Name.Package, obj.Name.Name, obj.Name.Classifier, obj.Name.Extension, obj.IsNative() ? "native" : "artifact").GetHashCode();
         }
     }
 

@@ -102,7 +102,6 @@ namespace NsisoLauncherCore.Modules
                 }
             }
 
-
             if (InheritsFromInstance != null)
             {
                 List<Library> base_libs = InheritsFromInstance.GetAllLibraries();

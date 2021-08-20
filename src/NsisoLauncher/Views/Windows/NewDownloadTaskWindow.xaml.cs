@@ -39,7 +39,9 @@ namespace NsisoLauncher.Views.Windows
         public NewDownloadTaskWindow()
         {
             _netRequester = App.NetHandler.Requester;
-            apiHandler = new FunctionAPIHandler(App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Mirrors.FunctionalMirrorList, _netRequester);
+            apiHandler = new FunctionAPIHandler(App.NetHandler.Mirrors.VersionListMirrorList.FirstOrDefault(),
+                App.NetHandler.Mirrors.FunctionalMirrorList.FirstOrDefault(),
+                _netRequester);
             InitializeComponent();
             versionListDataGrid.ItemsSource = verList;
             forgeListDataGrid.ItemsSource = forgeList;

@@ -12,15 +12,15 @@ namespace NsisoLauncherCore.Net.FunctionAPI
 {
     public class FunctionAPIHandler
     {
-        public IList<IFunctionalMirror> FunctionalMirrorList { get; set; }
-        public IList<IVersionListMirror> VersionListMirrorList { get; set; }
+        public IFunctionalMirror FunctionalMirror { get; set; }
+        public IVersionListMirror VersionListMirror { get; set; }
 
         private NetRequester _requester;
 
-        public FunctionAPIHandler(IList<IVersionListMirror> versionListMirrors, IList<IFunctionalMirror> functionMirrors, NetRequester requester)
+        public FunctionAPIHandler(IVersionListMirror versionListMirror, IFunctionalMirror functionMirror, NetRequester requester)
         {
-            FunctionalMirrorList = functionMirrors ?? throw new ArgumentNullException("FunctionalMirror is null");
-            VersionListMirrorList = versionListMirrors ?? throw new ArgumentNullException("VersionListMirror is null");
+            FunctionalMirror = functionMirror ?? throw new ArgumentNullException("FunctionalMirror is null");
+            VersionListMirror = versionListMirror;
             _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
@@ -31,7 +31,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<VersionManifest> GetVersionManifest()
         {
             Uri versionListUri;
-            IVersionListMirror mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(VersionListMirrorList);
+            IVersionListMirror mirror = VersionListMirror;
             versionListUri = mirror == null ? new Uri(GetDownloadUri.MojangVersionUrl) : mirror.VersionListUri;
             HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(versionListUri);
             jsonRespond.EnsureSuccessStatusCode();
@@ -46,7 +46,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWJava>> GetJavaList()
         {
             Uri javaListUri;
-            IFunctionalMirror mirror = (IFunctionalMirror)await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
+            IFunctionalMirror mirror = FunctionalMirror;
             if (mirror == null)
             {
                 throw new Exception("The Functional Mirror is null");
@@ -77,7 +77,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public async Task<List<JWForge>> GetForgeList(VersionBase version)
         {
             Uri forgeListUri;
-            IFunctionalMirror mirror = (IFunctionalMirror)await MirrorHelper.ChooseBestMirror(FunctionalMirrorList);
+            IFunctionalMirror mirror = FunctionalMirror;
             if (mirror == null)
             {
                 throw new Exception("The Functional Mirror is null");
