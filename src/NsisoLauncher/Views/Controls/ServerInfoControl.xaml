@@ -24,7 +24,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Image Margin="10" Grid.Column="0" Width="80" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Source="{Binding ServerInf.IconData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
+                   Source="{Binding ServerInf.FaviconByteArray, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
             <iconPacks:PackIconFontAwesome Margin="10" Grid.Column="0" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Kind="ExclamationCircleSolid"
                                            Visibility="{Binding ServerInf.State, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},
                                                         Converter={StaticResource stateToVis},ConverterParameter='reverse'}" Foreground="DarkRed"/>
@@ -41,17 +41,17 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="UsersSolid"  Margin="0,0,10,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                    <TextBlock Text="当前人数: "  Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                    <TextBlock Text="{Binding ServerInf.CurrentPlayerCount, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='当前人数'}"
+                    <TextBlock Text="玩家信息: "  Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                    <TextBlock Text="{Binding ServerInf.Players.Online, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='当前人数', FallbackValue='当前人数'}"
                             Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                     <TextBlock Text="/"  Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                    <TextBlock Text="{Binding ServerInf.MaxPlayerCount, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='最大人数'}"
+                    <TextBlock Text="{Binding ServerInf.Players.Max, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, TargetNullValue='最大人数', FallbackValue='最大人数'}"
                             Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <iconPacks:PackIconFontAwesome Kind="RocketSolid"  Margin="0,0,10,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                     <TextBlock Text="游戏版本: "  Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding ServerInf.GameVersion, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                    <TextBlock TextWrapping="Wrap" Text="{Binding ServerInf.Version.Name, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                             Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -74,7 +74,7 @@
             <StackPanel Orientation="Horizontal" Margin="10,0,10,0" Grid.Row="1" Grid.ColumnSpan="2" Opacity="0.8"
                         Visibility="{Binding ServerInf.State, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},Converter={StaticResource stateToVis}}">
                 <iconPacks:PackIconFontAwesome Kind="BullhornSolid"   Margin="0,0,10,0" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                <TextBlock   Text="{Binding ServerInf.MOTD, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
+                <TextBlock   Text="{Binding ServerInf.Motd, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
                             Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             </StackPanel>
         </Grid>

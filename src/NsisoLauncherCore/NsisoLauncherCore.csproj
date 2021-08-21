@@ -242,7 +242,8 @@
     <Compile Include="Net\PhalAPI\APIHandler.cs" />
     <Compile Include="Net\PhalAPI\APIModules.cs" />
     <Compile Include="Net\ProgressCallback.cs" />
-    <Compile Include="Net\Server\ForgeInfo.cs" />
+    <Compile Include="Net\Server\Chat.cs" />
+    <Compile Include="Net\Server\ModInfo.cs" />
     <Compile Include="Net\Server\ProtocolHandler.cs" />
     <Compile Include="Net\Server\ServerInfo.cs" />
     <Compile Include="Net\Tools\GetDownloadUrl.cs" />

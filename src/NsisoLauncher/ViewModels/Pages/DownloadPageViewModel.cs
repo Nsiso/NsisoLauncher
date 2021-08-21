@@ -65,31 +65,46 @@ namespace NsisoLauncher.ViewModels.Pages
             });
             PauseButtonCommand = new DelegateCommand(async (a) =>
             {
-                if (App.NetHandler?.Downloader != null)
+                MultiThreadDownloader downloader = App.NetHandler?.Downloader;
+                if (downloader != null)
                 {
-                    if (!App.NetHandler.Downloader.Paused)
+                    if (downloader.IsBusy)
                     {
-                        App.NetHandler.Downloader.RequestPause();
+                        if (!downloader.Paused)
+                        {
+                            downloader.RequestPause();
+                        }
+                        else
+                        {
+                            await App.MainWindowVM.ShowMessageAsync("当前已经暂停下载", "无需暂停");
+                        }
                     }
                     else
                     {
-                        await App.MainWindowVM.ShowMessageAsync("当前已经暂停下载", "无需暂停");
+                        await App.MainWindowVM.ShowMessageAsync("当前没有下载任务", "无法进行操作");
                     }
                 }
             });
             BeginButtonCommand = new DelegateCommand(async (a) =>
             {
-                if (App.NetHandler?.Downloader != null)
+                MultiThreadDownloader downloader = App.NetHandler?.Downloader;
+                if (downloader != null)
                 {
-                    if (App.NetHandler.Downloader.Paused)
+                    if (downloader.IsBusy)
                     {
-                        App.NetHandler.Downloader.RequestContinue();
+                        if (downloader.Paused)
+                        {
+                            downloader.RequestContinue();
+                        }
+                        else
+                        {
+                            await App.MainWindowVM.ShowMessageAsync("当前正在下载", "无需继续下载");
+                        }
                     }
                     else
                     {
-                        await App.MainWindowVM.ShowMessageAsync("当前正在下载", "无需继续下载");
+                        await App.MainWindowVM.ShowMessageAsync("当前没有下载任务", "无法进行操作");
                     }
-
                 }
             });
         }

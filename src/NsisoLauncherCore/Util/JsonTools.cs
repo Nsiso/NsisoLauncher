@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Server;
 using System;
 
 namespace NsisoLauncherCore.Util
@@ -86,6 +87,29 @@ namespace NsisoLauncherCore.Util
         }
 
         public override void WriteJson(JsonWriter writer, VersionBase value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, value);
+        }
+    }
+
+    public class ServerDescriptionJsonConverter : JsonConverter<Chat>
+    {
+        public override Chat ReadJson(JsonReader reader, Type objectType, Chat existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.String)
+            {
+                return new Chat() { Text = reader.Value.ToString() };
+            }
+            else
+            {
+                JObject obj = JObject.Load(reader);
+                Chat chat = new Chat();
+                serializer.Populate(obj.CreateReader(), chat);
+                return chat;
+            }
+        }
+
+        public override void WriteJson(JsonWriter writer, Chat value, JsonSerializer serializer)
         {
             serializer.Serialize(writer, value);
         }

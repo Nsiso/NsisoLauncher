@@ -1,4 +1,5 @@
 ﻿using Heijden.DNS;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -13,84 +14,89 @@ namespace NsisoLauncherCore.Net.Server
 {
     public class ServerInfo : INotifyPropertyChanged
     {
+        #region own property
         /// <summary>
-        /// 服务器IP地址
+        /// Server's address, support srv.
         /// </summary>
+        [JsonIgnore]
         public string ServerAddress { get; set; }
 
         /// <summary>
-        /// 服务器端口
+        /// Server's runing port
         /// </summary>
+        [JsonIgnore]
         public ushort ServerPort { get; set; }
 
         /// <summary>
-        /// 服务器名称
+        /// The server's name, it's used to display server name in ui.
         /// </summary>
+        [JsonIgnore]
         public string ServerName { get; set; }
+        #endregion
+
+        #region Handshake json response property
+
+        #endregion
+        /// <summary>
+        /// The server version info such name or protocol
+        /// </summary>
+        [JsonProperty("version")]
+        public ServerVersionInfo Version { get; set; }
 
         /// <summary>
-        /// 获取服务器MOTD
+        /// The server player info such max or current player count and sample.
         /// </summary>
-        public string MOTD { get; private set; }
+        [JsonProperty("players")]
+        public ServerPlayerInfo Players { get; set; }
 
         /// <summary>
-        /// 获取服务器的最大玩家数量
+        /// Server's description (aka motd)
         /// </summary>
-        public int MaxPlayerCount { get; private set; }
+        [JsonProperty("description")]
+        public Chat Description { get; private set; }
 
         /// <summary>
-        /// 获取服务器的在线人数
+        /// server's favicon. is a png image that is base64 encoded
         /// </summary>
-        public int CurrentPlayerCount { get; private set; }
+        [JsonProperty("favicon")]
+        public string Favicon { get; set; }
 
         /// <summary>
-        /// 获取服务器版本号
+        /// Server's mod info including mod type and mod list (if is avaliable)
         /// </summary>
-        public int ProtocolVersion { get; private set; }
+        [JsonProperty("modinfo")]
+        public ModInfo ModInfo { get; private set; }
+
+        #region The gen info
+        [JsonIgnore]
+        public string Motd { get => Description?.ToString(); }
+
+        [JsonIgnore]
+        public byte[] FaviconByteArray { get{ return Convert.FromBase64String(Favicon.Replace("data:image/png;base64,", "")); } }
 
         /// <summary>
-        /// 获取服务器游戏版本
+        /// The ping delay time.(ms)
         /// </summary>
-        public string GameVersion { get; private set; }
-
-        /// <summary>
-        /// 获取服务器详细的服务器信息JsonResult
-        /// </summary>
-        public string JsonResult { get; private set; }
-
-        /// <summary>
-        /// 获取服务器Forge信息（如果可用）
-        /// </summary>
-        public ForgeInfo ForgeInfo { get; private set; }
-
-        /// <summary>
-        /// 获取服务器在线玩家的名称（如果可用）
-        /// </summary>
-        public List<string> OnlinePlayersName { get; private set; }
-
-        /// <summary>
-        /// 获取此次连接服务器的延迟(ms)
-        /// </summary>
+        [JsonIgnore]
         public long Ping { get; private set; }
 
         /// <summary>
-        /// Icon DATA
+        /// The handshake state
         /// </summary>
-        public byte[] IconData { get; set; }
-
-        /// <summary>
-        /// 连接状态
-        /// </summary>
+        [JsonIgnore]
         public StateType State { get; set; }
 
         /// <summary>
-        /// 信息
+        /// The handshake message
         /// </summary>
+        [JsonIgnore]
         public string Message { get; set; }
+        #endregion
 
         /// <summary>
         /// 获取与特定格式代码相关联的颜色代码
         /// </summary>
+        [JsonIgnore]
         public static Dictionary<char, string> MinecraftColors { get; private set; } = new Dictionary<char, string>()
         {
                     { '0', "#000000" },
@@ -123,7 +129,20 @@ namespace NsisoLauncherCore.Net.Server
         {
             this.ServerAddress = ip;
             this.ServerPort = port;
-            this.IconData = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+            this.Favicon = "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            this.PropertyChanged += ServerInfo_PropertyChanged;
+        }
+
+        private void ServerInfo_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Description")
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Motd"));
+            }
+            if (e.PropertyName == "Favicon")
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FaviconByteArray"));
+            }
         }
 
         public ServerInfo(Modules.Server info) : this(info.Address, info.Port)
@@ -135,10 +154,6 @@ namespace NsisoLauncherCore.Net.Server
         {
             try
             {
-                // Some code source form:
-                // Minecraft Client v1.9.0 for Minecraft 1.4.6 to 1.9.0 - By ORelio under CDDL-1.0
-                // wiki.vg
-
                 TcpClient tcp = null;
 
                 try
@@ -162,31 +177,48 @@ namespace NsisoLauncherCore.Net.Server
                     }
                 }
 
+                tcp.ReceiveBufferSize = 1024 * 1024;
+
                 try
                 {
-                    tcp.ReceiveBufferSize = 1024 * 1024;
+                    #region Handshake
+                    /*
+                    *  packid  filed name          filed type      notes
+                    *  
+                    *          Protocol Version    VarInt          See protocol version numbers. The version that the client plans on using to connect to the server (which is not important for the ping). If the client is pinging to determine what version to use, by convention -1 should be set.
+                    *  
+                    *          Server Address      String      	Hostname or IP, e.g. localhost or 127.0.0.1, that was used to connect. The Notchian server does not use this information. Note that SRV records are a complete redirect, e.g. if _minecraft._tcp.example.com points to mc.example.org, users connecting to example.com will provide mc.example.org as server address in addition to connecting to it.
+                    *  0x00      
+                    *          Server Port         Unsigned Short  Default is 25565. The Notchian server does not use this information.
+                    *  
+                    *          Next state          VarInt          Should be 1 for status, but could also be 2 for login.
+                    *  
+                    */
 
-                    //Packet ID: 0x00
+                    // Handshake:
+                    // Packet ID: 0x00
                     byte[] packet_id = ProtocolHandler.getVarInt(0);
 
-                    //See protocol version numbers. The version that the client plans on using to connect to the server (which is not important for the ping).
-                    //If the client is pinging to determine what version to use, by convention should be set. -1
                     byte[] protocol_version = ProtocolHandler.getVarInt(-1);
-
-
                     byte[] server_adress_val = Encoding.UTF8.GetBytes(this.ServerAddress);
                     byte[] server_adress_len = ProtocolHandler.getVarInt(server_adress_val.Length);
-                    byte[] server_port = BitConverter.GetBytes(this.ServerPort); Array.Reverse(server_port);
+                    byte[] server_port = BitConverter.GetBytes(this.ServerPort);
+                    Array.Reverse(server_port);
                     byte[] next_state = ProtocolHandler.getVarInt(1);
-                    byte[] packet2 = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
-                    byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(packet2.Length), packet2);
 
+                    byte[] concat_pack = ProtocolHandler.concatBytes(packet_id, protocol_version, server_adress_len, server_adress_val, server_port, next_state);
+                    byte[] tosend = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(concat_pack.Length), concat_pack);
+
+                    tcp.Client.Send(tosend, SocketFlags.None);
+                    #endregion
+
+                    // Request
                     byte[] status_request = ProtocolHandler.getVarInt(0);
                     byte[] request_packet = ProtocolHandler.concatBytes(ProtocolHandler.getVarInt(status_request.Length), status_request);
 
-                    tcp.Client.Send(tosend, SocketFlags.None);
-
                     tcp.Client.Send(request_packet, SocketFlags.None);
+
+                    // Response
                     ProtocolHandler handler = new ProtocolHandler(tcp);
                     int packetLength = handler.readNextVarIntRAW();
                     if (packetLength > 0)
@@ -195,11 +227,11 @@ namespace NsisoLauncherCore.Net.Server
                         if (ProtocolHandler.readNextVarInt(packetData) == 0x00) //Read Packet ID
                         {
                             string result = ProtocolHandler.readNextString(packetData); //Get the Json data
-                            this.JsonResult = result;
-                            SetInfoFromJsonText(result);
+                            JsonConvert.PopulateObject(result, this);
                         }
                     }
 
+                    #region Ping
                     byte[] ping_id = ProtocolHandler.getVarInt(1);
                     byte[] ping_content = BitConverter.GetBytes((long)233);
                     byte[] ping_packet = ProtocolHandler.concatBytes(ping_id, ping_content);
@@ -233,7 +265,7 @@ namespace NsisoLauncherCore.Net.Server
                     {
                         this.Ping = 0;
                     }
-
+                    #endregion
                 }
                 catch (SocketException)
                 {
@@ -261,110 +293,6 @@ namespace NsisoLauncherCore.Net.Server
             });
         }
 
-        private void SetInfoFromJsonText(string JsonText)
-        {
-            try
-            {
-                JsonText = ClearColor(JsonText);
-                if (!string.IsNullOrEmpty(JsonText) && JsonText.StartsWith("{") && JsonText.EndsWith("}"))
-                {
-                    JObject jsonData = JObject.Parse(JsonText);
-
-                    if (jsonData.ContainsKey("version"))
-                    {
-                        JObject versionData = (JObject)jsonData["version"];
-                        this.GameVersion = versionData["name"].ToString();
-                        this.ProtocolVersion = int.Parse(versionData["protocol"].ToString());
-                    }
-
-                    if (jsonData.ContainsKey("players"))
-                    {
-                        JObject playerData = (JObject)jsonData["players"];
-                        this.MaxPlayerCount = int.Parse(playerData["max"].ToString());
-                        this.CurrentPlayerCount = int.Parse(playerData["online"].ToString());
-                        if (playerData.ContainsKey("sample"))
-                        {
-                            this.OnlinePlayersName = new List<string>();
-                            foreach (JObject name in playerData["sample"])
-                            {
-                                if (name.ContainsKey("name"))
-                                {
-                                    string playername = name["name"].ToString();
-                                    this.OnlinePlayersName.Add(playername);
-                                }
-                            }
-                        }
-                    }
-
-                    if (jsonData.ContainsKey("description"))
-                    {
-                        JToken descriptionData = jsonData["description"];
-                        if (descriptionData.Type == JTokenType.String)
-                        {
-                            this.MOTD = descriptionData.ToString();
-                        }
-                        else if (descriptionData.Type == JTokenType.Object)
-                        {
-                            JObject descriptionDataObj = (JObject)descriptionData;
-                            if (descriptionDataObj.ContainsKey("extra"))
-                            {
-                                foreach (var item in descriptionDataObj["extra"])
-                                {
-                                    string text = item["text"].ToString();
-                                    if (!string.IsNullOrWhiteSpace(text))
-                                    {
-                                        this.MOTD += text;
-                                    }
-                                }
-                            }
-                            else if (descriptionDataObj.ContainsKey("text"))
-                            {
-                                this.MOTD = descriptionDataObj["text"].ToString();
-                            }
-                        }
-                    }
-
-                    // Check for forge on the server.
-                    if (jsonData.ContainsKey("modinfo") && jsonData["modinfo"].Type == JTokenType.Object)
-                    {
-                        JObject modData = (JObject)jsonData["modinfo"];
-                        if (modData.ContainsKey("type") && modData["type"].ToString() == "FML")
-                        {
-                            this.ForgeInfo = new ForgeInfo(modData);
-                            if (!this.ForgeInfo.Mods.Any())
-                            {
-                                this.ForgeInfo = null;
-                            }
-                        }
-                    }
-
-                    if (jsonData.ContainsKey("favicon"))
-                    {
-                        try
-                        {
-                            string datastring = jsonData["favicon"].ToString();
-                            byte[] arr = Convert.FromBase64String(datastring.Replace("data:image/png;base64,", ""));
-                            this.IconData = arr;
-                            //using (MemoryStream ms = new MemoryStream(arr))
-                            //{
-                            //    this.Icon = new Bitmap(ms);
-                            //}
-                        }
-                        catch
-                        {
-                            this.IconData = null;
-                        }
-                    }
-
-                    this.State = StateType.GOOD;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         private string ClearColor(string str)
         {
             str = str.Replace(@"\n", "\n");
@@ -374,31 +302,28 @@ namespace NsisoLauncherCore.Net.Server
             }
             return str.Trim();
         }
+    }
 
-        //[DllImport("gdi32.dll", SetLastError = true)]
-        //private static extern bool DeleteObject(IntPtr hObject);
+    public class ServerVersionInfo
+    {
+        public string Name { get; set; }
 
-        ///// <summary>  
-        ///// 从bitmap转换成ImageSource  
-        ///// </summary>  
-        ///// <param name="icon"></param>  
-        ///// <returns></returns>  
-        //public static ImageSource ChangeBitmapToImageSource(Bitmap bitmap)
-        //{
-        //    //Bitmap bitmap = icon.ToBitmap();  
-        //    IntPtr hBitmap = bitmap.GetHbitmap();
+        public int Protocol { get; set; }
+    }
 
-        //    ImageSource wpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-        //        hBitmap,
-        //        IntPtr.Zero,
-        //        Int32Rect.Empty,
-        //        BitmapSizeOptions.FromEmptyOptions());
-        //    if (!DeleteObject(hBitmap))
-        //    {
-        //        throw new System.ComponentModel.Win32Exception();
-        //    }
-        //    return wpfBitmap;
+    public class ServerPlayerInfo
+    {
+        public int Max { get; set; }
 
-        //}
+        public int Online { get; set; }
+
+        public List<Player> Sample { get; set; }
+    }
+
+    public class Player
+    {
+        public string Name { get; set; }
+
+        public string Id { get; set; }
     }
 }
