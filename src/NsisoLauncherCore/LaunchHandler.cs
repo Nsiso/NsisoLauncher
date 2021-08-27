@@ -1,8 +1,6 @@
 ﻿using NsisoLauncherCore.LaunchException;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
-using NsisoLauncherCore.Util.Mod;
-using NsisoLauncherCore.Util.Save;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,16 +30,6 @@ namespace NsisoLauncherCore
         public bool IsBusyLaunching { get; private set; } = false;
 
         /// <summary>
-        /// 存档处理器
-        /// </summary>
-        public SaveHandler SaveHandler { get; set; }
-
-        /// <summary>
-        /// Mod处理器
-        /// </summary>
-        public ModHandler ModHandler { get; set; }
-
-        /// <summary>
         /// All javas
         /// </summary>
         public ObservableCollection<Java> Javas { get; set; }
@@ -68,9 +56,6 @@ namespace NsisoLauncherCore
             argumentsParser.ArgumentsParserLog += (s, l) => LaunchLog?.Invoke(s, l);
 
             assetsReader = new AssetsReader(this);
-
-            SaveHandler = new SaveHandler(this);
-            ModHandler = new ModHandler(this);
         }
 
         public async Task<LaunchResult> LaunchAsync(VersionBase ver, LaunchSetting setting)
@@ -445,6 +430,11 @@ namespace NsisoLauncherCore
         public string GetVersionModsDir(VersionBase version)
         {
             return PathManager.GetVersionModsDir(VersionIsolation, GameRootPath, version);
+        }
+
+        public string GetVersionResourcePacksDir(VersionBase version)
+        {
+            return PathManager.GetVersionResourcePacksDir(VersionIsolation, GameRootPath, version);
         }
         #endregion
 

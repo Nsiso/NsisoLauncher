@@ -2,25 +2,25 @@
 using System.IO;
 using Cyotek.Data.Nbt;
 
-namespace NsisoLauncherCore.Modules
+namespace NsisoLauncherCore.Component.Save
 {
-    public class SaveInfo
+    public class SaveInfo : IComponent
     {
 
         /// <summary>
         /// 地图基础路径
         /// </summary>
-        public string SaveBasePath { get; private set; }
+        public string Path { get; private set; }
 
         /// <summary>
         /// 地图icon路径
         /// </summary>
-        public string IconPath { get => SaveBasePath + "\\icon.png"; }
+        public string IconPath { get => Path + "\\icon.png"; }
 
         /// <summary>
         /// 地图名称
         /// </summary>
-        public string LevelName { get; private set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// 游戏类型
@@ -42,13 +42,15 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public TagDictionary SourceTagDictionary { get; set; }
 
+        public ComponentState State => ComponentState.ENABLE;
+
         public SaveInfo(string mapPath, TagDictionary tags)
         {
-            this.SaveBasePath = mapPath;
+            this.Path = mapPath;
             SourceTagDictionary = tags;
             if (tags.Contains("LevelName"))
             {
-                LevelName = (string)tags["LevelName"].GetValue();
+                Name = (string)tags["LevelName"].GetValue();
             }
             if (tags.Contains("GameType"))
             {
@@ -73,18 +75,7 @@ namespace NsisoLauncherCore.Modules
             }
         }
 
-        public void DeleteSave()
-        {
-            try
-            {
-                Directory.Delete(SaveBasePath, true);
-            }
-            catch (Exception)
-            {
-                //icon img?
-            }
-
-        }
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {

@@ -1,15 +1,36 @@
 ﻿using System.IO;
 
-namespace NsisoLauncherCore.Modules
+namespace NsisoLauncherCore.Component.Mod
 {
-    public class ModInfo
+    public class ModInfo : IComponent
     {
         /// <summary>
         /// Mod file name
         /// </summary>
-        public string ModPath { get; set; }
+        public string Path { get; set; }
 
-        public string Name { get => Path.GetFileNameWithoutExtension(ModPath); }
+        public string Name { get => System.IO.Path.GetFileNameWithoutExtension(Path); }
+
+        public ComponentState State
+        {
+            get
+            {
+                string ext = System.IO.Path.GetExtension(this.Path);
+                return ext == "jar" || ext == "zip" ? ComponentState.ENABLE : ComponentState.DISABLE;
+            }
+        }
+
+        public ModInfo()
+        {
+
+        }
+
+        public ModInfo(string comp_path)
+        {
+            this.Path = comp_path;
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         ///// <summary>
         ///// Mod ID

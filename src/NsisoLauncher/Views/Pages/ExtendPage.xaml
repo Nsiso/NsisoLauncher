@@ -5,6 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
       xmlns:modules="clr-namespace:NsisoLauncherCore.Modules;assembly=NsisoLauncherCore"
+      xmlns:mod="clr-namespace:NsisoLauncherCore.Component.Mod;assembly=NsisoLauncherCore"
+      xmlns:save="clr-namespace:NsisoLauncherCore.Component.Save;assembly=NsisoLauncherCore"
+      xmlns:resourcePack="clr-namespace:NsisoLauncherCore.Component.ResourcePack;assembly=NsisoLauncherCore"
       xmlns:utils="clr-namespace:NsisoLauncher.Utils"
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -17,6 +20,19 @@
     </Page.DataContext>
     <Page.Resources>
         <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotEmptyToBooleanConverter"/>
+        <Style TargetType="ListBox" x:Key="ListStyle" BasedOn="{StaticResource {x:Type ListBox}}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="_(:з)∠)_什么也没有噢，这里是空的"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -66,32 +82,26 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="存档">
-
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ListBox ItemsSource="{Binding VerSaves}" SelectedItem="{Binding SelectedSave}" Grid.Row="0">
+                    <ListBox ItemsSource="{Binding VerSaves}" SelectedItem="{Binding SelectedSave}" Grid.Row="0" Style="{StaticResource ListStyle}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type modules:SaveInfo}">
+                            <DataTemplate DataType="{x:Type save:SaveInfo}">
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Height="64" Width="64" Source="{Binding IconPath}" Margin="0,5">
-                                        <Image.CacheMode>
-                                            <BitmapCache/>
-                                        </Image.CacheMode>
-                                    </Image>
-                                    <StackPanel VerticalAlignment="Center" Margin="10,0">
-                                        <TextBlock Text="{Binding LevelName}" FontSize="16"/>
-                                        <TextBlock Text="{Binding GameType}"/>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontSize="16"/>
+                                        <TextBlock Text="{Binding GameType}" Foreground="Gray"/>
                                         <TextBlock Text="{Binding Time}" Foreground="Gray"/>
-                                        <TextBlock Text="{Binding SaveBasePath}" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding Path}" Foreground="Gray"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <WrapPanel VerticalAlignment="Bottom" Grid.Row="1">
+                    <WrapPanel Margin="0,5,0,0" VerticalAlignment="Bottom" Grid.Row="1">
                         <Button Content="添加" Padding="20,0" Margin="0,0,10,0" Command="{Binding AddSaveCmd}"
                                     IsEnabled="{Binding SelectedVersion, Converter={StaticResource objectNotEmptyToBooleanConverter}}"
                                         Style="{DynamicResource MahApps.Styles.Button.Square}"/>
@@ -102,7 +112,32 @@
                 </Grid>
             </TabItem>
             <TabItem Header="资源包">
-
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <ListBox ItemsSource="{Binding VerResourcePacks}" SelectedItem="{Binding SelectedResourcePack}" Grid.Row="0" AllowDrop="True" Style="{StaticResource ListStyle}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Drop">
+                                <i:InvokeCommandAction Command="{Binding AddResourcePackCmd}" CommandParameter="{}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type resourcePack:ResourcePackInfo}">
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <WrapPanel Margin="0,5,0,0" Grid.Row="1">
+                        <Button Content="添加" Padding="20,0" Margin="0,0,10,0" Command="{Binding AddResourcePackCmd}"
+                                    IsEnabled="{Binding SelectedVersion, Converter={StaticResource objectNotEmptyToBooleanConverter}}"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square}"/>
+                        <Button Content="删除" Padding="20,0" Margin="0,0,10,0" Command="{Binding DeleteResourcePackCmd}"
+                                        IsEnabled="{Binding SelectedResourcePack, Converter={StaticResource objectNotEmptyToBooleanConverter}}"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square}"/>
+                    </WrapPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="模组">
 
@@ -111,20 +146,18 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <ListBox ItemsSource="{Binding VerMods}" SelectedItem="{Binding SelectedMod}" Grid.Row="0" AllowDrop="True">
+                    <ListBox ItemsSource="{Binding VerMods}" SelectedItem="{Binding SelectedMod}" Grid.Row="0" AllowDrop="True" Style="{StaticResource ListStyle}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Drop">
                                 <i:InvokeCommandAction Command="{Binding AddModCmd}" CommandParameter="{}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type modules:ModInfo}">
-                                <!--<StackPanel VerticalAlignment="Center" Margin="0,10">
+                            <DataTemplate DataType="{x:Type mod:ModInfo}">
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Name}" FontSize="16"/>
-                                    <TextBlock Text="{Binding Version}"/>
-                                    <TextBlock Text="{Binding Description}"/>
-                                </StackPanel>-->
-                                <TextBlock Text="{Binding Name}"/>
+                                    <TextBlock Text="{Binding Path}" Foreground="Gray"/>
+                                </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

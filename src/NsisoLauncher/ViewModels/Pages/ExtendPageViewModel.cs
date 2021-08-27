@@ -1,5 +1,8 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using NsisoLauncher.Utils;
+using NsisoLauncherCore.Component.Mod;
+using NsisoLauncherCore.Component.ResourcePack;
+using NsisoLauncherCore.Component.Save;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Util;
 using System;
@@ -23,10 +26,12 @@ namespace NsisoLauncher.ViewModels.Pages
         public ObservableCollection<VersionBase> VersionList { get; private set; }
 
         #region 存档数据
+        public SaveManager SaveManager { get; set; }
+
         /// <summary>
         /// 版本存档
         /// </summary>
-        public ObservableCollection<SaveInfo> VerSaves { get; set; }
+        public ObservableCollection<SaveInfo> VerSaves { get => SaveManager?.Items; }
 
         /// <summary>
         /// 选中的存档
@@ -45,10 +50,12 @@ namespace NsisoLauncher.ViewModels.Pages
         #endregion
 
         #region Mod数据
+        public ModManager ModManager { get; set; }
+
         /// <summary>
         /// 版本mod
         /// </summary>
-        public ObservableCollection<ModInfo> VerMods { get; set; }
+        public ObservableCollection<ModInfo> VerMods { get => ModManager?.Items; }
 
         /// <summary>
         /// 选中的mod实例
@@ -60,6 +67,24 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand DeleteModCmd { get; set; }
         #endregion
 
+        #region resource packs数据
+        public ResourcePackManager ResourcePackManager { get; set; }
+
+        /// <summary>
+        /// 版本mod
+        /// </summary>
+        public ObservableCollection<ResourcePackInfo> VerResourcePacks { get => ResourcePackManager?.Items; }
+
+        /// <summary>
+        /// 选中的mod实例
+        /// </summary>
+        public ResourcePackInfo SelectedResourcePack { get; set; }
+
+        public ICommand AddResourcePackCmd { get; set; }
+
+        public ICommand DeleteResourcePackCmd { get; set; }
+        #endregion
+
         public ICommand ValidateDependCmd { get; set; }
 
         public ICommand ValidateAssetsCmd { get; set; }
@@ -67,8 +92,6 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public ExtendPageViewModel()
         {
-            VerSaves = new ObservableCollection<SaveInfo>();
-            VerMods = new ObservableCollection<ModInfo>();
             if (App.VersionList != null)
             {
                 this.VersionList = App.VersionList;
@@ -82,33 +105,40 @@ namespace NsisoLauncher.ViewModels.Pages
 
             DeleteSaveCmd = new DelegateCommand(async (a) =>
             {
-                await DeleteSave(a);
+                await DeleteSave();
             });
-
             AddSaveCmd = new DelegateCommand(async (a) =>
             {
-                await AddSave(a);
+                await AddSave();
             });
 
             DeleteModCmd = new DelegateCommand(async (a) =>
             {
-                await DeleteMod(a);
+                await DeleteMod();
             });
-
             AddModCmd = new DelegateCommand(async (a) =>
             {
-                await AddMod(a);
+                await AddMod();
+            });
+
+            DeleteResourcePackCmd = new DelegateCommand(async (a) =>
+            {
+                await DeleteResourcePack();
+            });
+            AddResourcePackCmd = new DelegateCommand(async (a) =>
+            {
+                await AddResourcePack();
             });
 
             ValidateDependCmd = new DelegateCommand(async (a) =>
             {
-                await ValidateDepend(a);
+                await ValidateDepend();
             });
 
             this.PropertyChanged += ExtendPageViewModel_PropertyChanged;
         }
 
-        private async Task ValidateDepend(object obj)
+        private async Task ValidateDepend()
         {
             if (SelectedVersion == null)
             {
@@ -164,7 +194,7 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private async Task DeleteSave(object obj)
+        private async Task DeleteSave()
         {
             if (SelectedSave == null)
             {
@@ -172,7 +202,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 return;
             }
 
-            var result = await App.MainWindowVM.ShowMessageAsync(string.Format("确定删除存档{0}？", SelectedSave.LevelName),
+            var result = await App.MainWindowVM.ShowMessageAsync(string.Format("确定删除存档{0}？", SelectedSave.Name),
                 "这个存档会彻底消失且无法找回！", MessageDialogStyle.AffirmativeAndNegative, null);
             switch (result)
             {
@@ -182,8 +212,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     break;
                 case MessageDialogResult.Affirmative:
                     SaveInfo save = SelectedSave;
-                    VerSaves.Remove(save);
-                    save.DeleteSave();
+                    SaveManager.Remove(save);
                     await App.MainWindowVM.ShowMessageAsync("删除成功", "成功删除所选的存档");
                     break;
                 default:
@@ -191,7 +220,7 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private async Task AddSave(object obj)
+        private async Task AddSave()
         {
             if (SelectedVersion == null)
             {
@@ -213,21 +242,19 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     try
                     {
-                        FileHelper.DirectoryCopy(foldPath, App.Handler.GetVersionSavesDir(SelectedVersion), true, false);
+                        SaveManager.Add(foldPath);
                     }
                     catch (Exception ex)
                     {
                         await App.MainWindowVM.ShowMessageAsync("添加存档失败", string.Format("添加存档时出现意外：{0}", ex.ToString()));
                         return;
                     }
-
-                    UpdateVersionSaves();
                     await App.MainWindowVM.ShowMessageAsync("添加存档成功", "快去看看吧");
                 }
             }
         }
 
-        private async Task DeleteMod(object obj)
+        private async Task DeleteMod()
         {
             if (SelectedMod == null)
             {
@@ -245,8 +272,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     break;
                 case MessageDialogResult.Affirmative:
                     ModInfo mod = SelectedMod;
-                    VerMods.Remove(mod);
-                    File.Delete(mod.ModPath);
+                    ModManager.Remove(mod);
                     await App.MainWindowVM.ShowMessageAsync("删除成功", "成功删除所选的Mod");
                     break;
                 default:
@@ -254,7 +280,7 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private async Task AddMod(object obj)
+        private async Task AddMod()
         {
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
@@ -277,16 +303,75 @@ namespace NsisoLauncher.ViewModels.Pages
                     }
                     try
                     {
-                        File.Copy(modPath, dest_path, false);
+                        ModManager.Add(modPath);
                     }
                     catch (Exception ex)
                     {
                         await App.MainWindowVM.ShowMessageAsync("添加Mod失败", string.Format("添加Mod时出现意外：{0}", ex.ToString()));
                         return;
                     }
-
-                    UpdateVersionMods();
                     await App.MainWindowVM.ShowMessageAsync("添加Mod成功", "快去看看吧");
+                }
+            }
+        }
+
+        private async Task DeleteResourcePack()
+        {
+            if (SelectedMod == null)
+            {
+                await App.MainWindowVM.ShowMessageAsync("未选择版本", "选择的版本为空");
+                return;
+            }
+
+            var result = await App.MainWindowVM.ShowMessageAsync(string.Format("确定删除ResourcePack:{0}？", SelectedMod.Name),
+                "这个ResourcePack会彻底消失且无法找回！", MessageDialogStyle.AffirmativeAndNegative, null);
+            switch (result)
+            {
+                case MessageDialogResult.Canceled:
+                    break;
+                case MessageDialogResult.Negative:
+                    break;
+                case MessageDialogResult.Affirmative:
+                    ResourcePackInfo resourcePack = SelectedResourcePack;
+                    ResourcePackManager.Remove(resourcePack);
+                    await App.MainWindowVM.ShowMessageAsync("删除成功", "成功删除所选的ResourcePack");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async Task AddResourcePack()
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = "选择ResourcePack路径";
+                dialog.Filter = "ResourcePack(*.zip)|*.zip";
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    string resourcePackPath = dialog.FileName;
+                    if (string.IsNullOrWhiteSpace(resourcePackPath))
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("选择了空路径", "无法将空路径ResourcePack添加至版本ResourcePack中");
+                        return;
+                    }
+
+                    string dest_path = string.Format("{0}\\{1}", App.Handler.GetVersionResourcePacksDir(SelectedVersion), Path.GetFileName(resourcePackPath));
+                    if (File.Exists(dest_path))
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("添加ResourcePack失败", "Mod列表中已经存在这个ResourcePack");
+                        return;
+                    }
+                    try
+                    {
+                        ResourcePackManager.Add(resourcePackPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        await App.MainWindowVM.ShowMessageAsync("添加ResourcePack失败", string.Format("添加ResourcePack时出现意外：{0}", ex.ToString()));
+                        return;
+                    }
+                    await App.MainWindowVM.ShowMessageAsync("添加ResourcePack成功", "快去看看吧");
                 }
             }
         }
@@ -310,39 +395,20 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private void UpdateVersion()
         {
-            UpdateVersionMods();
-            UpdateVersionSaves();
-        }
-
-        private async void UpdateVersionSaves()
-        {
-            VerSaves.Clear();
-            if (this.SelectedVersion != null)
+            if (SelectedVersion != null)
             {
-                List<SaveInfo> saves = await App.Handler.SaveHandler.GetSavesAsync(this.SelectedVersion);
-                if (saves != null)
-                {
-                    foreach (var item in saves)
-                    {
-                        VerSaves.Add(item);
-                    }
-                }
+                ModManager = new ModManager(SelectedVersion, App.Handler);
+                SaveManager = new SaveManager(SelectedVersion, App.Handler);
+                ResourcePackManager = new ResourcePackManager(SelectedVersion, App.Handler);
+                ModManager.Refresh();
+                SaveManager.Refresh();
+                ResourcePackManager.Refresh();
             }
-        }
-
-        private async void UpdateVersionMods()
-        {
-            VerMods.Clear();
-            if (this.SelectedVersion != null)
+            else
             {
-                List<ModInfo> saves = await App.Handler.ModHandler.GetModsAsync(this.SelectedVersion);
-                if (saves != null)
-                {
-                    foreach (var item in saves)
-                    {
-                        VerMods.Add(item);
-                    }
-                }
+                ModManager = null;
+                SaveManager = null;
+                ResourcePackManager = null;
             }
         }
 

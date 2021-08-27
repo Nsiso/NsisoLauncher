@@ -50,6 +50,12 @@
     <Compile Include="Auth\MojangAuthenticator.cs" />
     <Compile Include="Auth\Nide8Authenticator.cs" />
     <Compile Include="Auth\OfflineAuthenticator.cs" />
+    <Compile Include="Component\IComponent.cs" />
+    <Compile Include="Component\IComponentManager.cs" />
+    <Compile Include="Component\Mod\ModManager.cs" />
+    <Compile Include="Component\ResourcePack\ResourcePackInfo.cs" />
+    <Compile Include="Component\ResourcePack\ResourcePackManager.cs" />
+    <Compile Include="Component\Save\SaveManager.cs" />
     <Compile Include="Config\LauncherProfiles.cs" />
     <Compile Include="Config\LauncherSettings.cs" />
     <Compile Include="Config\LauncherSkins.cs" />
@@ -74,11 +80,11 @@
     <Compile Include="Modules\Log.cs" />
     <Compile Include="Modules\MicrosoftSkin.cs" />
     <Compile Include="Modules\MicrosoftUser.cs" />
-    <Compile Include="Modules\ModInfo.cs" />
+    <Compile Include="Component\Mod\ModInfo.cs" />
     <Compile Include="Modules\PlayerProfile.cs" />
     <Compile Include="Modules\Proxy.cs" />
     <Compile Include="Modules\Resolution.cs" />
-    <Compile Include="Modules\SaveInfo.cs" />
+    <Compile Include="Component\Save\SaveInfo.cs" />
     <Compile Include="Modules\Server.cs" />
     <Compile Include="Modules\Sha1SizeUrl.cs" />
     <Compile Include="Modules\VersionBase.cs" />
@@ -277,11 +283,9 @@
     <Compile Include="Util\JsonTools.cs" />
     <Compile Include="Util\Jwt.cs" />
     <Compile Include="Util\LaunchSignal.cs" />
-    <Compile Include="Util\Mod\ModHandler.cs" />
     <Compile Include="Util\ObservableDictionary.cs" />
     <Compile Include="Util\ObservableLauncherData.cs" />
     <Compile Include="Util\RuleChecker.cs" />
-    <Compile Include="Util\Save\SaveHandler.cs" />
     <Compile Include="Util\SystemTools.cs" />
     <Compile Include="Util\Unzip.cs" />
     <Compile Include="VersionReader.cs" />
@@ -307,5 +311,6 @@
       <Version>6.11.1</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

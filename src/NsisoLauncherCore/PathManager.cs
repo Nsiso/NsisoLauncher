@@ -278,16 +278,29 @@ namespace NsisoLauncherCore
 
 
         /// <summary>
+        /// 获取版本模组路径
+        /// </summary>
+        /// <param name="versionIsolation">版本是否隔离</param>
+        /// <param name="gameRootPath">游戏根目录</param>
+        /// <param name="version">版本</param>
+        /// <returns>版本模组文件夹路径</returns>
+        public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, VersionBase version)
+        {
+            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
+            return verRoot + "\\mods";
+        }
+
+        /// <summary>
         /// 获取版本存档路径
         /// </summary>
         /// <param name="versionIsolation">版本是否隔离</param>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="version">版本</param>
         /// <returns>版本mod文件夹路径</returns>
-        public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, VersionBase version)
+        public static string GetVersionResourcePacksDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
             string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
-            return verRoot + "\\mods";
+            return verRoot + "\\resourcepacks";
         }
         #endregion
     }
