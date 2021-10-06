@@ -50,10 +50,12 @@ namespace NsisoLauncher.Views.Windows
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void ShowLogin()
+        public async Task Login()
         {
-            wb.Source = OAuthFlower.GetAuthorizeUri();
-            this.ShowLoading();
+            //wb.Source = OAuthFlower.GetAuthorizeUri();
+            //this.ShowLoading();
+            //this.ShowDialog();
+            await OAuthFlower.Login(CancelToken);
             this.ShowDialog();
         }
 

@@ -299,10 +299,10 @@ namespace NsisoLauncher.ViewModels.Pages
             //LoginNode(userNode);
         }
 
-        private void MicrosoftLogin()
+        private async Task MicrosoftLogin()
         {
             OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
-            loginWindow.ShowLogin();
+            await loginWindow.Login();
             if (loginWindow.LoggedInUser != null)
             {
                 UserNode node = new UserNode();

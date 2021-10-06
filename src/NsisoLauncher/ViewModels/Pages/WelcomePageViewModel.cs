@@ -223,7 +223,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                     }
                                     else
                                     {
-                                        loginWindow.ShowLogin();
+                                        await loginWindow.Login();
                                         if (loginWindow.LoggedInUser != null)
                                         {
                                             ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;

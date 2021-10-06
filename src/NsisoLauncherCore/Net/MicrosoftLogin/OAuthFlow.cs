@@ -2,6 +2,8 @@
 using NsisoLauncherCore.Net.MicrosoftLogin.Modules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,6 +16,8 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
     {
         private NetRequester requester;
 
+        public string OAuthListenPrefix { get; set; } = "http://localhost:8080/";
+
         public Uri OAuthAuthorizeUri { get; set; } = new Uri("https://login.live.com/oauth20_authorize.srf");
 
         public Uri OAuthTokenUri { get; set; } = new Uri("https://login.live.com/oauth20_token.srf");
@@ -21,7 +25,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         /// <summary>
         /// your Azure client ID
         /// </summary>
-        public string ClientId { get; set; } = "00000000402b5328";
+        public string ClientId { get; set; } = "aca71205-b0f3-4c94-b8a8-9b58c2a8f555";
 
         /// <summary>
         /// Response type
@@ -31,7 +35,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         /// <summary>
         /// oauth scope
         /// </summary>
-        public string Scope { get; set; } = "service::user.auth.xboxlive.com::MBI_SSL";
+        public string Scope { get; set; } = "XboxLive.signin offline_access";
 
         /// <summary>
         /// your redirect uri
@@ -53,13 +57,34 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             this.requester = arg_requester;
         }
 
+        public async Task<string> Login(CancellationToken cancellation)
+        {
+            Uri authUri = GetAuthorizeUri();
+
+            // Create a listener.
+            HttpListener listener = new HttpListener();
+            listener.Prefixes.Add(this.OAuthListenPrefix);
+            listener.Start();
+            _ = cancellation.Register(() => { listener.Close(); });
+
+            Console.WriteLine("Listening...");
+            Process.Start(authUri.AbsoluteUri);
+            // Note: The GetContext method blocks while waiting for a request.
+            HttpListenerContext context = await listener.GetContextAsync();
+            HttpListenerRequest request = context.Request;
+            listener.Stop();
+
+            return request.QueryString["code"];
+
+        }
+
         public Uri GetAuthorizeUri()
         {
             UriBuilder uriBuilder = new UriBuilder(OAuthAuthorizeUri);
             StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.AppendFormat("client_id={0}", Uri.EscapeDataString(ClientId));
             queryBuilder.AppendFormat("&response_type={0}", Uri.EscapeDataString(ResponseType));
-            queryBuilder.AppendFormat("&redirect_uri={0}", Uri.EscapeDataString(RedirectUri.OriginalString));
+            queryBuilder.AppendFormat("&redirect_uri={0}", Uri.EscapeDataString(OAuthListenPrefix));
             queryBuilder.AppendFormat("&scope={0}", Uri.EscapeDataString(Scope));
             if (!string.IsNullOrWhiteSpace(State))
             {
