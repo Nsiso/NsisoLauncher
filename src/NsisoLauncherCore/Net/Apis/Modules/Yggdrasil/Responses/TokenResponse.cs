@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
 {
     /// <summary>
     /// 表示对返回令牌的有效负载的响应

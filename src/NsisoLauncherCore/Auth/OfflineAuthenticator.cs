@@ -1,7 +1,7 @@
 ﻿using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Modules.Yggdrasil;
-using NsisoLauncherCore.Modules.Yggdrasil.Requests;
-using NsisoLauncherCore.Modules.Yggdrasil.Responses;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.Net.Yggdrasil;
 using System;
 using System.Collections.Generic;

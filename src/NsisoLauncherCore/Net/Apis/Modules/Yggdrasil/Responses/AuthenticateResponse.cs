@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
 {
     /// <summary>
     /// 对验证请求的响应

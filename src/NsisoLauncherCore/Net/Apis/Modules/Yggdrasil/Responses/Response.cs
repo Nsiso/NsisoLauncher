@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil.Responses
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
 {
     /// <summary>
     /// 默认的响应类,可以继承

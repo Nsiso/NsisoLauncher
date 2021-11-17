@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil.Requests
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests
 {
     public class AuthenticateRequest : UsernamePasswordPair
     {

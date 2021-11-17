@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil.Requests
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests
 {
     public class RefreshRequest : AccessClientTokenPair
     {

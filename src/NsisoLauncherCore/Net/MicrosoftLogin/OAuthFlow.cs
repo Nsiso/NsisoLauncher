@@ -9,150 +9,62 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Identity.Client;
 
 namespace NsisoLauncherCore.Net.MicrosoftLogin
 {
     public class OAuthFlow
     {
-        private NetRequester requester;
+        private IPublicClientApplication publicClientApp;
 
-        public string OAuthListenPrefix { get; set; } = "http://localhost:8080/";
+        private readonly string tenant = "consumers";
 
-        public Uri OAuthAuthorizeUri { get; set; } = new Uri("https://login.live.com/oauth20_authorize.srf");
-
-        public Uri OAuthTokenUri { get; set; } = new Uri("https://login.live.com/oauth20_token.srf");
+        private readonly string[] scopes = { "XboxLive.signin", "offline_access" };
 
         /// <summary>
         /// your Azure client ID
         /// </summary>
         public string ClientId { get; set; } = "aca71205-b0f3-4c94-b8a8-9b58c2a8f555";
 
-        /// <summary>
-        /// Response type
-        /// </summary>
-        public string ResponseType { get; set; } = "code";
 
-        /// <summary>
-        /// oauth scope
-        /// </summary>
-        public string Scope { get; set; } = "XboxLive.signin offline_access";
-
-        /// <summary>
-        /// your redirect uri
-        /// </summary>
-        public Uri RedirectUri { get; set; } = new Uri("https://login.live.com/oauth20_desktop.srf");
-
-        /// <summary>
-        /// optional; used to prevent CSRF & restoring previous application states
-        /// </summary>
-        public string State { get; set; }
-
-        /// <summary>
-        /// The auth code from 1st step oauth
-        /// </summary>
-        public string AuthCode { get; set; }
-
-        public OAuthFlow(NetRequester arg_requester)
+        public OAuthFlow()
         {
-            this.requester = arg_requester;
+            publicClientApp = PublicClientApplicationBuilder.Create(ClientId)
+                .WithDefaultRedirectUri()
+                .WithAuthority(AzureCloudInstance.AzurePublic, tenant)
+                .Build();
         }
 
-        public async Task<string> Login(CancellationToken cancellation)
+        public async Task<AuthenticationResult> Login(CancellationToken cancellation = default)
         {
-            Uri authUri = GetAuthorizeUri();
-
-            // Create a listener.
-            HttpListener listener = new HttpListener();
-            listener.Prefixes.Add(this.OAuthListenPrefix);
-            listener.Start();
-            _ = cancellation.Register(() => { listener.Close(); });
-
-            Console.WriteLine("Listening...");
-            Process.Start(authUri.AbsoluteUri);
-            // Note: The GetContext method blocks while waiting for a request.
-            HttpListenerContext context = await listener.GetContextAsync();
-            HttpListenerRequest request = context.Request;
-            listener.Stop();
-
-            return request.QueryString["code"];
-
-        }
-
-        public Uri GetAuthorizeUri()
-        {
-            UriBuilder uriBuilder = new UriBuilder(OAuthAuthorizeUri);
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.AppendFormat("client_id={0}", Uri.EscapeDataString(ClientId));
-            queryBuilder.AppendFormat("&response_type={0}", Uri.EscapeDataString(ResponseType));
-            queryBuilder.AppendFormat("&redirect_uri={0}", Uri.EscapeDataString(OAuthListenPrefix));
-            queryBuilder.AppendFormat("&scope={0}", Uri.EscapeDataString(Scope));
-            if (!string.IsNullOrWhiteSpace(State))
+            try
             {
-                queryBuilder.AppendFormat("&state={0}", Uri.EscapeDataString(State));
+                var authResult = await publicClientApp.AcquireTokenInteractive(scopes)
+                    .ExecuteAsync(cancellation);
+                return authResult;
             }
-            uriBuilder.Query = queryBuilder.ToString();
-            return uriBuilder.Uri;
-        }
-
-        public string RedirectUrlToAuthCode(Uri uri)
-        {
-            string query = uri.Query.TrimStart('?');
-            string[] queries = query.Split('&');
-            foreach (var item in queries)
+            catch (Exception ex)
             {
-                string[] arg = item.Split('=');
-                if (arg.Length != 2)
-                {
-                    throw new Exception(string.Format("The query arg : {0} size have no key and value slited by = char", item));
-                }
-                string key = arg[0];
-                string value = arg[1];
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    continue;
-                }
-                if (key == "code")
-                {
-                    return value;
-                }
+                throw ex;
             }
-            return null;
         }
 
-        public async Task<MicrosoftToken> MicrosoftCodeToAccessToken(string code, CancellationToken cancellation = default)
+        public async Task<AuthenticationResult> Login(IAccount account, CancellationToken cancellation = default)
         {
-            Dictionary<string, string> args = new Dictionary<string, string>();
-            args.Add("client_id", ClientId);
-            args.Add("code", code);
-            args.Add("grant_type", "authorization_code");
-            args.Add("redirect_uri", RedirectUri.AbsoluteUri);
-            args.Add("scope", Scope);
-            FormUrlEncodedContent content = new FormUrlEncodedContent(args);
-            var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
-            result.EnsureSuccessStatusCode();
-
-            string jsonStr = await result.Content.ReadAsStringAsync();
-            MicrosoftToken token = JsonConvert.DeserializeObject<MicrosoftToken>(jsonStr);
-
-            return token;
-        }
-
-        public async Task<MicrosoftToken> RefreshMicrosoftAccessToken(MicrosoftToken token, CancellationToken cancellation = default)
-        {
-            Dictionary<string, string> args = new Dictionary<string, string>();
-            args.Add("client_id", ClientId);
-            args.Add("refresh_token", token.Refresh_token);
-            args.Add("grant_type", "refresh_token");
-            args.Add("redirect_uri", RedirectUri.AbsoluteUri);
-            args.Add("scope", Scope);
-            FormUrlEncodedContent content = new FormUrlEncodedContent(args);
-            var result = await requester.Client.PostAsync(OAuthTokenUri, content, cancellation);
-            result.EnsureSuccessStatusCode();
-
-            string jsonStr = await result.Content.ReadAsStringAsync();
-            MicrosoftToken re_token = JsonConvert.DeserializeObject<MicrosoftToken>(jsonStr);
-
-            return re_token;
+            try
+            {
+                var authResult = await publicClientApp.AcquireTokenSilent(scopes, account)
+                    .ExecuteAsync(cancellation);
+                return authResult;
+            }
+            catch (MsalUiRequiredException)
+            {
+                return await Login(cancellation);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

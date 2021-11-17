@@ -4,9 +4,10 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
-using NsisoLauncherCore.Modules.Yggdrasil;
-using NsisoLauncherCore.Modules.Yggdrasil.Requests;
-using NsisoLauncherCore.Modules.Yggdrasil.Responses;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
+using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
+using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
@@ -301,8 +302,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task MicrosoftLogin()
         {
-            OauthLoginWindow loginWindow = new Views.Windows.OauthLoginWindow(App.NetHandler.Requester);
-            await loginWindow.Login();
+            MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator(App.NetHandler.Requester);
+            var result = await authenticator.LoginGetMinecraftToken();
             if (loginWindow.LoggedInUser != null)
             {
                 UserNode node = new UserNode();

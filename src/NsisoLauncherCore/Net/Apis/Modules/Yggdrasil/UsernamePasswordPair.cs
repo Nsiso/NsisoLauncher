@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace NsisoLauncherCore.Modules.Yggdrasil
+namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil
 {
     public class UsernamePasswordPair
     {

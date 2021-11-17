@@ -44,9 +44,9 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             return await Post(XstsAuthenticateUri, request, cancellation);
         }
 
-        public async Task<XboxLiveToken> Authenticate(MicrosoftToken token, CancellationToken cancellation = default)
+        public async Task<XboxLiveToken> Authenticate(string ms_token, CancellationToken cancellation = default)
         {
-            var xbl_result = await XblAuthenticate(new XblAuthProperties(token.Access_token), cancellation);
+            var xbl_result = await XblAuthenticate(new XblAuthProperties(ms_token), cancellation);
             string xbl_token = xbl_result.Token;
             var xsts_result = await XstsAuthenticate(new XstsAuthProperties(xbl_token), cancellation);
             return new XboxLiveToken()

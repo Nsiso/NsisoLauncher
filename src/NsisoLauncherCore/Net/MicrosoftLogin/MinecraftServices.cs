@@ -64,7 +64,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             }
         }
 
-        public async Task<MicrosoftUser> GetProfile(MicrosoftToken ms_token, MinecraftToken mc_token, CancellationToken cancellation)
+        public async Task<MicrosoftUser> GetProfile(string ms_token, MinecraftToken mc_token, CancellationToken cancellation)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, ProfileUri);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mc_token.AccessToken);
@@ -74,7 +74,6 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             var respond_str = await result.Content.ReadAsStringAsync();
             Console.WriteLine(respond_str);
             MicrosoftUser profile = JsonConvert.DeserializeObject<MicrosoftUser>(respond_str);
-            profile.MicrosoftToken = ms_token;
             profile.MinecraftToken = mc_token;
 
             return profile;
