@@ -219,16 +219,17 @@ namespace NsisoLauncherCore.Util
             string assetsPath = core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
             {
-                return (ver.AssetIndex != null);
-            }
-            else
-            {
-                var assets = await core.GetAssetsAsync(ver);
-                return await Task.Factory.StartNew(() =>
+                assetsPath = core.GetAssetsIndexPath(ver.InheritsFromInstance?.Assets);
+                if (!File.Exists(assetsPath))
                 {
-                    return IsLostAnyAssetsFromJassets(core, assets);
-                });
+                    return (ver.AssetIndex != null);
+                }
             }
+            var assets = await core.GetAssetsAsync(ver);
+            return await Task.Factory.StartNew(() =>
+            {
+                return IsLostAnyAssetsFromJassets(core, assets);
+            });
         }
 
         /// <summary>
