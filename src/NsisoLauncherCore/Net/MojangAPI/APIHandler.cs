@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.User;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -30,7 +31,7 @@ namespace NsisoLauncherCore.Net.MojangAPI
 
             string url = string.Format("{0}/{1}", SkinUrl, profile.Id);
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.GameAccessToken);
             var result = await requester.Client.SendAsync(request);
             result.EnsureSuccessStatusCode();
             string json_str = await result.Content.ReadAsStringAsync();

@@ -19,6 +19,8 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
 
         public AuthenticateResponseData Data { get; internal set; }
 
+        public YggdrasilUser YggdrasilUser { get => new YggdrasilUser(Data); }
+
     }
 
     public class AuthenticateResponseData

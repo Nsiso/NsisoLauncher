@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Util;
+﻿using NsisoLauncherCore.User;
+using NsisoLauncherCore.Util;
 using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Modules

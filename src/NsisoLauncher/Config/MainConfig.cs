@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
+using NsisoLauncherCore.User;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;

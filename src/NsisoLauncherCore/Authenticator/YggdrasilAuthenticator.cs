@@ -1,6 +1,8 @@
 ﻿using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Apis;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.User;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Authenticator
 {
-    public class YggdrasilAuthenticator
+    public class YggdrasilAuthenticator : IYggdrasilAuthenticator
     {
         public string YggdrasilApiAddress
         {
@@ -35,9 +37,71 @@ namespace NsisoLauncherCore.Authenticator
             this.ClientToken = client_token;
         }
 
-        async Task<YggdrasilUser> AuthenticateAsync(string username, string password, CancellationToken cancellation = default)
+        public async Task<YggdrasilAuthenticateUserResult> AuthenticateAsync(string username, string password, CancellationToken cancellation = default)
         {
-            var result = await api.Authenticate(new AuthenticateRequest(username, password, ClientToken), cancellation);
+            AuthenticateResponse result = await api.Authenticate(new AuthenticateRequest(username, password, ClientToken), cancellation);
+            if (result.IsSuccess)
+            {
+                return new YggdrasilAuthenticateUserResult(result, new YggdrasilUser(result.Data));
+            }
+            else
+            {
+                return new YggdrasilAuthenticateUserResult(result, null);
+            }
+        }
+
+        public async Task<YggdrasilAuthenticateUserResult> RefreshAsync(YggdrasilUser user, CancellationToken cancellation = default)
+        {
+            RefreshRequest request = new RefreshRequest(new AccessClientTokenPair(user.GameAccessToken, ClientToken));
+            TokenResponse result = await api.Refresh(request, cancellation);
+            if (result.IsSuccess)
+            {
+                user.GameAccessToken = result.Data.AccessToken;
+            }
+            return new YggdrasilAuthenticateUserResult(result, user);
+        }
+
+        public async Task<YggdrasilAuthenticateResult> ValidateAsync(YggdrasilUser user, CancellationToken cancellation = default)
+        {
+            Response result = await api.Validate(new AccessClientTokenPair(user.GameAccessToken, ClientToken), cancellation);
+            return new YggdrasilAuthenticateResult(result);
+        }
+
+        public async Task<YggdrasilAuthenticateResult> SignoutAsync(string username, string password, CancellationToken cancellation = default)
+        {
+            Response result = await api.Signout(new UsernamePasswordPair() { Username = username, Password = password }, cancellation);
+            return new YggdrasilAuthenticateResult(result);
+        }
+
+        public async Task<YggdrasilAuthenticateResult> InvalidateAsync(YggdrasilUser user, CancellationToken cancellation = default)
+        {
+            Response result = await api.Invalidate(new AccessClientTokenPair(user.GameAccessToken, ClientToken), cancellation);
+            return new YggdrasilAuthenticateResult(result);
+        }
+    }
+
+    public class YggdrasilAuthenticateUserResult : YggdrasilAuthenticateResult
+    {
+        public YggdrasilUser User { get; set; }
+
+        public YggdrasilAuthenticateUserResult(Response response, YggdrasilUser user) : base(response)
+        {
+            this.User = user;
+        }
+    }
+
+    public class YggdrasilAuthenticateResult
+    {
+
+        public Response Response { get; set; }
+
+        public bool IsSuccess { get => Response.IsSuccess; }
+
+        public ResponseState State { get => Response.State; }
+
+        public YggdrasilAuthenticateResult(Response response)
+        {
+            this.Response = response ?? throw new ArgumentNullException(nameof(response));
         }
     }
 }

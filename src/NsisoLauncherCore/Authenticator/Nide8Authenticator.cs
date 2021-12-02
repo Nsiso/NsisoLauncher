@@ -1,12 +1,11 @@
-﻿using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
-using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
-using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
-using NsisoLauncherCore.Net;
-using NsisoLauncherCore.Net.Yggdrasil;
+﻿using NsisoLauncherCore.Net;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace NsisoLauncherCore.Auth
+namespace NsisoLauncherCore.Authenticator
 {
     public class Nide8Authenticator : YggdrasilAuthenticator
     {
@@ -14,8 +13,7 @@ namespace NsisoLauncherCore.Auth
 
         private Net.Nide8API.APIHandler nide8Handler;
 
-        public Nide8Authenticator(NetRequester requester, string nide8ID) : base(
-            string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), requester)
+        public Nide8Authenticator(NetRequester requester, string nide8ID, string client_token) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), requester, client_token)
         {
             nide8Handler = new Net.Nide8API.APIHandler(requester, nide8ID);
         }
@@ -23,7 +21,7 @@ namespace NsisoLauncherCore.Auth
         public async Task UpdateApiRoot()
         {
             var result = await nide8Handler.GetInfoAsync();
-            this.AuthServerUrl = result.APIRoot;
+            this.YggdrasilApiAddress = result.APIRoot;
         }
 
         public async Task<Net.Nide8API.APIModules> GetInfo()

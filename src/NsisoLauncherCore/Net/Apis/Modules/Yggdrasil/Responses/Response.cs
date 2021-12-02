@@ -24,7 +24,7 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
         /// <summary>
         ///定义请求是否成功
         /// </summary>
-        public bool IsSuccess { get; internal set; }
+        public bool IsSuccess { get => State == ResponseState.SUCCESS; }
 
         /// <summary>
         /// 响应的原始消息内容
@@ -44,16 +44,11 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
         internal Response(ResponseState state)
         {
             this.State = state;
-            if (state == ResponseState.SUCCESS)
-            {
-                this.IsSuccess = true;
-            }
         }
         internal Response(Response response) : this()
         {
             this.State = response.State;
             this.Code = response.Code;
-            this.IsSuccess = response.IsSuccess;
             this.RawMessage = response.RawMessage;
             this.Error = response.Error;
         }
@@ -103,43 +98,34 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
             switch (response.Code)
             {
                 case HttpStatusCode.NoContent:
+                    return new Response(response)
                     {
-                        return new Response(response)
+                        Error = new Error()
                         {
-                            IsSuccess = false,
-                            Error = new Error()
-                            {
-                                ErrorMessage = "Response has no content",
-                                ErrorTag = "NoContent"
-                            }
-                        };
-                    }
+                            ErrorMessage = "Response has no content",
+                            ErrorTag = "NoContent"
+                        }
+                    };
 
                 case HttpStatusCode.UnsupportedMediaType:
+                    return new Response(response)
                     {
-                        return new Response(response)
+                        Error = new Error()
                         {
-                            IsSuccess = false,
-                            Error = new Error()
-                            {
-                                ErrorMessage = "Post contents must not be well formatted",
-                                ErrorTag = "UnsupportedMediaType"
-                            }
-                        };
-                    }
+                            ErrorMessage = "Post contents must not be well formatted",
+                            ErrorTag = "UnsupportedMediaType"
+                        }
+                    };
 
                 default:
+                    return new Response(response)
                     {
-                        return new Response(response)
+                        Error = new Error()
                         {
-                            IsSuccess = false,
-                            Error = new Error()
-                            {
-                                ErrorMessage = response.Code.ToString(),
-                                ErrorTag = response.Code.ToString()
-                            }
-                        };
-                    }
+                            ErrorMessage = response.Code.ToString(),
+                            ErrorTag = response.Code.ToString()
+                        }
+                    };
             }
         }
     }

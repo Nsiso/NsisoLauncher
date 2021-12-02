@@ -22,7 +22,10 @@ namespace NsisoLauncherCore.User
 
         public string Playername { get; set; }
 
-        public string GameAccessToken { get; set; }
+        public string GameAccessToken { get => MinecraftToken.AccessToken; }
+
+        public MinecraftToken MinecraftToken { get; set; }
+
 
         [JsonIgnore]
         public List<UserProperty> Properties => null;

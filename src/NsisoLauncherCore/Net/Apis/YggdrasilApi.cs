@@ -100,8 +100,7 @@ namespace NsisoLauncherCore.Net.Apis
                 Response response = new Response()
                 {
                     RawMessage = raw,
-                    Code = code,
-                    IsSuccess = is_success
+                    Code = code
                 };
 
                 ResponseState errState = ResponseState.ERR_OTHER;
@@ -152,7 +151,6 @@ namespace NsisoLauncherCore.Net.Apis
                 {
                     return new Response(ResponseState.CANCELED)
                     {
-                        IsSuccess = false,
                         Error = new Error()
                         {
                             ErrorTag = ex.Message,
@@ -165,7 +163,6 @@ namespace NsisoLauncherCore.Net.Apis
                 {
                     return new Response(ResponseState.ERR_TIMEOUT)
                     {
-                        IsSuccess = false,
                         Error = new Error()
                         {
                             ErrorTag = ex.Message,
@@ -179,7 +176,6 @@ namespace NsisoLauncherCore.Net.Apis
             {
                 return new Response(ResponseState.ERR_INSIDE)
                 {
-                    IsSuccess = false,
                     Error = new Error()
                     {
                         ErrorTag = ex.Message,

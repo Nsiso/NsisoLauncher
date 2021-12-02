@@ -2,13 +2,12 @@
 using NsisoLauncher.Config;
 using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Windows;
-using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
-using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
-using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
-using Nsisnamespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.Net.MicrosoftLogin;
-using NsisoLauncherCore.Net.Yggdrasil;
+using NsisoLauncherCore.Authenticator;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;

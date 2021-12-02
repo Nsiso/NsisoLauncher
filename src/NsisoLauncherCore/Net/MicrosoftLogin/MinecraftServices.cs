@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Net.Http.Headers;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.User;
 
 namespace NsisoLauncherCore.Net.MicrosoftLogin
 {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,44 @@ namespace NsisoLauncherCore.User
 {
     public class YggdrasilUser : IUser
     {
+        public YggdrasilUser()
+        {
+
+        }
+
+        public YggdrasilUser(AuthenticateResponseData data)
+        {
+            this.SetFromAuthenticateResponseData(data);
+        }
+
+        public void SetFromAuthenticateResponseData(AuthenticateResponseData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            // handle the available profiles
+            if (data.AvailableProfiles != null)
+            {
+                this.Profiles = new Dictionary<string, PlayerProfile>();
+                foreach (var item in data.AvailableProfiles)
+                {
+                    this.Profiles.Add(item.Id, item);
+                }
+            }
+
+            // handle the selected profile
+            if (data.SelectedProfile != null)
+            {
+                this.SelectedProfileUuid = data.SelectedProfile?.Id;
+            }
+
+            this.GameAccessToken = data.AccessToken;
+
+            this.UserData = data.User;
+        }
+
         [JsonIgnore]
         public string Username => this.UserData.Username;
 

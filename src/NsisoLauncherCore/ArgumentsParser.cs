@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Server;
+using NsisoLauncherCore.User;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -249,15 +250,15 @@ namespace NsisoLauncherCore
             List<Library> libraries = version.GetAllLibraries();
             Dictionary<string, string> argDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.LaunchPlayerName) },
-                {"${auth_session}",setting.LaunchUser.LaunchAccessToken },
+                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.Playername) },
+                {"${auth_session}",setting.LaunchUser.GameAccessToken },
                 {"${version_name}",string.Format("\"{0}\"", version.Id) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",assetsIndexName },
-                {"${auth_uuid}",setting.LaunchUser.LaunchUuid },
-                {"${auth_access_token}",setting.LaunchUser.LaunchAccessToken },
+                {"${auth_uuid}",setting.LaunchUser.PlayerUUID },
+                {"${auth_access_token}",setting.LaunchUser.GameAccessToken },
                 {"${user_properties}",ToList(setting.LaunchUser.Properties) },
                 {"${user_type}",setting.LaunchUser.UserType },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) },
@@ -425,7 +426,7 @@ namespace NsisoLauncherCore
             return jvmHead.ToString()?.Trim();
         }
 
-        private static string ToList(List<UserData.Property> properties)
+        private static string ToList(List<UserProperty> properties)
         {
             if (properties == null)
             {

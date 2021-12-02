@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NsisoLauncherCore</RootNamespace>
     <AssemblyName>NsisoLauncherCore</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,12 +47,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentsParser.cs" />
+    <Compile Include="Authenticator\AutoAuthenticator.cs" />
+    <Compile Include="Authenticator\IAuthenticator.cs" />
+    <Compile Include="Authenticator\IYggdrasilAuthenticator.cs" />
     <Compile Include="Authenticator\MicrosoftAuthenticator.cs" />
+    <Compile Include="Authenticator\Nide8Authenticator.cs" />
+    <Compile Include="Authenticator\OfflineYggdrasilAuthenticator.cs" />
     <Compile Include="Authenticator\YggdrasilAuthenticator.cs" />
-    <Compile Include="Auth\AuthlibInjectorAuthenticator.cs" />
-    <Compile Include="Auth\MojangAuthenticator.cs" />
-    <Compile Include="Auth\Nide8Authenticator.cs" />
-    <Compile Include="Auth\OfflineAuthenticator.cs" />
+    <Compile Include="Authenticator\AuthlibInjectorAuthenticator.cs" />
     <Compile Include="Component\IComponent.cs" />
     <Compile Include="Component\IComponentManager.cs" />
     <Compile Include="Component\Mod\ModManager.cs" />
@@ -228,7 +231,6 @@
     <Compile Include="Net\GroupDownloadTask.cs" />
     <Compile Include="Net\IDownloadable.cs" />
     <Compile Include="Net\IDownloadTask.cs" />
-    <Compile Include="Net\MicrosoftLogin\MicrosoftAuthenticator.cs" />
     <Compile Include="Net\MicrosoftLogin\MinecraftServices.cs" />
     <Compile Include="Net\MicrosoftLogin\Modules\MinecraftAuthenticateRequest.cs" />
     <Compile Include="Net\MicrosoftLogin\Modules\XboxAuthenticateRequest.cs" />
@@ -258,8 +260,6 @@
     <Compile Include="Net\Tools\GetDownloadUrl.cs" />
     <Compile Include="Net\Tools\GetJavaInstaller.cs" />
     <Compile Include="Net\Tools\MirrorHelper.cs" />
-    <Compile Include="Net\Yggdrasil\IAuthenticator.cs" />
-    <Compile Include="Net\Yggdrasil\YggdrasilAuthenticator.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\IUser.cs" />
