@@ -216,7 +216,7 @@ namespace NsisoLauncherCore.Util
 
         public static async Task<bool> IsLostAssetsAsync(LaunchHandler core, VersionBase ver)
         {
-            string assetsPath = core.GetAssetsIndexPath(ver.Assets);
+            string assetsPath = ver.InheritsFromInstance.?Assets ?? core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
             {
                 return (ver.AssetIndex != null);

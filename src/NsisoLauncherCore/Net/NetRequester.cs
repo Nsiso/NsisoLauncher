@@ -11,22 +11,22 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net
 {
-    public class NetRequester : IDisposable
+    public static class NetRequester
     {
         /// <summary>
         /// NsisoLauncher目前名称.
         /// </summary>
-        public string ClientName { get; set; } = "NsisoLauncher";
+        public static string ClientName { get; set; } = "NsisoLauncher";
 
         /// <summary>
         /// NsisoLauncher目前版本号.
         /// </summary>
-        public string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
+        public static string ClientVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
 
         /// <summary>
         /// 使用的代理服务
         /// </summary>
-        public IWebProxy NetProxy
+        public static IWebProxy NetProxy
         {
             get
             {
@@ -38,11 +38,11 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        private HttpClient _client;
+        private static HttpClient _client;
         /// <summary>
         /// 表示Web请求中使用的http客户端.
         /// </summary>
-        public HttpClient Client
+        public static HttpClient Client
         {
             get
             {
@@ -60,11 +60,11 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        private HttpClientHandler _clientHandler;
+        private static HttpClientHandler _clientHandler;
         /// <summary>
         /// 表示http客户端handler
         /// </summary>
-        public HttpClientHandler ClientHandler
+        public static HttpClientHandler ClientHandler
         {
             get
             {
@@ -80,7 +80,19 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        public async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
+        public static async Task<HttpResponseMessage> HttpGetAsync(string uri)
+        {
+            try
+            {
+                return await Client.GetAsync(uri);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg)
         {
             try
             {
@@ -92,7 +104,7 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        public async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg, CancellationToken cancellation)
+        public static async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg, CancellationToken cancellation)
         {
             try
             {
@@ -101,18 +113,6 @@ namespace NsisoLauncherCore.Net
             catch (TaskCanceledException)
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_clientHandler != null)
-            {
-                _clientHandler.Dispose();
-            }
-            if (_client != null)
-            {
-                _client.Dispose();
             }
         }
     }

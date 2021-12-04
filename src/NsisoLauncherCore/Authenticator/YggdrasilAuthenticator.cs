@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Authenticator
 {
-    public class YggdrasilAuthenticator : IYggdrasilAuthenticator
+    public class YggdrasilAuthenticator : IYggdrasilAuthenticator, IAuthenticator
     {
         public string YggdrasilApiAddress
         {
@@ -22,19 +23,20 @@ namespace NsisoLauncherCore.Authenticator
         }
 
         public string ClientToken { get; set; }
+        public string Name { get; set; }
 
-        YggdrasilApi api;
+        [JsonIgnore]
+        protected YggdrasilApi api;
 
-        public YggdrasilAuthenticator(NetRequester requester, string client_token)
+        public YggdrasilAuthenticator(string client_token) : this("https://authserver.mojang.com", client_token)
         {
-            api = new YggdrasilApi(requester);
-            this.ClientToken = client_token;
         }
 
-        public YggdrasilAuthenticator(string api_addr, NetRequester requester, string client_token)
+        [JsonConstructor]
+        public YggdrasilAuthenticator(string yggdrasilApiAddress, string clientToken)
         {
-            api = new YggdrasilApi(api_addr, requester);
-            this.ClientToken = client_token;
+            api = new YggdrasilApi(yggdrasilApiAddress);
+            this.ClientToken = clientToken;
         }
 
         public async Task<YggdrasilAuthenticateUserResult> AuthenticateAsync(string username, string password, CancellationToken cancellation = default)

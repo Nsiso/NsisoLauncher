@@ -16,12 +16,9 @@ namespace NsisoLauncherCore.Net.PhalAPI
 
         public bool NoTracking { get; set; }
 
-        private NetRequester _netRequester;
-
-        public APIHandler(bool isNoTracking, NetRequester requester)
+        public APIHandler(bool isNoTracking)
         {
             NoTracking = isNoTracking;
-            _netRequester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         public async Task<NsisoLauncherVersionResponse> GetLatestLauncherVersion(CancellationToken cancellation)
@@ -41,7 +38,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
 
                 string query_url = APIUrl + "?s=App.Table.FreeQuery";
 
-                HttpResponseMessage resultRespond = await _netRequester.HttpPostAsync(query_url, args, cancellation);
+                HttpResponseMessage resultRespond = await NetRequester.HttpPostAsync(query_url, args, cancellation);
                 if (!resultRespond.IsSuccessStatusCode)
                 {
                     return null;
@@ -71,7 +68,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
             args.Add("app_key", App_key);
             args.Add("super_type", level.ToString());
             args.Add("super_message", log);
-            var result = await _netRequester.HttpPostAsync(APIUrl + "?s=App.Market_SuperLogger.Record", args);
+            var result = await NetRequester.HttpPostAsync(APIUrl + "?s=App.Market_SuperLogger.Record", args);
             Console.WriteLine(result);
         }
 
@@ -90,7 +87,7 @@ namespace NsisoLauncherCore.Net.PhalAPI
                     args.Add("type", "forever");
                     args.Add("name", "NsisoLauncherUsingTimes");
                     args.Add("value", "1");
-                    await _netRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
+                    await NetRequester.HttpPostAsync(APIUrl + "?s=App.Main_Counter.SmartRefresh", args);
                 }
                 catch
                 {

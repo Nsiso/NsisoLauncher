@@ -110,14 +110,26 @@
 
     <sys:String x:Key="String.NewDownloadTaskWindow">新建下载任务窗口</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Loading">加载中</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.MC.Search">搜索</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.MC.Build1">最新发行版本:</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.MC.Build2">最新快照版本:</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.MC.Text1">版本源:</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version">下载游戏版本</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.ID">版本ID</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Type">类型</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Version.Type.Text">版本类型:</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Time">修改时间</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.ReleaseTime">发布时间</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Refresh">刷新</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Version.Download">下载选中版本</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Forge">下载Forge</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Forge.Text">要安装Forge的本地游戏版本：</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Forge.Text.Version">Forge版本</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Forge.Text.Build">Forge构建版本</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Fabric">下载Fabric</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Fabric.Text">要安装Fabric的本地游戏版本：</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Fabric.Text.Version">Fabric版本</sys:String>
+    <sys:String x:Key="String.NewDownloadTaskWindow.Fabric.Text.Build">Fabric构建版本</sys:String>
     <sys:String x:Key="String.NewDownloadTaskWindow.Liteloader">下载Liteloader</sys:String>
 
     <sys:String x:Key="String.Settingwindow.Title">设置窗口</sys:String>

@@ -6,6 +6,8 @@ namespace NsisoLauncherCore.Net.Mirrors
     {
         string MirrorName { get; set; }
 
-        Uri BaseUri { get; set; }
+        Uri MCDownloadUri { get; set; }
+        Uri ForgeDownloadUri { get; set; }
+        Uri FabricDownloadUri { get; set; }
     }
 }

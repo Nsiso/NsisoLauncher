@@ -99,5 +99,36 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
             return e;
         }
+
+        /// <summary>
+        /// 联网获取指定版本所有的FABRIC
+        /// </summary>
+        /// <param name="version">要搜索的版本</param>
+        /// <returns>Fabric列表</returns>
+        public async Task<List<JWFabric>> GetForgeList(VersionBase version)
+        {
+            Uri fabricListUri;
+            IFunctionalMirror mirror = FunctionalMirror;
+            if (mirror == null)
+            {
+                throw new Exception("The Functional Mirror is null");
+            }
+            else
+            {
+                fabricListUri = mirror.FabricListUri;
+            }
+            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(string.Format("{0}/{1}", fabricListUri, version.Id));
+            string json = null;
+            if (jsonRespond.IsSuccessStatusCode)
+            {
+                json = await jsonRespond.Content.ReadAsStringAsync();
+            }
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return null;
+            }
+            var e = JsonConvert.DeserializeObject<List<JWFabric>>(json);
+            return e;
+        }
     }
 }

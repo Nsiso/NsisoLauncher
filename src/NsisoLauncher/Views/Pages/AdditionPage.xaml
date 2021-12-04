@@ -32,16 +32,16 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right">
                         <iconPacks:PackIconFontAwesome Kind="SearchSolid" VerticalAlignment="Center"/>
                         <TextBox controls:TextBoxHelper.ClearTextButton="True" Width="200" Margin="10,0" Text="{Binding VersionListFilterString}"/>
-                        <Button Content="搜索" Command="{Binding SearchVersionCmd}" Padding="10,0"/>
+                        <Button Content="{DynamicResource String.NewDownloadTaskWindow.MC.Search}" Command="{Binding SearchVersionCmd}" Padding="10,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0">
-                        <TextBlock Text="最新发行版本:"/>
+                        <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.MC.Build1}"/>
                         <TextBlock Text="{Binding Latest.Release}"/>
                         <Separator Margin="5,0"/>
-                        <TextBlock Text="最新快照版本:"/>
+                        <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.MC.Build2}"/>
                         <TextBlock Text="{Binding Latest.Snapshot}"/>
                         <Separator Margin="5,0"/>
-                        <TextBlock Text="版本源:"/>
+                        <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.MC.Text1}"/>
                         <TextBlock Text="{Binding VersionListMirror.MirrorName, FallbackValue='官方源'}"/>
                     </StackPanel>
                     <DataGrid Grid.Row="1" Margin="0,10,0,10" Language="zh-CN" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single"
@@ -65,7 +65,8 @@
                                                               IsExpanded="True" Margin="0,0,0,5">
                                                         <Expander.Header>
                                                             <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="版本类型: " Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
+                                                                <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.Version.Type.Text}" 
+                                                                           Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
                                                                 <TextBlock Text="{Binding Name}" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}"/>
                                                             </StackPanel>
                                                         </Expander.Header>
@@ -94,15 +95,15 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Text="要安装Forge的本地游戏版本：" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.Forge.Text}" VerticalAlignment="Center"/>
                         <ComboBox HorizontalAlignment="Left" DisplayMemberPath="Id" Width="200"
                                   ItemsSource="{Binding LocalVersionList}" SelectedItem="{Binding SelectedLocalVersion}"/>
                     </StackPanel>
                     <DataGrid Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="0,10"
                               ItemsSource="{Binding ForgeList}" SelectedItem="{Binding SelectedForge}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Forge版本" Binding="{Binding Path=Version}"/>
-                            <DataGridTextColumn Header="Build" Binding="{Binding Path=Build}"/>
+                            <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Forge.Text.Version}" Binding="{Binding Path=Version}"/>
+                            <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Forge.Text.Build}" Binding="{Binding Path=Build}"/>
                         </DataGrid.Columns>
                         <DataGrid.Resources>
                             <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
@@ -111,6 +112,34 @@
                     <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}" Grid.Row="2" Command="{Binding DownloadForgeCmd}"
                             VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="25,0" Style="{StaticResource MahApps.Styles.Button.Square.Accent}"/>
                     <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Refresh}" Grid.Row="2" Command="{Binding RefreshForgeListCmd}"
+                            Style="{DynamicResource MahApps.Styles.Button.Square}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="25,0"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{DynamicResource String.NewDownloadTaskWindow.Fabric}" >
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource String.NewDownloadTaskWindow.Fabric.Text}" VerticalAlignment="Center"/>
+                        <ComboBox HorizontalAlignment="Left" DisplayMemberPath="Id" Width="200"
+                                  ItemsSource="{Binding LocalVersionList}" SelectedItem="{Binding SelectedLocalVersion}"/>
+                    </StackPanel>
+                    <DataGrid Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" Margin="0,10"
+                              ItemsSource="{Binding FabricList}" SelectedItem="{Binding SelectedFabric}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Fabric.Text.Version}" Binding="{Binding Path=Version}"/>
+                            <DataGridTextColumn Header="{DynamicResource String.NewDownloadTaskWindow.Fabric.Text.Build}" Binding="{Binding Path=Build}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.Resources>
+                            <ResourceDictionary Source="/NsisoLauncher;component/Resource/Style/DataGridEmptyHelperControl.xaml"/>
+                        </DataGrid.Resources>
+                    </DataGrid>
+                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Download}" Grid.Row="2" Command="{Binding DownloadFabricCmd}"
+                            VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="25,0" Style="{StaticResource MahApps.Styles.Button.Square.Accent}"/>
+                    <Button Content="{DynamicResource String.NewDownloadTaskWindow.Version.Refresh}" Grid.Row="2" Command="{Binding RefreshFabricListCmd}"
                             Style="{DynamicResource MahApps.Styles.Button.Square}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="25,0"/>
                 </Grid>
             </TabItem>

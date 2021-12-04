@@ -6,6 +6,20 @@ namespace NsisoLauncherCore.Net.FunctionAPI
 {
     public class APIModules
     {
+        public class JWFabric
+        {
+            /// <summary>
+            /// Build
+            /// </summary>
+            [JsonProperty("build")]
+            public int Build { get; set; }
+
+            /// <summary>
+            /// 版本号
+            /// </summary>
+            [JsonProperty("version")]
+            public string Version { get; set; }
+        }
         public class JWForge
         {
             /// <summary>

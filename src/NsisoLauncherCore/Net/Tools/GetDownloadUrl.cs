@@ -4,6 +4,7 @@ using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
+using 
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -13,13 +14,13 @@ namespace NsisoLauncherCore.Net.Tools
 {
     public static class GetDownloadUri
     {
-        public static string MojangMainUrl { get => "https://launcher.mojang.com/"; }
-        public static string MojangMetaUrl { get => "https://launchermeta.mojang.com/"; }
-        public static string MojangVersionUrl { get => MojangMetaUrl + "mc/game/version_manifest.json"; }
-        public static string MojanglibrariesUrl { get => "https://libraries.minecraft.net/"; }
-        public static string MojangAssetsBaseUrl { get => "https://resources.download.minecraft.net/"; }
-        public static string ForgeHttpUrl { get => "http://files.minecraftforge.net/maven/"; }
-        public static string ForgeHttpsUrl { get => "https://files.minecraftforge.net/maven/"; }
+        public const string MojangMainUrl = "https://launcher.mojang.com/";
+        public const string MojangMetaUrl = "https://launchermeta.mojang.com/";
+        public const string MojangVersionUrl = $"{MojangMetaUrl}mc/game/version_manifest.json";
+        public const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
+        public const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
+        public const string ForgeHttpUrl = "http://files.minecraftforge.net/maven/";
+        public const string ForgeHttpsUrl = "https://files.minecraftforge.net/maven/";
 
         public static string ReplaceUriByDic(string str, Dictionary<string, string> dic)
         {
@@ -33,20 +34,25 @@ namespace NsisoLauncherCore.Net.Tools
 
         private static string GetAssetsBasePath(JAssetInfo assetsInfo)
         {
-            return string.Format(@"{0}\{1}", assetsInfo.Hash.Substring(0, 2), assetsInfo.Hash);
+            return $"{(assetsInfo.Hash.Substring(0, 2))}\{assetsInfo.Hash}";
         }
 
-        public static string GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
+        public static async string GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
         {
-            return string.Format("{0}version/{1}/json", mirror.BaseUri, verID);
+            if (mirror.MirrorName == MirrorInventory.OfficalAPI)
+            {
+                var res = await NetRequester.HttpGetAsync(MojangVersionUrl);
+                JObject obj  = 
+            }
+            return $"{mirror.CoreVersionListUri}{verID}/json";
         }
 
-        public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core, IVersionListMirror mirror)
-        {
-            string to = core.GetVersionJsonPath(verID);
-            string from = GetCoreJsonDownloadURL(verID, mirror);
-            return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
-        }
+        //public static DownloadTask GetCoreJsonDownloadTask(string verID, LaunchHandler core, IVersionListMirror mirror)
+        //{
+        //    string to = core.GetVersionJsonPath(verID);
+        //    string from = GetCoreJsonDownloadURL(verID, mirror);
+        //    return new DownloadTask("游戏版本核心Json文件", new StringUrl(from), to);
+        //}
 
         public static string GetCoreJarDownloadURL(VersionBase ver, IVersionListMirror mirror)
         {
@@ -54,16 +60,15 @@ namespace NsisoLauncherCore.Net.Tools
             if (ver.Downloads?.Client != null)
             {
                 url = ver.Downloads.Client.Url;
-
             }
             else
             {
-                url = string.Format("{0}version/{1}/client", MojangMainUrl, ver.Id);
+                url = $"{MojangMainUrl}version/{ver.Id}/client";
             }
 
             if (mirror != null)
             {
-                url.Replace(MojangMainUrl, mirror.BaseUri.AbsoluteUri);
+                url.Replace(MojangMainUrl, mirror.MCDownloadUri.AbsoluteUri);
             }
 
             return url;

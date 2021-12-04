@@ -40,8 +40,12 @@ namespace NsisoLauncher.ViewModels.Pages
         public VersionBase SelectedLocalVersion { get; set; }
         public ObservableCollection<JWVersion> DownloadVersionList { get; set; }
         public JWVersion SelectedDownloadVersion { get; set; }
+
         public ObservableCollection<JWForge> ForgeList { get; set; }
+        public ObservableCollection<JWFabric> FabricList { get; set; }
+
         public JWForge SelectedForge { get; set; }
+        public JWFabric SelectedFabric { get; set; }
 
         public ICollectionView DownloadVersionListView { get; set; }
 
@@ -53,7 +57,9 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand DownloadVersionCmd { get; set; }
 
         public ICommand RefreshForgeListCmd { get; set; }
+        public ICommand RefreshFabricListCmd { get; set; }
         public ICommand DownloadForgeCmd { get; set; }
+        public ICommand DownloadFabricCmd { get; set; }
 
         private FunctionAPIHandler apiHandler;
         private NetRequester _netRequester;
@@ -86,6 +92,7 @@ namespace NsisoLauncher.ViewModels.Pages
             }
             DownloadVersionList = new ObservableCollection<JWVersion>();
             ForgeList = new ObservableCollection<JWForge>();
+            FabricList = new ObservableCollection<JWFabric>();
 
             DownloadVersionListView = CollectionViewSource.GetDefaultView(DownloadVersionList);
             DownloadVersionListView.GroupDescriptions.Add(new PropertyGroupDescription("Type"));
@@ -114,6 +121,14 @@ namespace NsisoLauncher.ViewModels.Pages
             DownloadForgeCmd = new DelegateCommand(async (x) =>
             {
                 await DownloadForge();
+            });
+            RefreshFabricListCmd = new DelegateCommand(async (x) =>
+            {
+                await RefreshFabricList();
+            });
+            DownloadFabricCmd = new DelegateCommand(async (x) =>
+            {
+                await DownloadFabric();
             });
 
             this.PropertyChanged += AdditionPageViewModel_PropertyChanged;
@@ -171,7 +186,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 VersionBase ver = SelectedLocalVersion;
                 if (ver == null)
                 {
-                    await _mainWindow.ShowMessageAsync("您没有选择要安装的minecraft版本", "请选择您要安装Forge的Minecraft版本");
+                    await _mainWindow.ShowMessageAsync("您没有选择要安装的Minecraft版本", "请选择您要安装Forge的Minecraft版本");
                     ForgeList.Clear();
                     return;
                 }
@@ -201,6 +216,48 @@ namespace NsisoLauncher.ViewModels.Pages
             catch (Exception ex)
             {
                 await _mainWindow.ShowMessageAsync(string.Format("获取Forge列表失败：{0}", ex.Message), ex.ToString());
+                return;
+            }
+
+        }
+
+        private async Task RefreshFabricList()
+        {
+            try
+            {
+                VersionBase ver = SelectedLocalVersion;
+                if (ver == null)
+                {
+                    await _mainWindow.ShowMessageAsync("您没有选择要安装的Minecraft版本", "请选择您要安装Fabric的Minecraft版本");
+                    FabricList.Clear();
+                    return;
+                }
+                if (ver.InheritsFrom != null)
+                {
+                    await _mainWindow.ShowMessageAsync("您选择的Minecraft不可安装Fabric", "该版本已经继承于一个原有的版本，不可再安装");
+                    FabricList.Clear();
+                    return;
+                }
+                var loading = await _mainWindow.ShowProgressAsync("获取Fabric列表中", "请稍后");
+                loading.SetIndeterminate();
+                FabricList.Clear();
+                List<JWFabric> result = await apiHandler.GetFabricList(ver);
+                await loading.CloseAsync();
+                if (result == null || result.Count == 0)
+                {
+                    await _mainWindow.ShowMessageAsync("没有匹配该版本的Fabric", "貌似没有支持这个版本的Fabric，请尝试更换另一个版本");
+                }
+                else
+                {
+                    foreach (var item in result)
+                    {
+                        FabricList.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _mainWindow.ShowMessageAsync(string.Format("获取Fabric列表失败：{0}", ex.Message), ex.ToString());
                 return;
             }
 
@@ -289,7 +346,68 @@ namespace NsisoLauncher.ViewModels.Pages
                 }
                 string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
                 DownloadTask dt = new DownloadTask("forge核心",
-                    new StringUrl(string.Format("{0}forge/download/{1}", FunctionalMirror.BaseUri, forge.Build)),
+                    new StringUrl($"{FunctionalMirror.ForgeDownloadUri}{forge.Build}"),
+                    forgePath);
+                IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
+                dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
+                {
+                    try
+                    {
+                        IInstaller installer = new ForgeInstaller(forgePath, new CommonInstallOptions()
+                        {
+                            GameRootPath = App.Handler.GameRootPath,
+                            IsClient = true,
+                            VersionToInstall = ver,
+                            Mirror = mirror,
+                            Java = Java.GetSuitableJava(App.JavaList, ver)
+                        });
+                        installer.BeginInstall(callback, cancelToken);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            App.RefreshVersionList();
+                        });
+                        return null;
+                    }
+                    catch (Exception ex)
+                    { return ex; }
+                });
+                App.NetHandler.Downloader.AddDownloadTask(dt);
+                _mainPage.NavigateToDownloadPage();
+                await App.NetHandler.Downloader.StartDownload();
+            }
+            catch (Exception ex)
+            {
+                await _mainWindow.ShowMessageAsync($"下载Forge失败：{ex.Message}", ex.ToString());
+                return;
+            }
+
+        }
+
+        private async Task DownloadFabric()
+        {
+            try
+            {
+                VersionBase ver = SelectedLocalVersion;
+                if (ver == null)
+                {
+                    await _mainWindow.ShowMessageAsync("您未选择要安装Fabric的Minecraft", "您需要选择一个需要安装Fabric的Minecraft本体");
+                    return;
+                }
+
+                JWFabric forge = SelectedFabric;
+                if (forge == null)
+                {
+                    await _mainWindow.ShowMessageAsync("您未选择要安装的Fabric", "您需要选择一个要安装Fabric");
+                    return;
+                }
+
+                if (FunctionalMirror == null)
+                {
+                    throw new Exception("Functional Mirror is null");
+                }
+                string forgePath = NsisoLauncherCore.PathManager.TempDirectory + $"\Forge_{forge.Build}-Installer.jar";
+                DownloadTask dt = new DownloadTask("forge核心",
+                    new StringUrl($"{FunctionalMirror.ForgeDownloadUri}{forge.Build}"),
                     forgePath);
                 IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
                 dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>

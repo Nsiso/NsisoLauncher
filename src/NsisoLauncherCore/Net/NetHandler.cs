@@ -11,11 +11,6 @@ namespace NsisoLauncherCore.Net
         public bool NoTracking { get; set; }
 
         /// <summary>
-        /// 请求器
-        /// </summary>
-        public NetRequester Requester { get; set; }
-
-        /// <summary>
         /// 下载器
         /// </summary>
         public MultiThreadDownloader Downloader { get; set; }
@@ -32,21 +27,19 @@ namespace NsisoLauncherCore.Net
 
         public NetHandler()
         {
-            Requester = new NetRequester();
             Mirrors = new MirrorInventory();
 #if DEBUG
-            NsisoAPIHandler = new PhalAPI.APIHandler(true, Requester);
+            NsisoAPIHandler = new PhalAPI.APIHandler(true);
 #else
-            NsisoAPIHandler = new PhalAPI.APIHandler(NoTracking, Requester);
+            NsisoAPIHandler = new PhalAPI.APIHandler(NoTracking);
 #endif
-            Downloader = new MultiThreadDownloader(Requester);
+            Downloader = new MultiThreadDownloader();
             Downloader.MirrorList = Mirrors.DownloadableMirrorList;
         }
 
         public void Dispose()
         {
             Downloader.Dispose();
-            Requester.Dispose();
         }
     }
 }

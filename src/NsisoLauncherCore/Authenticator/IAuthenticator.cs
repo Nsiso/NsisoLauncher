@@ -9,7 +9,7 @@ namespace NsisoLauncherCore.Authenticator
 {
     public interface IAuthenticator
     {
-        Task<>
+        string Name { get; set; }
     }
 
     public class AuthenticateResult

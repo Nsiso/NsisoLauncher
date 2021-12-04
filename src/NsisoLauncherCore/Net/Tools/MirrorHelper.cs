@@ -30,7 +30,7 @@ namespace NsisoLauncherCore.Net.Tools
 
                 foreach (var item in mirrors)
                 {
-                    var result = await ping.SendPingAsync(item.BaseUri.Host, 1000);
+                    var result = await ping.SendPingAsync(item.MCDownloadUri.Host, 1000);
                     if (currentLowestPing <= 0)
                     {
                         currentLowestPing = result.RoundtripTime;

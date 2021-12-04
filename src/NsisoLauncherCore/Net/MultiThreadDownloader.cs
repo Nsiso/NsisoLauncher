@@ -44,7 +44,7 @@ namespace NsisoLauncherCore.Net
         /// <summary>
         /// 初始化一个多线程下载器
         /// </summary>
-        public MultiThreadDownloader(NetRequester requester)
+        public MultiThreadDownloader()
         {
             _timer.Elapsed += _timer_Elapsed;
             if (SynchronizationContext.Current != null)
@@ -55,8 +55,6 @@ namespace NsisoLauncherCore.Net
             {
                 sc = new SynchronizationContext();
             }
-
-            _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         #region 速度计算（每秒触发事件）
@@ -197,7 +195,6 @@ namespace NsisoLauncherCore.Net
         private ManualResetEventSlim _pauseResetEvent = new ManualResetEventSlim(true);
         private SynchronizationContext sc;
         private IDownloadableMirror mirror = null;
-        private NetRequester _requester;
 
         /// <summary>
         /// 清除全部下载任务
@@ -370,7 +367,7 @@ namespace NsisoLauncherCore.Net
                     {
                         item.ProgressCallback.IncreasedDoneSize += ProgressCallback_IncreasedDoneSize;
 
-                        var result = await item.DownloadAsync(_requester, cancelToken, _pauseResetEvent, mirror, downloadSetting).ConfigureAwait(false);
+                        var result = await item.DownloadAsync(cancelToken, _pauseResetEvent, mirror, downloadSetting).ConfigureAwait(false);
 
                         if (!result.IsSuccess)
                         {

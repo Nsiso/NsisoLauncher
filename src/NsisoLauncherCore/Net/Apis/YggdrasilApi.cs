@@ -17,17 +17,14 @@ namespace NsisoLauncherCore.Net.Apis
     {
         public string ApiAddress { get; set; }
 
-        private NetRequester requester;
-
-        public YggdrasilApi(NetRequester requester) : this("https://authserver.mojang.com", requester)
+        public YggdrasilApi(string authServer)
         {
-
+            this.ApiAddress = authServer;
         }
 
-        public YggdrasilApi(string authServer, NetRequester requester)
+        public YggdrasilApi()
         {
-            this.requester = requester;
-            this.ApiAddress = authServer;
+            this.ApiAddress = "https://authserver.mojang.com";
         }
 
         async public Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, CancellationToken cancellation = default)
@@ -89,7 +86,7 @@ namespace NsisoLauncherCore.Net.Apis
                 string request_str = JsonConvert.SerializeObject(request);
                 StringContent content = new StringContent(request_str, Encoding.UTF8, "application/json");
 
-                var result = await requester.Client.PostAsync(url, content, cancellation);
+                var result = await NetRequester.Client.PostAsync(url, content, cancellation);
 
                 //result.EnsureSuccessStatusCode();
 

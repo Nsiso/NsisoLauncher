@@ -12,6 +12,6 @@ namespace NsisoLauncherCore.Net.Mirrors
 
         Uri OptifineListUri { get; set; }
 
-        Uri FabriceListUri { get; set; }
+        Uri FabricListUri { get; set; }
     }
 }
