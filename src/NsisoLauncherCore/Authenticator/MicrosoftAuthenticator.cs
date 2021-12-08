@@ -18,11 +18,11 @@ namespace NsisoLauncherCore.Authenticator
         private XboxliveAuth xboxliveAuther;
         private MinecraftServices mcServices;
 
-        public MicrosoftAuthenticator(NetRequester requester)
+        public MicrosoftAuthenticator()
         {
             oAuthFlower = new OAuthFlow();
-            xboxliveAuther = new XboxliveAuth(requester);
-            mcServices = new MinecraftServices(requester);
+            xboxliveAuther = new XboxliveAuth();
+            mcServices = new MinecraftServices();
         }
 
         public async Task<MinecraftToken> LoginGetMinecraftToken(CancellationToken cancellation = default)

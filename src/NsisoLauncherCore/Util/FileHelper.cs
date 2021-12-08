@@ -216,7 +216,7 @@ namespace NsisoLauncherCore.Util
 
         public static async Task<bool> IsLostAssetsAsync(LaunchHandler core, VersionBase ver)
         {
-            string assetsPath = ver.InheritsFromInstance.?Assets ?? core.GetAssetsIndexPath(ver.Assets);
+            string assetsPath = ver.InheritsFromInstance?.Assets ?? core.GetAssetsIndexPath(ver.Assets);
             if (!File.Exists(assetsPath))
             {
                 return (ver.AssetIndex != null);
@@ -303,7 +303,7 @@ namespace NsisoLauncherCore.Util
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, VersionBase version, IList<IVersionListMirror> mirrors, NetRequester netRequester)
+        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, VersionBase version, IList<IVersionListMirror> mirrors)
         {
             var lostLibs = GetLostLibs(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
@@ -341,7 +341,10 @@ namespace NsisoLauncherCore.Util
                             mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors);
                         }
                     }
-                    HttpResponseMessage jsonRespond = await netRequester.Client.GetAsync(GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsFrom, mirror));
+                    var url = await GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsFrom, mirror);
+                    if (url == null)
+                        throw new Exception("获取inner json时出错");
+                    HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(url);
                     if (jsonRespond.IsSuccessStatusCode)
                     {
                         innerJsonPath = await jsonRespond.Content.ReadAsStringAsync();
@@ -364,7 +367,7 @@ namespace NsisoLauncherCore.Util
                 VersionBase innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors, netRequester));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors));
                 }
 
             }

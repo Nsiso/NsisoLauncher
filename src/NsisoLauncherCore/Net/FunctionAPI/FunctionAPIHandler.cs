@@ -15,13 +15,10 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         public IFunctionalMirror FunctionalMirror { get; set; }
         public IVersionListMirror VersionListMirror { get; set; }
 
-        private NetRequester _requester;
-
-        public FunctionAPIHandler(IVersionListMirror versionListMirror, IFunctionalMirror functionMirror, NetRequester requester)
+        public FunctionAPIHandler(IVersionListMirror versionListMirror, IFunctionalMirror functionMirror)
         {
             FunctionalMirror = functionMirror ?? throw new ArgumentNullException("FunctionalMirror is null");
             VersionListMirror = versionListMirror;
-            _requester = requester ?? throw new ArgumentNullException("NetRequester is null");
         }
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             Uri versionListUri;
             IVersionListMirror mirror = VersionListMirror;
             versionListUri = mirror == null ? new Uri(GetDownloadUri.MojangVersionUrl) : mirror.VersionListUri;
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(versionListUri);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(versionListUri);
             jsonRespond.EnsureSuccessStatusCode();
             string json = await jsonRespond.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<VersionManifest>(json);
@@ -55,7 +52,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 javaListUri = mirror.JavaListUri;
             }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(javaListUri);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(javaListUri);
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {
@@ -86,7 +83,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 forgeListUri = mirror.ForgeListUri;
             }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(string.Format("{0}/{1}", forgeListUri, version.Id));
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(string.Format("{0}/{1}", forgeListUri, version.Id));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {
@@ -105,7 +102,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// </summary>
         /// <param name="version">要搜索的版本</param>
         /// <returns>Fabric列表</returns>
-        public async Task<List<JWFabric>> GetForgeList(VersionBase version)
+        public async Task<List<JWFabric>> GetFabricList(VersionBase version)
         {
             Uri fabricListUri;
             IFunctionalMirror mirror = FunctionalMirror;
@@ -117,7 +114,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 fabricListUri = mirror.FabricListUri;
             }
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(string.Format("{0}/{1}", fabricListUri, version.Id));
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(string.Format("{0}/{1}", fabricListUri, version.Id));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {

@@ -80,11 +80,95 @@ namespace NsisoLauncherCore.Net
             }
         }
 
+        public static async Task<string> HttpGetStringAsync(string uri)
+        {
+            try
+            {
+                return await Client.GetStringAsync(uri);
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpGetAsync(Uri uri, HttpCompletionOption option, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.GetAsync(uri, option, cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpGetAsync(Uri uri)
+        {
+            try
+            {
+                return await Client.GetAsync(uri);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpGetAsync(Uri uri, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.GetAsync(uri, cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
         public static async Task<HttpResponseMessage> HttpGetAsync(string uri)
         {
             try
             {
                 return await Client.GetAsync(uri);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpGetAsync(string uri, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.GetAsync(uri, cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpPostAsync(Uri uri, HttpContent arg)
+        {
+            try
+            {
+                return await Client.PostAsync(uri, arg);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpPostAsync(Uri uri, Dictionary<string, string> arg)
+        {
+            try
+            {
+                return await Client.PostAsync(uri, new FormUrlEncodedContent(arg));
             }
             catch (TaskCanceledException)
             {
@@ -104,11 +188,59 @@ namespace NsisoLauncherCore.Net
             }
         }
 
+        public static async Task<HttpResponseMessage> HttpPostAsync(Uri uri, HttpContent arg, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.PostAsync(uri, arg, cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpPostAsync(Uri uri, Dictionary<string, string> arg, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.PostAsync(uri, new FormUrlEncodedContent(arg), cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
         public static async Task<HttpResponseMessage> HttpPostAsync(string uri, Dictionary<string, string> arg, CancellationToken cancellation)
         {
             try
             {
                 return await Client.PostAsync(uri, new FormUrlEncodedContent(arg), cancellation);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpSendAsync(HttpRequestMessage httpRequest)
+        {
+            try
+            {
+                return await Client.SendAsync(httpRequest);
+            }
+            catch (TaskCanceledException)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public static async Task<HttpResponseMessage> HttpSendAsync(HttpRequestMessage httpRequest, CancellationToken cancellation)
+        {
+            try
+            {
+                return await Client.SendAsync(httpRequest, cancellation);
             }
             catch (TaskCanceledException)
             {

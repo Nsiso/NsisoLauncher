@@ -56,7 +56,7 @@ namespace NsisoLauncherCore.Net
             }
         }
 
-        public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, NetRequester requester, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent,
+        public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent,
             ProgressCallback progressCallback, IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             #region 检查
@@ -165,7 +165,7 @@ namespace NsisoLauncherCore.Net
 
                     #region 下载流程
                     progressCallback.State = "下载中（等待Get回应）";
-                    using (var getResult = await requester.Client.GetAsync(fromUriBuilder.Uri,
+                    using (var getResult = await NetRequester.HttpGetAsync(fromUriBuilder.Uri,
                         HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
                     {
                         getResult.EnsureSuccessStatusCode();

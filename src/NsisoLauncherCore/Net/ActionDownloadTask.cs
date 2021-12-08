@@ -43,7 +43,7 @@ namespace NsisoLauncherCore.Net
             ProgressCallback = new ProgressCallback();
         }
 
-        public async Task<DownloadResult> DownloadAsync(NetRequester requester, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent, IDownloadableMirror mirror, DownloadSetting downloadSetting)
+        public async Task<DownloadResult> DownloadAsync(CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent, IDownloadableMirror mirror, DownloadSetting downloadSetting)
         {
             this.ProgressCallback.State = "执行中";
             try

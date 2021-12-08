@@ -301,7 +301,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task MicrosoftLogin()
         {
-            MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator(App.NetHandler.Requester);
+            MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
             var result = await authenticator.LoginGetMinecraftToken();
             if (loginWindow.LoggedInUser != null)
             {

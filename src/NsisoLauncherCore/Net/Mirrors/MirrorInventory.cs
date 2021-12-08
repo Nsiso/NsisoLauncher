@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NsisoLauncherCore.Net.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace NsisoLauncherCore.Net.Mirrors
@@ -6,10 +7,10 @@ namespace NsisoLauncherCore.Net.Mirrors
     public class MirrorInventory
     {
         private const string BMCLUrl = "https://bmclapi2.bangbang93.com/";
-        private const string BMCLVersionURL = $"{BMCLUrl}mc/game/version_manifest.json";
+        private const string BMCLVersionURL = "https://bmclapi2.bangbang93.com/mc/game/version_manifest.json";
 
         private const string MCBBSUrl = "https://download.mcbbs.net/";
-        private const string MCBBSVersionURL = $"{MCBBSUrl}mc/game/version_manifest.json";
+        private const string MCBBSVersionURL = "https://download.mcbbs.net/mc/game/version_manifest.json";
 
         public const string BmclAPI = "BmclAPI";
         public const string OfficalAPI = "OfficalAPI";
@@ -37,7 +38,7 @@ namespace NsisoLauncherCore.Net.Mirrors
             offical.MCDownloadUri = new Uri(GetDownloadUri.MojangMainUrl);
             offical.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("launcher.mojang.com");
             offical.VersionListUri = new Uri(GetDownloadUri.MojangVersionUrl);
-            offical.ForgeListUri = new Uri(bmclapi.BaseUri, "/forge/minecraft");
+            offical.ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/");
             return offical;
         }
 

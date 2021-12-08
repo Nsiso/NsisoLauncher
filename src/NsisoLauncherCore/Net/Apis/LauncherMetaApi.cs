@@ -15,22 +15,11 @@ namespace NsisoLauncherCore.Net.Apis
     {
         public string BaseUrl { get => "https://launchermeta.mojang.com"; }
 
-        private NetRequester _requester;
-
-        public LauncherMetaApi(NetRequester requester)
-        {
-            if (requester == null)
-            {
-                throw new ArgumentNullException("net requester is null");
-            }
-            _requester = requester;
-        }
-
         public async Task<VersionManifest> GetVersionManifest(CancellationToken cancellation = default)
         {
             string url = BaseUrl + "/mc/game/version_manifest.json";
 
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(url, cancellation);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<VersionManifest>(json_str);
@@ -40,7 +29,7 @@ namespace NsisoLauncherCore.Net.Apis
         {
             string url = BaseUrl + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(url, cancellation);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<JavaAll>(json_str);
@@ -48,7 +37,7 @@ namespace NsisoLauncherCore.Net.Apis
 
         public async Task<JavaManifest> GetJavaManifest(JavaMeta java, CancellationToken cancellation = default)
         {
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(java.Manifest.Url, cancellation);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(java.Manifest.Url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<JavaManifest>(json_str);
@@ -102,7 +91,7 @@ namespace NsisoLauncherCore.Net.Apis
                 throw new Exception("The selected java is null in get native java meta");
             }
 
-            HttpResponseMessage jsonRespond = await _requester.Client.GetAsync(java.Manifest.Url, cancellation);
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(java.Manifest.Url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
             string json_str = await jsonRespond.Content.ReadAsStringAsync();
             JavaManifest manifest = JsonConvert.DeserializeObject<JavaManifest>(json_str);

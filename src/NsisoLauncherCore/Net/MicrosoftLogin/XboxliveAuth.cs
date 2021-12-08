@@ -9,18 +9,11 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
 {
     public class XboxliveAuth
     {
-        private NetRequester requester;
-
         /// <summary>
         /// The uri of xbl
         /// </summary>
         public Uri XblAuthenticateUri { get; set; } = new Uri("https://user.auth.xboxlive.com/user/authenticate");
         public Uri XstsAuthenticateUri { get; set; } = new Uri("https://xsts.auth.xboxlive.com/xsts/authorize");
-
-        public XboxliveAuth(NetRequester arg_requester)
-        {
-            this.requester = arg_requester;
-        }
 
         public async Task<XboxLiveAuthResult> XblAuthenticate(XblAuthProperties properties, CancellationToken cancellation = default)
         {
@@ -62,7 +55,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             HttpContent content = new StringContent(json_str);
             content.Headers.ContentType.MediaType = "application/json";
 
-            var result = await requester.Client.PostAsync(uri, content, cancellation);
+            var result = await NetRequester.HttpPostAsync(uri, content, cancellation);
             result.EnsureSuccessStatusCode();
 
             var respond_str = await result.Content.ReadAsStringAsync();

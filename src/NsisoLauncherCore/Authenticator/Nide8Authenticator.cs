@@ -13,9 +13,9 @@ namespace NsisoLauncherCore.Authenticator
 
         private Net.Nide8API.APIHandler nide8Handler;
 
-        public Nide8Authenticator(NetRequester requester, string nide8ID, string client_token) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), requester, client_token)
+        public Nide8Authenticator(string nide8ID, string client_token) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), client_token)
         {
-            nide8Handler = new Net.Nide8API.APIHandler(requester, nide8ID);
+            nide8Handler = new Net.Nide8API.APIHandler(nide8ID);
         }
 
         public async Task UpdateApiRoot()

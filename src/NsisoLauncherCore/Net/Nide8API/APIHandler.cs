@@ -11,17 +11,14 @@ namespace NsisoLauncherCore.Net.Nide8API
 
         public string Nide8ID { get; private set; }
 
-        private NetRequester _netRequester;
-        public APIHandler(NetRequester requester, string id)
+        public APIHandler(string id)
         {
-            _netRequester = requester;
             this.Nide8ID = id;
-
         }
 
         public async Task<APIModules> GetInfoAsync()
         {
-            HttpResponseMessage jsonRespond = await _netRequester.Client.GetAsync(string.Format("{0}/{1}", Nide8BaseUrl, Nide8ID));
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(string.Format("{0}/{1}", Nide8BaseUrl, Nide8ID));
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {

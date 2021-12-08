@@ -62,21 +62,17 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand DownloadFabricCmd { get; set; }
 
         private FunctionAPIHandler apiHandler;
-        private NetRequester _netRequester;
 
         private MainWindowViewModel _mainWindow;
         private MainPageViewModel _mainPage;
-
-
 
         public AdditionPageViewModel()
         {
             if (App.NetHandler != null)
             {
-                _netRequester = App.NetHandler.Requester;
                 VersionListMirror = App.NetHandler.Mirrors.VersionListMirrorList.FirstOrDefault();
                 FunctionalMirror = App.NetHandler.Mirrors.FunctionalMirrorList.FirstOrDefault();
-                apiHandler = new FunctionAPIHandler(VersionListMirror, FunctionalMirror, _netRequester);
+                apiHandler = new FunctionAPIHandler(VersionListMirror, FunctionalMirror);
             }
             if (App.MainWindowVM != null)
             {
