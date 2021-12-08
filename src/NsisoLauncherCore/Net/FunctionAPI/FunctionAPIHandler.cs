@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
@@ -83,18 +85,57 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 forgeListUri = mirror.ForgeListUri;
             }
-            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(string.Format("{0}/{1}", forgeListUri, version.Id));
-            string json = null;
-            if (jsonRespond.IsSuccessStatusCode)
+
+            if (mirror.ForgeListUri.AbsolutePath == "https://files.minecraftforge.net/net/minecraftforge/forge/")
             {
-                json = await jsonRespond.Content.ReadAsStringAsync();
+                HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync($"{forgeListUri}/index_{version.Id}.html");
+                string html = null;
+                if (jsonRespond.IsSuccessStatusCode)
+                {
+                    html = await jsonRespond.Content.ReadAsStringAsync();
+                }
+                if (string.IsNullOrWhiteSpace(html))
+                {
+                    return null;
+                }
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                var nodes = doc.DocumentNode.Descendants("table")
+                    .Where(x => x.Attributes["class"]?.Value == "download-list").FirstOrDefault();
+                if (nodes == null)
+                    return null;
+                var nodes1 = nodes.Descendants("tbody").FirstOrDefault();
+                if (nodes1 == null)
+                    return null;
+                List<JWForge> list = new List<JWForge>();
+                foreach (var item in nodes1.Descendants("tr"))
+                {
+                    var item1 = item.Descendants("td").Where(x => x.Attributes["class"]?.Value == "download-version").FirstOrDefault();
+                    if (item1 != null)
+                    {
+                        list.Add(new JWForge
+                        {
+                            Version = item1.InnerText.Trim()
+                        });
+                    }
+                }
             }
-            if (string.IsNullOrWhiteSpace(json))
+
+            else
             {
-                return null;
+                HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync($"{forgeListUri}/{version.Id}");
+                string json = null;
+                if (jsonRespond.IsSuccessStatusCode)
+                {
+                    json = await jsonRespond.Content.ReadAsStringAsync();
+                }
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    return null;
+                }
+                var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
+                return e;
             }
-            var e = JsonConvert.DeserializeObject<List<JWForge>>(json);
-            return e;
         }
 
         /// <summary>

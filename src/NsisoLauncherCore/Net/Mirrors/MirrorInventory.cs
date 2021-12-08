@@ -32,41 +32,47 @@ namespace NsisoLauncherCore.Net.Mirrors
         // !WARNING!: THIS IS A HARD CODE.
         public ApiBaseMirror GetOfficalApi()
         {
-            ApiBaseMirror offical = new ApiBaseMirror(); 
-            offical.MirrorName = OfficalAPI;
+            ApiBaseMirror offical = new ApiBaseMirror
+            {
+                MirrorName = OfficalAPI,
 
-            offical.MCDownloadUri = new Uri(GetDownloadUri.MojangMainUrl);
-            offical.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("launcher.mojang.com");
-            offical.VersionListUri = new Uri(GetDownloadUri.MojangVersionUrl);
-            offical.ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/");
+                MCDownloadUri = new Uri(GetDownloadUri.MojangMainUrl),
+                ReplaceDictionary = GetBmclApiBaseReplaceUriDic("launcher.mojang.com"),
+                VersionListUri = new Uri(GetDownloadUri.MojangVersionUrl),
+                ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/")
+            };
             return offical;
         }
 
         public ApiBaseMirror GetBmclApi()
         {
-            ApiBaseMirror bmclapi = new ApiBaseMirror();
-            bmclapi.MirrorName = BmclAPI;
+            ApiBaseMirror bmclapi = new ApiBaseMirror
+            {
+                MirrorName = BmclAPI,
 
-            bmclapi.MCDownloadUri = new Uri(BMCLUrl);
-            bmclapi.CoreVersionListUri = new Uri($"{BMCLUrl}version/");
-            bmclapi.ForgeDownloadUri = new Uri($"{BMCLUrl}forge/download/");
-            bmclapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("bmclapi2.bangbang93.com");
-            bmclapi.VersionListUri = new Uri(BMCLVersionURL);
-            bmclapi.ForgeListUri = new Uri($"{BMCLUrl}/forge/minecraft");
+                MCDownloadUri = new Uri(BMCLUrl),
+                CoreVersionListUri = new Uri($"{BMCLUrl}version/"),
+                ForgeDownloadUri = new Uri($"{BMCLUrl}forge/download/"),
+                ReplaceDictionary = GetBmclApiBaseReplaceUriDic("bmclapi2.bangbang93.com"),
+                VersionListUri = new Uri(BMCLVersionURL),
+                ForgeListUri = new Uri($"{BMCLUrl}/forge/minecraft")
+            };
             return bmclapi;
         }
 
         public ApiBaseMirror GetMcbbsApi()
         {
-            ApiBaseMirror mcbbsapi = new ApiBaseMirror();
-            mcbbsapi.MirrorName = McbbsAPI;
+            ApiBaseMirror mcbbsapi = new ApiBaseMirror
+            {
+                MirrorName = McbbsAPI,
 
-            mcbbsapi.MCDownloadUri = new Uri(MCBBSUrl);
-            mcbbsapi.CoreVersionListUri = new Uri($"{MCBBSUrl}version/");
-            mcbbsapi.ForgeDownloadUri = new Uri($"{MCBBSUrl}forge/download/");
-            mcbbsapi.ReplaceDictionary = GetBmclApiBaseReplaceUriDic("download.mcbbs.net");
-            mcbbsapi.VersionListUri = new Uri(MCBBSVersionURL);
-            mcbbsapi.ForgeListUri = new Uri($"{MCBBSUrl}/forge/minecraft");
+                MCDownloadUri = new Uri(MCBBSUrl),
+                CoreVersionListUri = new Uri($"{MCBBSUrl}version/"),
+                ForgeDownloadUri = new Uri($"{MCBBSUrl}forge/download/"),
+                ReplaceDictionary = GetBmclApiBaseReplaceUriDic("download.mcbbs.net"),
+                VersionListUri = new Uri(MCBBSVersionURL),
+                ForgeListUri = new Uri($"{MCBBSUrl}/forge/minecraft")
+            };
             return mcbbsapi;
         }
 

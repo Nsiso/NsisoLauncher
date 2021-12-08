@@ -275,7 +275,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     JWVersion item = SelectedDownloadVersion;
                     IDownloadableMirror mirror = DownloadableMirror;
                     string url = mirror == null ? item.Url : mirror.DoDownloadUriReplace(item.Url);
-                    HttpResponseMessage jsonRespond = await _netRequester.Client.GetAsync(url);
+                    HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(url);
                     string json = null;
                     if (jsonRespond.IsSuccessStatusCode)
                     {
@@ -302,7 +302,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.Url), App.Handler.GetAssetsIndexPath(ver.Assets)));
 
-                    tasks.AddRange(await FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester));
+                    tasks.AddRange(await FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList));
 
                     App.NetHandler.Downloader.AddDownloadTask(tasks);
                     _mainPage.NavigateToDownloadPage();
@@ -401,7 +401,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     throw new Exception("Functional Mirror is null");
                 }
-                string forgePath = NsisoLauncherCore.PathManager.TempDirectory + $"\Forge_{forge.Build}-Installer.jar";
+                string forgePath = NsisoLauncherCore.PathManager.TempDirectory + $"/Forge_{forge.Build}-Installer.jar";
                 DownloadTask dt = new DownloadTask("forge核心",
                     new StringUrl($"{FunctionalMirror.ForgeDownloadUri}{forge.Build}"),
                     forgePath);

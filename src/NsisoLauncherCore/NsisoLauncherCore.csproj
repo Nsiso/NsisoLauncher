@@ -302,6 +302,9 @@
       <Version>6.5.1</Version>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.39</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Identity.Client">
       <Version>4.36.2</Version>
     </PackageReference>
