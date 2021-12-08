@@ -4,11 +4,12 @@ using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Checker;
-using 
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NsisoLauncherCore.Net.Tools
 {
@@ -16,7 +17,7 @@ namespace NsisoLauncherCore.Net.Tools
     {
         public const string MojangMainUrl = "https://launcher.mojang.com/";
         public const string MojangMetaUrl = "https://launchermeta.mojang.com/";
-        public const string MojangVersionUrl = $"{MojangMetaUrl}mc/game/version_manifest.json";
+        public const string MojangVersionUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
         public const string MojanglibrariesUrl = "https://libraries.minecraft.net/";
         public const string MojangAssetsBaseUrl = "https://resources.download.minecraft.net/";
         public const string ForgeHttpUrl = "http://files.minecraftforge.net/maven/";
@@ -34,15 +35,28 @@ namespace NsisoLauncherCore.Net.Tools
 
         private static string GetAssetsBasePath(JAssetInfo assetsInfo)
         {
-            return $"{(assetsInfo.Hash.Substring(0, 2))}\{assetsInfo.Hash}";
+            return $"{(assetsInfo.Hash.Substring(0, 2))}/{assetsInfo.Hash}";
         }
 
-        public static async string GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
+        public static async Task<string> GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
         {
             if (mirror.MirrorName == MirrorInventory.OfficalAPI)
             {
-                var res = await NetRequester.HttpGetAsync(MojangVersionUrl);
-                JObject obj  = 
+                var res = await NetRequester.HttpGetStringAsync(MojangVersionUrl);
+                if (res == null)
+                    return null;
+                JObject obj = JObject.Parse(res);
+                if (obj.ContainsKey("versions"))
+                {
+                    JArray array = obj["version"] as JArray;
+                    var item = array.Where(a =>
+                    {
+                        var b = a as JObject;
+                        return b?.ContainsKey("id") == true && b["id"]?.ToString() == verID;
+                    }).First();
+                    return item["url"].ToString();
+                }
+                return null;
             }
             return $"{mirror.CoreVersionListUri}{verID}/json";
         }
@@ -148,10 +162,10 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), downloadTo);
         }
 
-        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo, NetRequester requester)
+        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
         {
             AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
-            return await handler.GetLatestAICoreDownloadTask(source, downloadTo, requester);
+            return await handler.GetLatestAICoreDownloadTask(source, downloadTo);
         }
 
         private static List<IDownloadTask> GetJavaManifestDownloadTasks(JavaManifest manifest, string download_to_dir)

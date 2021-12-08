@@ -5,7 +5,7 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
 {
     public class APIHandler
     {
-        public async Task<DownloadTask> GetLatestAICoreDownloadTask(DownloadSource source, string downloadTo, NetRequester requester)
+        public async Task<DownloadTask> GetLatestAICoreDownloadTask(DownloadSource source, string downloadTo)
         {
             string apiBase;
             switch (source)
@@ -20,7 +20,7 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
                     apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
                     break;
             }
-            var jsonRespond = await requester.Client.GetAsync(apiBase);
+            var jsonRespond = await NetRequester.HttpGetAsync(apiBase);
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {
