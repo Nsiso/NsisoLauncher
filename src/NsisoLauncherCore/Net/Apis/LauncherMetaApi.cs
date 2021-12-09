@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.Apis
 {
-    public class LauncherMetaApi
+    public static class LauncherMetaApi
     {
-        public string BaseUrl { get => "https://launchermeta.mojang.com"; }
+        public const string BaseUrl = "https://launchermeta.mojang.com";
 
-        public async Task<VersionManifest> GetVersionManifest(CancellationToken cancellation = default)
+        public static async Task<VersionManifest> GetVersionManifest(CancellationToken cancellation = default)
         {
             string url = BaseUrl + "/mc/game/version_manifest.json";
 
@@ -25,7 +25,7 @@ namespace NsisoLauncherCore.Net.Apis
             return JsonConvert.DeserializeObject<VersionManifest>(json_str);
         }
 
-        public async Task<JavaAll> GetJavaAll(CancellationToken cancellation = default)
+        public static async Task<JavaAll> GetJavaAll(CancellationToken cancellation = default)
         {
             string url = BaseUrl + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 
@@ -35,7 +35,7 @@ namespace NsisoLauncherCore.Net.Apis
             return JsonConvert.DeserializeObject<JavaAll>(json_str);
         }
 
-        public async Task<JavaManifest> GetJavaManifest(JavaMeta java, CancellationToken cancellation = default)
+        public static async Task<JavaManifest> GetJavaManifest(JavaMeta java, CancellationToken cancellation = default)
         {
             HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(java.Manifest.Url, cancellation);
             jsonRespond.EnsureSuccessStatusCode();
@@ -43,7 +43,7 @@ namespace NsisoLauncherCore.Net.Apis
             return JsonConvert.DeserializeObject<JavaManifest>(json_str);
         }
 
-        public async Task<NativeJavaMeta> GetNativeJavaMeta(string gamecore, CancellationToken cancellation = default)
+        public static async Task<NativeJavaMeta> GetNativeJavaMeta(string gamecore, CancellationToken cancellation = default)
         {
             JavaAll javas = await GetJavaAll(cancellation);
             if (javas == null)

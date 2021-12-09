@@ -10,18 +10,10 @@ namespace NsisoLauncherCoreTest.Apis
     [TestClass]
     public class LauncherMetaApiTest
     {
-        private NetRequester _requester;
-        private LauncherMetaApi _api;
-        public LauncherMetaApiTest()
-        {
-            _requester = new NetRequester();
-            _api = new LauncherMetaApi(_requester);
-        }
-
         [TestMethod]
         public async Task TestGetVersionManifest()
         {
-            var manifest = await _api.GetVersionManifest();
+            var manifest = await LauncherMetaApi.GetVersionManifest();
             Assert.IsNotNull(manifest);
             Assert.IsNotNull(manifest.Latest);
             Assert.IsNotNull(manifest.Versions);
@@ -31,7 +23,7 @@ namespace NsisoLauncherCoreTest.Apis
         [TestMethod]
         public async Task TestGetJavaAll()
         {
-            var result = await _api.GetJavaAll();
+            var result = await LauncherMetaApi.GetJavaAll();
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Windows_x64);
             Assert.IsNotNull(result.Windows_x86);
@@ -43,11 +35,11 @@ namespace NsisoLauncherCoreTest.Apis
         [TestMethod]
         public async Task TestGetNativeJavaMeta()
         {
-            var javas = await _api.GetJavaAll();
+            var javas = await LauncherMetaApi.GetJavaAll();
             Assert.IsNotNull(javas);
             foreach (var item in javas.Gamecore)
             {
-                var result = await _api.GetNativeJavaMeta(item.Key);
+                var result = await LauncherMetaApi.GetNativeJavaMeta(item.Key);
                 Assert.IsNotNull(result);
                 Assert.IsNotNull(result.Manifest);
                 Assert.IsNotNull(result.Manifest.Files);

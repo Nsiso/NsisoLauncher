@@ -505,7 +505,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     (lockAuthNode != null) &&
                         (lockAuthNode.AuthType == AuthenticationType.NIDE8))
                 {
-                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(App.NetHandler.Requester, lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                    var nide8ReturnResult = await new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"]).GetInfoAsync();
                     if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
                     {
                         NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
@@ -642,8 +642,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                         }
                                         else
                                         {
-                                            LauncherMetaApi metaApi = new LauncherMetaApi(App.NetHandler.Requester);
-                                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(javaVersion.Component);
+                                            NativeJavaMeta meta = await LauncherMetaApi.GetNativeJavaMeta(javaVersion.Component);
                                             List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
                                             App.NetHandler.Downloader.AddDownloadTask(tasks);
                                             App.MainPageVM.NavigateToDownloadPage();

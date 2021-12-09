@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using User = NsisoLauncher.Config.User;
+using NsisoLauncherCore.User;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -340,16 +341,16 @@ namespace NsisoLauncher.ViewModels.Pages
             switch (selectedAuthNode.AuthType)
             {
                 case AuthenticationType.MOJANG:
-                    authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                    authenticator = new MojangAuthenticator();
                     break;
                 case AuthenticationType.NIDE8:
-                    authenticator = new Nide8Authenticator(App.NetHandler.Requester, selectedAuthNode.Property["nide8ID"]);
+                    authenticator = new Nide8Authenticator(selectedAuthNode.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new AuthlibInjectorAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new AuthlibInjectorAuthenticator(selectedAuthNode.Property["authserver"]);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
-                    authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(selectedAuthNode.Property["authserver"]);
                     break;
                 default:
                     throw new Exception("Using yggdrasil authenticator but the auth node auth type is not yggdrasil.");
@@ -574,16 +575,16 @@ namespace NsisoLauncher.ViewModels.Pages
                     break;
                 case AuthenticationType.MOJANG:
 
-                    authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                    authenticator = new MojangAuthenticator();
                     break;
                 case AuthenticationType.NIDE8:
-                    authenticator = new Nide8Authenticator(App.NetHandler.Requester, node.Property["nide8ID"]);
+                    authenticator = new Nide8Authenticator(node.Property["nide8ID"]);
                     break;
                 case AuthenticationType.AUTHLIB_INJECTOR:
-                    authenticator = new AuthlibInjectorAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new AuthlibInjectorAuthenticator(node.Property["authserver"]);
                     break;
                 case AuthenticationType.CUSTOM_SERVER:
-                    authenticator = new YggdrasilAuthenticator(node.Property["authserver"], App.NetHandler.Requester);
+                    authenticator = new YggdrasilAuthenticator(node.Property["authserver"]);
                     break;
                 case AuthenticationType.MICROSOFT:
                     break;

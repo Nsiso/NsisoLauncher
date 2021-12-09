@@ -104,7 +104,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     DownloadWindow downloadWindow = new DownloadWindow();
                     string core = "java-runtime-alpha";
-                    NativeJavaMeta java = await new LauncherMetaApi(App.NetHandler.Requester).GetNativeJavaMeta(core, CancellationSource.Token);
+                    NativeJavaMeta java = await LauncherMetaApi.GetNativeJavaMeta(core, CancellationSource.Token);
                     List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(java);
                     App.NetHandler.Downloader.AddDownloadTask(tasks);
                     downloadWindow.Show();

@@ -234,7 +234,7 @@ namespace NsisoLauncher
                 {
                     proxy.Credentials = new NetworkCredential(Config.MainConfig.Net.ProxyUsername, Config.MainConfig.Net.ProxyPassword);
                 }
-                NetHandler.Requester.NetProxy = proxy;
+                NetRequester.NetProxy = proxy;
             }
             #endregion
 

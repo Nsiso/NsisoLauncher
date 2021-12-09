@@ -1,5 +1,6 @@
 ﻿using NsisoLauncher.Config;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.User;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
