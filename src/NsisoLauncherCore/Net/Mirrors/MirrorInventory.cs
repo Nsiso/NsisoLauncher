@@ -39,7 +39,10 @@ namespace NsisoLauncherCore.Net.Mirrors
                 MCDownloadUri = new Uri(GetDownloadUri.MojangMainUrl),
                 ReplaceDictionary = GetBmclApiBaseReplaceUriDic("launcher.mojang.com"),
                 VersionListUri = new Uri(GetDownloadUri.MojangVersionUrl),
-                ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/")
+                ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/"),
+                FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
+                ForgeDownloadUri = new Uri("https://maven.minecraftforge.net/net/minecraftforge/forge/"),
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
             };
             return offical;
         }
@@ -55,7 +58,9 @@ namespace NsisoLauncherCore.Net.Mirrors
                 ForgeDownloadUri = new Uri($"{BMCLUrl}forge/download/"),
                 ReplaceDictionary = GetBmclApiBaseReplaceUriDic("bmclapi2.bangbang93.com"),
                 VersionListUri = new Uri(BMCLVersionURL),
-                ForgeListUri = new Uri($"{BMCLUrl}/forge/minecraft")
+                ForgeListUri = new Uri($"{BMCLUrl}/forge/minecraft"),
+                FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
             };
             return bmclapi;
         }
@@ -71,7 +76,9 @@ namespace NsisoLauncherCore.Net.Mirrors
                 ForgeDownloadUri = new Uri($"{MCBBSUrl}forge/download/"),
                 ReplaceDictionary = GetBmclApiBaseReplaceUriDic("download.mcbbs.net"),
                 VersionListUri = new Uri(MCBBSVersionURL),
-                ForgeListUri = new Uri($"{MCBBSUrl}/forge/minecraft")
+                ForgeListUri = new Uri($"{MCBBSUrl}/forge/minecraft"),
+                FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
             };
             return mcbbsapi;
         }

@@ -11,6 +11,7 @@ using NsisoLauncherCore.Net.Mirrors;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Util;
 using NsisoLauncherCore.Util.Installer;
+using NsisoLauncherCore.Util.Installer.Fabric;
 using NsisoLauncherCore.Util.Installer.Forge;
 using System;
 using System.Collections.Generic;
@@ -61,8 +62,6 @@ namespace NsisoLauncher.ViewModels.Pages
         public ICommand DownloadForgeCmd { get; set; }
         public ICommand DownloadFabricCmd { get; set; }
 
-        private FunctionAPIHandler apiHandler;
-
         private MainWindowViewModel _mainWindow;
         private MainPageViewModel _mainPage;
 
@@ -72,7 +71,6 @@ namespace NsisoLauncher.ViewModels.Pages
             {
                 VersionListMirror = App.NetHandler.Mirrors.VersionListMirrorList.FirstOrDefault();
                 FunctionalMirror = App.NetHandler.Mirrors.FunctionalMirrorList.FirstOrDefault();
-                apiHandler = new FunctionAPIHandler(VersionListMirror, FunctionalMirror);
             }
             if (App.MainWindowVM != null)
             {
@@ -157,7 +155,7 @@ namespace NsisoLauncher.ViewModels.Pages
             IsLoadingVersion = true;
             try
             {
-                VersionManifest manifest = await apiHandler.GetVersionManifest();
+                VersionManifest manifest = await FunctionAPIHandler.GetVersionManifest(VersionListMirror);
                 Latest = manifest.Latest;
                 DownloadVersionList.Clear();
                 foreach (var item in manifest.Versions)
@@ -195,7 +193,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 var loading = await _mainWindow.ShowProgressAsync("获取Forge列表中", "请稍后");
                 loading.SetIndeterminate();
                 ForgeList.Clear();
-                List<JWForge> result = await apiHandler.GetForgeList(ver);
+                List<JWForge> result = await FunctionAPIHandler.GetForgeList(FunctionalMirror, ver);
                 await loading.CloseAsync();
                 if (result == null || result.Count == 0)
                 {
@@ -237,7 +235,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 var loading = await _mainWindow.ShowProgressAsync("获取Fabric列表中", "请稍后");
                 loading.SetIndeterminate();
                 FabricList.Clear();
-                List<JWFabric> result = await apiHandler.GetFabricList(ver);
+                List<JWFabric> result = await FunctionAPIHandler.GetFabricList(FunctionalMirror, ver);
                 await loading.CloseAsync();
                 if (result == null || result.Count == 0)
                 {
@@ -340,9 +338,9 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     throw new Exception("Functional Mirror is null");
                 }
-                string forgePath = NsisoLauncherCore.PathManager.TempDirectory + string.Format(@"\Forge_{0}-Installer.jar", forge.Build);
+                string forgePath = $"{NsisoLauncherCore.PathManager.TempDirectory}/forge-{ver.Id}-{forge.Version}-installer.jar";
                 DownloadTask dt = new DownloadTask("forge核心",
-                    new StringUrl($"{FunctionalMirror.ForgeDownloadUri}{forge.Build}"),
+                    new StringUrl(FunctionAPIHandler.GetForgeDownload(FunctionalMirror, ver, forge)),
                     forgePath);
                 IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
                 dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
@@ -390,8 +388,8 @@ namespace NsisoLauncher.ViewModels.Pages
                     return;
                 }
 
-                JWFabric forge = SelectedFabric;
-                if (forge == null)
+                JWFabric fabric = SelectedFabric;
+                if (fabric == null)
                 {
                     await _mainWindow.ShowMessageAsync("您未选择要安装的Fabric", "您需要选择一个要安装Fabric");
                     return;
@@ -401,20 +399,21 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     throw new Exception("Functional Mirror is null");
                 }
-                string forgePath = NsisoLauncherCore.PathManager.TempDirectory + $"/Forge_{forge.Build}-Installer.jar";
-                DownloadTask dt = new DownloadTask("forge核心",
-                    new StringUrl($"{FunctionalMirror.ForgeDownloadUri}{forge.Build}"),
+                string forgePath = $"{NsisoLauncherCore.PathManager.TempDirectory}/fabric-installer-0.10.2.jar";
+                DownloadTask dt = new DownloadTask("fabric安装核心",
+                    new StringUrl(FunctionalMirror.FabricDownloadUri.AbsoluteUri),
                     forgePath);
                 IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
                 dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>
                 {
                     try
                     {
-                        IInstaller installer = new ForgeInstaller(forgePath, new CommonInstallOptions()
+                        IInstaller installer = new FabricInstaller(forgePath, new FabricInstallOptions()
                         {
                             GameRootPath = App.Handler.GameRootPath,
                             IsClient = true,
                             VersionToInstall = ver,
+                            Fabric = fabric,
                             Mirror = mirror,
                             Java = Java.GetSuitableJava(App.JavaList, ver)
                         });

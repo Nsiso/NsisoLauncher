@@ -12,25 +12,15 @@ using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 
 namespace NsisoLauncherCore.Net.FunctionAPI
 {
-    public class FunctionAPIHandler
+    public static class FunctionAPIHandler
     {
-        public IFunctionalMirror FunctionalMirror { get; set; }
-        public IVersionListMirror VersionListMirror { get; set; }
-
-        public FunctionAPIHandler(IVersionListMirror versionListMirror, IFunctionalMirror functionMirror)
-        {
-            FunctionalMirror = functionMirror ?? throw new ArgumentNullException("FunctionalMirror is null");
-            VersionListMirror = versionListMirror;
-        }
-
         /// <summary>
         /// 联网获取版本列表
         /// </summary>
         /// <returns>版本列表</returns>
-        public async Task<VersionManifest> GetVersionManifest()
+        public static async Task<VersionManifest> GetVersionManifest(IVersionListMirror mirror)
         {
             Uri versionListUri;
-            IVersionListMirror mirror = VersionListMirror;
             versionListUri = mirror == null ? new Uri(GetDownloadUri.MojangVersionUrl) : mirror.VersionListUri;
             HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(versionListUri);
             jsonRespond.EnsureSuccessStatusCode();
@@ -42,10 +32,9 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// 联网获取JAVA列表
         /// </summary>
         /// <returns>JAVA列表</returns>
-        public async Task<List<JWJava>> GetJavaList()
+        public static async Task<List<JWJava>> GetJavaList(IFunctionalMirror mirror)
         {
             Uri javaListUri;
-            IFunctionalMirror mirror = FunctionalMirror;
             if (mirror == null)
             {
                 throw new Exception("The Functional Mirror is null");
@@ -73,10 +62,9 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         /// </summary>
         /// <param name="version">要搜索的版本</param>
         /// <returns>Forge列表</returns>
-        public async Task<List<JWForge>> GetForgeList(VersionBase version)
+        public static async Task<List<JWForge>> GetForgeList(IFunctionalMirror mirror, VersionBase version)
         {
             Uri forgeListUri;
-            IFunctionalMirror mirror = FunctionalMirror;
             if (mirror == null)
             {
                 throw new Exception("The Functional Mirror is null");
@@ -119,6 +107,7 @@ namespace NsisoLauncherCore.Net.FunctionAPI
                         });
                     }
                 }
+                return list;
             }
 
             else
@@ -139,14 +128,41 @@ namespace NsisoLauncherCore.Net.FunctionAPI
         }
 
         /// <summary>
+        /// 联网获取指定版本所有的FORGE
+        /// </summary>
+        /// <param name="version">要搜索的版本</param>
+        /// <returns>Forge列表</returns>
+        public static string GetForgeDownload(IFunctionalMirror mirror, VersionBase version, JWForge forge)
+        {
+            Uri forgeListUri;
+            if (mirror == null)
+            {
+                throw new Exception("The Functional Mirror is null");
+            }
+            else
+            {
+                forgeListUri = mirror.ForgeListUri;
+            }
+
+            if (forgeListUri.AbsolutePath == "https://maven.minecraftforge.net/net/minecraftforge/forge/")
+            {
+                return $"{forgeListUri.AbsolutePath}{version.Id}-{forge.Version}/forge-{version.Id}-{forge.Version}-installer.jar";
+            }
+
+            else
+            {
+                return $"{mirror.ForgeDownloadUri}{forge.Build}";
+            }
+        }
+
+        /// <summary>
         /// 联网获取指定版本所有的FABRIC
         /// </summary>
         /// <param name="version">要搜索的版本</param>
         /// <returns>Fabric列表</returns>
-        public async Task<List<JWFabric>> GetFabricList(VersionBase version)
+        public static async Task<List<JWFabric>> GetFabricList(IFunctionalMirror mirror, VersionBase version)
         {
             Uri fabricListUri;
-            IFunctionalMirror mirror = FunctionalMirror;
             if (mirror == null)
             {
                 throw new Exception("The Functional Mirror is null");
@@ -155,7 +171,8 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 fabricListUri = mirror.FabricListUri;
             }
-            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(string.Format("{0}/{1}", fabricListUri, version.Id));
+
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(fabricListUri);
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {

@@ -4,7 +4,6 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
-using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
@@ -13,7 +12,6 @@ using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Tools;
-using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -22,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using NsisoLauncherCore.Authenticator;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -183,19 +182,19 @@ namespace NsisoLauncher.ViewModels.Pages
                     case AuthenticationType.OFFLINE:
                         return;
                     case AuthenticationType.MOJANG:
-                        authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+                        authenticator = new MojangAuthenticator();
                         NowState = "正在进行正版登录";
                         break;
                     case AuthenticationType.NIDE8:
-                        authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["nide8ID"]);
+                        authenticator = new Nide8Authenticator(authenticationNode.Property["nide8ID"]);
                         NowState = "正在进行统一通行证登录";
                         break;
                     case AuthenticationType.AUTHLIB_INJECTOR:
-                        authenticator = new AuthlibInjectorAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+                        authenticator = new AuthlibInjectorAuthenticator(authenticationNode.Property["authserver"]);
                         NowState = "正在进行Authlib_injector登录";
                         break;
                     case AuthenticationType.CUSTOM_SERVER:
-                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"]);
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                     case AuthenticationType.MICROSOFT:
@@ -246,7 +245,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         }
                         return;
                     default:
-                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"]);
                         NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
                         break;
                 }

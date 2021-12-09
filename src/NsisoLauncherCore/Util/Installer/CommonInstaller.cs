@@ -31,6 +31,11 @@ namespace NsisoLauncherCore.Util.Installer
         }
     }
 
+    public class FabricInstallOptions : CommonInstallOptions
+    {
+        public Net.FunctionAPI.APIModules.JWFabric Fabric { get; set; }
+    }
+
     public class CommonInstallOptions
     {
         public string GameRootPath { get; set; }
