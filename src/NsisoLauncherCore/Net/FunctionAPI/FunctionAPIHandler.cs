@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml;
 using static NsisoLauncherCore.Net.FunctionAPI.APIModules;
 
 namespace NsisoLauncherCore.Net.FunctionAPI
@@ -153,6 +154,40 @@ namespace NsisoLauncherCore.Net.FunctionAPI
             {
                 return $"{mirror.ForgeDownloadUri}{forge.Build}";
             }
+        }
+
+        /// <summary>
+        /// 联网获取Fabric安装器
+        /// </summary>
+        /// <returns>Fabric链接</returns>
+        public static async Task<string> GetFabricDownload(IFunctionalMirror mirror)
+        {
+            Uri fabricListUri;
+            if (mirror == null)
+            {
+                throw new Exception("The Functional Mirror is null");
+            }
+            else
+            {
+                fabricListUri = new Uri(mirror.FabricDownloadUri, "maven-metadata.xml");
+            }
+
+            var res = await NetRequester.HttpGetStringAsync(fabricListUri);
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(res);
+
+            foreach (var item in xmlDoc.GetElementsByTagName("latest"))
+            {
+                string version = (item as XmlElement)?.InnerText;
+                if (string.IsNullOrWhiteSpace(version))
+                {
+                    throw new Exception("Get Fabric Version Error");
+                }
+                return $"{mirror.FabricDownloadUri}/{version}/fabric-installer-{version}.jar";
+            }
+
+            throw new Exception("Get Fabric Version Error");
+
         }
 
         /// <summary>

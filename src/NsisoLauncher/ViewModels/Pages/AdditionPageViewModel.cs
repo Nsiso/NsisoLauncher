@@ -399,9 +399,9 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     throw new Exception("Functional Mirror is null");
                 }
-                string forgePath = $"{NsisoLauncherCore.PathManager.TempDirectory}/fabric-installer-0.10.2.jar";
+                string forgePath = $"{NsisoLauncherCore.PathManager.TempDirectory}/fabric-installer.jar";
                 DownloadTask dt = new DownloadTask("fabric安装核心",
-                    new StringUrl(FunctionalMirror.FabricDownloadUri.AbsoluteUri),
+                    new StringUrl(await FunctionAPIHandler.GetFabricDownload(FunctionalMirror)),
                     forgePath);
                 IDownloadableMirror mirror = (IDownloadableMirror)await MirrorHelper.ChooseBestMirror(App.NetHandler.Mirrors.DownloadableMirrorList);
                 dt.DownloadObject.Todo = new Func<ProgressCallback, CancellationToken, Exception>((callback, cancelToken) =>

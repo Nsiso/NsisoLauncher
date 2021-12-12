@@ -42,7 +42,7 @@ namespace NsisoLauncherCore.Net.Mirrors
                 ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/"),
                 FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
                 ForgeDownloadUri = new Uri("https://maven.minecraftforge.net/net/minecraftforge/forge/"),
-                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/")
             };
             return offical;
         }
@@ -60,7 +60,7 @@ namespace NsisoLauncherCore.Net.Mirrors
                 VersionListUri = new Uri(BMCLVersionURL),
                 ForgeListUri = new Uri($"{BMCLUrl}/forge/minecraft"),
                 FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
-                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/")
             };
             return bmclapi;
         }
@@ -78,7 +78,7 @@ namespace NsisoLauncherCore.Net.Mirrors
                 VersionListUri = new Uri(MCBBSVersionURL),
                 ForgeListUri = new Uri($"{MCBBSUrl}/forge/minecraft"),
                 FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
-                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar")
+                FabricDownloadUri = new Uri("https://maven.fabricmc.net/net/fabricmc/fabric-installer/")
             };
             return mcbbsapi;
         }

@@ -80,6 +80,18 @@ namespace NsisoLauncherCore.Net
             }
         }
 
+        public static async Task<string> HttpGetStringAsync(Uri uri)
+        {
+            try
+            {
+                return await Client.GetStringAsync(uri);
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
+        }
+
         public static async Task<string> HttpGetStringAsync(string uri)
         {
             try
