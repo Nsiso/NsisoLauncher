@@ -37,7 +37,7 @@ namespace NsisoLauncherCore.Net.Mirrors
                 MirrorName = OfficalAPI,
 
                 MCDownloadUri = new Uri(GetDownloadUri.MojangMainUrl),
-                ReplaceDictionary = GetBmclApiBaseReplaceUriDic("launcher.mojang.com"),
+                ReplaceDictionary = new Dictionary<string, string>(),
                 VersionListUri = new Uri(GetDownloadUri.MojangVersionUrl),
                 ForgeListUri = new Uri("https://files.minecraftforge.net/net/minecraftforge/forge/"),
                 FabricListUri = new Uri("https://meta.fabricmc.net/v2/versions/loader"),
