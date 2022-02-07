@@ -91,17 +91,14 @@ namespace NsisoLauncherCore.Util
         }
 
         /// <summary>
-        /// 获取版本丢失的库文件
+        /// 获取给定库文件中丢失的库文件
         /// </summary>
         /// <param name="core">所使用的启动核心</param>
-        /// <param name="version">要检查的版本</param>
+        /// <param name="libraries">给定要检查的库文件线性表</param>
         /// <returns>返回Key为路径，value为库实例的集合</returns>
-        public static Dictionary<string, Library> GetLostLibs(LaunchHandler core, VersionBase version)
+        public static Dictionary<string, Library> GetLostLibs(LaunchHandler core, List<Library> libraries)
         {
             Dictionary<string, Library> lostLibs = new Dictionary<string, Library>();
-
-
-            List<Library> libraries = version.GetAllLibraries();
 
             foreach (var item in libraries)
             {
@@ -119,6 +116,18 @@ namespace NsisoLauncherCore.Util
                 }
             }
             return lostLibs;
+        }
+
+        /// <summary>
+        /// 获取版本丢失的库文件
+        /// </summary>
+        /// <param name="core">所使用的启动核心</param>
+        /// <param name="version">要检查的版本</param>
+        /// <returns>返回Key为路径，value为库实例的集合</returns>
+        public static Dictionary<string, Library> GetLostLibs(LaunchHandler core, VersionBase version)
+        {
+            List<Library> libraries = version.GetAllLibraries();
+            return GetLostLibs(core, libraries);
         }
         #endregion
 
@@ -297,28 +306,34 @@ namespace NsisoLauncherCore.Util
         //}
 
         /// <summary>
+        /// To get all lost libraries download task list from given liraries list
+        /// </summary>
+        /// <param name="core">Launch core</param>
+        /// <param name="libraries">libs</param>
+        /// <param name="mirror">version list net mirror</param>
+        /// <returns>list of download task</returns>
+        public static List<DownloadTask> GetLostLibrariesDownloadTask(LaunchHandler core, List<Library> libraries, IVersionListMirror mirror)
+        {
+            var lostLibs = GetLostLibs(core, libraries);
+            List<DownloadTask> tasks = new List<DownloadTask>();
+
+            foreach (var item in lostLibs)
+            {
+                tasks.Add(GetDownloadUri.GetLibDownloadTask(item));
+            }
+            return tasks;
+        }
+
+        /// <summary>
         /// 获取全部丢失的文件下载任务
         /// </summary>
         /// <param name="source">下载源</param>
         /// <param name="core">使用的核心</param>
         /// <param name="version">检查的版本</param>
         /// <returns></returns>
-        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, VersionBase version, IList<IVersionListMirror> mirrors)
+        public async static Task<List<DownloadTask>> GetLostDependDownloadTaskAsync(LaunchHandler core, VersionBase version, IVersionListMirror mirror)
         {
-            var lostLibs = GetLostLibs(core, version);
             List<DownloadTask> tasks = new List<DownloadTask>();
-            IVersionListMirror mirror = null;
-            if ((mirrors != null) && (mirrors.Count != 0))
-            {
-                mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors);
-            }
-            if (IsLostJarCore(core, version))
-            {
-                if (version.Jar == null)
-                {
-                    tasks.Add(GetDownloadUri.GetCoreJarDownloadTask(version, core, mirror));
-                }
-            }
 
             if (version.InheritsFrom != null)
             {
@@ -326,21 +341,7 @@ namespace NsisoLauncherCore.Util
                 string innerJsonStr = null;
                 if (!File.Exists(innerJsonPath))
                 {
-                    if (mirror == null)
-                    {
-                        if (mirrors.Count == 0)
-                        {
-                            throw new Exception("no Version List Mirror");
-                        }
-                        else if (mirrors.Count == 1)
-                        {
-                            mirror = mirrors.First();
-                        }
-                        else
-                        {
-                            mirror = (IVersionListMirror)await MirrorHelper.ChooseBestMirror(mirrors);
-                        }
-                    }
+
                     var url = await GetDownloadUri.GetCoreJsonDownloadURL(version.InheritsFrom, mirror);
                     if (url == null)
                         throw new Exception("获取inner json时出错");
@@ -367,14 +368,13 @@ namespace NsisoLauncherCore.Util
                 VersionBase innerVer = core.JsonToVersion(innerJsonStr);
                 if (innerVer != null)
                 {
-                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirrors));
+                    tasks.AddRange(await GetLostDependDownloadTaskAsync(core, innerVer, mirror));
                 }
 
             }
-            foreach (var item in lostLibs)
-            {
-                tasks.Add(GetDownloadUri.GetLibDownloadTask(item));
-            }
+
+            List<Library> libraries = version.GetAllLibraries();
+            tasks.AddRange(GetLostLibrariesDownloadTask(core, libraries, mirror));
             return tasks;
         }
         #endregion

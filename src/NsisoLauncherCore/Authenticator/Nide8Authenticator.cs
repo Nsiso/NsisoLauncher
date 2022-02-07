@@ -1,4 +1,5 @@
-﻿using NsisoLauncherCore.Net;
+﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace NsisoLauncherCore.Authenticator
 
         private Net.Nide8API.APIHandler nide8Handler;
 
-        public Nide8Authenticator(string nide8ID, string client_token) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), client_token)
+        [JsonConstructor]
+        public Nide8Authenticator(string nide8ID, string clientToken) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), clientToken)
         {
             nide8Handler = new Net.Nide8API.APIHandler(nide8ID);
         }

@@ -209,6 +209,15 @@ namespace NsisoLauncherCore
 
         public string Parse(VersionBase version, LaunchSetting setting)
         {
+            if (version == null)
+            {
+                throw new ArgumentNullException(nameof(version));
+            }
+            if (setting == null)
+            {
+                throw new ArgumentNullException(nameof(setting));
+            }
+
             SendDebugLog(string.Format("Start version {0} launch argument parse.", version.Id));
 
             Stopwatch stopwatch = new Stopwatch();
@@ -250,14 +259,14 @@ namespace NsisoLauncherCore
             List<Library> libraries = version.GetAllLibraries();
             Dictionary<string, string> argDic = new Dictionary<string, string>()
             {
-                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.Playername) },
+                {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.SelectedProfile.PlayerName) },
                 {"${auth_session}",setting.LaunchUser.GameAccessToken },
                 {"${version_name}",string.Format("\"{0}\"", version.Id) },
                 {"${game_directory}",gameDir },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",assetsIndexName },
-                {"${auth_uuid}",setting.LaunchUser.PlayerUUID },
+                {"${auth_uuid}",setting.LaunchUser.SelectedProfile.Id },
                 {"${auth_access_token}",setting.LaunchUser.GameAccessToken },
                 {"${user_properties}",ToList(setting.LaunchUser.Properties) },
                 {"${user_type}",setting.LaunchUser.UserType },

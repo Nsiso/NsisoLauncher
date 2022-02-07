@@ -4,7 +4,6 @@ using NsisoLauncher.Utils;
 using NsisoLauncher.Views.Pages;
 using NsisoLauncher.Views.Windows;
 using NsisoLauncherCore;
-using NsisoLauncherCore.Auth;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
@@ -13,7 +12,6 @@ using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Net.MicrosoftLogin;
 using NsisoLauncherCore.Net.Tools;
-using NsisoLauncherCore.Net.Yggdrasil;
 using NsisoLauncherCore.Util;
 using System;
 using System.Collections.Generic;
@@ -105,7 +103,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 {
                     DownloadWindow downloadWindow = new DownloadWindow();
                     string core = "java-runtime-alpha";
-                    NativeJavaMeta java = await new LauncherMetaApi(App.NetHandler.Requester).GetNativeJavaMeta(core, CancellationSource.Token);
+                    NativeJavaMeta java = await new LauncherMetaApi().GetNativeJavaMeta(core, CancellationSource.Token);
                     List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(java);
                     App.NetHandler.Downloader.AddDownloadTask(tasks);
                     downloadWindow.Show();
@@ -171,120 +169,120 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task RefreshUser()
         {
-            NowState = "正在登录用户";
-            UserNode selectedUser = App.Config.MainConfig.User.SelectedUser;
-            string clientToken = App.Config.MainConfig.User.ClientToken;
-            if (selectedUser != null)
-            {
-                AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
-                IAuthenticator authenticator = null;
-                switch (authenticationNode.AuthType)
-                {
-                    case AuthenticationType.OFFLINE:
-                        return;
-                    case AuthenticationType.MOJANG:
-                        authenticator = new MojangAuthenticator(App.NetHandler.Requester);
-                        NowState = "正在进行正版登录";
-                        break;
-                    case AuthenticationType.NIDE8:
-                        authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["nide8ID"]);
-                        NowState = "正在进行统一通行证登录";
-                        break;
-                    case AuthenticationType.AUTHLIB_INJECTOR:
-                        authenticator = new AuthlibInjectorAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
-                        NowState = "正在进行Authlib_injector登录";
-                        break;
-                    case AuthenticationType.CUSTOM_SERVER:
-                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
-                        NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
-                        break;
-                    case AuthenticationType.MICROSOFT:
-                        {
-                            try
-                            {
-                                NowState = string.Format("正在进行微软登录", authenticationNode.Name);
-                                if (selectedUser.User is MicrosoftUser ms && !string.IsNullOrWhiteSpace(ms.MinecraftToken?.AccessToken))
-                                {
-                                    //检查minecraft token是否过期
+            //NowState = "正在登录用户";
+            //UserNode selectedUser = App.Config.MainConfig.User.SelectedUser;
+            //string clientToken = App.Config.MainConfig.User.ClientToken;
+            //if (selectedUser != null)
+            //{
+            //    AuthenticationNode authenticationNode = App.Config.MainConfig.User.GetUserAuthenticationNode(selectedUser);
+            //    IAuthenticator authenticator = null;
+            //    switch (authenticationNode.AuthType)
+            //    {
+            //        case AuthenticationType.OFFLINE:
+            //            return;
+            //        case AuthenticationType.MOJANG:
+            //            authenticator = new MojangAuthenticator(App.NetHandler.Requester);
+            //            NowState = "正在进行正版登录";
+            //            break;
+            //        case AuthenticationType.NIDE8:
+            //            authenticator = new Nide8Authenticator(App.NetHandler.Requester, authenticationNode.Property["nide8ID"]);
+            //            NowState = "正在进行统一通行证登录";
+            //            break;
+            //        case AuthenticationType.AUTHLIB_INJECTOR:
+            //            authenticator = new AuthlibInjectorAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+            //            NowState = "正在进行Authlib_injector登录";
+            //            break;
+            //        case AuthenticationType.CUSTOM_SERVER:
+            //            authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+            //            NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
+            //            break;
+            //        case AuthenticationType.MICROSOFT:
+            //            {
+            //                try
+            //                {
+            //                    NowState = string.Format("正在进行微软登录", authenticationNode.Name);
+            //                    if (selectedUser.User is MicrosoftUser ms && !string.IsNullOrWhiteSpace(ms.MinecraftToken?.AccessToken))
+            //                    {
+            //                        //检查minecraft token是否过期
 
-                                    //如果未过期
-                                    if (Jwt.ValidateExp(ms.MinecraftToken.AccessToken))
-                                    {
-                                        break;
-                                    }
+            //                        //如果未过期
+            //                        if (Jwt.ValidateExp(ms.MinecraftToken.AccessToken))
+            //                        {
+            //                            break;
+            //                        }
 
-                                    //如果过期
-                                    //检查微软token是否过期
-                                    OauthLoginWindow loginWindow = new OauthLoginWindow(App.NetHandler.Requester);
-                                    loginWindow.CancelToken = CancellationSource.Token;
-                                    if (DateTime.UtcNow < ms.MicrosoftToken.IssuedTime.AddSeconds(ms.MicrosoftToken.Expires_in))
-                                    {
-                                        ms.MinecraftToken = await loginWindow.RefreshMinecraftToken(ms.MicrosoftToken);
-                                    }
-                                    else
-                                    {
-                                        await loginWindow.Login();
-                                        if (loginWindow.LoggedInUser != null)
-                                        {
-                                            ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;
-                                            //todo 感觉微软登录刷新还没写完
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            await App.MainWindowVM.ShowMessageAsync("登录失败", "请检查微软登录是否成功进行");
-                                        }
-                                    }
-                                }
-                                //todo 刷新微软账户
-                                return;
-                            }
-                            catch (Exception ex)
-                            {
-                                await App.MainWindowVM.ShowMessageAsync(string.Format("登录失败", ex.Message), ex.ToString());
-                            }
-                        }
-                        return;
-                    default:
-                        authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
-                        NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
-                        break;
-                }
+            //                        //如果过期
+            //                        //检查微软token是否过期
+            //                        OauthLoginWindow loginWindow = new OauthLoginWindow(App.NetHandler.Requester);
+            //                        loginWindow.CancelToken = CancellationSource.Token;
+            //                        if (DateTime.UtcNow < ms.MicrosoftToken.IssuedTime.AddSeconds(ms.MicrosoftToken.Expires_in))
+            //                        {
+            //                            ms.MinecraftToken = await loginWindow.RefreshMinecraftToken(ms.MicrosoftToken);
+            //                        }
+            //                        else
+            //                        {
+            //                            await loginWindow.Login();
+            //                            if (loginWindow.LoggedInUser != null)
+            //                            {
+            //                                ms.MicrosoftToken = loginWindow.LoggedInUser.MicrosoftToken;
+            //                                //todo 感觉微软登录刷新还没写完
+            //                                break;
+            //                            }
+            //                            else
+            //                            {
+            //                                await App.MainWindowVM.ShowMessageAsync("登录失败", "请检查微软登录是否成功进行");
+            //                            }
+            //                        }
+            //                    }
+            //                    //todo 刷新微软账户
+            //                    return;
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    await App.MainWindowVM.ShowMessageAsync(string.Format("登录失败", ex.Message), ex.ToString());
+            //                }
+            //            }
+            //            return;
+            //        default:
+            //            authenticator = new YggdrasilAuthenticator(authenticationNode.Property["authserver"], App.NetHandler.Requester);
+            //            NowState = string.Format("正在进行{0}登录", authenticationNode.Name);
+            //            break;
+            //    }
 
-                if (authenticator == null)
-                {
-                    return;
-                }
+            //    if (authenticator == null)
+            //    {
+            //        return;
+            //    }
 
-                AccessClientTokenPair tokens = new AccessClientTokenPair()
-                {
-                    AccessToken = selectedUser.User.LaunchAccessToken,
-                    ClientToken = clientToken
-                };
+            //    AccessClientTokenPair tokens = new AccessClientTokenPair()
+            //    {
+            //        AccessToken = selectedUser.User.LaunchAccessToken,
+            //        ClientToken = clientToken
+            //    };
 
-                var result = await authenticator.Validate(tokens, CancellationSource.Token);
+            //    var result = await authenticator.Validate(tokens, CancellationSource.Token);
 
-                if (result.IsSuccess)
-                {
-                    return;
-                }
-                else
-                {
-                    var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens), CancellationSource.Token);
-                    if (refresh_result.IsSuccess)
-                    {
-                        if (selectedUser.User is YggdrasilUser ygg)
-                        {
-                            ygg.AccessToken = refresh_result.Data.AccessToken;
-                        }
-                    }
-                    else
-                    {
-                        await App.MainWindowVM.ShowMessageAsync("当前登录用户信息已过期", "请在用户页面重新登录");
-                        App.Config.MainConfig.User.SelectedUserUuid = null;
-                    }
-                }
-            }
+            //    if (result.IsSuccess)
+            //    {
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        var refresh_result = await authenticator.Refresh(new RefreshRequest(tokens), CancellationSource.Token);
+            //        if (refresh_result.IsSuccess)
+            //        {
+            //            if (selectedUser.User is YggdrasilUser ygg)
+            //            {
+            //                ygg.AccessToken = refresh_result.Data.AccessToken;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            await App.MainWindowVM.ShowMessageAsync("当前登录用户信息已过期", "请在用户页面重新登录");
+            //            App.Config.MainConfig.User.SelectedUserUuid = null;
+            //        }
+            //    }
+            //}
         }
     }
 }

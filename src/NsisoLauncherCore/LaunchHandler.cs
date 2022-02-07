@@ -407,16 +407,6 @@ namespace NsisoLauncherCore
             return PathManager.GetAssetsPath(GameRootPath, assetsInfo);
         }
 
-        public string GetNide8JarPath()
-        {
-            return PathManager.GetNide8JarPath(GameRootPath);
-        }
-
-        public string GetAIJarPath()
-        {
-            return PathManager.GetAIJarPath(GameRootPath);
-        }
-
         public string GetVersionOptionsPath(VersionBase version)
         {
             return PathManager.GetVersionOptionsPath(VersionIsolation, GameRootPath, version);

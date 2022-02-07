@@ -13,6 +13,7 @@ namespace NsisoLauncherCore.Net
 {
     public static class NetRequester
     {
+
         /// <summary>
         /// NsisoLauncher目前名称.
         /// </summary>

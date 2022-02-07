@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Authenticator;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.User;
@@ -171,125 +172,39 @@ namespace NsisoLauncher.Config
     /// </summary>
     public class User : INotifyPropertyChanged
     {
-        private ObservableDictionary<string, UserNode> userDatabase;
+        private ObservableDictionary<string, IAuthenticator> _authenticators;
 
-        /// <summary>
-        /// 用户数据库
-        /// </summary>
-        public ObservableDictionary<string, UserNode> UserDatabase
+        public ObservableDictionary<string, IAuthenticator> Authenticators
         {
             get
             {
-                if (userDatabase == null)
+                if (_authenticators == null)
                 {
-                    userDatabase = new ObservableDictionary<string, UserNode>();
+                    _authenticators = new ObservableDictionary<string, IAuthenticator>();
                 }
-                return userDatabase;
+                return _authenticators;
             }
-            set
-            {
-                userDatabase = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UserDatabase"));
-            }
+            set { _authenticators = value; }
         }
 
-        /// <summary>
-        /// 选中的用户
-        /// </summary>
-        public string SelectedUserUuid { get; set; }
-
-        private ObservableDictionary<string, AuthenticationNode> authenticationDic;
+        public string SelectedAuthenticatorId { get; set; }
 
         [JsonIgnore]
-        public UserNode SelectedUser
+        public IAuthenticator SelectedAuthenticator
         {
             get
             {
-                if (string.IsNullOrEmpty(SelectedUserUuid))
-                {
-                    return null;
-                }
-                if (UserDatabase.ContainsKey(SelectedUserUuid))
-                {
-                    return UserDatabase[SelectedUserUuid];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        public AuthenticationNode GetUserAuthenticationNode(UserNode userNode)
-        {
-            if (userNode == null)
-            {
-                throw new Exception("The Usernode argument is null");
-            }
-            string authNodeName = userNode.AuthModule;
-            if (string.IsNullOrEmpty(authNodeName))
-            {
-                return null;
-            }
-            if (!AuthenticationDic.ContainsKey(authNodeName))
-            {
-                return null;
-            }
-            return AuthenticationDic[authNodeName];
-        }
-
-        /// <summary> 
-        /// 验证节点
-        /// </summary>
-        public ObservableDictionary<string, AuthenticationNode> AuthenticationDic
-        {
-            get
-            {
-                if (authenticationDic == null)
-                {
-                    authenticationDic = new ObservableDictionary<string, AuthenticationNode>();
-                }
-                return authenticationDic;
+                return string.IsNullOrEmpty(SelectedAuthenticatorId) ? null : Authenticators[SelectedAuthenticatorId];
             }
             set
             {
-                authenticationDic = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AuthenticationDic"));
+                this.SelectedAuthenticatorId = value;
             }
         }
 
-        /// <summary>
-        /// 用户端Token
-        /// </summary>
-        public string ClientToken { get; set; }
-
-        /// <summary>
-        /// 锁定全局验证
-        /// </summary>
-        public string LockAuthName { get; set; }
-
-        /// <summary>
-        /// 全局是否对NIDE8服务器依赖
-        /// </summary>
-        public bool Nide8ServerDependence { get; set; }
+        public bool LockAuthenticator { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// 获取锁定验证模型，若不存在返回NULL
-        /// </summary>
-        /// <returns>锁定的验证模型</returns>
-        public AuthenticationNode GetLockAuthNode()
-        {
-            if ((!string.IsNullOrWhiteSpace(LockAuthName)) && (AuthenticationDic.ContainsKey(LockAuthName)))
-            {
-                return AuthenticationDic[LockAuthName];
-            }
-            else
-            {
-                return null;
-            }
-        }
     }
 
     /// <summary>
@@ -645,20 +560,6 @@ namespace NsisoLauncher.Config
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
-
-    /// <summary>
-    /// 用户验证节点设置
-    /// </summary>
-    public class UserNode
-    {
-        /// <summary>
-        /// 所使用的验证模型
-        /// </summary>
-        public string AuthModule { get; set; }
-
-        public IUser User { get; set; }
-    }
-
 
     public enum VersionSourceType
     {

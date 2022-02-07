@@ -23,20 +23,8 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
 
     }
 
-    public class AuthenticateResponseData
+    public class AuthenticateResponseData : AccessClientTokenPair
     {
-        /// <summary>
-        /// 此用户的访问令牌
-        /// </summary>
-        [JsonProperty("accessToken")]
-        public string AccessToken { get; internal set; }
-
-        /// <summary>
-        /// 必须与Requester.ClientToken相同
-        /// </summary>
-        [JsonProperty("clientToken")]
-        public string ClientToken { get; internal set; }
-
         /// <summary>
         /// 可用profile的列表
         /// </summary>
@@ -54,17 +42,5 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses
         /// </summary>
         [JsonProperty("user")]
         public UserData User { get; internal set; }
-    }
-
-    /// <summary>
-    /// 代表使用身份验证API时发生错误
-    /// </summary>
-    public class AuthenticationResponseError : Error
-    {
-        /// <summary>
-        /// 此错误的原因（可选）
-        /// </summary>
-        [JsonProperty("cause")]
-        public string Cause { get; private set; }
     }
 }

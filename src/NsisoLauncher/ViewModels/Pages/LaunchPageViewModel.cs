@@ -22,6 +22,8 @@ using System.Windows.Input;
 using NsisoLauncherCore.Net.Tools;
 using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
+using NsisoLauncherCore.Authenticator;
+using NsisoLauncherCore.User;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -29,9 +31,9 @@ namespace NsisoLauncher.ViewModels.Pages
     {
         public Windows.MainWindowViewModel MainWindowVM { get; set; }
 
-        public Config.User UserSetting { get; set; }
+        public User UserSetting { get; set; }
 
-        public UserNode LoggedInUser { get; set; }
+        public IAuthenticator Authenticator { get; set; }
 
         #region Commands
         /// <summary>
@@ -53,11 +55,6 @@ namespace NsisoLauncher.ViewModels.Pages
         /// 跳转到用户界面
         /// </summary>
         public ICommand ToUserPageCmd { get; set; }
-        #endregion
-
-        #region ElementsProp
-        public string UserName { get; set; }
-        public string UserProfileName { get; set; }
         #endregion
 
         /// <summary>	
@@ -133,9 +130,8 @@ namespace NsisoLauncher.ViewModels.Pages
             UserSetting = App.Config?.MainConfig?.User;
             if (UserSetting != null)
             {
-                UserSetting.PropertyChanged += User_PropertyChanged;
+                //UserSetting.PropertyChanged += User_PropertyChanged;
             }
-            RefreshUserBinding();
 
             #region 命令初始化
             LoadedCmd = new DelegateCommand(
@@ -235,31 +231,6 @@ namespace NsisoLauncher.ViewModels.Pages
             }
         }
 
-        private void User_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedUser")
-            {
-                RefreshUserBinding();
-            }
-        }
-
-        private void RefreshUserBinding()
-        {
-            UserNode userNode = UserSetting?.SelectedUser;
-            if (userNode != null)
-            {
-                UserName = userNode.User.DisplayUsername;
-                //todo 添加prifile name
-                UserProfileName = userNode.User.LaunchPlayerName;
-            }
-            else
-            {
-                UserName = null;
-                UserProfileName = null;
-            }
-
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public async Task LaunchFromVM(LaunchType launchType)
@@ -273,14 +244,14 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
-                UserNode launchUser = UserSetting.SelectedUser;
+                IUser launchUser = Authenticator.SelectedUser;
                 if (launchUser == null)
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
                         App.GetResourceString("String.Message.EmptyUsername2"));
                     return;
                 }
-                if (launchUser.User.LaunchUuid == null)
+                if (launchUser.SelectedProfile == null)
                 {
                     await MainWindowVM.ShowMessageAsync("没有选择游戏角色",
                         "您已经登录，但您没有可以进行游戏的角色（Profile），有可能您未选择或者列表为空");
@@ -338,36 +309,25 @@ namespace NsisoLauncher.ViewModels.Pages
                 //标记控件状态启动中
                 App.LaunchSignal.IsLaunching = true;
 
-                #region 验证
-                AuthenticationNode launchAuthNode = null;
-                if (UserSetting.AuthenticationDic.ContainsKey(launchUser.AuthModule))
-                {
-                    launchAuthNode = UserSetting.AuthenticationDic[launchUser.AuthModule];
-                }
-                if (launchAuthNode == null)
-                {
-                    throw new Exception("所使用用户没有验证器类型");
-                }
-                launchSetting.LaunchUser = launchUser.User;
-                #endregion
-
-                #region 验证后用户处理
-                //todo:增加验证后用户处理
-                //App.Config.MainConfig.History.SelectedUserNodeID = launchUser.UserData.ID;
-                //if (!App.Config.MainConfig.User.UserDatabase.ContainsKey(launchUser.UserData.ID))
+                //#region 验证
+                //AuthenticationNode launchAuthNode = null;
+                //if (UserSetting.AuthenticationDic.ContainsKey(launchUser.AuthModule))
                 //{
-                //    launchUser.AuthModule = LaunchAuthNodePair?.Key;
-                //    App.Config.MainConfig.User.UserDatabase.Add(launchUser.UserData.ID, launchUser);
-                //    LaunchUserPair = new KeyValuePair<string, UserNode>(launchUser.UserData.ID, launchUser);
+                //    launchAuthNode = UserSetting.AuthenticationDic[launchUser.AuthModule];
                 //}
-                #endregion
+                //if (launchAuthNode == null)
+                //{
+                //    throw new Exception("所使用用户没有验证器类型");
+                //}
+                //launchSetting.LaunchUser = launchUser.User;
+                //#endregion
 
                 #region 检查游戏完整
                 List<IDownloadTask> losts = new List<IDownloadTask>();
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
-                    App.Handler, LaunchVersion, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
+                    App.Handler, LaunchVersion, App.NetHandler.Mirrors.VersionListMirrorList);
 
                 #region 检查验证核心
                 if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
@@ -384,7 +344,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     if (!File.Exists(aiJarPath))
                     {
                         DownloadTask aicore = await GetDownloadUri.GetAICoreDownloadTask(App.Config.MainConfig.Net.DownloadSource,
-                            aiJarPath, App.NetHandler.Requester);
+                            aiJarPath);
                         if (aicore != null)
                         {
                             lostDepend.Add(aicore);
@@ -505,7 +465,7 @@ namespace NsisoLauncher.ViewModels.Pages
                     (lockAuthNode != null) &&
                         (lockAuthNode.AuthType == AuthenticationType.NIDE8))
                 {
-                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(App.NetHandler.Requester, lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
                     if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
                     {
                         NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
@@ -642,7 +602,7 @@ namespace NsisoLauncher.ViewModels.Pages
                                         }
                                         else
                                         {
-                                            LauncherMetaApi metaApi = new LauncherMetaApi(App.NetHandler.Requester);
+                                            LauncherMetaApi metaApi = new LauncherMetaApi();
                                             NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(javaVersion.Component);
                                             List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
                                             App.NetHandler.Downloader.AddDownloadTask(tasks);

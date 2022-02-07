@@ -22,17 +22,26 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         private readonly string[] scopes = { "XboxLive.signin", "offline_access" };
 
         /// <summary>
-        /// your Azure client ID
+        /// Azure client ID
         /// </summary>
-        public string ClientId { get; set; } = "aca71205-b0f3-4c94-b8a8-9b58c2a8f555";
+        public string ClientId { get; set; }
 
 
-        public OAuthFlow()
+        public OAuthFlow(string clientId)
         {
+            this.ClientId = clientId;
             publicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithDefaultRedirectUri()
                 .WithAuthority(AzureCloudInstance.AzurePublic, tenant)
                 .Build();
+        }
+
+        /// <summary>
+        /// Default using NsisoLauncher's azure client id.
+        /// </summary>
+        public OAuthFlow() : this("aca71205-b0f3-4c94-b8a8-9b58c2a8f555")
+        {
+
         }
 
         public async Task<AuthenticationResult> Login(CancellationToken cancellation = default)

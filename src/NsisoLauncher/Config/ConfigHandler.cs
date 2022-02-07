@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NsisoLauncherCore;
+using NsisoLauncherCore.Authenticator;
 using NsisoLauncherCore.Config;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
@@ -208,13 +209,11 @@ namespace NsisoLauncher.Config
             {
                 User = new User()
                 {
-                    ClientToken = Guid.NewGuid().ToString("N"),
-                    UserDatabase = new ObservableDictionary<string, UserNode>(),
-                    AuthenticationDic = new ObservableDictionary<string, AuthenticationNode>()
+                    Authenticators = new ObservableDictionary<string, IAuthenticator>()
                     {
-                        {"offline", new AuthenticationNode("offline"){AuthType = AuthenticationType.OFFLINE, Name="离线登录", Locked = true} },
-                        {"mojang", new AuthenticationNode("mojang"){AuthType = AuthenticationType.MOJANG, Name="Mojang正版登录", Locked = true} },
-                        {"microsoft", new AuthenticationNode("microsoft"){AuthType = AuthenticationType.MICROSOFT, Name="微软正版登录", Locked = true} },
+                        {"offline", new OfflineYggdrasilAuthenticator(){Name="离线登录", Locked = true} },
+                        {"mojang", new YggdrasilAuthenticator(Guid.NewGuid().ToString("N")){Name="Mojang正版登录", Locked = true} },
+                        {"microsoft", new MicrosoftAuthenticator(){Name="微软正版登录", Locked = true} },
                     }
                 },
                 History = new History(),

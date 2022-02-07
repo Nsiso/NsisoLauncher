@@ -14,19 +14,26 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests
         public string ClientToken { get; set; }
 
         [JsonProperty("requestUser")]
-        public bool RequestUser { get; set; } = true;
+        public bool RequestUser { get; set; }
 
         public AuthenticateRequest(string username, string password, string clientToken)
         {
             this.Username = username;
             this.Password = password;
             this.ClientToken = clientToken;
-            RequestUser = true;
+            this.RequestUser = true;
+        }
+        public AuthenticateRequest(string username, string password, string clientToken, bool requestUser)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.ClientToken = clientToken;
+            this.RequestUser = requestUser;
         }
 
         public AuthenticateRequest()
         {
-
+            this.RequestUser = true;
         }
     }
 

@@ -1,20 +1,19 @@
 ﻿using Newtonsoft.Json;
-using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.User;
+using NsisoLauncherCore.Util;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Authenticator
 {
-    public class YggdrasilAuthenticator : IYggdrasilAuthenticator, IAuthenticator
+    public class YggdrasilAuthenticator : IAuthenticator
     {
         public string YggdrasilApiAddress
         {
@@ -23,7 +22,6 @@ namespace NsisoLauncherCore.Authenticator
         }
 
         public string ClientToken { get; set; }
-        public string Name { get; set; }
 
         [JsonIgnore]
         protected YggdrasilApi api;
@@ -39,71 +37,301 @@ namespace NsisoLauncherCore.Authenticator
             this.ClientToken = clientToken;
         }
 
-        public async Task<YggdrasilAuthenticateUserResult> AuthenticateAsync(string username, string password, CancellationToken cancellation = default)
+        public string Name { get; set; }
+
+        [JsonIgnore]
+        public bool RequireUsername => true;
+        [JsonIgnore]
+        public string InputUsername { get; set; }
+
+        [JsonIgnore]
+        public bool RequirePassword => true;
+        [JsonIgnore]
+        public string InputPassword { get; set; }
+
+        [JsonIgnore]
+        public bool RequireRemember { get; set; }
+        [JsonIgnore]
+        public bool InputRemember { get; set; }
+
+        public ObservableDictionary<string, IUser> Users { get; set; }
+
+        private string _selectedUserId;
+        public string SelectedUserId
         {
-            AuthenticateResponse result = await api.Authenticate(new AuthenticateRequest(username, password, ClientToken), cancellation);
-            if (result.IsSuccess)
+            get
             {
-                return new YggdrasilAuthenticateUserResult(result, new YggdrasilUser(result.Data));
+                return _selectedUserId;
+            }
+            set
+            {
+                this._selectedUserId = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUserId)));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUser)));
+            }
+        }
+
+        [JsonIgnore]
+        public IUser SelectedUser
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(SelectedUserId))
+                {
+                    return Users[SelectedUserId];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                this.SelectedUserId = value?.UserId;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUserId)));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUser)));
+            }
+        }
+
+        [JsonIgnore]
+        public bool AllowAuthenticate => true;
+        [JsonIgnore]
+        public bool AllowRefresh => true;
+        [JsonIgnore]
+        public bool AllowValidate => true;
+        [JsonIgnore]
+        public bool AllowSignout => true;
+        [JsonIgnore]
+        public bool AllowInvalidate => true;
+
+        public bool Locked { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public async virtual Task<AuthenticateResult> AuthenticateAsync(CancellationToken cancellation)
+        {
+            if (string.IsNullOrEmpty(InputUsername))
+            {
+                throw new ArgumentNullException(nameof(InputUsername));
+            }
+            if (string.IsNullOrEmpty(InputPassword))
+            {
+                throw new ArgumentNullException(nameof(InputPassword));
+            }
+            try
+            {
+                AuthenticateResponse result = await api.Authenticate(new AuthenticateRequest(InputUsername, InputPassword, ClientToken), cancellation);
+                if (result.IsSuccess)
+                {
+                    YggdrasilUser user = new YggdrasilUser(result.Data);
+                    if (Users.ContainsKey(user.UserId))
+                    {
+                        Users[user.UserId] = user;
+                    }
+                    else
+                    {
+                        Users.Add(user.UserId, user);
+                    }
+                    this.SelectedUser = user;
+                }
+                return ResponseToAuthenticateResult(result);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.CANCELED, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+                else
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.TIMEOUT, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.EXCEPTION, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+            }
+        }
+
+        public async virtual Task<AuthenticateResult> InvalidateAsync(CancellationToken cancellation)
+        {
+            if (SelectedUser == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedUser));
+            }
+
+            try
+            {
+                Response result = await api.Invalidate(new AccessClientTokenPair(SelectedUser.GameAccessToken, this.ClientToken), cancellation);
+                if (result.IsSuccess)
+                {
+                    YggdrasilUser user = (YggdrasilUser)this.SelectedUser;
+                    user.GameAccessToken = null;
+                    this.SelectedUser = null;
+                }
+                return ResponseToAuthenticateResult(result);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.CANCELED, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+                else
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.TIMEOUT, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.EXCEPTION, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+            }
+        }
+
+        public async virtual Task<AuthenticateResult> RefreshAsync(CancellationToken cancellation)
+        {
+            if (SelectedUser == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedUser));
+            }
+
+            try
+            {
+                AuthenticateResponse result = await api.Refresh(new RefreshRequest()
+                {
+                    AccessToken = SelectedUser.GameAccessToken,
+                    ClientToken = this.ClientToken,
+                    RequestUser = false
+                }, cancellation);
+
+
+                if (result.IsSuccess)
+                {
+                    AuthenticateResponseData data = result.Data;
+                    YggdrasilUser user = (YggdrasilUser)SelectedUser;
+                    user.SetFromAuthenticateResponseData(data);
+                }
+                return ResponseToAuthenticateResult(result);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.CANCELED, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+                else
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.TIMEOUT, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.EXCEPTION, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+            }
+        }
+
+        public async virtual Task<AuthenticateResult> SignoutAsync(CancellationToken cancellation)
+        {
+            if (string.IsNullOrEmpty(InputUsername))
+            {
+                throw new ArgumentNullException(nameof(InputUsername));
+            }
+            if (string.IsNullOrEmpty(InputPassword))
+            {
+                throw new ArgumentNullException(nameof(InputPassword));
+            }
+            try
+            {
+                Response result = await api.Signout(new AuthenticateRequest(InputUsername, InputPassword, ClientToken), cancellation);
+                return ResponseToAuthenticateResult(result);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.CANCELED, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+                else
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.TIMEOUT, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.EXCEPTION, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+            }
+        }
+
+        public async virtual Task<AuthenticateResult> ValidateAsync(CancellationToken cancellation)
+        {
+            if (SelectedUser == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedUser));
+            }
+            try
+            {
+                // if token is jwt, local validate first.
+                JwtSecurityToken token;
+                if (Jwt.TryParse(SelectedUser.GameAccessToken, out token))
+                {
+                    if (!Jwt.ValidateExp(token))
+                    {
+                        return new AuthenticateResult() { State = AuthenticateState.FORBIDDEN, ErrorTag = "JwtExpired", ErrorMessage = "The jwt token expired." };
+                    }
+                }
+                Response result = await api.Validate(new AccessClientTokenPair(SelectedUser.GameAccessToken, this.ClientToken), cancellation);
+                return ResponseToAuthenticateResult(result);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.CANCELED, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+                else
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.TIMEOUT, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.EXCEPTION, ErrorTag = ex.Message, ErrorMessage = ex.ToString() };
+            }
+        }
+
+        private AuthenticateResult ResponseToAuthenticateResult(Response response)
+        {
+            if (response.IsSuccess)
+            {
+                return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
             }
             else
             {
-                return new YggdrasilAuthenticateUserResult(result, null);
+                AuthenticateResult result = new AuthenticateResult();
+                result.ErrorTag = result.ErrorTag;
+                result.ErrorMessage = result.ErrorMessage;
+                result.Cause = result.Cause;
+
+                int code_int = (int)response.Code;
+                if (response.Code == System.Net.HttpStatusCode.Forbidden)
+                {
+                    result.State = AuthenticateState.FORBIDDEN;
+                }
+                else if (code_int >= 400 && code_int < 500)
+                {
+                    result.State = AuthenticateState.ERROR_CLIENT;
+                }
+                else if (code_int >= 500 && code_int < 600)
+                {
+                    result.State = AuthenticateState.ERROR_SERVER;
+                }
+                else
+                {
+                    result.State = AuthenticateState.UNKNOWN;
+                }
+
+                return result;
             }
-        }
-
-        public async Task<YggdrasilAuthenticateUserResult> RefreshAsync(YggdrasilUser user, CancellationToken cancellation = default)
-        {
-            RefreshRequest request = new RefreshRequest(new AccessClientTokenPair(user.GameAccessToken, ClientToken));
-            TokenResponse result = await api.Refresh(request, cancellation);
-            if (result.IsSuccess)
-            {
-                user.GameAccessToken = result.Data.AccessToken;
-            }
-            return new YggdrasilAuthenticateUserResult(result, user);
-        }
-
-        public async Task<YggdrasilAuthenticateResult> ValidateAsync(YggdrasilUser user, CancellationToken cancellation = default)
-        {
-            Response result = await api.Validate(new AccessClientTokenPair(user.GameAccessToken, ClientToken), cancellation);
-            return new YggdrasilAuthenticateResult(result);
-        }
-
-        public async Task<YggdrasilAuthenticateResult> SignoutAsync(string username, string password, CancellationToken cancellation = default)
-        {
-            Response result = await api.Signout(new UsernamePasswordPair() { Username = username, Password = password }, cancellation);
-            return new YggdrasilAuthenticateResult(result);
-        }
-
-        public async Task<YggdrasilAuthenticateResult> InvalidateAsync(YggdrasilUser user, CancellationToken cancellation = default)
-        {
-            Response result = await api.Invalidate(new AccessClientTokenPair(user.GameAccessToken, ClientToken), cancellation);
-            return new YggdrasilAuthenticateResult(result);
-        }
-    }
-
-    public class YggdrasilAuthenticateUserResult : YggdrasilAuthenticateResult
-    {
-        public YggdrasilUser User { get; set; }
-
-        public YggdrasilAuthenticateUserResult(Response response, YggdrasilUser user) : base(response)
-        {
-            this.User = user;
-        }
-    }
-
-    public class YggdrasilAuthenticateResult
-    {
-
-        public Response Response { get; set; }
-
-        public bool IsSuccess { get => Response.IsSuccess; }
-
-        public ResponseState State { get => Response.State; }
-
-        public YggdrasilAuthenticateResult(Response response)
-        {
-            this.Response = response ?? throw new ArgumentNullException(nameof(response));
         }
     }
 }

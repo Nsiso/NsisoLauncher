@@ -1,12 +1,16 @@
-﻿using System;
+﻿using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Util;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.User
 {
-    public interface IUser
+    public interface IUser : INotifyPropertyChanged
     {
         /// <summary>
         /// The user account's user name.
@@ -16,17 +20,19 @@ namespace NsisoLauncherCore.User
         /// <summary>
         /// The user account's id.
         /// </summary>
-        string UserId{ get; }
+        string UserId { get; }
 
         /// <summary>
-        /// The account now player uuid
+        /// The selected profile
         /// </summary>
-        string PlayerUUID { get; }
+        PlayerProfile SelectedProfile { get; }
+
+        string SelectedProfileId { get; set; }
 
         /// <summary>
-        /// The account now player name
+        /// All the profiles
         /// </summary>
-        string Playername { get; }
+        Dictionary<string, PlayerProfile> Profiles { get; }
 
         /// <summary>
         /// Minecraft's access token

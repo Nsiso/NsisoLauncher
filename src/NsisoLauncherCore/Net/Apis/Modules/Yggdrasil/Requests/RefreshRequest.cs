@@ -8,11 +8,11 @@ namespace NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests
     public class RefreshRequest : AccessClientTokenPair
     {
         [JsonProperty("requestUser")]
-        public bool RequestUser { get; set; } = false;
+        public bool RequestUser { get; set; }
 
         public RefreshRequest()
         {
-
+            this.RequestUser = false;
         }
 
         public RefreshRequest(AccessClientTokenPair pair)

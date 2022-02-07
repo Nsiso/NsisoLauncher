@@ -3,6 +3,7 @@ using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace NsisoLauncherCore.User
@@ -39,7 +40,7 @@ namespace NsisoLauncherCore.User
             // handle the selected profile
             if (data.SelectedProfile != null)
             {
-                this.SelectedProfileUuid = data.SelectedProfile?.Id;
+                this.SelectedProfileId = data.SelectedProfile?.Id;
             }
 
             this.GameAccessToken = data.AccessToken;
@@ -58,10 +59,24 @@ namespace NsisoLauncherCore.User
         /// </summary>
         public Dictionary<string, PlayerProfile> Profiles { get; set; }
 
+        string _selectedProfileId;
+
         /// <summary>
         /// 选中的角色UUID
         /// </summary>
-        public string SelectedProfileUuid { get; set; }
+        public string SelectedProfileId
+        {
+            get
+            {
+                return this._selectedProfileId;
+            }
+            set
+            {
+                this._selectedProfileId = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfileId)));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfile)));
+            }
+        }
 
         /// <summary>
         /// 获得选中的用户角色
@@ -71,19 +86,23 @@ namespace NsisoLauncherCore.User
         {
             get
             {
-                return Profiles[SelectedProfileUuid];
+                if (!string.IsNullOrEmpty(_selectedProfileId))
+                {
+                    return Profiles[SelectedProfileId];
+                }
+                else
+                {
+                    return null;
+                }
             }
             set
             {
-                SelectedProfileUuid = value.Id;
+                SelectedProfileId = value?.Id;
+
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfileId)));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfile)));
             }
         }
-
-        [JsonIgnore]
-        public string PlayerUUID => SelectedProfileUuid;
-
-        [JsonIgnore]
-        public string Playername => SelectedProfile.PlayerName;
 
         public string GameAccessToken { get; set; }
 
@@ -96,7 +115,9 @@ namespace NsisoLauncherCore.User
         /// <summary>
         /// 用户数据
         /// </summary>
-        public virtual UserData UserData { get; set; }
+        public UserData UserData { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>

@@ -35,18 +35,6 @@ namespace NsisoLauncherCore.Net.Apis
             {
                 authenticateResponse.Data = JsonConvert.DeserializeObject<AuthenticateResponseData>(response.RawMessage);
             }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(authenticateResponse.RawMessage))
-                {
-                    string raw_trim = response.RawMessage.Trim();
-                    if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
-                    {
-                        authenticateResponse.Error = JsonConvert.DeserializeObject<AuthenticationResponseError>(raw_trim);
-                    }
-                }
-
-            }
             return authenticateResponse;
         }
 
@@ -56,15 +44,15 @@ namespace NsisoLauncherCore.Net.Apis
             return response;
         }
 
-        async public Task<TokenResponse> Refresh(RefreshRequest request, CancellationToken cancellation = default)
+        async public Task<AuthenticateResponse> Refresh(RefreshRequest request, CancellationToken cancellation = default)
         {
             Response response = await SendRequest(string.Format("{0}/{1}", ApiAddress, "refresh"), request, cancellation);
-            TokenResponse tokenResponse = new TokenResponse(response);
+            AuthenticateResponse refreshResponse = new AuthenticateResponse(response);
             if (response.IsSuccess)
             {
-                tokenResponse.Data = JsonConvert.DeserializeObject<AccessClientTokenPair>(response.RawMessage);
+                refreshResponse.Data = JsonConvert.DeserializeObject<AuthenticateResponseData>(response.RawMessage);
             }
-            return tokenResponse;
+            return refreshResponse;
         }
 
         async public Task<Response> Signout(UsernamePasswordPair data, CancellationToken cancellation = default)
@@ -81,106 +69,36 @@ namespace NsisoLauncherCore.Net.Apis
 
         async private Task<Response> SendRequest(string url, object request, CancellationToken cancellation = default)
         {
-            try
+            string request_str = JsonConvert.SerializeObject(request);
+            StringContent content = new StringContent(request_str, Encoding.UTF8, "application/json");
+
+            var result = await NetRequester.Client.PostAsync(url, content, cancellation);
+
+            bool is_success = result.IsSuccessStatusCode;
+            string raw = await result.Content.ReadAsStringAsync();
+            string raw_trim = raw.Trim();
+            HttpStatusCode code = result.StatusCode;
+
+            Response response = new Response()
             {
-                string request_str = JsonConvert.SerializeObject(request);
-                StringContent content = new StringContent(request_str, Encoding.UTF8, "application/json");
+                RawMessage = raw,
+                Code = code,
+                IsSuccess = is_success,
+            };
 
-                var result = await NetRequester.Client.PostAsync(url, content, cancellation);
-
-                //result.EnsureSuccessStatusCode();
-
-                bool is_success = result.IsSuccessStatusCode;
-                string raw = await result.Content.ReadAsStringAsync();
-                HttpStatusCode code = result.StatusCode;
-
-                Response response = new Response()
+            if (!is_success)
+            {
+                if (result.Content.Headers.ContentType.MediaType == "application/json")
                 {
-                    RawMessage = raw,
-                    Code = code
-                };
-
-                ResponseState errState = ResponseState.ERR_OTHER;
-                if (is_success)
-                {
-                    errState = ResponseState.SUCCESS;
+                    response.Error = JsonConvert.DeserializeObject<Error>(raw_trim);
                 }
                 else
                 {
-                    string raw_trim = raw.Trim();
-                    if (raw_trim.StartsWith("{") && raw_trim.EndsWith("}"))
-                    {
-                        Error error = JsonConvert.DeserializeObject<Error>(raw_trim);
-                        response.Error = error;
-                    }
+                    response.Error = new Error() { ErrorTag = code.ToString(), ErrorMessage = raw_trim };
+                }
+            }
 
-                    switch (result.StatusCode)
-                    {
-                        case HttpStatusCode.MethodNotAllowed:
-                            errState = ResponseState.ERR_METHOD_NOT_ALLOW;
-                            break;
-                        case HttpStatusCode.NotFound:
-                            errState = ResponseState.ERR_NOTFOUND;
-                            break;
-                        case HttpStatusCode.Forbidden:
-                            errState = ResponseState.ERR_INVALID_CRDL;
-                            break;
-                        default:
-                            errState = ResponseState.ERR_OTHER;
-                            break;
-                    }
-
-                    if (response.Error == null)
-                    {
-                        response.Error = new Error()
-                        {
-                            ErrorMessage = result.StatusCode.ToString(),
-                            ErrorTag = result.StatusCode.ToString()
-                        };
-                    }
-                }
-                response.State = errState;
-                return response;
-            }
-            catch (TaskCanceledException ex)
-            {
-                if (cancellation.IsCancellationRequested)
-                {
-                    return new Response(ResponseState.CANCELED)
-                    {
-                        Error = new Error()
-                        {
-                            ErrorTag = ex.Message,
-                            ErrorMessage = ex.Message,
-                            Exception = ex
-                        }
-                    };
-                }
-                else
-                {
-                    return new Response(ResponseState.ERR_TIMEOUT)
-                    {
-                        Error = new Error()
-                        {
-                            ErrorTag = ex.Message,
-                            ErrorMessage = ex.Message,
-                            Exception = ex
-                        }
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new Response(ResponseState.ERR_INSIDE)
-                {
-                    Error = new Error()
-                    {
-                        ErrorTag = ex.Message,
-                        ErrorMessage = ex.Message,
-                        Exception = ex
-                    }
-                };
-            }
+            return response;
         }
     }
 }

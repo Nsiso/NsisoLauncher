@@ -173,7 +173,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                         var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
                             App.Handler,
-                            SelectedVersion, App.NetHandler.Mirrors.VersionListMirrorList, App.NetHandler.Requester);
+                            SelectedVersion, App.NetHandler.Mirrors.VersionListMirrorList);
                         if (lostDepend.Count != 0)
                         {
                             if (!App.NetHandler.Downloader.IsBusy)
