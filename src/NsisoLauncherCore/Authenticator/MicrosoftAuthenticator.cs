@@ -71,6 +71,8 @@ namespace NsisoLauncherCore.Authenticator
 
         public bool Locked { get; set; }
 
+        public List<Library> Libraries => null;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public async Task<AuthenticateResult> AuthenticateAsync(CancellationToken cancellation)
@@ -146,6 +148,21 @@ namespace NsisoLauncherCore.Authenticator
         public Task<AuthenticateResult> ValidateAsync(CancellationToken cancellation)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetExtraJvmArgument(LaunchHandler handler)
+        {
+            return null;
+        }
+
+        public string GetExtraGameArgument(LaunchHandler handler)
+        {
+            return null;
+        }
+
+        public Task UpdateAuthenticatorAsync(CancellationToken cancellation)
+        {
+            return Task.CompletedTask;
         }
     }
 }

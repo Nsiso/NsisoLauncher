@@ -327,29 +327,14 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                 var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
-                    App.Handler, LaunchVersion, App.NetHandler.Mirrors.VersionListMirrorList);
+                    App.Handler, LaunchVersion, App.NetHandler.Mirrors.VersionListMirrorList.First());
 
                 #region 检查验证核心
-                if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
+                if (Authenticator.Libraries != null)
                 {
-                    string nideJarPath = App.Handler.GetNide8JarPath();
-                    if (!File.Exists(nideJarPath))
-                    {
-                        lostDepend.Add(new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), nideJarPath));
-                    }
-                }
-                else if (launchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
-                {
-                    string aiJarPath = App.Handler.GetAIJarPath();
-                    if (!File.Exists(aiJarPath))
-                    {
-                        DownloadTask aicore = await GetDownloadUri.GetAICoreDownloadTask(App.Config.MainConfig.Net.DownloadSource,
-                            aiJarPath);
-                        if (aicore != null)
-                        {
-                            lostDepend.Add(aicore);
-                        }
-                    }
+                    List<DownloadTask> auth_lib_tasks = FileHelper.GetLostLibrariesDownloadTask(App.Handler,
+                        Authenticator.Libraries, App.NetHandler.Mirrors.VersionListMirrorList.First());
+                    lostDepend.AddRange(auth_lib_tasks);
                 }
                 #endregion
 
@@ -450,40 +435,51 @@ namespace NsisoLauncher.ViewModels.Pages
                         ProxyPassword = App.Config.MainConfig.Net.ProxyPassword
                     };
                 }
-                if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
+                string auth_jvm_arg = Authenticator.GetExtraJvmArgument(App.Handler);
+                string auth_game_arg = Authenticator.GetExtraGameArgument(App.Handler);
+                if (!string.IsNullOrWhiteSpace(auth_jvm_arg))
                 {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(), launchAuthNode.Property["nide8ID"]);
+                    launchSetting.AdvencedJvmArguments += string.Format(" {0}", auth_jvm_arg);
                 }
-                else if (launchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
+                if (!string.IsNullOrWhiteSpace(auth_game_arg))
                 {
-                    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetAIJarPath(), launchAuthNode.Property["authserver"]);
+                    launchSetting.AdvencedGameArguments += string.Format(" {0}", auth_game_arg);
                 }
+                //if (launchAuthNode.AuthType == AuthenticationType.NIDE8)
+                //{
+                //    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetNide8JarPath(), launchAuthNode.Property["nide8ID"]);
+                //}
+                //else if (launchAuthNode.AuthType == AuthenticationType.AUTHLIB_INJECTOR)
+                //{
+                //    launchSetting.JavaAgent += string.Format(" \"{0}\"={1}", App.Handler.GetAIJarPath(), launchAuthNode.Property["authserver"]);
+                //}
 
-                //直连服务器设置
-                var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
-                if (App.Config.MainConfig.User.Nide8ServerDependence &&
-                    (lockAuthNode != null) &&
-                        (lockAuthNode.AuthType == AuthenticationType.NIDE8))
-                {
-                    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
-                    if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
-                    {
-                        NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
-                        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
-                        if (serverIp.Length == 2)
-                        {
-                            server.Address = serverIp[0];
-                            server.Port = ushort.Parse(serverIp[1]);
-                        }
-                        else
-                        {
-                            server.Address = nide8ReturnResult.Meta.ServerIP;
-                            server.Port = 25565;
-                        }
-                        launchSetting.LaunchToServer = server;
-                    }
-                }
-                else if (App.Config.MainConfig.Server.LaunchToServer)
+                ////直连服务器设置
+                //var lockAuthNode = App.Config.MainConfig.User.GetLockAuthNode();
+                //if (App.Config.MainConfig.User.Nide8ServerDependence &&
+                //    (lockAuthNode != null) &&
+                //        (lockAuthNode.AuthType == AuthenticationType.NIDE8))
+                //{
+                //    var nide8ReturnResult = await (new NsisoLauncherCore.Net.Nide8API.APIHandler(lockAuthNode.Property["nide8ID"])).GetInfoAsync();
+                //    if (!string.IsNullOrWhiteSpace(nide8ReturnResult.Meta.ServerIP))
+                //    {
+                //        NsisoLauncherCore.Modules.Server server = new NsisoLauncherCore.Modules.Server();
+                //        string[] serverIp = nide8ReturnResult.Meta.ServerIP.Split(':');
+                //        if (serverIp.Length == 2)
+                //        {
+                //            server.Address = serverIp[0];
+                //            server.Port = ushort.Parse(serverIp[1]);
+                //        }
+                //        else
+                //        {
+                //            server.Address = nide8ReturnResult.Meta.ServerIP;
+                //            server.Port = 25565;
+                //        }
+                //        launchSetting.LaunchToServer = server;
+                //    }
+                //}
+                //else 
+                if (App.Config.MainConfig.Server.LaunchToServer)
                 {
                     launchSetting.LaunchToServer = new NsisoLauncherCore.Modules.Server() { Address = App.Config.MainConfig.Server.Address, Port = App.Config.MainConfig.Server.Port };
                 }

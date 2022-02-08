@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil;
 using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Requests;
@@ -6,6 +7,7 @@ using NsisoLauncherCore.Net.Apis.Modules.Yggdrasil.Responses;
 using NsisoLauncherCore.User;
 using NsisoLauncherCore.Util;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
@@ -105,6 +107,8 @@ namespace NsisoLauncherCore.Authenticator
         public bool AllowInvalidate => true;
 
         public bool Locked { get; set; }
+
+        public virtual List<Library> Libraries => null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -332,6 +336,21 @@ namespace NsisoLauncherCore.Authenticator
 
                 return result;
             }
+        }
+
+        public virtual string GetExtraJvmArgument(LaunchHandler handler)
+        {
+            return null;
+        }
+
+        public virtual string GetExtraGameArgument(LaunchHandler handler)
+        {
+            return null;
+        }
+
+        public virtual Task UpdateAuthenticatorAsync(CancellationToken cancellation)
+        {
+            return Task.CompletedTask;
         }
     }
 }

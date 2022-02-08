@@ -105,24 +105,21 @@ namespace NsisoLauncherCore.Authenticator
         bool AllowInvalidate { get; }
         #endregion
 
-        #region Launch depend property
+        #region Launch depend property and method
         /// <summary>
         /// The authenticator requires extra java virtual machine argument
         /// </summary>
-        string ExtraJvmArgument { get; }
+        string GetExtraJvmArgument(LaunchHandler handler);
 
         /// <summary>
         /// The authenticator requires extra game argument
         /// </summary>
-        string ExtraGameArgument { get; }
+        string GetExtraGameArgument(LaunchHandler handler);
 
         /// <summary>
         /// The authenticator requires libraries
         /// </summary>
         List<Library> Libraries { get; }
-
-        //Action<Task> BeforeLaunchTodo { get; }
-        //Action<Task> AfterLaunchTodo { get; }
         #endregion
 
         Task UpdateAuthenticatorAsync(CancellationToken cancellation);

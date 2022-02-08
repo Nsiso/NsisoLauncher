@@ -82,6 +82,7 @@
     <Compile Include="Modules\Log.cs" />
     <Compile Include="Modules\MicrosoftSkin.cs" />
     <Compile Include="Net\Apis\YggdrasilApi.cs" />
+    <Compile Include="Net\AuthlibInjectorAPI\ApiModules.cs" />
     <Compile Include="Net\Mirrors\ApiBaseMirror.cs" />
     <Compile Include="User\MicrosoftUser.cs" />
     <Compile Include="Component\Mod\ModInfo.cs" />

@@ -1,26 +1,53 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NsisoLauncherCore.Modules;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
 {
     public class APIHandler
     {
-        public async Task<DownloadTask> GetLatestAICoreDownloadTask(DownloadSource source, string downloadTo)
+        public string ApiUrlBase { get; set; }
+        public string LatestUrl => ApiUrlBase + "/artifact/latest.json";
+
+        public APIHandler()
         {
-            string apiBase;
+            ApiUrlBase = "https://authlib-injector.yushi.moe";
+        }
+
+        public APIHandler(DownloadSource source)
+        {
             switch (source)
             {
                 case DownloadSource.Mojang:
-                    apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
+                    ApiUrlBase = "https://authlib-injector.yushi.moe";
                     break;
                 case DownloadSource.BMCLAPI:
-                    apiBase = "https://bmclapi2.bangbang93.com/mirrors/authlib-injector/artifact/latest.json";
+                    ApiUrlBase = "https://bmclapi2.bangbang93.com/mirrors/authlib-injector";
                     break;
                 default:
-                    apiBase = "https://authlib-injector.yushi.moe/artifact/latest.json";
+                    ApiUrlBase = "https://authlib-injector.yushi.moe";
                     break;
             }
-            var jsonRespond = await NetRequester.HttpGetAsync(apiBase);
+        }
+
+        public async Task<Library> GetCoreLibraryAsync()
+        {
+            var jsonRespond = await NetRequester.HttpGetAsync(LatestUrl);
+            jsonRespond.EnsureSuccessStatusCode();
+            string json = await jsonRespond.Content.ReadAsStringAsync();
+            LatestArtifact latestArtifact = JsonConvert.DeserializeObject<LatestArtifact>(json);
+            Library library = new Library()
+            {
+                Url = latestArtifact.DownloadUrl,
+                Name = new Artifact(string.Format("moe.yushi:authlibinjector:{0}", latestArtifact.Version))
+            };
+            return library;
+        }
+
+        public async Task<DownloadTask> GetLatestAICoreDownloadTask(string downloadTo)
+        {
+            var jsonRespond = await NetRequester.HttpGetAsync(LatestUrl);
             string json = null;
             if (jsonRespond.IsSuccessStatusCode)
             {
