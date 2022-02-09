@@ -244,11 +244,19 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.GetResourceString("String.Message.EmptyLaunchVersion2"));
                     return;
                 }
-                IUser launchUser = Authenticator.SelectedUser;
-                if (launchUser == null)
+
+                if (Authenticator == null)
                 {
                     await MainWindowVM.ShowMessageAsync(App.GetResourceString("String.Message.EmptyUsername"),
                         App.GetResourceString("String.Message.EmptyUsername2"));
+                    return;
+                }
+
+                IUser launchUser = Authenticator.SelectedUser;
+                if (launchUser == null)
+                {
+                    await MainWindowVM.ShowMessageAsync(string.Format("{0}没有登录中的用户", Authenticator.Name),
+                        string.Format("{0}中没有登录状态的用户，请前往用户中心登录用户"));
                     return;
                 }
                 if (launchUser.SelectedProfile == null)

@@ -75,7 +75,7 @@ namespace NsisoLauncherCore.Authenticator
         /// <summary>
         /// Currently selected user (value for dictionary)
         /// </summary>
-        IUser SelectedUser { get; set; }
+        IUser SelectedUser { get; }
         #endregion
 
         #region Allow

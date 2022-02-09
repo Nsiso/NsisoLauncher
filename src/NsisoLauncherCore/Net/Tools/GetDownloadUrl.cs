@@ -152,22 +152,6 @@ namespace NsisoLauncherCore.Net.Tools
             return new DownloadObject(assets, to);
         }
 
-        /// <summary>
-        /// 获取NIDE8核心下载任务
-        /// </summary>
-        /// <param name="downloadTo">下载目的路径</param>
-        /// <returns>下载任务</returns>
-        public static DownloadTask GetNide8CoreDownloadTask(string downloadTo)
-        {
-            return new DownloadTask("统一通行证核心", new StringUrl("https://login2.nide8.com:233/index/jar"), downloadTo);
-        }
-
-        public async static Task<DownloadTask> GetAICoreDownloadTask(DownloadSource source, string downloadTo)
-        {
-            AuthlibInjectorAPI.APIHandler handler = new AuthlibInjectorAPI.APIHandler();
-            return await handler.GetLatestAICoreDownloadTask(source, downloadTo);
-        }
-
         private static List<IDownloadTask> GetJavaManifestDownloadTasks(JavaManifest manifest, string download_to_dir)
         {
             List<IDownloadTask> tasks = new List<IDownloadTask>();

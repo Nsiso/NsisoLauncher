@@ -302,7 +302,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
                     tasks.Add(new DownloadTask("资源引导", new StringUrl(ver.AssetIndex.Url), App.Handler.GetAssetsIndexPath(ver.Assets)));
 
-                    tasks.AddRange(await FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList));
+                    tasks.AddRange(await FileHelper.GetLostDependDownloadTaskAsync(App.Handler, ver, App.NetHandler.Mirrors.VersionListMirrorList.First()));
 
                     App.NetHandler.Downloader.AddDownloadTask(tasks);
                     _mainPage.NavigateToDownloadPage();

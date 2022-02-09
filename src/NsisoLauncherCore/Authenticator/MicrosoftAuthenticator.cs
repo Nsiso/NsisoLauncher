@@ -1,4 +1,5 @@
 ﻿using Microsoft.Identity.Client;
+using Newtonsoft.Json;
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.MicrosoftLogin;
@@ -61,7 +62,14 @@ namespace NsisoLauncherCore.Authenticator
         public ObservableDictionary<string, User.IUser> Users { get; set; }
 
         public string SelectedUserId { get; set; }
-        public User.IUser SelectedUser { get; set; }
+        [JsonIgnore]
+        public User.IUser SelectedUser
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(SelectedUserId) ? Users[SelectedUserId] : null;
+            }
+        }
 
         public bool AllowAuthenticate => true;
         public bool AllowRefresh => true;
@@ -87,7 +95,8 @@ namespace NsisoLauncherCore.Authenticator
                 {
                     profile = await mcServices.GetProfile(result.AccessToken, mc_result, cancellation).ConfigureAwait(false);
                 }
-                this.SelectedUser = new MicrosoftUser(result.Account, mc_result, profile);
+                MicrosoftUser user = new MicrosoftUser(result.Account, mc_result, profile);
+                this.SelectedUserId = user.UserId;
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
 
             }

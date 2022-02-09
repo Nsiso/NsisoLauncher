@@ -10,12 +10,10 @@ namespace NsisoLauncherCoreTest.Apis
     [TestClass]
     public class LauncherMetaApiTest
     {
-        private NetRequester _requester;
         private LauncherMetaApi _api;
         public LauncherMetaApiTest()
         {
-            _requester = new NetRequester();
-            _api = new LauncherMetaApi(_requester);
+            _api = new LauncherMetaApi();
         }
 
         [TestMethod]

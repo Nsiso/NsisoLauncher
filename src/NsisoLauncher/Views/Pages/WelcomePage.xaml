@@ -6,7 +6,7 @@
       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:NsisoLauncher.Views.Pages"
       xmlns:vm="clr-namespace:NsisoLauncher.ViewModels.Pages"
-      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"

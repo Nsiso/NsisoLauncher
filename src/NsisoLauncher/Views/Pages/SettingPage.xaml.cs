@@ -94,72 +94,72 @@ namespace NsisoLauncher.Views.Pages
         //    await this.ShowMessageAsync("保存成功", "所有设置已成功保存在本地");
         //}
 
-        private async void forgetUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (userComboBox.SelectedItem == null)
-            {
-                await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
-                return;
-            }
+        //private async void forgetUserButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (userComboBox.SelectedItem == null)
+        //    {
+        //        await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+        //        return;
+        //    }
 
-            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
-            UserNode node = selectedItem.Value;
-            //todo （后）恢复注销用户功能
-            if (node.User is YggdrasilUser ygg)
-            {
-                ygg.AccessToken = null;
-            }
-            else if(node.User is MicrosoftUser ms)
-            {
-                ms.MicrosoftToken = null;
-                ms.MinecraftToken = null;
-            }
-            await this.ShowMessageAsync("注销成功", "请保存以生效");
-        }
+        //    KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
+        //    UserNode node = selectedItem.Value;
+        //    //todo （后）恢复注销用户功能
+        //    if (node.User is YggdrasilUser ygg)
+        //    {
+        //        ygg.AccessToken = null;
+        //    }
+        //    else if(node.User is MicrosoftUser ms)
+        //    {
+        //        ms.MicrosoftToken = null;
+        //        ms.MinecraftToken = null;
+        //    }
+        //    await this.ShowMessageAsync("注销成功", "请保存以生效");
+        //}
 
-        private async void clearUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (userComboBox.SelectedItem == null)
-            {
-                await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
-                return;
-            }
+        //private async void clearUserButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (userComboBox.SelectedItem == null)
+        //    {
+        //        await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+        //        return;
+        //    }
 
-            KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
-            UserNode node = selectedItem.Value;
-            if (node.User is YggdrasilUser ygg)
-            {
-                ygg.AccessToken = null;
-                ygg.Profiles = null;
-                ygg.UserData = null;
-                ygg.SelectedProfileUuid = null;
-            }
-            else if (node.User is MicrosoftUser ms)
-            {
-                ms.MicrosoftToken = null;
-                ms.MinecraftToken = null;
-            }
-            
-            await this.ShowMessageAsync("重置用户成功", "请保存以生效");
-        }
+        //    KeyValuePair<string, UserNode> selectedItem = (KeyValuePair<string, UserNode>)userComboBox.SelectedItem;
+        //    UserNode node = selectedItem.Value;
+        //    if (node.User is YggdrasilUser ygg)
+        //    {
+        //        ygg.AccessToken = null;
+        //        ygg.Profiles = null;
+        //        ygg.UserData = null;
+        //        ygg.SelectedProfileUuid = null;
+        //    }
+        //    else if (node.User is MicrosoftUser ms)
+        //    {
+        //        ms.MicrosoftToken = null;
+        //        ms.MinecraftToken = null;
+        //    }
 
-        private async void delUserButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (userComboBox.SelectedItem == null)
-            {
-                await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
-                return;
-            }
+        //    await this.ShowMessageAsync("重置用户成功", "请保存以生效");
+        //}
 
-            string key = (string)userComboBox.SelectedValue;
-            App.Config.MainConfig.User.UserDatabase.Remove(key);
-            await this.ShowMessageAsync("删除用户成功", "请保存以生效");
-        }
+        //private async void delUserButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (userComboBox.SelectedItem == null)
+        //    {
+        //        await this.ShowMessageAsync("您未选择要进行操作的用户", "请先选择您要进行操作的用户");
+        //        return;
+        //    }
 
-        private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
-        {
-            lockauthCombobox.SelectedItem = null;
-        }
+        //    string key = (string)userComboBox.SelectedValue;
+        //    App.Config.MainConfig.User.UserDatabase.Remove(key);
+        //    await this.ShowMessageAsync("删除用户成功", "请保存以生效");
+        //}
+
+        //private void clearAllauthButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    lockauthCombobox.SelectedItem = null;
+        //}
 
         private void VersionOptionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {

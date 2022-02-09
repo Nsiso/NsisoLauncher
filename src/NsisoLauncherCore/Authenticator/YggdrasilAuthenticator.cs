@@ -78,20 +78,7 @@ namespace NsisoLauncherCore.Authenticator
         {
             get
             {
-                if (!string.IsNullOrEmpty(SelectedUserId))
-                {
-                    return Users[SelectedUserId];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                this.SelectedUserId = value?.UserId;
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUserId)));
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUser)));
+                return !string.IsNullOrEmpty(SelectedUserId) ? Users[SelectedUserId] : null;
             }
         }
 
@@ -136,7 +123,7 @@ namespace NsisoLauncherCore.Authenticator
                     {
                         Users.Add(user.UserId, user);
                     }
-                    this.SelectedUser = user;
+                    this.SelectedUserId = user.UserId;
                 }
                 return ResponseToAuthenticateResult(result);
             }
@@ -171,7 +158,7 @@ namespace NsisoLauncherCore.Authenticator
                 {
                     YggdrasilUser user = (YggdrasilUser)this.SelectedUser;
                     user.GameAccessToken = null;
-                    this.SelectedUser = null;
+                    this.SelectedUserId = null;
                 }
                 return ResponseToAuthenticateResult(result);
             }

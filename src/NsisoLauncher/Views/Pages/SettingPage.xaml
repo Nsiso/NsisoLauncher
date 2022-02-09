@@ -344,9 +344,9 @@
                                               DisplayMemberPath="Value.UserName"/>
                                     <Label Content="*在主界面输入要新建的用户名并启动即可新建用户"/>
                                 </StackPanel>
-                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.UnRemember}" Margin="5" HorizontalAlignment="Stretch" Click="forgetUserButton_Click"/>
-                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.Clear}" Margin="5,0,5,5" HorizontalAlignment="Stretch" Click="clearUserButton_Click"/>
-                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.Del}" Margin="5,0" HorizontalAlignment="Stretch" Click="delUserButton_Click"
+                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.UnRemember}" Margin="5" HorizontalAlignment="Stretch"/>
+                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.Clear}" Margin="5,0,5,5" HorizontalAlignment="Stretch"/>
+                                <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" Content="{StaticResource String.Settingwindow.User.Info.Del}" Margin="5,0" HorizontalAlignment="Stretch"
                                         Background="IndianRed" Foreground="White"/>
                             </StackPanel>
                         </Expander>
@@ -357,7 +357,7 @@
                                     <ComboBox x:Name="lockauthCombobox" Width="200" Margin="0,0,5,0"
                                     DisplayMemberPath="Value.Name" ItemsSource="{Binding MainConfig.User.AuthenticationDic}"
                                     SelectedValuePath="Key" SelectedValue="{Binding MainConfig.User.LockAuthName}"/>
-                                    <Button Width="100" Content="清除全局验证选择" Click="clearAllauthButton_Click"/>
+                                    <Button Width="100" Content="清除全局验证选择"/>
                                 </StackPanel>
                                 <CheckBox Margin="0,0,0,10" Content="统一通行证服务器依赖（仅在全局使用统一通行证验证模型，且统一通行证后台正确设置后生效）" IsChecked="{Binding MainConfig.User.Nide8ServerDependence}"/>
                                 <Button Style="{DynamicResource MahApps.Styles.Button.MetroSquare}" HorizontalAlignment="Stretch" Content="删除全部验证模型" Background="IndianRed" Foreground="White" Margin="0,0,0,5"/>

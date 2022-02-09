@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -173,7 +174,7 @@ namespace NsisoLauncher.ViewModels.Pages
                         App.LogHandler.AppendInfo("检查丢失的依赖库文件中...");
                         var lostDepend = await FileHelper.GetLostDependDownloadTaskAsync(
                             App.Handler,
-                            SelectedVersion, App.NetHandler.Mirrors.VersionListMirrorList);
+                            SelectedVersion, App.NetHandler.Mirrors.VersionListMirrorList.First());
                         if (lostDepend.Count != 0)
                         {
                             if (!App.NetHandler.Downloader.IsBusy)

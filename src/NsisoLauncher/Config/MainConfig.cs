@@ -196,10 +196,6 @@ namespace NsisoLauncher.Config
             {
                 return string.IsNullOrEmpty(SelectedAuthenticatorId) ? null : Authenticators[SelectedAuthenticatorId];
             }
-            set
-            {
-                this.SelectedAuthenticatorId = value;
-            }
         }
 
         public bool LockAuthenticator { get; set; }
