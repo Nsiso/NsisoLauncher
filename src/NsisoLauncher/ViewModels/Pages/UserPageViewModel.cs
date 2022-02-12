@@ -65,42 +65,33 @@ namespace NsisoLauncher.ViewModels.Pages
 
             this.PropertyChanged += UserPageViewModel_PropertyChanged;
 
-           // User = App.Config?.MainConfig?.User;
-           // AuthenticationDic = App.Config?.MainConfig?.User?.AuthenticationDic;
+            User = App.Config?.MainConfig?.User;
 
-           // if (User != null)
-           // {
-           //     if (!string.IsNullOrEmpty(User.SelectedUserUuid))
-           //     {
-           //         this.LoggedInUser = User.SelectedUser;
-           //     }
-           // }
+            LoginCmd = new DelegateCommand(async (a) =>
+            {
+                await User.SelectedAuthenticator.AuthenticateAsync(default);
+            });
 
-           // LoginCmd = new DelegateCommand(async (a) =>
-           // {
-           //     await Login();
-           // });
+            // LogoutCmd = new DelegateCommand(async (a) =>
+            //{
+            //    await Logout();
+            //});
 
-           // LogoutCmd = new DelegateCommand(async (a) =>
-           //{
-           //    await Logout();
-           //});
+            // AddAuthNodeCmd = new DelegateCommand((a) =>
+            // {
+            //     AuthNodeWindow nodeWindow = new AuthNodeWindow();
+            //     nodeWindow.Show();
+            // });
 
-           // AddAuthNodeCmd = new DelegateCommand((a) =>
-           // {
-           //     AuthNodeWindow nodeWindow = new AuthNodeWindow();
-           //     nodeWindow.Show();
-           // });
+            // ChangeSkinCmd = new DelegateCommand((a) =>
+            // {
+            //     Process.Start("https://www.minecraft.net/zh-hans/profile/skin");
+            // });
 
-           // ChangeSkinCmd = new DelegateCommand((a) =>
-           // {
-           //     Process.Start("https://www.minecraft.net/zh-hans/profile/skin");
-           // });
-
-           // GoAccountManagementCmd = new DelegateCommand((a) =>
-           // {
-           //     Process.Start("https://www.minecraft.net/zh-hans/profile");
-           // });
+            // GoAccountManagementCmd = new DelegateCommand((a) =>
+            // {
+            //     Process.Start("https://www.minecraft.net/zh-hans/profile");
+            // });
         }
 
         private void UserPageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

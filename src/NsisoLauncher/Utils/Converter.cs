@@ -59,21 +59,6 @@ namespace NsisoLauncher.Utils
         }
     }
 
-    [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class OppositeBooleanToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isVisible = (bool)value;
-            return new System.Windows.Controls.BooleanToVisibilityConverter().Convert(!isVisible, targetType, parameter, culture);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return !(bool)new System.Windows.Controls.BooleanToVisibilityConverter().ConvertBack(value, targetType, parameter, culture);
-        }
-    }
-
     [ValueConversion(typeof(string), typeof(int))]
     public class StringToIntConverter : IValueConverter
     {
@@ -115,6 +100,31 @@ namespace NsisoLauncher.Utils
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return null;
+        }
+    }
+
+    [ValueConversion(typeof(object), typeof(Visibility))]
+    public class ObjectNullToVisibilityConverter : IValueConverter
+    {
+        public Visibility IsNull { get; set; }
+
+        public Visibility NotNull { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return IsNull;
+            }
+            else
+            {
+                return NotNull;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -18,13 +18,19 @@ namespace NsisoLauncherCore.Authenticator
     {
         public string Name { get; set; }
 
+        [JsonIgnore]
         public bool RequireUsername => true;
+        [JsonIgnore]
         public string InputUsername { get; set; }
 
+        [JsonIgnore]
         public bool RequirePassword => false;
+        [JsonIgnore]
         public string InputPassword { get; set; }
 
+        [JsonIgnore]
         public bool RequireRemember => true;
+        [JsonIgnore]
         public bool InputRemember { get; set; }
 
         public ObservableDictionary<string, IUser> Users { get; set; }
@@ -39,8 +45,8 @@ namespace NsisoLauncherCore.Authenticator
             set
             {
                 this._selectedUserId = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUserId)));
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedUser)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedUserId)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedUser)));
             }
         }
 
@@ -53,14 +59,20 @@ namespace NsisoLauncherCore.Authenticator
             }
         }
 
+        [JsonIgnore]
         public bool AllowAuthenticate => true;
+        [JsonIgnore]
         public bool AllowRefresh => true;
+        [JsonIgnore]
         public bool AllowValidate => true;
+        [JsonIgnore]
         public bool AllowSignout => false;
+        [JsonIgnore]
         public bool AllowInvalidate => true;
 
         public bool Locked { get; set; }
 
+        [JsonIgnore]
         public List<Library> Libraries => null;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -69,6 +81,11 @@ namespace NsisoLauncherCore.Authenticator
         {
             return Task.Factory.StartNew(() =>
             {
+                if (string.IsNullOrEmpty(InputUsername))
+                {
+                    return new AuthenticateResult() { State = AuthenticateState.ERROR_CLIENT, Cause = "The input username is empty", ErrorTag = "UsernameEmpty" };
+                }
+
                 string accessToken = Guid.NewGuid().ToString("N");
                 string profileId = Guid.NewGuid().ToString("N");
                 string userId = Guid.NewGuid().ToString("N");

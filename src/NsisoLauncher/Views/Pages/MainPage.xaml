@@ -17,7 +17,6 @@
       Title="MainPage">
     <Page.Resources>
         <converters:VisualBrushTargetConverter x:Key="visualBrushTargetConverter"/>
-        <converters:OppositeBooleanToVisibilityConverter x:Key="oppositeBooleanToVisibilityConverter"/>
         <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type itemUtils:MenuItem}">
             <Grid Height="48">
                 <Grid.ColumnDefinitions>

@@ -50,13 +50,19 @@ namespace NsisoLauncherCore.Authenticator
         //}
         public string Name { get; set; }
 
+        [JsonIgnore]
         public bool RequireUsername => false;
+        [JsonIgnore]
         public string InputUsername { get; set; }
 
+        [JsonIgnore]
         public bool RequirePassword => false;
+        [JsonIgnore]
         public string InputPassword { get; set; }
 
+        [JsonIgnore]
         public bool RequireRemember => true;
+        [JsonIgnore]
         public bool InputRemember { get; set; }
 
         public ObservableDictionary<string, User.IUser> Users { get; set; }
@@ -71,14 +77,20 @@ namespace NsisoLauncherCore.Authenticator
             }
         }
 
+        [JsonIgnore]
         public bool AllowAuthenticate => true;
+        [JsonIgnore]
         public bool AllowRefresh => true;
+        [JsonIgnore]
         public bool AllowValidate => false;
+        [JsonIgnore]
         public bool AllowSignout => false;
+        [JsonIgnore]
         public bool AllowInvalidate => false;
 
         public bool Locked { get; set; }
 
+        [JsonIgnore]
         public List<Library> Libraries => null;
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -130,6 +130,7 @@ namespace NsisoLauncher.ViewModels.Pages
             UserSetting = App.Config?.MainConfig?.User;
             if (UserSetting != null)
             {
+                Authenticator = UserSetting.SelectedAuthenticator;
                 //UserSetting.PropertyChanged += User_PropertyChanged;
             }
 
@@ -317,7 +318,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 //标记控件状态启动中
                 App.LaunchSignal.IsLaunching = true;
 
-                //#region 验证
+                #region 验证
                 //AuthenticationNode launchAuthNode = null;
                 //if (UserSetting.AuthenticationDic.ContainsKey(launchUser.AuthModule))
                 //{
@@ -327,8 +328,8 @@ namespace NsisoLauncher.ViewModels.Pages
                 //{
                 //    throw new Exception("所使用用户没有验证器类型");
                 //}
-                //launchSetting.LaunchUser = launchUser.User;
-                //#endregion
+                launchSetting.LaunchUser = launchUser;
+                #endregion
 
                 #region 检查游戏完整
                 List<IDownloadTask> losts = new List<IDownloadTask>();

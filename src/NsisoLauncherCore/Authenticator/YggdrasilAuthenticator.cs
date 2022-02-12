@@ -52,7 +52,7 @@ namespace NsisoLauncherCore.Authenticator
         public string InputPassword { get; set; }
 
         [JsonIgnore]
-        public bool RequireRemember { get; set; }
+        public bool RequireRemember => true;
         [JsonIgnore]
         public bool InputRemember { get; set; }
 

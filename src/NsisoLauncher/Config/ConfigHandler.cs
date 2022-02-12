@@ -211,9 +211,12 @@ namespace NsisoLauncher.Config
                 {
                     Authenticators = new ObservableDictionary<string, IAuthenticator>()
                     {
-                        {"offline", new OfflineYggdrasilAuthenticator(){Name="离线登录", Locked = true} },
-                        {"mojang", new YggdrasilAuthenticator(Guid.NewGuid().ToString("N")){Name="Mojang正版登录", Locked = true} },
-                        {"microsoft", new MicrosoftAuthenticator(){Name="微软正版登录", Locked = true} },
+                        {"offline", new OfflineYggdrasilAuthenticator(){Name="离线登录", Locked = true,
+                            Users = new ObservableDictionary<string, NsisoLauncherCore.User.IUser>()} },
+                        {"mojang", new YggdrasilAuthenticator(Guid.NewGuid().ToString("N")){Name="Mojang正版登录", Locked = true,
+                            Users = new ObservableDictionary<string, NsisoLauncherCore.User.IUser>()} },
+                        {"microsoft", new MicrosoftAuthenticator(){Name="微软正版登录", Locked = true,
+                            Users = new ObservableDictionary<string, NsisoLauncherCore.User.IUser>()} },
                     }
                 },
                 History = new History(),

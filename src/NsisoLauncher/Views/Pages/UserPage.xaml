@@ -21,9 +21,12 @@
         <utils:BooleanToVisibilityConverter
             x:Key="ReverseBooleanToVisibilityConverter"
             True="Collapsed" False="Visible"/>
-
-        <utils:UsernamePasswordVisibilityConverter x:Key="upVisibilityConverter"/>
-        
+        <utils:BooleanToVisibilityConverter
+            x:Key="BooleanToVisibilityConverter"
+            True="Visible" False="Collapsed"/>
+        <utils:ObjectNullToVisibilityConverter
+            IsNull="Visible" NotNull="Collapsed"
+            x:Key="objectNullVisibleConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -32,21 +35,22 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!--#region 登录状态-->
+        <!--#region 登录状态--><!--
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}"
-              Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20">
+              Visibility="{Binding Authenticator.SelectedUser, Converter={StaticResource objectNotEmptyToVisibilityConverter}}">
+            <StackPanel DataContext="{Binding Authenticator}"
+                        Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20">
                 <StackPanel>
                     <TextBlock Text="当前用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
-                    <TextBlock Text="{Binding LoggedInUsername, TargetNullValue='暂未登录'}" Foreground="White" FontSize="26"/>
+                    <TextBlock Text="{Binding SelectedUser.Username, TargetNullValue='暂未登录'}" Foreground="White" FontSize="26"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <iconPacks:PackIconFontAwesome Kind="CircleSolid" Margin="0,0,5,0" Foreground="{Binding StateColor}"/>
                         <TextBlock Text="{Binding State, TargetNullValue='离线'}" Foreground="White"/>
-                        <TextBlock Text="{Binding AuthName, TargetNullValue='验证类型'}" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="{Binding Name, TargetNullValue='验证类型'}" Foreground="White" Margin="10,0,0,0"/>
                     </StackPanel>
 
                 </StackPanel>
-                <!--<Button Margin="20,0" Content="切换用户" VerticalAlignment="Bottom"/>-->
+                --><!--<Button Margin="20,0" Content="切换用户" VerticalAlignment="Bottom"/>--><!--
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
                 <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="切换用户" Margin="0,0,10,0"/>
@@ -56,7 +60,7 @@
 
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
               Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <!--<Grid.ColumnDefinitions>
+            --><!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>-->
@@ -67,7 +71,8 @@
             <!--<TabControl>
                 <TabItem Header="档案">
                     
-                    --><!--<Grid>
+                    -->
+            <!--<Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="3*"/>
@@ -92,13 +97,14 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </Grid>--><!--
+                    </Grid>-->
+            <!--
                 </TabItem>
                 <TabItem Header="皮肤">
                 </TabItem>
                 <TabItem Header="用户资料">
                 </TabItem>
-            </TabControl>-->
+            </TabControl>--><!--
 
             <StackPanel Margin="10">
                 <GroupBox Header="档案" Margin="0,0,0,10">
@@ -114,27 +120,19 @@
                 </GroupBox>
             </StackPanel>
         </Grid>
-        <!--#endregion-->
+        --><!--#endregion-->
 
         <!--#region 未登录状态 -->
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" 
-              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
+              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNullVisibleConverter}}">
             <StackPanel Margin="0,60" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label Content="登录后即可畅玩Minecraft" Foreground="White" FontSize="26"/>
                 <Label Content="支持离线/正版/皮肤站/登录站等登录方式" Foreground="White" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
-              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
+              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNullVisibleConverter}}">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <!--<Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                        Content="离线登录" Padding="50,5" Margin="5" Command="{Binding OfflineLoginCmd}"/>
-                <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                        Content="微软账号登录" Padding="50,5" Margin="5" Command="{Binding MicrosoftLoginCmd}"/>
-                <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                        Content="Mojang账号登录" Padding="50,5" Margin="5" Command="{Binding MojangLoginCmd}"/>
-                <Button Style="{StaticResource MahApps.Styles.Button.Square}"
-                        Content="外置登录" Padding="50,5" Margin="5" Command="{Binding OtherLoginCmd}"/>-->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -151,36 +149,37 @@
                     <TextBlock Text="验证类型:" Margin="5"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Width="200">
-                    <ComboBox ItemsSource="{Binding AuthenticationDic}" DisplayMemberPath="Value.Name"
-                          SelectedValuePath="Key" SelectedValue="{Binding SelectedAuthenticationNodeId}"
+                    <ComboBox ItemsSource="{Binding User.Authenticators}" DisplayMemberPath="Value.Name"
+                          SelectedValuePath="Key" SelectedValue="{Binding User.SelectedAuthenticatorId}"
                           controls:TextBoxHelper.Watermark="选择验证类型" Width="165"
-                          VerticalAlignment="Center" x:Name="authTypeCombobox"/>
+                          VerticalAlignment="Center"/>
                     <Button Width="30" Content="{iconPacks:FontAwesome Kind=PlusSolid, Width='10', Height='10'}"
                             VerticalAlignment="Center" Margin="5,0,0,0" Command="{Binding AddAuthNodeCmd}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="1"
-                            Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='username'}">
+                            Visibility="{Binding User.SelectedAuthenticator.RequireUsername , Converter={StaticResource BooleanToVisibilityConverter}}">
                     <iconPacks:PackIconFontAwesome Kind="UserAltSolid" Margin="5"/>
                     <TextBlock Text="用户名:" Margin="5"/>
                 </StackPanel>
                 <TextBox controls:TextBoxHelper.Watermark="用请输入户名" Width="200" 
-                         Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='username'}"
-                         Text="{Binding InputUsername}"
+                         Visibility="{Binding User.SelectedAuthenticator.RequireUsername , Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Text="{Binding User.SelectedAuthenticator.InputUsername}"
                          Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="2"
-                            Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='password'}">
+                            Visibility="{Binding User.SelectedAuthenticator.RequirePassword , Converter={StaticResource BooleanToVisibilityConverter}}">
                     <iconPacks:PackIconFontAwesome Kind="KeySolid" Margin="5"/>
                     <TextBlock Text="密码:" Margin="5"/>
                 </StackPanel>
                 <PasswordBox controls:TextBoxHelper.Watermark="请输入密码" Width="200"
-                             Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='password'}"
-                             controls:PasswordBoxBindingBehavior.Password="{Binding InputPassword}"
+                             Visibility="{Binding User.SelectedAuthenticator.RequirePassword , Converter={StaticResource BooleanToVisibilityConverter}}"
+                             controls:PasswordBoxBindingBehavior.Password="{Binding User.SelectedAuthenticator.InputPassword}"
                              Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
                 <StackPanel Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,0,0">
-                    <CheckBox Content="自动登录" IsChecked="{Binding SelectedAutoLogin}"/>
+                    <CheckBox Content="自动登录" IsChecked="{Binding SelectedAutoLogin}"
+                              Visibility="{Binding User.SelectedAuthenticator.RequireRemember , Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <CheckBox Content="记住密码" IsChecked="{Binding SelectedRememberPassword}" Margin="10,0"
-                          Visibility="{Binding ElementName=authTypeCombobox, Path=SelectedItem.Value.AuthType, Converter={StaticResource upVisibilityConverter},ConverterParameter='password'}"/>
+                              Visibility="{Binding User.SelectedAuthenticator.RequireRemember , Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </StackPanel>
                 <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="登录"
                         Grid.Row="4" Grid.ColumnSpan="2" Margin="0,10" Command="{Binding LoginCmd}"/>

@@ -73,8 +73,8 @@ namespace NsisoLauncherCore.User
             set
             {
                 this._selectedProfileId = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfileId)));
-                this.PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedProfile)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedProfileId)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedProfile)));
             }
         }
 

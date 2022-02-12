@@ -317,7 +317,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="FodyWeavers.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -378,9 +377,6 @@
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
       <Version>6.15.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Http">
-      <Version>4.3.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
