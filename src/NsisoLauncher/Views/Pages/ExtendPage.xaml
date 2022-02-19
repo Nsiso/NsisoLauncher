@@ -19,7 +19,7 @@
         <vm:ExtendPageViewModel/>
     </Page.DataContext>
     <Page.Resources>
-        <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotEmptyToBooleanConverter"/>
+        <utils:ObjectNullToBooleanConverter x:Key="objectNotEmptyToBooleanConverter"/>
         <Style TargetType="ListBox" x:Key="ListStyle" BasedOn="{StaticResource {x:Type ListBox}}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">

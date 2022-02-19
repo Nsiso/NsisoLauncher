@@ -30,6 +30,7 @@ namespace NsisoLauncher.Utils
         }
     }
 
+    [ValueConversion(typeof(bool), typeof(Visibility))]
     public sealed class BooleanToVisibilityConverter : BooleanConverter<Visibility>
     {
         public BooleanToVisibilityConverter() :
@@ -38,25 +39,11 @@ namespace NsisoLauncher.Utils
     }
 
     [ValueConversion(typeof(bool), typeof(bool))]
-    public class BoolToOppositeBoolConverter : IValueConverter
+    public class BoolToOppositeBoolConverter : BooleanConverter<bool>
     {
-        public object Convert(object value, Type targetType, object parameter,
-           CultureInfo culture)
-        {
-            if (targetType != typeof(bool))
-            {
-                throw new InvalidOperationException("The target must be a boolean");
-            }
-
-            return !(bool)value;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter,
-            CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
+        public BoolToOppositeBoolConverter() :
+            base(false, true)
+        { }
     }
 
     [ValueConversion(typeof(string), typeof(int))]
@@ -103,68 +90,45 @@ namespace NsisoLauncher.Utils
         }
     }
 
-    [ValueConversion(typeof(object), typeof(Visibility))]
-    public class ObjectNullToVisibilityConverter : IValueConverter
+
+    public class ObjectNullConverter<T> : IValueConverter
     {
-        public Visibility IsNull { get; set; }
-
-        public Visibility NotNull { get; set; }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public ObjectNullConverter()
         {
-            if (value == null)
-            {
-                return IsNull;
-            }
-            else
-            {
-                return NotNull;
-            }
+
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public ObjectNullConverter(T nullValue, T notNullValue)
+        {
+            IsNull = nullValue;
+            NotNull = notNullValue;
+        }
+
+        public T IsNull { get; set; }
+        public T NotNull { get; set; }
+
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value == null ? IsNull : NotNull;
+        }
+
+        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
-    public class ObjectNotEmptyToVisibilityConverter : IValueConverter
+    [ValueConversion(typeof(object), typeof(Visibility))]
+    public class ObjectNullToVisibilityConverter : ObjectNullConverter<Visibility>
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-            {
-                return Visibility.Collapsed;
-            }
-            else
-            {
-                return Visibility.Visible;
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
     }
 
-    public class ObjectNotEmptyToBooleanConverter : IValueConverter
+    [ValueConversion(typeof(object), typeof(bool))]
+    public class ObjectNullToBooleanConverter : ObjectNullConverter<bool>
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public ObjectNullToBooleanConverter() : base(false, true)
         {
-            if (value == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
         }
     }
 
@@ -279,46 +243,6 @@ namespace NsisoLauncher.Utils
                     {
                         return Visibility.Collapsed;
                     }
-            }
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    [ValueConversion(typeof(AuthenticationType), typeof(Visibility))]
-    public class UsernamePasswordVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            AuthenticationType type = (AuthenticationType)value;
-            string mode = (string)parameter;
-            if (mode == "username")
-            {
-                switch (type)
-                {
-                    case AuthenticationType.MICROSOFT:
-                        return Visibility.Collapsed;
-
-                    default:
-                        return Visibility.Visible;
-                }
-            }
-            else
-            {
-                switch (type)
-                {
-                    case AuthenticationType.OFFLINE:
-                        return Visibility.Collapsed;
-
-                    case AuthenticationType.MICROSOFT:
-                        return Visibility.Collapsed;
-
-                    default:
-                        return Visibility.Visible;
-                }
             }
         }
 

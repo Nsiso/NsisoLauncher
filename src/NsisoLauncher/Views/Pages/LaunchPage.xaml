@@ -24,7 +24,7 @@
     </Page.DataContext>
     <Page.Resources>
         <utils:StringNotEmptyToVisibilityConverter x:Key="strEmptyToVis"/>
-        <utils:ObjectNotEmptyToVisibilityConverter x:Key="objEmptyToVis"/>
+        <utils:ObjectNullToVisibilityConverter IsNull="Collapsed" NotNull="Visible" x:Key="objEmptyToVis"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>

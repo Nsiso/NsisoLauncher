@@ -10,7 +10,6 @@
         mc:Ignorable="d"
         Title="AuthNodeWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <controls:MetroWindow.Resources>
-        <utils:ObjectNotEmptyToBooleanConverter x:Key="objectNotNullToBool"/>
         <utils:ComparisonConverter x:Key="comparisonConverter"/>
     </controls:MetroWindow.Resources>
     <Grid>

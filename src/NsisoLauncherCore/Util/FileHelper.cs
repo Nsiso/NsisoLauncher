@@ -373,6 +373,20 @@ namespace NsisoLauncherCore.Util
 
             }
 
+            // check the core
+            string jar_path = core.GetVersionJarPath(version);
+            if (!File.Exists(jar_path))
+            {
+                if (version.Downloads?.Client != null)
+                {
+                    tasks.Add(new DownloadTask("版本核心jar文件", new DownloadObject(version.Downloads.Client, jar_path)));
+                }
+                else
+                {
+                    throw new Exception("The version's jar core not exsist and can't find the download index.");
+                }
+            }
+
             List<Library> libraries = version.GetAllLibraries();
             tasks.AddRange(GetLostLibrariesDownloadTask(core, libraries, mirror));
             return tasks;
