@@ -16,7 +16,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin.Modules
 
         public XblAuthProperties(string access_token)
         {
-            this.RpsTicket = access_token;
+            this.RpsTicket = string.Format("d={0}",access_token);
         }
     }
 

@@ -75,5 +75,10 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
                 throw ex;
             }
         }
+
+        public async Task<IAccount> GetAccountAsync(string identifier)
+        {
+            return await publicClientApp.GetAccountAsync(identifier);
+        }
     }
 }

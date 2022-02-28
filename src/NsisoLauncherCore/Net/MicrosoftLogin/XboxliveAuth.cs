@@ -2,6 +2,7 @@
 using NsisoLauncherCore.Net.MicrosoftLogin.Modules;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,8 +55,11 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             string json_str = JsonConvert.SerializeObject(properties);
             HttpContent content = new StringContent(json_str);
             content.Headers.ContentType.MediaType = "application/json";
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+            httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpRequestMessage.Content = content;
 
-            var result = await NetRequester.HttpPostAsync(uri, content, cancellation);
+            var result = await NetRequester.HttpSendAsync(httpRequestMessage, cancellation);
             result.EnsureSuccessStatusCode();
 
             var respond_str = await result.Content.ReadAsStringAsync();

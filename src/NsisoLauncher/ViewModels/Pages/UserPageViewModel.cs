@@ -42,6 +42,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public User User { get; set; }
 
+        public bool IsLoggedIn { get => User?.SelectedAuthenticator?.SelectedUser != null; }
+
         #region 多语言支持变量
         private LoginDialogSettings loginDialogSettings = new LoginDialogSettings()
         {
@@ -69,13 +71,22 @@ namespace NsisoLauncher.ViewModels.Pages
 
             LoginCmd = new DelegateCommand(async (a) =>
             {
-                await User.SelectedAuthenticator.AuthenticateAsync(default);
+                AuthenticateResult result = await User?.SelectedAuthenticator?.AuthenticateAsync(default);
+                if (result.IsSuccess)
+                {
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));
+                }
+                else
+                {
+                    await MainWindowVM.ShowMessageAsync(string.Format("登录失败:{0}", result.ErrorTag), result.ErrorMessage);
+                }
             });
 
-            // LogoutCmd = new DelegateCommand(async (a) =>
-            //{
-            //    await Logout();
-            //});
+            LogoutCmd = new DelegateCommand(async (a) =>
+            {
+                await User?.SelectedAuthenticator?.InvalidateAsync(default);
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));
+            });
 
             // AddAuthNodeCmd = new DelegateCommand((a) =>
             // {

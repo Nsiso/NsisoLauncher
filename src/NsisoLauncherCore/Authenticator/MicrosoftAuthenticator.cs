@@ -108,6 +108,7 @@ namespace NsisoLauncherCore.Authenticator
                     profile = await mcServices.GetProfile(result.AccessToken, mc_result, cancellation).ConfigureAwait(false);
                 }
                 MicrosoftUser user = new MicrosoftUser(result.Account, mc_result, profile);
+                this.Users.Add(user.UserId, user);
                 this.SelectedUserId = user.UserId;
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
 
@@ -134,7 +135,16 @@ namespace NsisoLauncherCore.Authenticator
             try
             {
                 MicrosoftUser user = (MicrosoftUser)SelectedUser;
-                AuthenticationResult result = await oAuthFlower.Login(user.MicrosoftAccount, cancellation);
+                IAccount account = await oAuthFlower.GetAccountAsync(SelectedUserId);
+                AuthenticationResult result = null;
+                if (account != null)
+                {
+                    result = await oAuthFlower.Login(account, cancellation);
+                }
+                else
+                {
+                    result = await oAuthFlower.Login(cancellation);
+                }
                 XboxLiveToken xbox_result = await xboxliveAuther.Authenticate(result.AccessToken, cancellation);
                 MinecraftToken mc_result = await mcServices.Authenticate(xbox_result, cancellation);
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };

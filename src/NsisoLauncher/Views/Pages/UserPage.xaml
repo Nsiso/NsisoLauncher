@@ -41,7 +41,7 @@
 
         <!--#region 登录状态-->
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}"
-              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNotNullVisibleConverter}}">
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20">
                 <StackPanel>
                     <TextBlock Text="当前用户:" FontSize="16" Foreground="White" Margin="0,0,0,10"/>
@@ -59,9 +59,8 @@
                 <Button Style="{StaticResource MahApps.Styles.Button.Flat}" Content="注销" Command="{Binding LogoutCmd}"/>
             </StackPanel>
         </Grid>
-
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
-              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNotNullVisibleConverter}}">
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
@@ -126,14 +125,14 @@
 
         <!--#region 未登录状态 -->
         <Grid Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" 
-              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNullVisibleConverter}}">
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel Margin="0,60" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label Content="登录后即可畅玩Minecraft" Foreground="White" FontSize="26"/>
                 <Label Content="支持离线/正版/皮肤站/登录站等登录方式" Foreground="White" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" 
-              Visibility="{Binding User.SelectedAuthenticator.SelectedUser, Converter={StaticResource objectNullVisibleConverter}}">
+              Visibility="{Binding IsLoggedIn, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

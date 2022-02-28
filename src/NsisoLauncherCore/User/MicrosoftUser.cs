@@ -12,13 +12,9 @@ namespace NsisoLauncherCore.User
 {
     public class MicrosoftUser : IUser
     {
-        public IAccount MicrosoftAccount { get; set; }
+        public string Username { get; set; }
 
-        [JsonIgnore]
-        public string Username => MicrosoftAccount.Username;
-
-        [JsonIgnore]
-        public string UserId => MicrosoftAccount.HomeAccountId.Identifier;
+        public string UserId { get; set; }
 
         [JsonIgnore]
         public string GameAccessToken { get => MinecraftToken.AccessToken; }
@@ -45,9 +41,15 @@ namespace NsisoLauncherCore.User
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public MicrosoftUser()
+        {
+
+        }
+
         public MicrosoftUser(IAccount microsoftAccount, MinecraftToken minecraftToken, MicrosoftPlayerProfile profile)
         {
-            this.MicrosoftAccount = microsoftAccount;
+            this.Username = microsoftAccount.Username;
+            this.UserId = microsoftAccount.HomeAccountId.Identifier;
             this.MinecraftToken = minecraftToken;
             this.Profile = profile;
             if (Profile != null)
