@@ -303,6 +303,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 //{
                 //    await MainWindowVM.ShowMessageAsync("没有设置启动所使用的java",
                 //        "您的电脑安装了java，但您没有设置启动所使用的java，请转移至设置中的：环境设置-java设置 以设置启动使用的java");
+                //    return;
                 //}
                 #endregion
 

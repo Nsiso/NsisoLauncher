@@ -466,7 +466,16 @@ namespace NsisoLauncherCore
                 }
             }
 
+            //string jar_path = handler.GetVersionJarPath(ver);
+            //stringBuilder.Append(jar_path);
+
             string jar_path = handler.GetVersionJarPath(ver);
+            VersionBase inheritVer = ver.InheritsFromInstance;
+            while (inheritVer != null)
+            {
+                jar_path = handler.GetVersionJarPath(inheritVer);
+                inheritVer = inheritVer.InheritsFromInstance;
+            }
             stringBuilder.Append(jar_path);
 
             stringBuilder.Append('\"');
