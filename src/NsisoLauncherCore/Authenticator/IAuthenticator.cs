@@ -76,6 +76,11 @@ namespace NsisoLauncherCore.Authenticator
         /// Currently selected user (value for dictionary)
         /// </summary>
         IUser SelectedUser { get; }
+
+        /// <summary>
+        /// The user'current state of is online.
+        /// </summary>
+        bool IsOnline { get; }
         #endregion
 
         #region Allow

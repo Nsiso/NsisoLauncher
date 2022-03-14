@@ -60,6 +60,9 @@ namespace NsisoLauncherCore.Authenticator
         }
 
         [JsonIgnore]
+        public bool IsOnline { get => true; }
+
+        [JsonIgnore]
         public bool AllowAuthenticate => true;
         [JsonIgnore]
         public bool AllowRefresh => true;

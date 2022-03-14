@@ -83,6 +83,9 @@ namespace NsisoLauncherCore.Authenticator
         }
 
         [JsonIgnore]
+        public bool IsOnline { get; private set; } = false;
+
+        [JsonIgnore]
         public bool AllowAuthenticate => true;
         [JsonIgnore]
         public bool AllowRefresh => true;
@@ -124,6 +127,7 @@ namespace NsisoLauncherCore.Authenticator
                         Users.Add(user.UserId, user);
                     }
                     this.SelectedUserId = user.UserId;
+                    this.IsOnline = true;
                 }
                 return ResponseToAuthenticateResult(result);
             }
@@ -159,6 +163,7 @@ namespace NsisoLauncherCore.Authenticator
                     YggdrasilUser user = (YggdrasilUser)this.SelectedUser;
                     user.GameAccessToken = null;
                     this.SelectedUserId = null;
+                    this.IsOnline = false;
                 }
                 return ResponseToAuthenticateResult(result);
             }
@@ -201,6 +206,7 @@ namespace NsisoLauncherCore.Authenticator
                     AuthenticateResponseData data = result.Data;
                     YggdrasilUser user = (YggdrasilUser)SelectedUser;
                     user.SetFromAuthenticateResponseData(data);
+                    IsOnline = true;
                 }
                 return ResponseToAuthenticateResult(result);
             }
@@ -234,6 +240,10 @@ namespace NsisoLauncherCore.Authenticator
             try
             {
                 Response result = await api.Signout(new AuthenticateRequest(InputUsername, InputPassword, ClientToken), cancellation);
+                if (result.IsSuccess)
+                {
+                    this.IsOnline = false;
+                }
                 return ResponseToAuthenticateResult(result);
             }
             catch (TaskCanceledException ex)
@@ -271,6 +281,10 @@ namespace NsisoLauncherCore.Authenticator
                     }
                 }
                 Response result = await api.Validate(new AccessClientTokenPair(SelectedUser.GameAccessToken, this.ClientToken), cancellation);
+                if (result.IsSuccess)
+                {
+                    this.IsOnline = true;
+                }
                 return ResponseToAuthenticateResult(result);
             }
             catch (TaskCanceledException ex)

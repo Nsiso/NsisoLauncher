@@ -78,6 +78,9 @@ namespace NsisoLauncherCore.Authenticator
         }
 
         [JsonIgnore]
+        public bool IsOnline { get; private set; } = false;
+
+        [JsonIgnore]
         public bool AllowAuthenticate => true;
         [JsonIgnore]
         public bool AllowRefresh => true;
@@ -110,6 +113,7 @@ namespace NsisoLauncherCore.Authenticator
                 MicrosoftUser user = new MicrosoftUser(result.Account, mc_result, profile);
                 this.Users.Add(user.UserId, user);
                 this.SelectedUserId = user.UserId;
+                this.IsOnline = true;
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
 
             }
@@ -147,6 +151,7 @@ namespace NsisoLauncherCore.Authenticator
                 }
                 XboxLiveToken xbox_result = await xboxliveAuther.Authenticate(result.AccessToken, cancellation);
                 MinecraftToken mc_result = await mcServices.Authenticate(xbox_result, cancellation);
+                this.IsOnline = true;
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
             }
             catch (TaskCanceledException ex)

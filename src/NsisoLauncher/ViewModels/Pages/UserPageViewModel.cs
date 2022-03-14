@@ -44,6 +44,21 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public bool IsLoggedIn { get => User?.SelectedAuthenticator?.SelectedUser != null; }
 
+        public SolidColorBrush StateColor
+        {
+            get
+            {
+                if (User?.SelectedAuthenticator?.IsOnline != null && User.SelectedAuthenticator.IsOnline)
+                {
+                    return Brushes.LawnGreen;
+                }
+                else
+                {
+                    return Brushes.Gray;
+                }
+            }
+        }
+
         #region 多语言支持变量
         private LoginDialogSettings loginDialogSettings = new LoginDialogSettings()
         {
