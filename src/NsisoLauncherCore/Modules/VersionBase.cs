@@ -86,7 +86,7 @@ namespace NsisoLauncherCore.Modules
         /// </summary>
         public string Type { get; set; }
 
-        public virtual List<Library> GetAllLibraries()
+        public virtual List<Library> GetAllValidLibraries()
         {
             HashSet<Library> lib_hash_set = new HashSet<Library>(new LibraryNameEqualityComparer());
 
@@ -104,7 +104,7 @@ namespace NsisoLauncherCore.Modules
 
             if (InheritsFromInstance != null)
             {
-                List<Library> base_libs = InheritsFromInstance.GetAllLibraries();
+                List<Library> base_libs = InheritsFromInstance.GetAllValidLibraries();
                 foreach (var item in base_libs)
                 {
                     if (item.IsEnable())

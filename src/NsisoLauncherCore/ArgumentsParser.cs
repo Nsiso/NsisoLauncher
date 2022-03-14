@@ -256,7 +256,7 @@ namespace NsisoLauncherCore
             {
                 assetsIndexName = "legacy";
             }
-            List<Library> libraries = version.GetAllLibraries();
+            List<Library> libraries = version.GetAllValidLibraries();
             Dictionary<string, string> argDic = new Dictionary<string, string>()
             {
                 {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.SelectedProfile.PlayerName) },

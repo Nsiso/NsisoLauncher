@@ -211,7 +211,7 @@ namespace NsisoLauncherCore
                         }
                     }
 
-                    List<Library> libraries = ver.GetAllLibraries();
+                    List<Library> libraries = ver.GetAllValidLibraries();
                     foreach (var item in libraries)
                     {
                         if (item.IsEnable())

@@ -126,7 +126,7 @@ namespace NsisoLauncherCore.Util
         /// <returns>返回Key为路径，value为库实例的集合</returns>
         public static Dictionary<string, Library> GetLostLibs(LaunchHandler core, VersionBase version)
         {
-            List<Library> libraries = version.GetAllLibraries();
+            List<Library> libraries = version.GetAllValidLibraries();
             return GetLostLibs(core, libraries);
         }
         #endregion
@@ -387,7 +387,7 @@ namespace NsisoLauncherCore.Util
                 }
             }
 
-            List<Library> libraries = version.GetAllLibraries();
+            List<Library> libraries = version.GetAllValidLibraries();
             tasks.AddRange(GetLostLibrariesDownloadTask(core, libraries, mirror));
             return tasks;
         }
