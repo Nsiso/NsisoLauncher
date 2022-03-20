@@ -63,14 +63,28 @@ namespace NsisoLauncherCore.Modules
                                     if (arg["value"].Type == JTokenType.String)
                                     {
                                         string value = arg["value"].ToString();
-                                        argBuilder.AppendFormat("\"{0}\" ", value);
+                                        if (value.Contains(' '))
+                                        {
+                                            argBuilder.AppendFormat("\"{0}\" ", value);
+                                        }
+                                        else
+                                        {
+                                            argBuilder.AppendFormat("{0} ", value);
+                                        }
                                     }
                                     else if (arg["value"].Type == JTokenType.Array)
                                     {
                                         foreach (var str in arg["value"])
                                         {
                                             string value = str.ToString();
-                                            argBuilder.AppendFormat("\"{0}\" ", value);
+                                            if (value.Contains(' '))
+                                            {
+                                                argBuilder.AppendFormat("\"{0}\" ", value);
+                                            }
+                                            else
+                                            {
+                                                argBuilder.AppendFormat("{0} ", value);
+                                            }
                                         }
                                     }
                                 }
@@ -78,7 +92,17 @@ namespace NsisoLauncherCore.Modules
                         }
                         break;
                     case JTokenType.String:
-                        argBuilder.AppendFormat("\"{0}\" ", arg.ToString());
+                        {
+                            string value = arg.ToString();
+                            if (value.Contains(' '))
+                            {
+                                argBuilder.AppendFormat("\"{0}\" ", arg.ToString());
+                            }
+                            else
+                            {
+                                argBuilder.AppendFormat("{0} ", arg.ToString());
+                            }
+                        }
                         break;
                     default:
                         break;
