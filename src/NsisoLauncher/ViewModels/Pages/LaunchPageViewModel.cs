@@ -24,6 +24,7 @@ using NsisoLauncherCore.Net.Apis;
 using NsisoLauncherCore.Net.Apis.Modules;
 using NsisoLauncherCore.Authenticator;
 using NsisoLauncherCore.User;
+using System.Threading;
 
 namespace NsisoLauncher.ViewModels.Pages
 {
@@ -234,7 +235,7 @@ namespace NsisoLauncher.ViewModels.Pages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public async Task LaunchFromVM(LaunchType launchType)
+        public async Task LaunchFromVM(LaunchType launchType, CancellationToken cancellation = default)
         {
             try
             {
@@ -253,14 +254,14 @@ namespace NsisoLauncher.ViewModels.Pages
                     return;
                 }
 
-                IUser launchUser = Authenticator.SelectedUser;
-                if (launchUser == null)
+                IAuthenticator authenticator = this.Authenticator;
+                if (authenticator.SelectedUser == null)
                 {
                     await MainWindowVM.ShowMessageAsync(string.Format("{0}没有登录中的用户", Authenticator.Name),
                         string.Format("{0}中没有登录状态的用户，请前往用户中心登录用户"));
                     return;
                 }
-                if (launchUser.SelectedProfile == null)
+                if (authenticator.SelectedUser.SelectedProfile == null)
                 {
                     await MainWindowVM.ShowMessageAsync("没有选择游戏角色",
                         "您已经登录，但您没有可以进行游戏的角色（Profile），有可能您未选择或者列表为空");
@@ -321,16 +322,41 @@ namespace NsisoLauncher.ViewModels.Pages
                 App.LaunchSignal.IsLaunching = true;
 
                 #region 验证
-                //AuthenticationNode launchAuthNode = null;
-                //if (UserSetting.AuthenticationDic.ContainsKey(launchUser.AuthModule))
-                //{
-                //    launchAuthNode = UserSetting.AuthenticationDic[launchUser.AuthModule];
-                //}
-                //if (launchAuthNode == null)
-                //{
-                //    throw new Exception("所使用用户没有验证器类型");
-                //}
-                launchSetting.LaunchUser = launchUser;
+                bool online = true;
+
+                if (authenticator.IsOnline && authenticator.AllowValidate)
+                {
+                    App.LogHandler.AppendInfo("正在验证用户...");
+                    AuthenticateResult validate_result = await authenticator.ValidateAsync(cancellation);
+                    if (!validate_result.IsSuccess)
+                    {
+                        online = false;
+                    }
+                }
+                else
+                {
+                    online = false;
+                }
+
+                if (!online && authenticator.AllowRefresh)
+                {
+                    App.LogHandler.AppendInfo("验证用户失败，正在刷新用户登录...");
+                    ProgressDialogController progressDialogController = await MainWindowVM.ShowProgressAsync(string.Format("{0}正在重新登录{1}中...",
+                        authenticator.Name, authenticator.SelectedUser.Username), "，这可能是因为您有段时间没有登录，这需要一段时间");
+                    progressDialogController.SetIndeterminate();
+
+                    AuthenticateResult refresh_result = await authenticator.RefreshAsync(cancellation);
+
+                    await progressDialogController.CloseAsync();
+                    if (!refresh_result.IsSuccess)
+                    {
+                        await MainWindowVM.ShowMessageAsync(string.Format("{0}重新登录失败:{1}", authenticator.Name, refresh_result.ErrorTag),
+                            string.Format("登录用户:{0}\n错误信息:{0}", authenticator.SelectedUser, refresh_result.ErrorMessage));
+                        App.MainPageVM.NavigateToUserPage();
+                        return;
+                    }
+                }
+                launchSetting.LaunchUser = authenticator.SelectedUser;
                 #endregion
 
                 #region 检查游戏完整

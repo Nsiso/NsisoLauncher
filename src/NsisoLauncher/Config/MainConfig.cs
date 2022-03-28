@@ -378,7 +378,7 @@ namespace NsisoLauncher.Config
         /// <summary>
         /// 下载源设置
         /// </summary>
-        public NsisoLauncherCore.Net.DownloadSource DownloadSource { get; set; }
+        public DownloadSource DownloadSource { get; set; }
 
         /// <summary>
         /// 版本设置
