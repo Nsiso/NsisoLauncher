@@ -26,6 +26,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
+    - name: Change work directory
+      run: cd $env:working_dir
+      
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v2.0.0
       with:
@@ -42,4 +45,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.Configuration }} Build Result
-        path: ${{ env.working_dir }}\${{ env.launcher_name }}\bin\${{ env.Configuration }}
+        path: ${{ env.launcher_name }}\bin\${{ env.Configuration }}
