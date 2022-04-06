@@ -32,23 +32,11 @@ jobs:
         # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
         dotnet-version: '6.0.x'
         
-    - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v1
-      
-    - name: Setup vstest
-      uses: darenm/Setup-VSTest@v1
-      
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v1
-      
-    - name: Nuget restore
-      run: nuget restore $env:working_dir
-      
     - name: Build
-      run: msbuild $env:working_dir /p:Configuration=$env:Configuration
+      run: dotnet build --configuration $env:Configuration
       
     - name: Unit test
-      run: VSTest.Console.exe $env:working_dir\$env:test_name\bin\$env:Configuration\$env:test_name.dll
+      run: dotnet test --configuration $env:Configuration
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
