@@ -60,11 +60,11 @@ namespace NsisoLauncherCore.Net.Apis
                     os_info = "windows";
                     switch (arch)
                     {
-                        case ArchEnum.x32:
+                        case ArchEnum.X86:
                             os_info += "-x86";
                             java = javas.Windows_x86[gamecore].FirstOrDefault();
                             break;
-                        case ArchEnum.x64:
+                        case ArchEnum.X64:
                             os_info += "-x64";
                             java = javas.Windows_x64[gamecore].FirstOrDefault();
                             break;
@@ -78,7 +78,7 @@ namespace NsisoLauncherCore.Net.Apis
                     os_info = "linux";
                     java = javas.Linux[gamecore].FirstOrDefault();
                     break;
-                case OsType.MacOS:
+                case OsType.MacOSX:
                     os_info = "mac-os";
                     java = javas.MacOS[gamecore].FirstOrDefault();
                     break;

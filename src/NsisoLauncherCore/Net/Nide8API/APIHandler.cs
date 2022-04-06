@@ -1,8 +1,8 @@
-﻿using Heijden.DNS;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DnsClient;
 
 namespace NsisoLauncherCore.Net.Nide8API
 {
@@ -39,20 +39,9 @@ namespace NsisoLauncherCore.Net.Nide8API
 
         public async Task<bool> TestIsNide8DnsOK()
         {
-            Response response = null;
-            await Task.Factory.StartNew(() =>
-            {
-                Resolver resolver = new Resolver();
-                response = resolver.Query("auth2.nide8.com", Heijden.DNS.QType.A);
-            });
-            if (string.IsNullOrWhiteSpace(response.Error) && response.RecordsA.Length != 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var lookup = new LookupClient();
+            var result = await lookup.QueryAsync("auth2.nide8.com", QueryType.A);
+            return !result.HasError && result.Answers.Count != 0;
         }
 
         public async Task<string> GetJarVersion()

@@ -13,7 +13,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <helix:HelixViewport3D RotateGesture="{StaticResource MouseGesture}"
+        <!--<helix:HelixViewport3D RotateGesture="{StaticResource MouseGesture}"
                                IsMoveEnabled="False" IsPanEnabled="False" FixedRotationPointEnabled="True" ShowViewCube="False" IsZoomEnabled="False"
                                FixedRotationPoint="0,80,0"  ModelUpDirection="0,1,0">
             <helix:HelixViewport3D.Resources>
@@ -23,12 +23,12 @@
                             <DiffuseMaterial.Brush>
                                 <ImageBrush ViewportUnits="Absolute"
                                     ImageSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:Skin3dViewer},Path=SkinImage}"/>
-                                <!--<VisualBrush ViewportUnits="Absolute">
+                                --><!--<VisualBrush ViewportUnits="Absolute">
                                     <VisualBrush.Visual>
                                         <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:Skin3dViewer},Path=SkinUrl}"
                                                RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                                     </VisualBrush.Visual>
-                                </VisualBrush>-->
+                                </VisualBrush>--><!--
                             </DiffuseMaterial.Brush>
                         </DiffuseMaterial>
                     </MaterialGroup>
@@ -40,106 +40,106 @@
             <ModelVisual3D>
                 <ModelVisual3D.Content>
                     <Model3DGroup x:Name="Scene" Transform="{DynamicResource SceneTR7}">
-                        <!-- Scene (XAML Path = ) -->
+                        --><!-- Scene (XAML Path = ) --><!--
                         <AmbientLight Color="#FFFFFF" />
                         <Model3DGroup x:Name="Steve___18OR66" Transform="{DynamicResource Steve___18OR66TR65}">
-                            <!-- IN_Body  -->
-                            <!-- Steve___18 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[22]) -->
+                            --><!-- IN_Body  -->
+                            <!-- Steve___18 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[22]) --><!--
                             <GeometryModel3D x:Name="Steve___18OR66GR67" Geometry="{DynamicResource Steve___18OR66GR67}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M8OR36" Transform="{DynamicResource Steve___M8OR36TR35}">
-                            <!-- IN_L_Leg_0  -->
-                            <!-- Steve___M8 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[12]) -->
+                            --><!-- IN_L_Leg_0  -->
+                            <!-- Steve___M8 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[12]) --><!--
                             <GeometryModel3D x:Name="Steve___M8OR36GR37" Geometry="{DynamicResource Steve___M8OR36GR37}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M9OR39" Transform="{DynamicResource Steve___M9OR39TR38}">
-                            <!-- IN_L_Leg_1  -->
-                            <!-- Steve___M9 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[13]) -->
+                            --><!-- IN_L_Leg_1  -->
+                            <!-- Steve___M9 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[13]) --><!--
                             <GeometryModel3D x:Name="Steve___M9OR39GR40" Geometry="{DynamicResource Steve___M9OR39GR40}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___10OR42" Transform="{DynamicResource Steve___10OR42TR41}">
-                            <!-- IN_R_Leg_0  -->
-                            <!-- Steve___10 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[14]) -->
+                            --><!-- IN_R_Leg_0  -->
+                            <!-- Steve___10 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[14]) --><!--
                             <GeometryModel3D x:Name="Steve___10OR42GR43" Geometry="{DynamicResource Steve___10OR42GR43}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___11OR45" Transform="{DynamicResource Steve___11OR45TR44}">
-                            <!-- IN_R_Leg_1  -->
-                            <!-- Steve___11 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[15]) -->
+                            --><!-- IN_R_Leg_1  -->
+                            <!-- Steve___11 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[15]) --><!--
                             <GeometryModel3D x:Name="Steve___11OR45GR46" Geometry="{DynamicResource Steve___11OR45GR46}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___12OR48" Transform="{DynamicResource Steve___12OR48TR47}">
-                            <!-- IN_L_Arm_0  -->
-                            <!-- Steve___12 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[16]) -->
+                            --><!-- IN_L_Arm_0  -->
+                            <!-- Steve___12 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[16]) --><!--
                             <GeometryModel3D x:Name="Steve___12OR48GR49" Geometry="{DynamicResource Steve___12OR48GR49}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___13OR51" Transform="{DynamicResource Steve___13OR51TR50}">
-                            <!-- IN_L_Arm_1  -->
-                            <!-- Steve___13 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[17]) -->
+                            --><!-- IN_L_Arm_1  -->
+                            <!-- Steve___13 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[17]) --><!--
                             <GeometryModel3D x:Name="Steve___13OR51GR52" Geometry="{DynamicResource Steve___13OR51GR52}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___14OR54" Transform="{DynamicResource Steve___14OR54TR53}">
-                            <!-- IN_R_Arm_0  -->
-                            <!-- Steve___14 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[18]) -->
+                            --><!-- IN_R_Arm_0  -->
+                            <!-- Steve___14 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[18]) --><!--
                             <GeometryModel3D x:Name="Steve___14OR54GR55" Geometry="{DynamicResource Steve___14OR54GR55}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___15OR57" Transform="{DynamicResource Steve___15OR57TR56}">
-                            <!-- IN_R_Arm_1  -->
-                            <!-- Steve___15 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[19]) -->
+                            --><!-- IN_R_Arm_1  -->
+                            <!-- Steve___15 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[19]) --><!--
                             <GeometryModel3D x:Name="Steve___15OR57GR58" Geometry="{DynamicResource Steve___15OR57GR58}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___17OR63" Transform="{DynamicResource Steve___17OR63TR62}">
-                            <!-- IN_Head  -->
-                            <!-- Steve___17 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[21]) -->
+                            --><!-- IN_Head  -->
+                            <!-- Steve___17 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[21]) --><!--
                             <GeometryModel3D x:Name="Steve___17OR63GR64" Geometry="{DynamicResource Steve___17OR63GR64}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M7OR33" Transform="{DynamicResource Steve___M7OR33TR32}">
-                            <!-- OUT_Body  -->
-                            <!-- Steve___M7 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[11]) -->
+                            --><!-- OUT_Body  -->
+                            <!-- Steve___M7 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[11]) --><!--
                             <GeometryModel3D x:Name="Steve___M7OR33GR34" Geometry="{DynamicResource Steve___M7OR33GR34}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___MoOR9" Transform="{DynamicResource Steve___MoOR9TR8}">
-                            <!-- OUT_L_Arm_0  -->
-                            <!-- Steve___Mo (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[3]) -->
+                            --><!-- OUT_L_Arm_0  -->
+                            <!-- Steve___Mo (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[3]) --><!--
                             <GeometryModel3D x:Name="Steve___MoOR9GR10" Geometry="{DynamicResource Steve___MoOR9GR10}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M0OR12" Transform="{DynamicResource Steve___M0OR12TR11}">
-                            <!-- OUT_L_Arm_1  -->
-                            <!-- Steve___M0 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[4]) -->
+                            --><!-- OUT_L_Arm_1  -->
+                            <!-- Steve___M0 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[4]) --><!--
                             <GeometryModel3D x:Name="Steve___M0OR12GR13" Geometry="{DynamicResource Steve___M0OR12GR13}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M1OR15" Transform="{DynamicResource Steve___M1OR15TR14}">
-                            <!-- OUT_R_Arm_0  -->
-                            <!-- Steve___M1 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[5]) -->
+                            --><!-- OUT_R_Arm_0  -->
+                            <!-- Steve___M1 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[5]) --><!--
                             <GeometryModel3D x:Name="Steve___M1OR15GR16" Geometry="{DynamicResource Steve___M1OR15GR16}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M2OR18" Transform="{DynamicResource Steve___M2OR18TR17}">
-                            <!-- OUT_R_Arm_1  -->
-                            <!-- Steve___M2 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[6]) -->
+                            --><!-- OUT_R_Arm_1  -->
+                            <!-- Steve___M2 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[6]) --><!--
                             <GeometryModel3D x:Name="Steve___M2OR18GR19" Geometry="{DynamicResource Steve___M2OR18GR19}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M3OR21" Transform="{DynamicResource Steve___M3OR21TR20}">
-                            <!-- OUT_L_Leg_0  -->
-                            <!-- Steve___M3 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[7]) -->
+                            --><!-- OUT_L_Leg_0  -->
+                            <!-- Steve___M3 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[7]) --><!--
                             <GeometryModel3D x:Name="Steve___M3OR21GR22" Geometry="{DynamicResource Steve___M3OR21GR22}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M4OR24" Transform="{DynamicResource Steve___M4OR24TR23}">
-                            <!-- OUT_L_Leg_1  -->
-                            <!-- Steve___M4 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[8]) -->
+                            --><!-- OUT_L_Leg_1  -->
+                            <!-- Steve___M4 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[8]) --><!--
                             <GeometryModel3D x:Name="Steve___M4OR24GR25" Geometry="{DynamicResource Steve___M4OR24GR25}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M5OR27" Transform="{DynamicResource Steve___M5OR27TR26}">
-                            <!-- OUT_R_Leg_0  -->
-                            <!-- Steve___M5 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[9]) -->
+                            --><!-- OUT_R_Leg_0  -->
+                            <!-- Steve___M5 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[9]) --><!--
                             <GeometryModel3D x:Name="Steve___M5OR27GR28" Geometry="{DynamicResource Steve___M5OR27GR28}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___M6OR30" Transform="{DynamicResource Steve___M6OR30TR29}">
-                            <!-- OUT_R_Leg_1  -->
-                            <!-- Steve___M6 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[10]) -->
+                            --><!-- OUT_R_Leg_1  -->
+                            <!-- Steve___M6 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[10]) --><!--
                             <GeometryModel3D x:Name="Steve___M6OR30GR31" Geometry="{DynamicResource Steve___M6OR30GR31}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                         <Model3DGroup x:Name="Steve___16OR60" Transform="{DynamicResource Steve___16OR60TR59}">
-                            <!-- OUT_Head  -->
-                            <!-- Steve___16 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[20]) -->
+                            --><!-- OUT_Head  -->
+                            <!-- Steve___16 (XAML Path = (Viewport3D.Children)[0].(ModelVisual3D.Content).(Model3DGroup.Children)[20]) --><!--
                             <GeometryModel3D x:Name="Steve___16OR60GR61" Geometry="{DynamicResource Steve___16OR60GR61}" Material="{DynamicResource steveMR1}" BackMaterial="{DynamicResource steveMR1}"/>
                         </Model3DGroup>
                     </Model3DGroup>
@@ -148,6 +148,6 @@
             <helix:HelixViewport3D.Camera>
                 <PerspectiveCamera x:Name="FrontOR6" LookDirection="0,0,-1" Position="0,100,200" UpDirection="0,1,0"/>
             </helix:HelixViewport3D.Camera>
-        </helix:HelixViewport3D>
+        </helix:HelixViewport3D>-->
     </Grid>
 </UserControl>

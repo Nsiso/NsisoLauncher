@@ -14,10 +14,10 @@ namespace NsisoLauncherCore.Net.Tools
             string arch_str;
             switch (arch)
             {
-                case ArchEnum.x32:
+                case ArchEnum.X86:
                     arch_str = "32";
                     break;
-                case ArchEnum.x64:
+                case ArchEnum.X64:
                     arch_str = "64";
                     break;
                 default:

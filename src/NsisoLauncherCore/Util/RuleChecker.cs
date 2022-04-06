@@ -34,13 +34,13 @@ namespace NsisoLauncherCore.Util
                 {
                     switch (SystemTools.GetSystemArch())
                     {
-                        case ArchEnum.x32:
+                        case ArchEnum.X86:
                             if (rule.OS.Arch != "x86")
                             {
                                 return n;
                             }
                             break;
-                        case ArchEnum.x64:
+                        case ArchEnum.X64:
                             if (rule.OS.Arch != "x64")
                             {
                                 return n;

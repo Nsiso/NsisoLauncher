@@ -1,23 +1,27 @@
-﻿using Microsoft.VisualBasic.Devices;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Linq;
 using System.Management;
 using System.Text;
+using Hardware.Info;
+using System.Runtime.InteropServices;
 
 namespace NsisoLauncherCore.Util
 {
     public enum ArchEnum
     {
-        x32,
-        x64
+        X86,
+        X64,
+        Arm,
+        Arm64
     }
 
     public enum OsType
     {
         Windows,
         Linux,
-        MacOS
+        MacOSX,
+        Unknown
     }
 
     public class SystemTools
@@ -34,11 +38,11 @@ namespace NsisoLauncherCore.Util
                 int rm = Convert.ToInt32(Math.Floor(GetRunmemory() * 0.6));
                 switch (java.Arch)
                 {
-                    case ArchEnum.x32:
+                    case ArchEnum.X86:
                         if (rm > 1024) { return 1024; }
                         else { return rm; }
 
-                    case ArchEnum.x64:
+                    case ArchEnum.X64:
                         if (rm > 4096) { return 4096; }
                         else { return rm; }
 
@@ -59,7 +63,10 @@ namespace NsisoLauncherCore.Util
         /// <returns>物理内存</returns>
         public static ulong GetTotalMemory()
         {
-            return new Computer().Info.TotalPhysicalMemory / 1048576;
+            HardwareInfo hardwareInfo = new HardwareInfo();
+            hardwareInfo.RefreshMemoryStatus();
+            ulong total = hardwareInfo.MemoryStatus.TotalPhysical;
+            return total / 1048576;
         }
 
         /// <summary>
@@ -68,19 +75,35 @@ namespace NsisoLauncherCore.Util
         /// <returns>32 or 64</returns>
         public static ArchEnum GetSystemArch()
         {
-            if (Environment.Is64BitOperatingSystem)
+            switch (RuntimeInformation.OSArchitecture)
             {
-                return ArchEnum.x64;
-            }
-            else
-            {
-                return ArchEnum.x32;
+                case Architecture.Arm:
+                    return ArchEnum.Arm;
+                case Architecture.Arm64:
+                    return ArchEnum.Arm64;
+                case Architecture.X64:
+                    return ArchEnum.X64;
+                case Architecture.X86:
+                    return ArchEnum.X86;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
         public static OsType GetOsType()
         {
-            // this is a hard code, if change to .net core you shoul make a choice.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OsType.Windows;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OsType.Linux;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OsType.MacOSX;
+            }
             return OsType.Windows;
         }
 
@@ -90,8 +113,10 @@ namespace NsisoLauncherCore.Util
         /// <returns>剩余内存</returns>
         public static ulong GetRunmemory()
         {
-            ComputerInfo ComputerMemory = new ComputerInfo();
-            return ComputerMemory.AvailablePhysicalMemory / 1048576;
+            HardwareInfo hardwareInfo = new HardwareInfo();
+            hardwareInfo.RefreshMemoryStatus();
+            ulong avail = hardwareInfo.MemoryStatus.AvailablePhysical;
+            return avail / 1048576;
         }
 
         /// <summary>
@@ -102,17 +127,20 @@ namespace NsisoLauncherCore.Util
         {
             try
             {
+                HardwareInfo hardwareInfo = new HardwareInfo();
+                hardwareInfo.RefreshVideoControllerList();
+                var videoControllers = hardwareInfo.VideoControllerList;
+
                 var sb = new StringBuilder();
-                var i = 0;
-                foreach (var mo in new ManagementClass("Win32_VideoController").GetInstances().Cast<ManagementObject>())
+                foreach (var item in videoControllers)
                 {
-                    sb.Append('#').Append(i++).Append(mo["Name"].ToString().Trim()).Append(' ');
+                    sb.AppendLine(item.ToString());
                 }
                 return sb.ToString();
             }
             catch
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -138,63 +166,104 @@ namespace NsisoLauncherCore.Util
             }
         }
 
-        public static bool IsSetupFrameworkUpdate(string name)
+        public static string GetSystemSummary()
         {
-            if (GetSystemArch() == ArchEnum.x32)
-            {
-                return IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Updates"), name);
-            }
-            else
-            {
-                bool key32 = IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Updates"), name);
-                if (key32)
-                {
-                    return true;
-                }
-                bool key64 = IsSetupFrameworkUpdateInner(Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Updates"), name);
-                if (key64)
-                {
-                    return true;
-                }
-                return false;
-            }
-        }
+            HardwareInfo hardwareInfo = new HardwareInfo();
+            hardwareInfo.RefreshCPUList(false);
+            hardwareInfo.RefreshMemoryStatus();
+            hardwareInfo.RefreshMemoryList();
+            hardwareInfo.RefreshMotherboardList();
+            hardwareInfo.RefreshBIOSList();
+            hardwareInfo.RefreshVideoControllerList();
+            hardwareInfo.RefreshSoundDeviceList();
+            hardwareInfo.RefreshNetworkAdapterList();
+            hardwareInfo.RefreshDriveList();
 
-        private static bool IsSetupFrameworkUpdateInner(RegistryKey baseKey, string name)
-        {
-            if (baseKey != null)
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("The system summary information:");
+            builder.AppendLine();
+
+            // CPU
+            builder.AppendLine("The CPU informations");
+            foreach (var item in hardwareInfo.CpuList)
             {
-                foreach (string baseKeyName in baseKey.GetSubKeyNames())
-                {
-                    if (baseKeyName.Contains(".NET Framework"))
-                    {
-                        using (RegistryKey updateKey = baseKey.OpenSubKey(baseKeyName))
-                        {
-                            foreach (string kbKeyName in updateKey.GetSubKeyNames())
-                            {
-                                Console.WriteLine(kbKeyName);
-                                if (kbKeyName.Equals(name))
-                                {
-                                    return true;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                return false;
+                builder.AppendLine(item.ToString());
             }
-            else
+            builder.AppendLine();
+
+            // RAM
+            builder.AppendLine("The Memory informations");
+            hardwareInfo.MemoryStatus.ToString();
+            builder.AppendLine("The Memory sticks informations");
+            foreach (var item in hardwareInfo.MemoryList)
             {
-                return false;
+                builder.AppendLine(item.ToString());
             }
+            builder.AppendLine();
+
+            // MOTHERBOARD
+            builder.AppendLine("The motherboard informations");
+            foreach (var item in hardwareInfo.MotherboardList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // BIOS
+            builder.AppendLine("The BIOS informations");
+            foreach (var item in hardwareInfo.BiosList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // VIDEO CONTROLLER
+            builder.AppendLine("The video controller informations");
+            foreach (var item in hardwareInfo.VideoControllerList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // SOUND DEVICE
+            builder.AppendLine("The sound devices informations");
+            foreach (var item in hardwareInfo.SoundDeviceList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // NETWORK
+            builder.AppendLine("The network adapter informations");
+            foreach (var item in hardwareInfo.NetworkAdapterList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // DRIVE
+            builder.AppendLine("The drive informations");
+            foreach (var item in hardwareInfo.DriveList)
+            {
+                builder.AppendLine(item.ToString());
+            }
+            builder.AppendLine();
+
+            // OS
+            builder.AppendLine("The os informations");
+            builder.AppendLine(RuntimeInformation.OSDescription);
+            builder.AppendLine(Environment.OSVersion.ToString());
+            builder.AppendLine("Process Architecture: " + RuntimeInformation.ProcessArchitecture);
+            builder.AppendLine("OS Architecture: " + RuntimeInformation.OSArchitecture);
+            builder.AppendLine();
+
+            // PROG
+            builder.AppendLine("The prog informations");
+            builder.AppendLine("Command Line:" + Environment.CommandLine);
+            builder.AppendLine("Current Directory:" + Environment.CurrentDirectory);
+            builder.AppendLine();
+
+            return builder.ToString();
         }
     }
 }

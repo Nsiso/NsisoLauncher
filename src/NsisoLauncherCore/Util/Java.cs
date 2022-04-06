@@ -132,7 +132,7 @@ namespace NsisoLauncherCore.Util
                     string type = firstL[0];
                     string version = firstL[2].Trim('\"');
                     bool is64 = result.Contains("64-Bit");
-                    ArchEnum arch = is64 ? ArchEnum.x64 : ArchEnum.x32;
+                    ArchEnum arch = is64 ? ArchEnum.X64 : ArchEnum.X86;
                     Java info = new Java(javaPath, version, arch)
                     {
                         Type = type
@@ -182,15 +182,15 @@ namespace NsisoLauncherCore.Util
                 IOrderedEnumerable<Java> ordered_javas = null;
                 switch (arch)
                 {
-                    case ArchEnum.x32:
-                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.x32).OrderByDescending(x => x.Version);
+                    case ArchEnum.X86:
+                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.X86).OrderByDescending(x => x.Version);
                         break;
-                    case ArchEnum.x64:
+                    case ArchEnum.X64:
                         //ordered_javas = javalist.OrderByDescending(a => a.Version).ThenByDescending(x => x.Arch);
                         ordered_javas = javalist.OrderByDescending(x => x.Version).ThenByDescending(x => x.Arch);
                         break;
                     default:
-                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.x32).OrderByDescending(x => x.Version);
+                        ordered_javas = javalist.Where(x => x.Arch == ArchEnum.X86).OrderByDescending(x => x.Version);
                         break;
                 }
 
@@ -356,21 +356,21 @@ namespace NsisoLauncherCore.Util
             ArchEnum arch = SystemTools.GetSystemArch();
             switch (arch)
             {
-                case ArchEnum.x32:
+                case ArchEnum.X86:
                     var jres = GetJavaRegisterPath(localMachine);
-                    javas.AddRange(jres.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    javas.AddRange(jres.Select(x => new Java(x.Value, x.Key, ArchEnum.X86)));
                     break;
 
-                case ArchEnum.x64:
+                case ArchEnum.X64:
                     var jres64 = GetJavaRegisterPath(localMachine);
-                    javas.AddRange(jres64.Select(x => new Java(x.Value, x.Key, ArchEnum.x64)));
+                    javas.AddRange(jres64.Select(x => new Java(x.Value, x.Key, ArchEnum.X64)));
                     var jres32 = GetJavaRegisterPath(localMachine.OpenSubKey("Wow6432Node"));
-                    javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    javas.AddRange(jres32.Select(x => new Java(x.Value, x.Key, ArchEnum.X86)));
                     break;
 
                 default:
                     var jresDefault = GetJavaRegisterPath(localMachine);
-                    javas.AddRange(jresDefault.Select(x => new Java(x.Value, x.Key, ArchEnum.x32)));
+                    javas.AddRange(jresDefault.Select(x => new Java(x.Value, x.Key, ArchEnum.X86)));
                     break;
             }
             return javas;
@@ -389,14 +389,14 @@ namespace NsisoLauncherCore.Util
             {
                 case OsType.Windows:
                     ArchEnum arch = SystemTools.GetSystemArch();
-                    Tuple<string, ArchEnum> win86 = new Tuple<string, ArchEnum>("windows-x86", ArchEnum.x32);
-                    Tuple<string, ArchEnum> win64 = new Tuple<string, ArchEnum>("windows-x64", ArchEnum.x64);
+                    Tuple<string, ArchEnum> win86 = new Tuple<string, ArchEnum>("windows-x86", ArchEnum.X86);
+                    Tuple<string, ArchEnum> win64 = new Tuple<string, ArchEnum>("windows-x64", ArchEnum.X64);
                     switch (arch)
                     {
-                        case ArchEnum.x32:
+                        case ArchEnum.X86:
                             names.Add(win86);
                             break;
-                        case ArchEnum.x64:
+                        case ArchEnum.X64:
                             names.Add(win86);
                             names.Add(win64);
                             break;
@@ -406,10 +406,10 @@ namespace NsisoLauncherCore.Util
                     }
                     break;
                 case OsType.Linux:
-                    names.Add(new Tuple<string, ArchEnum>("linux", ArchEnum.x64));
+                    names.Add(new Tuple<string, ArchEnum>("linux", ArchEnum.X64));
                     break;
-                case OsType.MacOS:
-                    names.Add(new Tuple<string, ArchEnum>("mac-os", ArchEnum.x64));
+                case OsType.MacOSX:
+                    names.Add(new Tuple<string, ArchEnum>("mac-os", ArchEnum.X64));
                     break;
                 default:
                     break;

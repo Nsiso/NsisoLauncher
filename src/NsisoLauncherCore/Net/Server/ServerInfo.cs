@@ -1,4 +1,4 @@
-﻿using Heijden.DNS;
+﻿using DnsClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -72,7 +72,7 @@ namespace NsisoLauncherCore.Net.Server
         public string Motd { get => Description?.ToString(); }
 
         [JsonIgnore]
-        public byte[] FaviconByteArray { get{ return Convert.FromBase64String(Favicon.Replace("data:image/png;base64,", "")); } }
+        public byte[] FaviconByteArray { get { return Convert.FromBase64String(Favicon.Replace("data:image/png;base64,", "")); } }
 
         /// <summary>
         /// The ping delay time.(ms)
@@ -162,12 +162,15 @@ namespace NsisoLauncherCore.Net.Server
                 }
                 catch (SocketException ex)
                 {
-                    RecordSRV result = (RecordSRV)new Resolver().Query("_minecraft._tcp." + this.ServerAddress, QType.SRV).Answers?.FirstOrDefault()?.RECORD;
-                    if (result != null)
+                    var lookup = new LookupClient();
+                    var result = lookup.Query(string.Format("_minecraft._tcp.{0}", this.ServerAddress), QueryType.SRV);
+                    if (!result.HasError)
                     {
-                        tcp = new TcpClient(result.TARGET, result.PORT);
-                        this.ServerAddress = result.TARGET;
-                        this.ServerPort = result.PORT;
+                        var record = result.Answers.SrvRecords().FirstOrDefault();
+
+                        tcp = new TcpClient(record.Target, record.Port);
+                        this.ServerAddress = record.Target;
+                        this.ServerPort = record.Port;
                     }
                     else
                     {

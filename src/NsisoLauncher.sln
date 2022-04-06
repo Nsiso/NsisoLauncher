@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsisoLauncher", "NsisoLauncher\NsisoLauncher.csproj", "{6D9DFDAF-8762-4CFA-B8CA-EBF68934F936}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NsisoLauncher", "NsisoLauncher\NsisoLauncher.csproj", "{6D9DFDAF-8762-4CFA-B8CA-EBF68934F936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsisoLauncherCore", "NsisoLauncherCore\NsisoLauncherCore.csproj", "{8EDD876E-B824-4EC9-A5D1-AACEC9ED2FFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NsisoLauncherCore", "NsisoLauncherCore\NsisoLauncherCore.csproj", "{8EDD876E-B824-4EC9-A5D1-AACEC9ED2FFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsisoLauncherCoreTest", "NsisoLauncherCoreTest\NsisoLauncherCoreTest.csproj", "{DBE22B54-45F4-40C7-9283-33E6743FFFE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NsisoLauncherCoreTest", "NsisoLauncherCoreTest\NsisoLauncherCoreTest.csproj", "{EFC27523-A460-44D5-8872-170DF04D266E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{8EDD876E-B824-4EC9-A5D1-AACEC9ED2FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EDD876E-B824-4EC9-A5D1-AACEC9ED2FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EDD876E-B824-4EC9-A5D1-AACEC9ED2FFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBE22B54-45F4-40C7-9283-33E6743FFFE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBE22B54-45F4-40C7-9283-33E6743FFFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBE22B54-45F4-40C7-9283-33E6743FFFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBE22B54-45F4-40C7-9283-33E6743FFFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC27523-A460-44D5-8872-170DF04D266E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFC27523-A460-44D5-8872-170DF04D266E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFC27523-A460-44D5-8872-170DF04D266E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFC27523-A460-44D5-8872-170DF04D266E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

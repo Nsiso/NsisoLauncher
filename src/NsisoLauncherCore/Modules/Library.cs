@@ -140,10 +140,10 @@ namespace NsisoLauncherCore.Modules
                     string arch;
                     switch (SystemTools.GetSystemArch())
                     {
-                        case ArchEnum.x32:
+                        case ArchEnum.X86:
                             arch = "32";
                             break;
-                        case ArchEnum.x64:
+                        case ArchEnum.X64:
                             arch = "64";
                             break;
                         default:

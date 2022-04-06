@@ -105,26 +105,13 @@ namespace NsisoLauncher.Views.Windows
             this.ShowMessageAsync("复制成功", "你现在可以点击窗口左下角作者联系方式，并把这该死的错误抛给他");
         }
 
-        private string GetEnvironmentInfo()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("\r\n==========环境信息==========");
-            builder.Append("\r\nCPU信息:" + SystemTools.GetProcessorInfo());
-            builder.Append("\r\n内存信息: 总大小:" + SystemTools.GetTotalMemory().ToString() + "MB/可用大小:" + SystemTools.GetRunmemory().ToString() + "MB");
-            builder.Append("\r\n显卡信息:" + SystemTools.GetVideoCardInfo());
-            builder.Append("\r\n操作系统:" + Environment.OSVersion.Platform);
-            builder.Append("\r\n版本号:" + Environment.OSVersion.VersionString);
-            builder.Append("\r\n系统位数:" + SystemTools.GetSystemArch());
-            builder.Append("\r\n程序运行命令行:" + Environment.CommandLine);
-            builder.Append("\r\n程序工作目录:" + Environment.CurrentDirectory);
-            return builder.ToString();
-        }
+
 
         private Task<string> GetEnvironmentInfoAsync()
         {
             return Task.Factory.StartNew(() =>
             {
-                return GetEnvironmentInfo();
+                return SystemTools.GetSystemSummary();
             });
         }
 

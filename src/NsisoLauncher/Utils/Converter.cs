@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -190,6 +191,7 @@ namespace NsisoLauncher.Utils
     }
 
     [ValueConversion(typeof(NsisoLauncherCore.Net.Server.ServerInfo.StateType), typeof(MahApps.Metro.IconPacks.PackIconFontAwesomeKind))]
+    [SupportedOSPlatform("windows")]
     public class ServerStateToIconTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -549,12 +549,12 @@ namespace NsisoLauncher.ViewModels.Pages
                 #endregion
 
                 #region 性能警告
-                if (launchSetting.UsingJava?.Arch == ArchEnum.x32 && SystemTools.GetSystemArch() == ArchEnum.x64)
+                if (launchSetting.UsingJava?.Arch == ArchEnum.X86 && SystemTools.GetSystemArch() == ArchEnum.X64)
                 {
                     await MainWindowVM.ShowMessageAsync("性能优化提示",
                         "您正在使用32位的java启动minecraft，但您的系统为64位，使用64位的java能提升游戏性能");
                 }
-                if (launchSetting.UsingJava?.Arch == ArchEnum.x32 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
+                if (launchSetting.UsingJava?.Arch == ArchEnum.X86 && App.Config.MainConfig.Environment.AutoMemory == false && App.Config.MainConfig.Environment.MaxMemory > 1536)
                 {
                     await MainWindowVM.ShowMessageAsync("内存分配警告",
                         "您正在使用32位的java启动minecraft，但您设置了手动分配内存且最大内存超过32位java限制。这可能导致游戏无法启动或崩溃");
