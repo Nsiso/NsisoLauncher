@@ -41,11 +41,11 @@ jobs:
       run: dotnet test --configuration $env:Configuration
       
     - name: Publish x64
-      working-directory: ${{ env.working_dir }}\${{ launcher_name }}
+      working-directory: ${{ env.working_dir }}\${{ env.launcher_name }}
       run: dotnet publish -r win-x64 --self-contained=false --configuration $env:Configuration /p:PublishSingleFile=true
       
     - name: Publish x86
-      working-directory: ${{ env.working_dir }}\${{ launcher_name }}
+      working-directory: ${{ env.working_dir }}\${{ env.launcher_name }}
       run: dotnet publish -r win-x86 --self-contained=false --configuration $env:Configuration /p:PublishSingleFile=true
       
     - name: Upload build artifacts
