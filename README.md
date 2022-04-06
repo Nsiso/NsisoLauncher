@@ -1,7 +1,6 @@
 # NsisoLauncher(DEV)
 
 A New Minecraft Launcher (unofficial) from Nsiso (DEV)  
-[![Build status](https://ci.appveyor.com/api/projects/status/st6w0l4x1fvf6m5f/branch/dev?svg=true)](https://ci.appveyor.com/project/nsisogf/nsisolauncher/branch/dev)
 [![Build Status](https://nsisogf.visualstudio.com/NsisoLauncher/_apis/build/status/Nsiso.NsisoLauncher?branchName=dev)](https://nsisogf.visualstudio.com/NsisoLauncher/_build/latest?definitionId=1&branchName=dev)
 ![Build](https://github.com/Nsiso/NsisoLauncher/workflows/Build/badge.svg?branch=dev)
 
@@ -94,14 +93,6 @@ Copyright 2017 Enzo Innocenzi
 MojangSharp is a C# wrapper for the Mojang API and Mojang Authentication API.  
 Licensed under the Apache License, Version 2.0;  
 <https://github.com/hawezo/MojangSharp/blob/master/LICENSE>  
-
-## Heijden.Dns
-
-<https://github.com/ghuntley/Heijden.Dns>  
-Copyright (c) 2008-2013 Alphons van der Heijden avanderheijden@moneywise.nl Copyright (c) 2014 Geoffrey Huntley ghuntley@ghuntley.com  
-A reusable DNS resolver for .NET  
-Licensed under the MIT License(MIT);  
-<https://github.com/ghuntley/Heijden.Dns/blob/master/LICENSE.md>  
 
 ## Minecraft-Console-Client
 
