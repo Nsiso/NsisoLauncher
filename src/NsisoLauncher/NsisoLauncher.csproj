@@ -59,10 +59,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>5.7.0</Version>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Fody">
       <Version>6.6.0</Version>
       <PrivateAssets>all</PrivateAssets>
@@ -78,7 +74,6 @@
     <PackageReference Include="Microsoft.Identity.Client">
       <Version>4.43.0</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
     </PackageReference>
