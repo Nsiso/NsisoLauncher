@@ -144,6 +144,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="0">
                     <iconPacks:PackIconFontAwesome Kind="CubeSolid" Margin="5"/>
@@ -153,7 +154,7 @@
                     <ComboBox ItemsSource="{Binding User.Authenticators}" DisplayMemberPath="Value.Name"
                           SelectedValuePath="Key" SelectedValue="{Binding User.SelectedAuthenticatorId}"
                           controls:TextBoxHelper.Watermark="选择验证类型" Width="165"/>
-                    <Button Width="30" Content="{iconPacks:FontAwesome Kind=PlusSolid, Width='10', Height='10'}"
+                    <Button Width="30" Content="{iconPacks:FontAwesome Kind=CogSolid, Width='10', Height='10'}"
                             Margin="5,0,0,0" Command="{Binding AddAuthNodeCmd}"/>
                 </StackPanel>
 
@@ -183,7 +184,10 @@
                 </StackPanel>
                 <Button Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="登录" 
                         IsEnabled="{Binding User.SelectedAuthenticator, Converter={StaticResource objectNullToBooleanConverter}}"
-                        Grid.Row="4" Grid.ColumnSpan="2" Margin="0,10" Command="{Binding LoginCmd}"/>
+                        Grid.Row="4" Grid.ColumnSpan="2" Margin="0,10,0,0" Command="{Binding LoginCmd}"/>
+                <Button Style="{StaticResource MahApps.Styles.Button.Square}" Content="创建新用户/注册" 
+                        IsEnabled="{Binding User.SelectedAuthenticator, Converter={StaticResource objectNullToBooleanConverter}}"
+                        Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Command="{Binding LoginCmd}"/>
             </Grid>
 
         </Grid>

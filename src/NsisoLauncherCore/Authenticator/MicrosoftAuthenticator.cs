@@ -89,7 +89,7 @@ namespace NsisoLauncherCore.Authenticator
         [JsonIgnore]
         public bool AllowSignout => false;
         [JsonIgnore]
-        public bool AllowInvalidate => false;
+        public bool AllowInvalidate => true;
 
         public bool Locked { get; set; }
 
@@ -111,7 +111,14 @@ namespace NsisoLauncherCore.Authenticator
                     profile = await mcServices.GetProfile(result.AccessToken, mc_result, cancellation).ConfigureAwait(false);
                 }
                 MicrosoftUser user = new MicrosoftUser(result.Account, mc_result, profile);
-                this.Users.Add(user.UserId, user);
+                if (!Users.ContainsKey(user.UserId))
+                {
+                    this.Users.Add(user.UserId, user);
+                }
+                else
+                {
+                    this.Users[user.UserId] = user;
+                }
                 this.SelectedUserId = user.UserId;
                 this.IsOnline = true;
                 return new AuthenticateResult() { State = AuthenticateState.SUCCESS };
@@ -173,7 +180,10 @@ namespace NsisoLauncherCore.Authenticator
 
         public Task<AuthenticateResult> InvalidateAsync(CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            this.IsOnline = false;
+            this.SelectedUserId = null;
+            AuthenticateResult authenticateResult = new AuthenticateResult() { State = AuthenticateState.SUCCESS };
+            return Task.FromResult(authenticateResult);
         }
 
         public Task<AuthenticateResult> SignoutAsync(CancellationToken cancellation)

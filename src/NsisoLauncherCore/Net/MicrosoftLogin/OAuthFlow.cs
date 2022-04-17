@@ -21,6 +21,8 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
 
         private readonly string[] scopes = { "XboxLive.signin", "offline_access" };
 
+        private readonly SystemWebViewOptions systemWebViewOptions = CustomHTML.GetCustomHTML();
+
         /// <summary>
         /// Azure client ID
         /// </summary>
@@ -30,10 +32,11 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
         public OAuthFlow(string clientId)
         {
             this.ClientId = clientId;
+
             publicClientApp = PublicClientApplicationBuilder.Create(ClientId)
-                .WithDefaultRedirectUri()
-                .WithAuthority(AzureCloudInstance.AzurePublic, tenant)
-                .Build();
+                    .WithAuthority(AzureCloudInstance.AzurePublic, tenant)
+                    .WithRedirectUri("http://localhost")
+                    .Build();
         }
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             try
             {
                 var authResult = await publicClientApp.AcquireTokenInteractive(scopes)
+                    .WithSystemWebViewOptions(systemWebViewOptions)
                     .ExecuteAsync(cancellation);
                 return authResult;
             }
