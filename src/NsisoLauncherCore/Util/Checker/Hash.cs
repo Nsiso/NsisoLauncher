@@ -9,27 +9,12 @@ namespace NsisoLauncherCore.Util.Checker
     {
         public HashType Type { get; set; }
 
-        private string _value;
-        public string Value
-        {
-            get { return _value; }
-            set
-            {
-                if (_value != null)
-                {
-                    this._value = value.ToLower();
-                }
-                else
-                {
-                    this.Value = value;
-                }
-            }
-        }
+        public string Value { get; set; }
 
         public Hash(HashType type, string value)
         {
             this.Type = type;
-            this._value = value;
+            this.Value = value;
         }
 
         public HashAlgorithm GetHashAlgorithm()
@@ -68,7 +53,7 @@ namespace NsisoLauncherCore.Util.Checker
 
         public bool Equals(Hash hash)
         {
-            return Type.Equals(hash.Type) && Value.Equals(hash.Value);
+            return Equals(hash.Type, hash.Value);
         }
 
         public bool Equals(HashType type, string hash)
