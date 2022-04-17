@@ -150,8 +150,8 @@ namespace NsisoLauncher.ViewModels.Pages
             //}
         }
 
-        private async Task Login()
-        {
+        //private async Task Login()
+        //{
             //if (SelectedAuthenticationNode == null)
             //{
             //    await App.MainWindowVM.ShowMessageAsync("您没有选择登录类型", "请在登录类型选择框中选择你要进行登录的版本。");
@@ -180,10 +180,10 @@ namespace NsisoLauncher.ViewModels.Pages
             //    default:
             //        break;
             //}
-        }
+        //}
 
-        private async Task OfflineLogin()
-        {
+        //private async Task OfflineLogin()
+        //{
             //string username = InputUsername;
             //if (string.IsNullOrWhiteSpace(username))
             //{
@@ -223,10 +223,10 @@ namespace NsisoLauncher.ViewModels.Pages
             //};
 
             //LoginNode(userNode);
-        }
+        //}
 
-        private async Task MicrosoftLogin()
-        {
+        //private async Task MicrosoftLogin()
+        //{
             //MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
             //var result = await authenticator.LoginGetMinecraftToken();
             //if (loginWindow.LoggedInUser != null)
@@ -251,7 +251,7 @@ namespace NsisoLauncher.ViewModels.Pages
             //{
             //    //todo 提醒用户登录未成功
             //}
-        }
+        //}
 
         //private async Task YggdrasilLogin()
         //{

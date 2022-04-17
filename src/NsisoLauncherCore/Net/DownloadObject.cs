@@ -33,9 +33,9 @@ namespace NsisoLauncherCore.Net
         public Func<ProgressCallback, CancellationToken, Exception> Todo { get; set; }
 
         /// <summary>
-        /// 校验器，不设置即不校验
+        /// 校验HASH，不设置即不校验
         /// </summary>
-        public IChecker Checker { get; set; }
+        public Hash CheckHash { get; set; }
 
         public DownloadObject(IDownloadable downloadable, string to)
         {

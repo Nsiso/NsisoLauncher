@@ -1,5 +1,6 @@
 ﻿using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net.Mirrors;
+using NsisoLauncherCore.Util.Checker;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,15 +31,15 @@ namespace NsisoLauncherCore.Net
                     client.DownloadFile(obj.Downloadable.GetDownloadSourceURL(), obj.To);
                 }
                 #region 下载后校验
-                if (obj.Checker != null)
+                if (obj.CheckHash != null)
                 {
-                    if (!obj.Checker.CheckFilePass())
+                    if (!HashChecker.CheckFilePass(obj.CheckHash, obj.To))
                     {
                         return new DownloadResult()
                         {
                             IsSuccess = false,
                             ObjectToDownload = obj,
-                            DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.Checker.CheckSum))
+                            DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.CheckHash))
                         };
                     }
                 }
@@ -143,10 +144,10 @@ namespace NsisoLauncherCore.Net
                     }
                     if (File.Exists(realFilename))
                     {
-                        if (downloadSetting.CheckFileHash && obj.Checker != null)
+                        if (downloadSetting.CheckFileHash && obj.CheckHash != null)
                         {
                             progressCallback.State = "校验中";
-                            if (await obj.Checker.CheckFilePassAsync())
+                            if (await HashChecker.CheckFilePassAsync(obj.CheckHash, realFilename))
                             {
                                 downloadResult.IsSuccess = true;
                                 return downloadResult;
@@ -194,13 +195,13 @@ namespace NsisoLauncherCore.Net
                     File.Move(buffFilename, realFilename);
 
                     #region 下载后校验
-                    if (downloadSetting.CheckFileHash && obj.Checker != null)
+                    if (downloadSetting.CheckFileHash && obj.CheckHash != null)
                     {
                         progressCallback.State = "校验中";
-                        if (!await obj.Checker.CheckFilePassAsync().ConfigureAwait(false))
+                        if (!await HashChecker.CheckFilePassAsync(obj.CheckHash, realFilename).ConfigureAwait(false))
                         {
                             progressCallback.State = "校验失败";
-                            downloadResult.DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.Checker.CheckSum));
+                            downloadResult.DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.CheckHash));
                         }
                         else
                         {

@@ -41,6 +41,12 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ViewModels\Dialogs\**" />
+    <EmbeddedResource Remove="ViewModels\Dialogs\**" />
+    <None Remove="ViewModels\Dialogs\**" />
+    <Page Remove="ViewModels\Dialogs\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="FodyWeavers.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -102,9 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\Steve.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Dialogs\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\minecraft_logo.png" />

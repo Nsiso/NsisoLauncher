@@ -35,7 +35,7 @@ namespace NsisoLauncherCore.Net.Tools
 
         private static string GetAssetsBasePath(JAssetInfo assetsInfo)
         {
-            return $"{(assetsInfo.Hash.Substring(0, 2))}/{assetsInfo.Hash}";
+            return $"{assetsInfo.Hash.Substring(0, 2)}/{assetsInfo.Hash}";
         }
 
         public static async Task<string> GetCoreJsonDownloadURL(string verID, IVersionListMirror mirror)
@@ -95,7 +95,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask downloadTask = new DownloadTask("游戏版本核心Jar文件", new StringUrl(from), to);
             if (!string.IsNullOrWhiteSpace(version.Downloads?.Client?.Sha1))
             {
-                downloadTask.DownloadObject.Checker = new SHA1Checker() { CheckSum = version.Downloads.Client.Sha1, FilePath = to };
+                downloadTask.DownloadObject.CheckHash = version.Downloads.Client.GetHash();
             }
             return downloadTask;
         }
@@ -113,7 +113,7 @@ namespace NsisoLauncherCore.Net.Tools
             DownloadTask task = new DownloadTask("版本依赖库文件" + lib.Value.Name.Name, lib.Value, to);
             if (lib.Value.LocalDownloadInfo != null)
             {
-                task.DownloadObject.Checker = new SHA1Checker() { CheckSum = lib.Value.LocalDownloadInfo.Sha1, FilePath = to };
+                task.DownloadObject.CheckHash = lib.Value.LocalDownloadInfo.GetHash();
             }
             return task;
         }
@@ -178,7 +178,7 @@ namespace NsisoLauncherCore.Net.Tools
                             string file = Path.Combine(download_to_dir, item.Key);
                             DownloadTask task = new DownloadTask(string.Format("下载JAVA组件{0}", item.Key), new DownloadObject(item.Value.Downloads.Raw, file)
                             {
-                                Checker = new SHA1Checker(item.Value.Downloads.Raw.Sha1, file)
+                                CheckHash = item.Value.Downloads.Raw.GetHash(),
                             });
                             tasks.Add(task);
                             break;

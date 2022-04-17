@@ -167,8 +167,9 @@ namespace NsisoLauncher.ViewModels.Pages
             { App.LogHandler.AppendError(e); }
         }
 
-        private async Task RefreshUser()
+        private Task RefreshUser()
         {
+            return Task.CompletedTask;
             //NowState = "正在登录用户";
             //UserNode selectedUser = App.Config.MainConfig.User.SelectedUser;
             //string clientToken = App.Config.MainConfig.User.ClientToken;

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NsisoLauncherCore.Modules;
+using NsisoLauncherCore.Util.Checker;
 using System.Threading.Tasks;
 
 namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
@@ -61,11 +62,8 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
             string downloadURL = jobj.Value<string>("download_url");
             string sha256 = jobj["checksums"].Value<string>("sha256");
             DownloadTask downloadTask = new DownloadTask("AuthlibInjector核心", new StringUrl(downloadURL), downloadTo);
-            downloadTask.DownloadObject.Checker = new Util.Checker.SHA256Checker()
-            {
-                CheckSum = sha256,
-                FilePath = downloadTo
-            };
+            Hash hash = new Hash(HashType.SHA256, sha256);
+            downloadTask.DownloadObject.CheckHash = hash;
             return downloadTask;
         }
     }

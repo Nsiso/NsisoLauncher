@@ -37,7 +37,6 @@ namespace NsisoLauncherCore.Util
         public static GameValidateResult Validate(LaunchHandler handler, VersionBase version, ValidateType type)
         {
             GameValidateResult result = new GameValidateResult();
-            SHA1Checker checker = new SHA1Checker();
             switch (type)
             {
                 case ValidateType.ONLY_CORE:
@@ -49,9 +48,8 @@ namespace NsisoLauncherCore.Util
                             result.IsPass = false;
                             result.FailedFiles.Add(core_path, FileFailedState.NOT_EXIST);
                         }
-                        checker.CheckSum = version.Downloads.Client.Sha1;
-                        checker.FilePath = core_path;
-                        if (!checker.CheckFilePass())
+
+                        if (!HashChecker.CheckFilePass(version.Downloads.Client, core_path))
                         {
                             result.IsPass = false;
                             result.FailedFiles.Add(core_path, FileFailedState.WRONG_HASH);
@@ -73,9 +71,7 @@ namespace NsisoLauncherCore.Util
 
                         if (item.LocalDownloadInfo?.Sha1 != null)
                         {
-                            checker.CheckSum = item.LocalDownloadInfo.Sha1;
-                            checker.FilePath = lib_path;
-                            if (!checker.CheckFilePass())
+                            if (!HashChecker.CheckFilePass(item.LocalDownloadInfo, lib_path))
                             {
                                 result.IsPass = false;
                                 result.FailedFiles.Add(lib_path, FileFailedState.WRONG_HASH);
@@ -104,9 +100,7 @@ namespace NsisoLauncherCore.Util
 
                         if (item.Value?.Hash != null)
                         {
-                            checker.CheckSum = item.Value.Hash;
-                            checker.FilePath = asset_path;
-                            if (!checker.CheckFilePass())
+                            if (!HashChecker.CheckFilePass(item.Value, asset_path))
                             {
                                 result.IsPass = false;
                                 result.FailedFiles.Add(asset_path, FileFailedState.WRONG_HASH);

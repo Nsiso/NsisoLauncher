@@ -233,7 +233,7 @@ namespace Cyotek.Data.Nbt
             return sb.ToString();
         }
 
-        public bool TryGetValue(string key, out Tag value)
+        public new bool TryGetValue(string key, out Tag value)
         {
             bool result;
 

@@ -20,6 +20,7 @@
     </Page.DataContext>
     <Page.Resources>
         <utils:ObjectNullToBooleanConverter x:Key="objectNotEmptyToBooleanConverter"/>
+        <utils:ObjectNullToVisibilityConverter IsNull="Visible" NotNull="Collapsed" x:Key="null2ShowConverter"/>
         <Style TargetType="ListBox" x:Key="ListStyle" BasedOn="{StaticResource {x:Type ListBox}}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">
@@ -172,5 +173,9 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Grid Grid.Row="1" Visibility="{Binding SelectedVersion, Converter={StaticResource null2ShowConverter}}" Background="#B2000000">
+            <TextBlock Text="请选择游戏版本" FontSize="32"
+                       Foreground="{StaticResource MahApps.Brushes.Badged.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
     </Grid>
 </Page>

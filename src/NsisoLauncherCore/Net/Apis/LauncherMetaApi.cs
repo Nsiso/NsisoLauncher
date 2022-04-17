@@ -15,6 +15,16 @@ namespace NsisoLauncherCore.Net.Apis
     {
         public string BaseUrl { get => "https://launchermeta.mojang.com"; }
 
+        public async Task<VersionManifestV2> GetVersionManifestV2(CancellationToken cancellation = default)
+        {
+            string url = BaseUrl + "/mc/game/version_manifest_v2.json";
+
+            HttpResponseMessage jsonRespond = await NetRequester.HttpGetAsync(url, cancellation);
+            jsonRespond.EnsureSuccessStatusCode();
+            string json_str = await jsonRespond.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<VersionManifestV2>(json_str);
+        }
+
         public async Task<VersionManifest> GetVersionManifest(CancellationToken cancellation = default)
         {
             string url = BaseUrl + "/mc/game/version_manifest.json";

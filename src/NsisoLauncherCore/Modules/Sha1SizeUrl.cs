@@ -1,4 +1,5 @@
 ﻿using NsisoLauncherCore.Net;
+using NsisoLauncherCore.Util.Checker;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace NsisoLauncherCore.Modules
     /// <summary>
     /// 基本数据要素类
     /// </summary>
-    public class Sha1SizeUrl : IDownloadable
+    public class Sha1SizeUrl : IDownloadable, IHashProvider
     {
         /// <summary>
         /// SHA1
@@ -28,6 +29,11 @@ namespace NsisoLauncherCore.Modules
         public string GetDownloadSourceURL()
         {
             return Url;
+        }
+
+        public Hash GetHash()
+        {
+            return new Hash(HashType.SHA1, Sha1);
         }
     }
 

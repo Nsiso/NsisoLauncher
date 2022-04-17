@@ -194,7 +194,6 @@ namespace NsisoLauncher.Config
         {
             LauncherProfilesConfig = new LauncherProfiles()
             {
-                ClientToken = Guid.NewGuid().ToString("N"),
                 Profiles = new ObservableDictionary<string, VersionProfile>()
             };
             SaveProfilesConfig();

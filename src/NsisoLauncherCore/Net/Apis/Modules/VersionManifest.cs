@@ -5,6 +5,12 @@ using System.Text;
 
 namespace NsisoLauncherCore.Net.Apis.Modules
 {
+    public class VersionManifestV2 : VersionManifest
+    {
+        [JsonProperty("versions")]
+        new public List<VersionMetaV2> Versions { get; set; }
+    }
+
     public class VersionManifest
     {
         [JsonProperty("latest")]
@@ -12,6 +18,21 @@ namespace NsisoLauncherCore.Net.Apis.Modules
 
         [JsonProperty("versions")]
         public List<VersionMeta> Versions { get; set; }
+    }
+
+    public class VersionMetaV2 : VersionMeta
+    {
+        /// <summary>
+        /// 版本ID
+        /// </summary>
+        [JsonProperty("sha1")]
+        public string Sha1 { get; set; }
+
+        /// <summary>
+        /// 版本类型
+        /// </summary>
+        [JsonProperty("complianceLevel")]
+        public int ComplianceLevel { get; set; }
     }
 
     public class VersionMeta

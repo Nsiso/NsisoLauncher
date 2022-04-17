@@ -2,6 +2,7 @@
 using NsisoLauncherCore.Modules;
 using NsisoLauncherCore.Net;
 using NsisoLauncherCore.Net.Tools;
+using NsisoLauncherCore.Util.Checker;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +52,7 @@ namespace NsisoLauncherCore.Util
         public Dictionary<string, JAssetInfo> Objects { get; set; }
     }
 
-    public class JAssetInfo : IDownloadable
+    public class JAssetInfo : IDownloadable, IHashProvider
     {
         [JsonProperty("hash")]
         public string Hash { get; set; }
@@ -64,6 +65,11 @@ namespace NsisoLauncherCore.Util
         public string GetDownloadSourceURL()
         {
             return GetDownloadUri.GetAssetsDownloadURL(this);
+        }
+
+        public Hash GetHash()
+        {
+            return new Hash(HashType.SHA1, Hash);
         }
     }
 }
