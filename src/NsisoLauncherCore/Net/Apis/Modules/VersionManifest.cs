@@ -5,10 +5,13 @@ using System.Text;
 
 namespace NsisoLauncherCore.Net.Apis.Modules
 {
-    public class VersionManifestV2 : VersionManifest
+    public class VersionManifestV2
     {
+        [JsonProperty("latest")]
+        public VersionLatest Latest { get; set; }
+
         [JsonProperty("versions")]
-        new public List<VersionMetaV2> Versions { get; set; }
+        public List<VersionMetaV2> Versions { get; set; }
     }
 
     public class VersionManifest

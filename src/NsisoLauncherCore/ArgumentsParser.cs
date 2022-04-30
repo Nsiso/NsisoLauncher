@@ -242,7 +242,15 @@ namespace NsisoLauncherCore
         private string ReplaceAll(VersionBase version, LaunchSetting setting, string all_arg)
         {
             string assetsPath = string.Format("\"{0}\"", handler.GetAssetsRoot());
-            string gameDir = string.Format("\"{0}\"", handler.GetVersionWorkspaceDir(version));
+            string gameDir;
+            if (setting.GameDirectory != null)
+            {
+                gameDir = setting.GameDirectory;
+            }
+            else
+            {
+                gameDir = handler.GetDefaultGameDirectory(version);
+            }
             string assetsIndexName;
             if (version.Assets != null)
             {
@@ -262,7 +270,7 @@ namespace NsisoLauncherCore
                 {"${auth_player_name}",string.Format("\"{0}\"", setting.LaunchUser.SelectedProfile.PlayerName) },
                 {"${auth_session}",setting.LaunchUser.GameAccessToken },
                 {"${version_name}",string.Format("\"{0}\"", version.Id) },
-                {"${game_directory}",gameDir },
+                {"${game_directory}",string.Format("\"{0}\"", gameDir) },
                 {"${game_assets}",assetsPath },
                 {"${assets_root}",assetsPath },
                 {"${assets_index_name}",assetsIndexName },
@@ -271,8 +279,8 @@ namespace NsisoLauncherCore
                 {"${user_properties}",ToList(setting.LaunchUser.Properties) },
                 {"${user_type}",setting.LaunchUser.UserType },
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) },
-                {"${natives_directory}",string.Format("\"{0}{1}\"",handler.GetVersionWorkspaceDir(version), @"\$natives") },
-                {"${library_directory}",string.Format("\"{0}{1}\"",handler.GameRootPath,  @"\libraries") },
+                {"${natives_directory}",string.Format("\"{0}\"", handler.GetVersionBinDirectory(version)) },
+                {"${library_directory}",string.Format("\"{0}{1}\"", handler.GameRootPath,  @"\libraries") },
                 {"${classpath_separator}", ";" },
                 {"${launcher_name}","NsisoLauncher5" },
                 {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },

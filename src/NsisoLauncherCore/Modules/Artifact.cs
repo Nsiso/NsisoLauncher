@@ -105,7 +105,7 @@ namespace NsisoLauncherCore.Modules
 
         public override string ToString()
         {
-            return Name;
+            return Descriptor;
         }
     }
 }

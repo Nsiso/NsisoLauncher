@@ -7,6 +7,11 @@ namespace NsisoLauncherCore.Modules
     public class LaunchSetting
     {
         /// <summary>
+        /// Use the given game directory
+        /// </summary>
+        public string GameDirectory { get; set; }
+
+        /// <summary>
         /// 启动指定的java
         /// </summary>
         public Java UsingJava { get; set; }

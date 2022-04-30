@@ -39,7 +39,7 @@ namespace NsisoLauncherCore.Util
             Process process = exitArg.Instance.InstanceProcess;
             DateTime launchTime = process.StartTime;
             DateTime exitTime = process.ExitTime;
-            string verRootDir = handler.GetVersionWorkspaceDir(exitArg.Version);
+            string verRootDir = handler.GetDefaultGameDirectory(exitArg.Version);
             string crashreportDir = verRootDir + "\\crash-reports";
             string latestlogPath = verRootDir + "\\logs\\latest.log";
 

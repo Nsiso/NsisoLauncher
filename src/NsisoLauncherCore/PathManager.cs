@@ -143,13 +143,35 @@ namespace NsisoLauncherCore
         }
 
         /// <summary>
+        /// Get the specified version's bin directory by it's id
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="id">The version id string</param>
+        /// <returns>The version's bin direcotry</returns>
+        public static string GetVersionBinDirectory(string gameRootPath, string id)
+        {
+            return string.Format(@"{0}\bin\{1}", gameRootPath, id);
+        }
+
+        /// <summary>
+        /// Get the specified version's bin directory by it's instance
+        /// </summary>
+        /// <param name="gameRootPath">Game root path</param>
+        /// <param name="ver">The version's instance</param>
+        /// <returns>The version's bin direcotry</returns>
+        public static string GetVersionBinDirectory(string gameRootPath, VersionBase ver)
+        {
+            return GetVersionBinDirectory(gameRootPath, ver.Id);
+        }
+
+        /// <summary>
         /// 获取游戏特定版本工作目录
         /// </summary>
         /// <param name="versionIsolation">版本是否隔离</param>
         /// <param name="gameRootPath">游戏根目录</param>
         /// <param name="ver">版本</param>
         /// <returns>特定版本工作目录路径</returns>
-        public static string GetVersionWorkspaceDir(bool versionIsolation, string gameRootPath, VersionBase ver)
+        public static string GetDefaultGameDirectory(bool versionIsolation, string gameRootPath, VersionBase ver)
         {
             return versionIsolation ? GetVersionRoot(gameRootPath, ver) : gameRootPath;
         }
@@ -259,7 +281,7 @@ namespace NsisoLauncherCore
         /// <returns>版本配置文件路径</returns>
         public static string GetVersionOptionsPath(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetDefaultGameDirectory(versionIsolation, gameRootPath, version);
             return verRoot + "\\options.txt";
         }
 
@@ -272,7 +294,7 @@ namespace NsisoLauncherCore
         /// <returns>版本存档路径</returns>
         public static string GetVersionSavesDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetDefaultGameDirectory(versionIsolation, gameRootPath, version);
             return verRoot + "\\saves";
         }
 
@@ -286,7 +308,7 @@ namespace NsisoLauncherCore
         /// <returns>版本模组文件夹路径</returns>
         public static string GetVersionModsDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetDefaultGameDirectory(versionIsolation, gameRootPath, version);
             return verRoot + "\\mods";
         }
 
@@ -299,7 +321,7 @@ namespace NsisoLauncherCore
         /// <returns>版本mod文件夹路径</returns>
         public static string GetVersionResourcePacksDir(bool versionIsolation, string gameRootPath, VersionBase version)
         {
-            string verRoot = GetVersionWorkspaceDir(versionIsolation, gameRootPath, version);
+            string verRoot = GetDefaultGameDirectory(versionIsolation, gameRootPath, version);
             return verRoot + "\\resourcepacks";
         }
         #endregion

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NsisoLauncherCore.Util.Checker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,14 @@ namespace NsisoLauncherCore.Net.AuthlibInjectorAPI
         public CheckSums CheckSums { get; set; }
     }
 
-    public class CheckSums
+    public class CheckSums : IHashProvider
     {
         [JsonProperty("sha256")]
         public string Sha256 { get; set; }
+
+        public Hash GetHash()
+        {
+            return new Hash(HashType.SHA256, Sha256);
+        }
     }
 }

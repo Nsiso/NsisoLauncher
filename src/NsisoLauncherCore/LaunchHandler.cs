@@ -122,6 +122,18 @@ namespace NsisoLauncherCore
                         setting.UsingJava = Java.GetSuitableJava(Javas, ver);
                     }
 
+                    if (string.IsNullOrEmpty(setting.GameDirectory))
+                    {
+                        setting.GameDirectory = GetDefaultGameDirectory(ver);
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(setting.GameDirectory))
+                        {
+                            throw new LaunchException.LaunchException("游戏目录不存在", string.Format("指定的游戏目录{0}不存在", setting.GameDirectory));
+                        }
+                    }
+
                     //check java for minecraft
                     JavaVersion javaVersion = null;
                     if (setting.UsingJava == null)
@@ -223,7 +235,7 @@ namespace NsisoLauncherCore
                                 if (File.Exists(libPath))
                                 {
                                     AppendLaunchInfoLog(string.Format("检查并解压不存在的库文件:{0}", libPath));
-                                    Unzip.UnZipNativeFile(libPath, GetVersionWorkspaceDir(ver) + @"\$natives", native.Extract, setting.LaunchType != LaunchType.SAFE);
+                                    Unzip.UnZipNativeFile(libPath, GetVersionBinDirectory(ver), native.Extract, setting.LaunchType != LaunchType.SAFE);
                                 }
                                 else
                                 {
@@ -270,7 +282,7 @@ namespace NsisoLauncherCore
                         RedirectStandardError = true,
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
-                        WorkingDirectory = GetVersionWorkspaceDir(ver)
+                        WorkingDirectory = setting.GameDirectory
                     };
 
                     LaunchInstance instance = new LaunchInstance(ver, setting, startInfo);
@@ -367,9 +379,9 @@ namespace NsisoLauncherCore
             return PathManager.GetVersionsRoot(GameRootPath);
         }
 
-        public string GetVersionWorkspaceDir(VersionBase ver)
+        public string GetDefaultGameDirectory(VersionBase ver)
         {
-            return PathManager.GetVersionWorkspaceDir(VersionIsolation, GameRootPath, ver);
+            return PathManager.GetDefaultGameDirectory(VersionIsolation, GameRootPath, ver);
         }
 
         public string GetLibrariesRoot()
@@ -407,6 +419,16 @@ namespace NsisoLauncherCore
             return PathManager.GetAssetsPath(GameRootPath, assetsInfo);
         }
 
+        public string GetVersionBinDirectory(string id)
+        {
+            return PathManager.GetVersionBinDirectory(GameRootPath, id);
+        }
+
+        public string GetVersionBinDirectory(VersionBase ver)
+        {
+            return PathManager.GetVersionBinDirectory(GameRootPath, ver);
+        }
+
         public string GetVersionOptionsPath(VersionBase version)
         {
             return PathManager.GetVersionOptionsPath(VersionIsolation, GameRootPath, version);
@@ -426,6 +448,8 @@ namespace NsisoLauncherCore
         {
             return PathManager.GetVersionResourcePacksDir(VersionIsolation, GameRootPath, version);
         }
+
+
         #endregion
 
         #region DEBUG方法
