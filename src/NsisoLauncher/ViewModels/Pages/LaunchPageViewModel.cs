@@ -286,18 +286,22 @@ namespace NsisoLauncher.ViewModels.Pages
                         });
                     if (result == MessageDialogResult.Affirmative)
                     {
-                        var arch = SystemTools.GetSystemArch();
-                        App.NetHandler.Downloader.AddDownloadTask(GetJavaInstaller.GetDownloadTask("8", arch, JavaImageType.JRE,
-                            () =>
-                            {
-                                App.Current.Dispatcher.Invoke(() =>
-                                {
-                                    App.RefreshJavaList();
-                                });
-                            }));
-                        App.MainPageVM.NavigateToDownloadPage();
-                        await App.NetHandler.Downloader.StartDownload();
-                        return;
+                        NsisoLauncherCore.Modules.JavaVersion javaVersion = LaunchVersion.GetLaunchJavaVersion();
+                        if (javaVersion == null)
+                        {
+                            await MainWindowVM.ShowMessageAsync("该版本没有提供java信息", "无法进行自动下载，请自行下载最新版本java");
+                            return;
+                        }
+                        else
+                        {
+                            LauncherMetaApi metaApi = new LauncherMetaApi();
+                            NativeJavaMeta meta = await metaApi.GetNativeJavaMeta(javaVersion.Component);
+                            List<IDownloadTask> tasks = GetDownloadUri.GetJavaDownloadTasks(meta);
+                            App.NetHandler.Downloader.AddDownloadTask(tasks);
+                            App.MainPageVM.NavigateToDownloadPage();
+                            await App.NetHandler.Downloader.StartDownloadAndWaitDone();
+                            App.RefreshJavaList();
+                        }
                     }
                 }
                 //else
@@ -315,7 +319,8 @@ namespace NsisoLauncher.ViewModels.Pages
 
                 LaunchSetting launchSetting = new LaunchSetting()
                 {
-                    LaunchType = launchType
+                    LaunchType = launchType,
+                    ClientId = ""
                 };
 
                 //标记控件状态启动中

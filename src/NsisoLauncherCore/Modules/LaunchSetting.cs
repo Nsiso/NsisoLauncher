@@ -90,5 +90,10 @@ namespace NsisoLauncherCore.Modules
         /// 游戏使用的代理服务器
         /// </summary>
         public Proxy GameProxy { get; set; }
+
+        /// <summary>
+        /// The client's id
+        /// </summary>
+        public string ClientId { get; set; }
     }
 }

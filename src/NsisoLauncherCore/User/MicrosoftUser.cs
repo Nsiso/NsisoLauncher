@@ -19,6 +19,8 @@ namespace NsisoLauncherCore.User
         [JsonIgnore]
         public string GameAccessToken { get => MinecraftToken.AccessToken; }
 
+        public string XboxUserId { get; set; }
+
         public MinecraftToken MinecraftToken { get; set; }
 
         public MicrosoftPlayerProfile Profile { get; set; }
@@ -51,6 +53,7 @@ namespace NsisoLauncherCore.User
             this.Username = microsoftAccount.Username;
             this.UserId = microsoftAccount.HomeAccountId.Identifier;
             this.MinecraftToken = minecraftToken;
+            this.XboxUserId = minecraftToken.XboxUserId;
             this.Profile = profile;
             if (Profile != null)
             {

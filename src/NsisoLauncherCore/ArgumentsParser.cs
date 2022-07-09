@@ -264,6 +264,11 @@ namespace NsisoLauncherCore
             {
                 assetsIndexName = "legacy";
             }
+            string xuid = setting.LaunchUser.UserId;
+            if (setting.LaunchUser is MicrosoftUser msuser)
+            {
+                xuid = msuser.XboxUserId;
+            }
             List<Library> libraries = version.GetAllValidLibraries();
             Dictionary<string, string> argDic = new Dictionary<string, string>()
             {
@@ -281,10 +286,12 @@ namespace NsisoLauncherCore
                 {"${version_type}", string.IsNullOrWhiteSpace(setting.VersionType) ? "NsisoLauncher5":string.Format("\"{0}\"",setting.VersionType) },
                 {"${natives_directory}",string.Format("\"{0}\"", handler.GetVersionBinDirectory(version)) },
                 {"${library_directory}",string.Format("\"{0}{1}\"", handler.GameRootPath,  @"\libraries") },
-                {"${classpath_separator}", ";" },
+                {"${classpath_separator}", Path.PathSeparator.ToString() },
                 {"${launcher_name}","NsisoLauncher5" },
                 {"${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString() },
                 {"${classpath}", GetClassPaths(libraries, version) },
+                {"${clientid}", setting.ClientId },
+                {"${auth_xuid}", xuid }
             };
             StringBuilder final_arg_builder = new StringBuilder(all_arg);
             return ReplaceByDic(final_arg_builder, argDic).ToString().Trim();
@@ -470,7 +477,7 @@ namespace NsisoLauncherCore
                 if (item.IsEnable() && !item.IsNative())
                 {
                     string libPath = handler.GetLibraryPath(item);
-                    stringBuilder.AppendFormat("{0};", libPath);
+                    stringBuilder.AppendFormat("{0}{1}", libPath, Path.PathSeparator);
                 }
             }
 

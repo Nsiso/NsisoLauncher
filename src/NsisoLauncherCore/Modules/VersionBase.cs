@@ -117,6 +117,11 @@ namespace NsisoLauncherCore.Modules
             return lib_hash_set.ToList();
         }
 
+        public virtual JavaVersion GetLaunchJavaVersion()
+        {
+            return this.JavaVersion == null ? InheritsFromInstance?.GetLaunchJavaVersion() : this.JavaVersion;
+        }
+
         public abstract string GetJvmLaunchArguments();
 
         public abstract string GetGameLaunchArguments();
@@ -167,6 +172,40 @@ namespace NsisoLauncherCore.Modules
         public string Component { get; set; }
 
         public int MajorVersion { get; set; }
+
+        public static bool IsMathced(JavaVersion gameJavaVersion, JavaVersion givenJavaVersion)
+        {
+            if (gameJavaVersion == null)
+            {
+                return true;
+            }
+            if (givenJavaVersion == null)
+            {
+                return false;
+            }
+            if (gameJavaVersion.MajorVersion > givenJavaVersion.MajorVersion)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool IsMathced(JavaVersion gameJavaVersion, Java givenJava)
+        {
+            if (gameJavaVersion == null)
+            {
+                return true;
+            }
+            if (givenJava == null)
+            {
+                return false;
+            }
+            if (gameJavaVersion.MajorVersion > givenJava.MajorVersion)
+            {
+                return false;
+            }
+            return true;
+        }
     }
     #endregion
 

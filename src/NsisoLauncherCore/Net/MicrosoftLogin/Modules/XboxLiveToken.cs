@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using NsisoLauncherCore.Util;
+using System.Linq;
 
 namespace NsisoLauncherCore.Net.MicrosoftLogin.Modules
 {
@@ -8,10 +9,10 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin.Modules
 
         public XboxLiveAuthResult XstsAuthResult { get; set; }
 
-        public string XblToken { get => XblAuthResult.Token; }
+        public string XblToken { get => XblAuthResult?.Token; }
 
-        public string XstsToken { get => XstsAuthResult.Token; }
+        public string XstsToken { get => XstsAuthResult?.Token; }
 
-        public string Uhs { get => XstsAuthResult.DisplayClaims?.Xui?.FirstOrDefault()?.Uhs; }
+        public string Uhs { get => XstsAuthResult?.DisplayClaims?.Xui?.FirstOrDefault()?.Uhs; }
     }
 }

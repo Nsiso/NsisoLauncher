@@ -135,21 +135,13 @@ namespace NsisoLauncherCore
                     }
 
                     //check java for minecraft
-                    JavaVersion javaVersion = null;
                     if (setting.UsingJava == null)
                     {
                         result.SetException(new NullJavaException());
                         return result;
                     }
-                    if (ver.JavaVersion != null)
-                    {
-                        javaVersion = ver.JavaVersion;
-                    }
-                    else if (ver.InheritsFromInstance != null && ver.InheritsFromInstance.JavaVersion != null)
-                    {
-                        javaVersion = ver.InheritsFromInstance.JavaVersion;
-                    }
-                    if (javaVersion != null && javaVersion.MajorVersion > setting.UsingJava.MajorVersion)
+                    JavaVersion javaVersion = ver.GetLaunchJavaVersion();
+                    if (!JavaVersion.IsMathced(javaVersion, setting.UsingJava))
                     {
                         result.SetException(new JavaNotMatchedException(javaVersion, setting.UsingJava));
                         return result;
