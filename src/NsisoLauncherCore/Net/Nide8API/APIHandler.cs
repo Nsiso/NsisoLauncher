@@ -8,7 +8,7 @@ namespace NsisoLauncherCore.Net.Nide8API
 {
     public class APIHandler
     {
-        public string Nide8BaseUrl { get; set; } = "https://auth2.nide8.com:233";
+        public string Nide8BaseUrl { get; set; } = "https://auth.mc-user.com:233";
 
         public string Nide8Id { get; private set; }
 
@@ -40,7 +40,7 @@ namespace NsisoLauncherCore.Net.Nide8API
         public async Task<bool> TestIsNide8DnsOK()
         {
             var lookup = new LookupClient();
-            var result = await lookup.QueryAsync("auth2.nide8.com", QueryType.A);
+            var result = await lookup.QueryAsync("auth.mc-user.com", QueryType.A);
             return !result.HasError && result.Answers.Count != 0;
         }
 

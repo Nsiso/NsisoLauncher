@@ -18,12 +18,12 @@ namespace NsisoLauncherCore.Authenticator
         private string _jarVersion = "1.0";
         private Library _jarLib => new Library()
         {
-            Url = "https://login2.nide8.com:233/index/jar",
+            Url = "https://login.mc-user.com:233/index/jar",
             Name = new Artifact(string.Format("com.nide8:login2:{0}", _jarVersion))
         };
 
         [JsonConstructor]
-        public Nide8Authenticator(string nide8ID, string clientToken) : base(string.Format("https://auth2.nide8.com:233/{0}/authserver", nide8ID), clientToken)
+        public Nide8Authenticator(string nide8ID, string clientToken) : base(string.Format("https://auth.mc-user.com:233/{0}/authserver", nide8ID), clientToken)
         {
             _nide8Handler = new Net.Nide8API.APIHandler(nide8ID);
         }
