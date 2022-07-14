@@ -123,16 +123,38 @@ namespace NsisoLauncher.ViewModels.Pages
                 return;
             }
 
+            var selected_auth = User.SelectedAuthenticator;
+
+            // check
+            if (selected_auth.RequireUsername && string.IsNullOrEmpty(selected_auth.InputUsername))
+            {
+                await MainWindowVM.ShowMessageAsync("您未输入登录用户名", "请输入您所登录用户的用户名");
+                return;
+            }
+            if (selected_auth.RequirePassword && string.IsNullOrEmpty(selected_auth.InputPassword))
+            {
+                await MainWindowVM.ShowMessageAsync("您未输入登录密码", "请输入您所登录用户的登录密码");
+                return;
+            }
+
             // show loading
             ProgressDialogController dialogController = null;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             if (User.SelectedAuthenticator.IsShowLoading)
             {
-                dialogController = await App.MainWindowVM.ShowProgressAsync(string.Format("正在登录：{0}", User.SelectedAuthenticator.Name), "这可能需要一段时间...");
+                dialogController = await App.MainWindowVM.ShowProgressAsync(
+                    string.Format("正在登录：{0}", User.SelectedAuthenticator.Name),
+                    "这可能需要一段时间...",
+                    true, new MetroDialogSettings()
+                    {
+
+                    });
                 dialogController.SetIndeterminate();
+                dialogController.Canceled += (a, b) => { cancellationTokenSource.Cancel(); };
             }
 
             // auth
-            AuthenticateResult result = await User?.SelectedAuthenticator?.AuthenticateAsync(default);
+            AuthenticateResult result = await User?.SelectedAuthenticator?.AuthenticateAsync(cancellationTokenSource.Token);
 
             // close loading
             if (dialogController != null)

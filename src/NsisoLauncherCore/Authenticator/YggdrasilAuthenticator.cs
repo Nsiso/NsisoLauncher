@@ -109,11 +109,11 @@ namespace NsisoLauncherCore.Authenticator
         {
             if (string.IsNullOrEmpty(InputUsername))
             {
-                throw new ArgumentNullException(nameof(InputUsername));
+                return new AuthenticateResult() { State = AuthenticateState.ERROR_CLIENT, Cause = "The input username is empty", ErrorTag = "UsernameEmpty" };
             }
             if (string.IsNullOrEmpty(InputPassword))
             {
-                throw new ArgumentNullException(nameof(InputPassword));
+                return new AuthenticateResult() { State = AuthenticateState.ERROR_CLIENT, Cause = "The input password is empty", ErrorTag = "PasswordEmpty" };
             }
             try
             {
