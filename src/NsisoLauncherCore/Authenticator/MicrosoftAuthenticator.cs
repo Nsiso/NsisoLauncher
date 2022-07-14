@@ -96,6 +96,9 @@ namespace NsisoLauncherCore.Authenticator
         [JsonIgnore]
         public List<Library> Libraries => null;
 
+        [JsonIgnore]
+        public bool IsShowLoading => true;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public async Task<AuthenticateResult> AuthenticateAsync(CancellationToken cancellation)

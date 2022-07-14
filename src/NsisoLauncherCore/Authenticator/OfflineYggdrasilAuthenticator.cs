@@ -78,6 +78,9 @@ namespace NsisoLauncherCore.Authenticator
         [JsonIgnore]
         public List<Library> Libraries => null;
 
+        [JsonIgnore]
+        public bool IsShowLoading => false;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Task<AuthenticateResult> AuthenticateAsync(CancellationToken cancellation = default)
@@ -87,6 +90,12 @@ namespace NsisoLauncherCore.Authenticator
                 if (string.IsNullOrEmpty(InputUsername))
                 {
                     return new AuthenticateResult() { State = AuthenticateState.ERROR_CLIENT, Cause = "The input username is empty", ErrorTag = "UsernameEmpty" };
+                }
+
+                IUser? found_user = Users.Values.Where(x => x.Username == InputUsername).FirstOrDefault();
+                if (found_user == null)
+                {
+
                 }
 
                 string accessToken = Guid.NewGuid().ToString("N");

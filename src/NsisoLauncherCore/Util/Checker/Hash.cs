@@ -28,16 +28,16 @@ namespace NsisoLauncherCore.Util.Checker
             switch (type)
             {
                 case HashType.MD5:
-                    hashAlgorithm = new MD5CryptoServiceProvider();
+                    hashAlgorithm = HashAlgorithm.Create("MD5");
                     break;
                 case HashType.SHA1:
-                    hashAlgorithm = new SHA1CryptoServiceProvider();
+                    hashAlgorithm = HashAlgorithm.Create("SHA1");
                     break;
                 case HashType.SHA256:
-                    hashAlgorithm = new SHA256CryptoServiceProvider();
+                    hashAlgorithm = HashAlgorithm.Create("SHA256");
                     break;
                 case HashType.SHA512:
-                    hashAlgorithm = new SHA512CryptoServiceProvider();
+                    hashAlgorithm = HashAlgorithm.Create("SHA512");
                     break;
                 default:
                     throw new Exception("Unknown hash type.");

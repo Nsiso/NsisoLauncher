@@ -37,7 +37,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
             this.Options = options ?? throw new ArgumentNullException("Install options is null");
         }
 
-        public void BeginInstallFromJObject(ProgressCallback monitor, CancellationToken cancellationToken, JObject jObj, string installer_path, string tempPath)
+        public async Task BeginInstallFromJObject(ProgressCallback monitor, CancellationToken cancellationToken, JObject jObj, string installer_path, string tempPath)
         {
             profile = jObj.ToObject<Install>();
 
@@ -82,7 +82,7 @@ namespace NsisoLauncherCore.Util.Installer.Forge
                 throw new FileNotFoundException("Minecraft jar is not exists");
             }
 
-            var exc = DownloadUtils.DownloadForgeJLibraries(monitor, Options.Mirror, cancellationToken, profile.Libraries, librariesDir);
+            var exc = await DownloadUtils.DownloadForgeJLibraries(monitor, Options.Mirror, cancellationToken, profile.Libraries, librariesDir);
             if (exc != null)
             {
                 throw exc;

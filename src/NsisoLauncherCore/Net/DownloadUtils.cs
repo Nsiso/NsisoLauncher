@@ -13,49 +13,49 @@ namespace NsisoLauncherCore.Net
 {
     public static class DownloadUtils
     {
-        public static DownloadResult SimpleDownload(DownloadObject obj, IDownloadableMirror mirror)
-        {
-            try
-            {
-                if (obj == null || obj.Downloadable == null)
-                {
-                    return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
-                }
-                string from = obj.Downloadable.GetDownloadSourceURL();
-                if (mirror != null)
-                {
-                    from = mirror.DoDownloadUriReplace(from);
-                }
-                using (WebClient client = new WebClient())
-                {
-                    client.DownloadFile(obj.Downloadable.GetDownloadSourceURL(), obj.To);
-                }
-                #region 下载后校验
-                if (obj.CheckHash != null)
-                {
-                    if (!HashChecker.CheckFilePass(obj.CheckHash, obj.To))
-                    {
-                        return new DownloadResult()
-                        {
-                            IsSuccess = false,
-                            ObjectToDownload = obj,
-                            DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.CheckHash))
-                        };
-                    }
-                }
-                #endregion
-                return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
-            }
-            catch (Exception ex)
-            {
-                return new DownloadResult()
-                {
-                    IsSuccess = false,
-                    ObjectToDownload = obj,
-                    DownloadException = ex
-                };
-            }
-        }
+        //public static DownloadResult SimpleDownload(DownloadObject obj, IDownloadableMirror mirror)
+        //{
+        //    try
+        //    {
+        //        if (obj == null || obj.Downloadable == null)
+        //        {
+        //            return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
+        //        }
+        //        string from = obj.Downloadable.GetDownloadSourceURL();
+        //        if (mirror != null)
+        //        {
+        //            from = mirror.DoDownloadUriReplace(from);
+        //        }
+        //        using (WebClient client = new WebClient())
+        //        {
+        //            client.DownloadFile(obj.Downloadable.GetDownloadSourceURL(), obj.To);
+        //        }
+        //        #region 下载后校验
+        //        if (obj.CheckHash != null)
+        //        {
+        //            if (!HashChecker.CheckFilePass(obj.CheckHash, obj.To))
+        //            {
+        //                return new DownloadResult()
+        //                {
+        //                    IsSuccess = false,
+        //                    ObjectToDownload = obj,
+        //                    DownloadException = new Exception(string.Format("{0}校验哈希值失败，目标哈希值:{1}", obj.To, obj.CheckHash))
+        //                };
+        //            }
+        //        }
+        //        #endregion
+        //        return new DownloadResult() { IsSuccess = true, ObjectToDownload = obj };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new DownloadResult()
+        //        {
+        //            IsSuccess = false,
+        //            ObjectToDownload = obj,
+        //            DownloadException = ex
+        //        };
+        //    }
+        //}
 
         public static async Task<DownloadResult> DownloadAsync(DownloadObject obj, CancellationToken cancellationToken, ManualResetEventSlim manualResetEvent,
             ProgressCallback progressCallback, IDownloadableMirror mirror, DownloadSetting downloadSetting)
@@ -267,93 +267,16 @@ namespace NsisoLauncherCore.Net
             return downloadResult;
         }
 
-        public static Exception DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<Library> libs, string librariesDir)
+        public static async Task<Exception> DownloadForgeJLibraries(ProgressCallback monitor, IDownloadableMirror mirror, CancellationToken cancelToken, List<Library> libs, string librariesDir)
         {
             try
             {
                 foreach (var item in libs)
                 {
-                    monitor.DoneSize = 0;
-                    monitor.State = string.Format("补全库文件{0}", item.Name);
-                    Exception exception = null;
-                    for (int i = 1; i <= 3; i++)
+                    await DownloadAsync(new DownloadObject(item, Path.Combine(librariesDir, item.Downloads.Artifact.Path)), cancelToken, null, monitor, mirror, new DownloadSetting()
                     {
-                        try
-                        {
-
-                            string from = item.Downloads.Artifact.Url;
-                            if (mirror != null)
-                            {
-                                from = mirror.DoDownloadUriReplace(from);
-                            }
-                            string to = Path.Combine(librariesDir, item.Downloads.Artifact.Path);
-                            string buffFilename = to + ".downloadtask";
-
-                            if (File.Exists(to))
-                            {
-                                continue;
-                            }
-                            if (string.IsNullOrWhiteSpace(from))
-                            {
-                                continue;
-                            }
-                            if (Path.IsPathRooted(to))
-                            {
-                                string dirName = Path.GetDirectoryName(to);
-                                if (!Directory.Exists(dirName))
-                                {
-                                    Directory.CreateDirectory(dirName);
-                                }
-                            }
-                            if (File.Exists(buffFilename))
-                            {
-                                File.Delete(buffFilename);
-                            }
-
-                            HttpWebRequest request = WebRequest.Create(from) as HttpWebRequest;
-                            cancelToken.Register(() => { request.Abort(); });
-                            request.Timeout = 5000;
-                            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-                            {
-                                monitor.TotalSize = response.ContentLength;
-                                using (Stream responseStream = response.GetResponseStream())
-                                {
-                                    responseStream.ReadTimeout = 5000;
-                                    using (FileStream fs = new FileStream(buffFilename, FileMode.Create))
-                                    {
-                                        byte[] bArr = new byte[1024];
-                                        int size = responseStream.Read(bArr, 0, (int)bArr.Length);
-
-                                        while (size > 0)
-                                        {
-                                            if (cancelToken.IsCancellationRequested)
-                                            {
-                                                return null;
-                                            }
-                                            fs.Write(bArr, 0, size);
-                                            size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                                            monitor.IncreaseDoneSize(size);
-                                        }
-                                    }
-                                }
-                            }
-
-                            //下载完成后转正
-                            File.Move(buffFilename, to);
-                            monitor.SetDone();
-
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            exception = e;
-                            monitor.State = string.Format("重试第{0}次", i);
-
-                            //继续重试
-                            continue;
-                        }
-
-                    }
+                        CheckFileHash = true,
+                    });
                 }
                 return null;
             }

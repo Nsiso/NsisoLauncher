@@ -44,7 +44,7 @@ namespace NsisoLauncher.Views.Controls
             //this.Visibility = Visibility.Hidden;
         }
 
-        //public async void SetServerInfo(Server server)
+        //public async taskSetServerInfo(Server server)
         //{
         //    if (server.ShowServerInfo)
         //    {

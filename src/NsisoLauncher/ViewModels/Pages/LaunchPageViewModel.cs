@@ -258,7 +258,7 @@ namespace NsisoLauncher.ViewModels.Pages
                 if (authenticator.SelectedUser == null)
                 {
                     await MainWindowVM.ShowMessageAsync(string.Format("{0}没有登录中的用户", Authenticator.Name),
-                        string.Format("{0}中没有登录状态的用户，请前往用户中心登录用户"));
+                        string.Format("{0}中没有登录状态的用户，请前往用户中心登录用户", Authenticator.Name));
                     return;
                 }
                 if (authenticator.SelectedUser.SelectedProfile == null)

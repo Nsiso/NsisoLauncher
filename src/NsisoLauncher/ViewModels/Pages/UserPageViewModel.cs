@@ -117,7 +117,29 @@ namespace NsisoLauncher.ViewModels.Pages
 
         private async Task Login()
         {
+            if (User == null || User.SelectedAuthenticator == null)
+            {
+                await MainWindowVM.ShowMessageAsync("登录失败:未选中登录目标", "请选中需要登录的目标");
+                return;
+            }
+
+            // show loading
+            ProgressDialogController dialogController = null;
+            if (User.SelectedAuthenticator.IsShowLoading)
+            {
+                dialogController = await App.MainWindowVM.ShowProgressAsync(string.Format("正在登录：{0}", User.SelectedAuthenticator.Name), "这可能需要一段时间...");
+                dialogController.SetIndeterminate();
+            }
+
+            // auth
             AuthenticateResult result = await User?.SelectedAuthenticator?.AuthenticateAsync(default);
+
+            // close loading
+            if (dialogController != null)
+            {
+                await dialogController.CloseAsync();
+            }
+
             if (result.IsSuccess)
             {
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));

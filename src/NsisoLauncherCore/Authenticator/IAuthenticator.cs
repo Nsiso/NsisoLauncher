@@ -110,6 +110,10 @@ namespace NsisoLauncherCore.Authenticator
         bool AllowInvalidate { get; }
         #endregion
 
+        #region Login UI Action Property
+        bool IsShowLoading { get; }
+        #endregion
+
         #region Launch depend property and method
         /// <summary>
         /// The authenticator requires extra java virtual machine argument
@@ -194,6 +198,11 @@ namespace NsisoLauncherCore.Authenticator
         /// Forbidden to authenticate (wrong username or password)
         /// </summary>
         FORBIDDEN,
+
+        /// <summary>
+        /// The user is not exsist, might need to register
+        /// </summary>
+        USER_NOT_EXSIST,
 
         /// <summary>
         /// Server responsed that is a server error
