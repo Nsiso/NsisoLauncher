@@ -92,10 +92,10 @@ namespace NsisoLauncherCore.Authenticator
                     return new AuthenticateResult() { State = AuthenticateState.ERROR_CLIENT, Cause = "The input username is empty", ErrorTag = "UsernameEmpty" };
                 }
 
-                IUser? found_user = Users.Values.Where(x => x.Username == InputUsername).FirstOrDefault();
-                if (found_user == null)
+                IUser found_user = Users.Values.Where(x => x.Username == InputUsername).FirstOrDefault();
+                if (found_user != null)
                 {
-
+                    return new AuthenticateResult() { State = AuthenticateState.USER_NOT_EXSIST, Cause = "The input username is empty", ErrorTag = "UsernameEmpty" };
                 }
 
                 string accessToken = Guid.NewGuid().ToString("N");

@@ -109,9 +109,9 @@ namespace NsisoLauncherCore.Util
                         File.WriteAllLines(core.GetVersionOptionsPath(version), optLines.ToArray());
                     }
                 }
-                catch (Exception e)
+                catch
                 {
-                    throw e;
+                    throw;
                 }
             });
         }

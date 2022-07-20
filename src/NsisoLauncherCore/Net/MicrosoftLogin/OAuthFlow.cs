@@ -56,9 +56,9 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
                     .ExecuteAsync(cancellation);
                 return authResult;
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -74,9 +74,9 @@ namespace NsisoLauncherCore.Net.MicrosoftLogin
             {
                 return await Login(cancellation);
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
