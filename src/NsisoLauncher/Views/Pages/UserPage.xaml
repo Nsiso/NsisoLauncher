@@ -163,9 +163,10 @@
                     <iconPacks:PackIconFontAwesome Kind="UserAltSolid" Margin="5"/>
                     <TextBlock Text="用户名:" Margin="5"/>
                 </StackPanel>
-                <TextBox controls:TextBoxHelper.Watermark="用请输入户名" Width="200" 
+                <ComboBox controls:TextBoxHelper.Watermark="用请输入户名" Width="200" 
                          Visibility="{Binding User.SelectedAuthenticator.RequireUsername , Converter={StaticResource BooleanToVisibilityConverter}}"
-                         Text="{Binding User.SelectedAuthenticator.InputUsername}"
+                         Text="{Binding User.SelectedAuthenticator.InputUsername}" IsEditable="True" 
+                         ItemsSource="{Binding User.SelectedAuthenticator.Users}" DisplayMemberPath="Value.Username"
                          Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="2"
                             Visibility="{Binding User.SelectedAuthenticator.RequirePassword , Converter={StaticResource BooleanToVisibilityConverter}}">
