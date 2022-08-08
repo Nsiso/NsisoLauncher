@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NsisoLauncherCore\NsisoLauncherCore.csproj" />
+    <ProjectReference Include="..\NsisoLauncherPluginBase\NsisoLauncherPluginBase.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Resource\Models\Page1.xaml.cs" />
